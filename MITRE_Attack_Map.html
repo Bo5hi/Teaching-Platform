@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MITRE ATT&CK — Colonial Pipeline | MCCoE</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#ee2207;--green:#00e676;--yellow:#ffd600;--cyan:#00f5ff;--bg:#0a0e1a;--card:#111827;--border:rgba(255,255,255,0.08);--text:#e2e8f0;--muted:#64748b}
+body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100vh;}
+
+/* HEADER */
+#hdr{background:linear-gradient(135deg,#0a0e1a 0%,#1a0505 100%);border-bottom:2px solid var(--red);padding:20px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.hdr-title{font-family:'Orbitron',sans-serif;font-size:1.1rem;color:var(--red);letter-spacing:2px;}
+.hdr-sub{font-size:.75rem;color:var(--muted);margin-top:4px;}
+
+/* STEP EXPLAINER */
+.step-bar{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--border);}
+.step{flex:1;min-width:120px;padding:14px 16px;text-align:center;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;font-size:.72rem;letter-spacing:.5px;color:var(--muted);}
+.step:hover{background:rgba(238,34,7,.06);}
+.step.on{border-bottom-color:var(--red);color:var(--text);background:rgba(238,34,7,.08);}
+.step-num{font-family:'Orbitron',sans-serif;font-size:1.1rem;color:var(--red);display:block;margin-bottom:4px;}
+
+/* PANELS */
+.panel{display:none;padding:32px;}
+.panel.on{display:block;}
+
+/* FRAMEWORK PANEL */
+.tactic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:32px;}
+.tactic-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;transition:all .2s;}
+.tactic-card.hit{border-color:var(--red);background:rgba(238,34,7,.1);}
+.tactic-card.hit .tc-id{color:var(--red);}
+.tc-id{font-size:.65rem;color:var(--muted);letter-spacing:.5px;margin-bottom:4px;}
+.tc-name{font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:6px;}
+.tc-badge{display:inline-block;background:rgba(238,34,7,.2);color:var(--red);font-size:.6rem;padding:2px 6px;border-radius:4px;margin-top:2px;}
+
+/* TECHNIQUE CARDS */
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+.tech-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:border-color .2s;}
+.tech-card:hover{border-color:rgba(238,34,7,.4);}
+.tech-id{font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--red);margin-bottom:6px;}
+.tech-name{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:4px;}
+.tech-tactic{font-size:.72rem;color:var(--cyan);margin-bottom:12px;letter-spacing:.5px;}
+.tech-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;margin-top:10px;}
+.tech-val{font-size:.82rem;color:var(--text);line-height:1.6;}
+.tech-link{display:inline-block;margin-top:12px;font-size:.72rem;color:var(--red);text-decoration:none;border:1px solid rgba(238,34,7,.3);padding:4px 10px;border-radius:4px;letter-spacing:.3px;}
+.tech-link:hover{background:rgba(238,34,7,.1);}
+
+/* ATTACK STORY */
+.story-line{display:flex;gap:0;margin-bottom:0;}
+.story-step{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:12px;display:flex;gap:16px;align-items:flex-start;}
+.story-num{background:var(--red);color:#fff;font-family:'Orbitron',sans-serif;font-size:.8rem;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.story-body{}
+.story-title{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:4px;}
+.story-desc{font-size:.82rem;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:8px;}
+.story-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.story-tag{font-size:.65rem;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.25);color:var(--green);padding:2px 8px;border-radius:4px;}
+.story-tag.red{background:rgba(238,34,7,.1);border-color:rgba(238,34,7,.25);color:var(--red);}
+
+/* WORKSHEET */
+.ws-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px;}
+.ws-title{font-family:'Orbitron',sans-serif;font-size:.8rem;color:var(--red);letter-spacing:1px;margin-bottom:16px;}
+.ws-row{display:grid;grid-template-columns:140px 1fr 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:10px;}
+.ws-row.hdr-row{background:rgba(238,34,7,.15);}
+.ws-cell{padding:12px;border-right:1px solid var(--border);font-size:.8rem;}
+.ws-cell:last-child{border-right:none;}
+.ws-cell.hdr-cell{font-size:.65rem;color:var(--red);text-transform:uppercase;letter-spacing:.5px;font-weight:700;}
+.ws-hint{font-size:.7rem;color:var(--cyan);margin-top:4px;}
+.ws-given{color:var(--yellow);}
+.ws-blank{color:var(--muted);font-style:italic;}
+.ws-note{font-size:.78rem;color:var(--muted);margin-top:12px;padding:10px;background:rgba(0,0,0,.3);border-radius:6px;border-left:3px solid var(--cyan);}
+
+/* SECTION TITLE */
+.sec-title{font-family:'Orbitron',sans-serif;font-size:.85rem;color:var(--red);letter-spacing:1.5px;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.intro-box{background:rgba(238,34,7,.06);border:1px solid rgba(238,34,7,.2);border-radius:10px;padding:20px;margin-bottom:28px;font-size:.85rem;line-height:1.8;color:rgba(255,255,255,.85);}
+.intro-box strong{color:var(--red);}
+
+/* QUICK REF */
+.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:24px;}
+.qr-card{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:8px;padding:12px;}
+.qr-label{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.qr-val{font-size:.82rem;color:var(--text);}
+
+.back-btn{display:inline-block;font-size:.75rem;color:var(--muted);text-decoration:none;margin-bottom:24px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;}
+.back-btn:hover{color:var(--text);border-color:rgba(255,255,255,.2);}
+/* WORKSHEET FORM STYLES */
+.ws-input{width:100%;min-height:80px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.1);color:#e2e8f0;font-family:'Share Tech Mono',monospace;font-size:.85rem;padding:12px;border-radius:8px;resize:vertical;line-height:1.6;}
+.ws-input:focus{outline:none;border-color:var(--red);background:rgba(0,0,0,.5);}
+.ws-input::placeholder{color:var(--muted);}
+.tech-form-card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+.tfc-header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);}
+.tfc-badge{font-family:'Orbitron',sans-serif;font-size:.85rem;color:var(--red);background:rgba(238,34,7,.12);border:1px solid rgba(238,34,7,.3);padding:4px 10px;border-radius:6px;white-space:nowrap;}
+.tfc-name{font-size:.88rem;font-weight:700;color:var(--text);flex:1;}
+.tfc-tag{font-size:.62rem;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--border);padding:2px 8px;border-radius:4px;white-space:nowrap;}
+.tfc-field{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.04);}
+.tfc-field:last-child{border-bottom:none;}
+.tfc-label{display:block;font-size:.78rem;color:var(--red);letter-spacing:.3px;margin-bottom:8px;line-height:1.5;}
+#student-banner{background:rgba(238,34,7,.08);border:1px solid rgba(238,34,7,.25);border-radius:8px;padding:12px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+#student-banner .sb-name{font-family:'Orbitron',sans-serif;font-size:.85rem;color:var(--text);}
+#student-banner .sb-id{font-size:.75rem;color:var(--muted);}
+#submit-btn{display:block;width:100%;padding:16px;background:var(--red);color:#fff;font-family:'Orbitron',sans-serif;font-size:.9rem;font-weight:700;letter-spacing:1.5px;border:none;border-radius:8px;cursor:pointer;margin-top:24px;transition:opacity .2s;}
+#submit-btn:hover{opacity:.85;}
+#submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+#submit-status{text-align:center;font-size:.85rem;margin-top:12px;min-height:22px;}
+</style>
+</head>
+<body>
+
+<div id="hdr">
+  <div>
+    <div class="hdr-title">⚔️ MITRE ATT&CK — COLONIAL PIPELINE MAPPING</div>
+    <div class="hdr-sub">MCCoE Cybersecurity Apprenticeship · Project 3 Learning Tool</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div style="font-size:.72rem;color:var(--muted);text-align:right;">attack.mitre.org<br><span style="color:var(--red);">Enterprise Matrix · 14 Tactics</span></div>
+    <a id="hub-btn" href="MCCoE_Hub.html" style="font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:1px;color:#fff;background:var(--red);border:none;padding:8px 16px;border-radius:6px;cursor:pointer;text-decoration:none;white-space:nowrap;">⌂ HUB</a>
+  </div>
+</div>
+
+<!-- STEP NAV -->
+<div class="step-bar">
+  <div class="step on" onclick="showPanel('framework',this)"><span class="step-num">01</span>THE FRAMEWORK</div>
+  <div class="step" onclick="showPanel('story',this)"><span class="step-num">02</span>ATTACK STORY</div>
+  <div class="step" onclick="showPanel('techniques',this)"><span class="step-num">03</span>TECHNIQUE BREAKDOWN</div>
+  <div class="step" onclick="showPanel('worksheet',this)"><span class="step-num">04</span>STUDENT WORKSHEET</div>
+</div>
+
+<!-- PANEL 1: FRAMEWORK -->
+<div id="panel-framework" class="panel on">
+  <div class="sec-title">// WHAT IS MITRE ATT&CK?</div>
+  <div class="intro-box">
+    MITRE ATT&CK is a globally accessible knowledge base of adversary tactics and techniques based on real-world observations.
+    Think of it as a <strong>universal language</strong> for describing how cyberattacks happen.<br><br>
+    <strong>Tactic</strong> = the attacker's GOAL at that phase. ("Why are they doing this?")<br>
+    <strong>Technique</strong> = HOW they achieve that goal. ("What exactly did they do?")<br>
+    <strong>Procedure</strong> = the specific tool or command used. ("DarkSide ransomware specifically...")<br><br>
+    The matrix has <strong>14 Tactics</strong> (columns) and hundreds of Techniques underneath.
+    When you identify a Technique used in a breach, you write its ID (like <strong style="color:var(--red);">T1078</strong>) so any security professional in the world immediately knows exactly what happened.
+  </div>
+
+  <div class="sec-title">// THE 14 TACTICS — Colonial Pipeline Highlighted in Red</div>
+  <div class="tactic-grid">
+    <div class="tactic-card"><div class="tc-id">TA0043</div><div class="tc-name">Reconnaissance</div><div style="font-size:.72rem;color:var(--muted);">Gather info before attacking</div></div>
+    <div class="tactic-card"><div class="tc-id">TA0042</div><div class="tc-name">Resource Development</div><div style="font-size:.72rem;color:var(--muted);">Build attack infrastructure</div></div>
+    <div class="tactic-card hit"><div class="tc-id">TA0001</div><div class="tc-name">Initial Access</div><div style="font-size:.72rem;color:var(--muted);">Get into the target network</div><span class="tc-badge">T1078 · T1133</span></div>
+    <div class="tactic-card"><div class="tc-id">TA0002</div><div class="tc-name">Execution</div><div style="font-size:.72rem;color:var(--muted);">Run malicious code</div></div>
+    <div class="tactic-card hit"><div class="tc-id">TA0003</div><div class="tc-name">Persistence</div><div style="font-size:.72rem;color:var(--muted);">Maintain foothold</div><span class="tc-badge">T1078</span></div>
+    <div class="tactic-card"><div class="tc-id">TA0004</div><div class="tc-name">Privilege Escalation</div><div style="font-size:.72rem;color:var(--muted);">Gain higher permissions</div></div>
+    <div class="tactic-card hit"><div class="tc-id">TA0005</div><div class="tc-name">Defense Evasion</div><div style="font-size:.72rem;color:var(--muted);">Avoid detection</div><span class="tc-badge">T1490</span></div>
+    <div class="tactic-card"><div class="tc-id">TA0006</div><div class="tc-name">Credential Access</div><div style="font-size:.72rem;color:var(--muted);">Steal credentials</div></div>
+    <div class="tactic-card"><div class="tc-id">TA0007</div><div class="tc-name">Discovery</div><div style="font-size:.72rem;color:var(--muted);">Learn the environment</div></div>
+    <div class="tactic-card hit"><div class="tc-id">TA0008</div><div class="tc-name">Lateral Movement</div><div style="font-size:.72rem;color:var(--muted);">Move through the network</div><span class="tc-badge">T1021</span></div>
+    <div class="tactic-card"><div class="tc-id">TA0009</div><div class="tc-name">Collection</div><div style="font-size:.72rem;color:var(--muted);">Gather target data</div></div>
+    <div class="tactic-card hit"><div class="tc-id">TA0010</div><div class="tc-name">Exfiltration</div><div style="font-size:.72rem;color:var(--muted);">Steal data out</div><span class="tc-badge">T1048</span></div>
+    <div class="tactic-card"><div class="tc-id">TA0011</div><div class="tc-name">Command & Control</div><div style="font-size:.72rem;color:var(--muted);">Communicate with malware</div></div>
+    <div class="tactic-card hit"><div class="tc-id">TA0040</div><div class="tc-name">Impact</div><div style="font-size:.72rem;color:var(--muted);">Disrupt / destroy</div><span class="tc-badge">T1486 · T1489 · T1490</span></div>
+  </div>
+
+  <div class="ws-note">💡 <strong>Key insight:</strong> Notice that most tactics in the middle (Execution, Privilege Escalation, Credential Access, Discovery, Collection, Command & Control) have NO highlighted techniques. This doesn't mean they didn't happen — it means Colonial Pipeline's incident reports didn't provide enough detail to confirm specific techniques there. In real incident response, you document what you CAN confirm with evidence.</div>
+</div>
+
+<!-- PANEL 2: ATTACK STORY -->
+<div id="panel-story" class="panel">
+  <div class="sec-title">// THE COLONIAL PIPELINE ATTACK — STEP BY STEP</div>
+  <div class="intro-box">
+    Before you map techniques, <strong>understand the story</strong>. Read each step, then on the next tab you'll match each step to the correct ATT&CK technique.
+    This is how real SOC analysts and incident responders work — they reconstruct the timeline first, then classify it using the framework.
+  </div>
+
+  <div class="story-step">
+    <div class="story-num">1</div>
+    <div class="story-body">
+      <div class="story-title">Dark Web Credential Discovery</div>
+      <div class="story-desc">Months or years before the attack, an employee's credentials were compromised in an unrelated breach and appeared on the dark web. DarkSide affiliates (or brokers who sell access) searched for valid credentials targeting Colonial Pipeline's VPN login portal.</div>
+      <div class="story-tags"><span class="story-tag">Passive reconnaissance</span><span class="story-tag">Credential theft from prior breach</span><span class="story-tag red">No dark web monitoring in place</span></div>
+    </div>
+  </div>
+
+  <div class="story-step">
+    <div class="story-num">2</div>
+    <div class="story-body">
+      <div class="story-title">VPN Login with Stolen Password</div>
+      <div class="story-desc">On May 7, 2021, attackers used the stolen VPN password to authenticate directly into Colonial Pipeline's network. There was NO multi-factor authentication on the VPN — a single password was all that stood between the public internet and the internal network.</div>
+      <div class="story-tags"><span class="story-tag red">T1078 — Valid Accounts</span><span class="story-tag red">T1133 — External Remote Services</span><span class="story-tag red">No MFA = direct access</span></div>
+    </div>
+  </div>
+
+  <div class="story-step">
+    <div class="story-num">3</div>
+    <div class="story-body">
+      <div class="story-title">Lateral Movement Through the IT Network</div>
+      <div class="story-desc">Once inside the VPN, attackers moved laterally through Colonial's IT network. There was no segmentation to stop them. They mapped the environment, identified critical systems, and positioned themselves to deploy ransomware at maximum impact.</div>
+      <div class="story-tags"><span class="story-tag red">T1021 — Remote Services</span><span class="story-tag red">No network segmentation</span><span class="story-tag">Dwell time: hours</span></div>
+    </div>
+  </div>
+
+  <div class="story-step">
+    <div class="story-num">4</div>
+    <div class="story-body">
+      <div class="story-title">Data Exfiltration — 100GB Stolen</div>
+      <div class="story-desc">Before deploying ransomware, DarkSide exfiltrated approximately 100GB of sensitive data. This is "double extortion" — they now had leverage beyond encryption: "Pay us or we publish your data." The exfiltration happened over alternative protocols to avoid detection.</div>
+      <div class="story-tags"><span class="story-tag red">T1048 — Exfiltration Over Alt Protocol</span><span class="story-tag red">Double extortion strategy</span><span class="story-tag">No DLP controls detected this</span></div>
+    </div>
+  </div>
+
+  <div class="story-step">
+    <div class="story-num">5</div>
+    <div class="story-body">
+      <div class="story-title">Shadow Copy Deletion</div>
+      <div class="story-desc">Before encrypting files, DarkSide deleted Windows Shadow Copies (automatic backup snapshots) and disabled backup services. This made recovery impossible without either the decryption key or an offline backup — forcing Colonial to choose: pay or lose everything.</div>
+      <div class="story-tags"><span class="story-tag red">T1490 — Inhibit System Recovery</span><span class="story-tag red">Backup deletion = no free recovery</span></div>
+    </div>
+  </div>
+
+  <div class="story-step">
+    <div class="story-num">6</div>
+    <div class="story-body">
+      <div class="story-title">DarkSide Ransomware Deployed</div>
+      <div class="story-desc">DarkSide ransomware encrypted files across Colonial's IT systems. Each encrypted file received a unique extension. A ransom note appeared demanding payment in Bitcoin. Colonial's IT systems were rendered inaccessible within minutes of deployment.</div>
+      <div class="story-tags"><span class="story-tag red">T1486 — Data Encrypted for Impact</span><span class="story-tag">Ransom demand: $4.4M Bitcoin</span></div>
+    </div>
+  </div>
+
+  <div class="story-step">
+    <div class="story-num">7</div>
+    <div class="story-body">
+      <div class="story-title">Pipeline Shutdown — National Emergency</div>
+      <div class="story-desc">Colonial Pipeline proactively shut down 5,500 miles of pipeline to prevent the ransomware from potentially spreading to OT (operational technology) systems. This decision — while cautious — caused fuel shortages across 17 states. President Biden declared a national emergency.</div>
+      <div class="story-tags"><span class="story-tag red">T1489 — Service Stop</span><span class="story-tag">17 states affected</span><span class="story-tag">National emergency declared</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL 3: TECHNIQUE BREAKDOWN -->
+<div id="panel-techniques" class="panel">
+  <div class="sec-title">// CONFIRMED ATT&CK TECHNIQUES — COLONIAL PIPELINE</div>
+  <div class="intro-box">
+    These are the 6 confirmed MITRE ATT&CK techniques documented in the Colonial Pipeline incident. For each one: read the technique ID and name, understand <em>how it was used specifically</em>, and note the defensive opportunity that was missed. Use these as your reference when completing the Student Worksheet.
+  </div>
+
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tech-id">T1078</div>
+      <div class="tech-name">Valid Accounts</div>
+      <div class="tech-tactic">TACTIC: Initial Access · Persistence</div>
+      <div class="tech-label">How used in this incident</div>
+      <div class="tech-val">Attackers used a legitimate employee VPN credential found on the dark web. Because the credential was valid, no security alert was triggered — the system saw a normal login.</div>
+      <div class="tech-label">Why it worked</div>
+      <div class="tech-val">No MFA on the VPN. A single username + password = full network access. The credential had been exposed in a prior unrelated breach and was never rotated.</div>
+      <div class="tech-label">Defensive opportunity missed</div>
+      <div class="tech-val">MFA would have stopped this cold. Dark web monitoring would have flagged the exposed credential. Password rotation policies would have invalidated it.</div>
+      <a class="tech-link" href="https://attack.mitre.org/techniques/T1078/" target="_blank">↗ View T1078 on ATT&CK</a>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-id">T1133</div>
+      <div class="tech-name">External Remote Services</div>
+      <div class="tech-tactic">TACTIC: Initial Access · Persistence</div>
+      <div class="tech-label">How used in this incident</div>
+      <div class="tech-val">Colonial's VPN was an external remote access service exposed to the internet. DarkSide used it as the entry point — it was the only door they needed, and it was unlocked.</div>
+      <div class="tech-label">Why it worked</div>
+      <div class="tech-val">External remote services are necessary for business operations, but they are high-value targets. Without MFA and proper monitoring, a VPN is a front door left open.</div>
+      <div class="tech-label">Defensive opportunity missed</div>
+      <div class="tech-val">VPN login monitoring for unusual times/locations, MFA, IP allowlisting for known employee locations, and rate limiting on authentication attempts.</div>
+      <a class="tech-link" href="https://attack.mitre.org/techniques/T1133/" target="_blank">↗ View T1133 on ATT&CK</a>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-id">T1021</div>
+      <div class="tech-name">Remote Services — Lateral Movement</div>
+      <div class="tech-tactic">TACTIC: Lateral Movement</div>
+      <div class="tech-label">How used in this incident</div>
+      <div class="tech-val">Once inside the VPN, attackers used remote service protocols (RDP, SMB, or similar) to move laterally from system to system within Colonial's IT network, mapping the environment before deploying ransomware.</div>
+      <div class="tech-label">Why it worked</div>
+      <div class="tech-val">No network segmentation. The IT network was flat — once inside the VPN, every system was reachable. There were no internal chokepoints to require re-authentication.</div>
+      <div class="tech-label">Defensive opportunity missed</div>
+      <div class="tech-val">Network segmentation, zero-trust architecture, and behavioral analytics (detecting unusual lateral movement patterns) would have flagged or stopped this.</div>
+      <a class="tech-link" href="https://attack.mitre.org/techniques/T1021/" target="_blank">↗ View T1021 on ATT&CK</a>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-id">T1048</div>
+      <div class="tech-name">Exfiltration Over Alternative Protocol</div>
+      <div class="tech-tactic">TACTIC: Exfiltration</div>
+      <div class="tech-label">How used in this incident</div>
+      <div class="tech-val">Before deploying ransomware, DarkSide exfiltrated approximately 100GB of sensitive data using protocols that blended with normal traffic to avoid detection. This enabled double extortion.</div>
+      <div class="tech-label">Why it worked</div>
+      <div class="tech-val">No Data Loss Prevention (DLP) solution was monitoring outbound data transfers for unusual volume or destination. 100GB leaving the network went undetected.</div>
+      <div class="tech-label">Defensive opportunity missed</div>
+      <div class="tech-val">DLP tools monitoring outbound traffic volume, UEBA (User Entity Behavior Analytics) detecting anomalous data transfers, and SSL inspection of egress traffic.</div>
+      <a class="tech-link" href="https://attack.mitre.org/techniques/T1048/" target="_blank">↗ View T1048 on ATT&CK</a>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-id">T1490</div>
+      <div class="tech-name">Inhibit System Recovery</div>
+      <div class="tech-tactic">TACTIC: Defense Evasion · Impact</div>
+      <div class="tech-label">How used in this incident</div>
+      <div class="tech-val">DarkSide deleted Windows Volume Shadow Copies (VSS) — the automatic backup snapshots Windows creates. They also disabled backup services, eliminating the ability to recover files without paying.</div>
+      <div class="tech-label">Why it worked</div>
+      <div class="tech-val">Shadow copies were accessible from within the compromised network. No immutable or air-gapped backups existed that DarkSide couldn't reach and delete.</div>
+      <div class="tech-label">Defensive opportunity missed</div>
+      <div class="tech-val">Offline air-gapped backups (ransomware cannot encrypt what it cannot reach). Protected shadow copies using VSS ACLs. File integrity monitoring to detect VSS deletion.</div>
+      <a class="tech-link" href="https://attack.mitre.org/techniques/T1490/" target="_blank">↗ View T1490 on ATT&CK</a>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-id">T1486</div>
+      <div class="tech-name">Data Encrypted for Impact</div>
+      <div class="tech-tactic">TACTIC: Impact</div>
+      <div class="tech-label">How used in this incident</div>
+      <div class="tech-val">DarkSide ransomware encrypted files across Colonial's IT systems using strong encryption (RSA + Salsa20). Each victim received a unique decryption key held by DarkSide — pay or lose your data permanently.</div>
+      <div class="tech-label">Why it worked</div>
+      <div class="tech-val">By the time ransomware deployed, every defensive opportunity had already been missed (no MFA, no segmentation, no DLP, no offline backups). Ransomware was the final blow after the network was already owned.</div>
+      <div class="tech-label">Defensive opportunity missed</div>
+      <div class="tech-val">Endpoint Detection and Response (EDR) with behavioral analysis can detect and kill ransomware encryption processes in real time. Application whitelisting prevents unauthorized executables.</div>
+      <a class="tech-link" href="https://attack.mitre.org/techniques/T1486/" target="_blank">↗ View T1486 on ATT&CK</a>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-id">T1489</div>
+      <div class="tech-name">Service Stop</div>
+      <div class="tech-tactic">TACTIC: Impact</div>
+      <div class="tech-label">How used in this incident</div>
+      <div class="tech-val">Colonial Pipeline voluntarily stopped all pipeline operations to prevent ransomware from potentially spreading to OT (operational technology / industrial control) systems. The attacker's ransomware on IT systems indirectly caused the OT shutdown.</div>
+      <div class="tech-label">Why it worked</div>
+      <div class="tech-val">The IT and OT networks were not fully isolated. Colonial could not be confident the ransomware had not already reached or could not reach the pipeline control systems — so they shut everything down.</div>
+      <div class="tech-label">Defensive opportunity missed</div>
+      <div class="tech-val">Complete IT/OT network separation (air gap). OT systems should have no path to IT-facing networks. Had this been in place, Colonial could have kept the pipeline running during the IT incident.</div>
+      <a class="tech-link" href="https://attack.mitre.org/techniques/T1489/" target="_blank">↗ View T1489 on ATT&CK</a>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL 4: WORKSHEET -->
+<div id="panel-worksheet" class="panel">
+  <div class="sec-title">// STUDENT MAPPING WORKSHEET</div>
+
+  <!-- Student identity banner -->
+  <div id="student-banner">
+    <div>
+      <div class="sb-name" id="sb-name-text">Not signed in</div>
+      <div class="sb-id" id="sb-id-text">Launch this tool from the Hub checklist to auto-fill your name</div>
+    </div>
+    <div style="font-size:.7rem;color:var(--muted);">Your answers are saved when you click Submit</div>
+  </div>
+
+  <div class="intro-box">
+    <strong>Instructions:</strong> Use what you learned in Steps 1–3 to complete this worksheet. Red badges are given — fill in every text box.
+    Use <a href="https://attack.mitre.org" target="_blank" style="color:var(--cyan);">attack.mitre.org</a> for defensive mitigations.<br><br>
+    Click <strong>SUBMIT MAPPING</strong> at the bottom when finished — your instructor receives your answers automatically.
+  </div>
+
+  <!-- PART A: WORKED EXAMPLE -->
+  <div style="margin-bottom:28px;">
+    <div class="sec-title" style="margin-bottom:16px;">// PART A — WORKED EXAMPLE &nbsp;<span style="font-size:.72rem;color:var(--green);font-family:'Share Tech Mono',monospace;letter-spacing:0;">Study this format before you start Part B</span></div>
+    <div style="background:#0d1f0d;border:1px solid rgba(0,230,118,.25);border-radius:12px;padding:20px 24px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <span style="font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--green);">T1078</span>
+        <span style="font-size:.85rem;color:rgba(255,255,255,.85);font-weight:700;">Valid Accounts</span>
+        <span style="font-size:.65rem;background:rgba(0,230,118,.15);border:1px solid rgba(0,230,118,.3);color:var(--green);padding:2px 8px;border-radius:4px;margin-left:auto;">COMPLETED EXAMPLE</span>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div style="font-size:.72rem;color:var(--green);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">How it was used in Colonial Pipeline</div>
+        <div style="font-size:.85rem;color:var(--text);line-height:1.7;padding:12px;background:rgba(0,0,0,.3);border-radius:6px;">Attackers used a stolen employee VPN password found on the dark web to authenticate directly into Colonial's network. Because the credential was valid, no alert was triggered. No MFA was in place to stop them.</div>
+      </div>
+      <div>
+        <div style="font-size:.72rem;color:var(--green);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">One defensive mitigation</div>
+        <div style="font-size:.85rem;color:var(--text);line-height:1.7;padding:12px;background:rgba(0,0,0,.3);border-radius:6px;">Enforce Multi-Factor Authentication (MFA) on all remote access systems. A stolen password alone is useless if a second factor (authenticator app, hardware key) is also required.</div>
+      </div>
+    </div>
+    <div class="ws-note" style="margin-top:10px;">⬆ Notice: specific technique ID, exact name, concrete detail tied to THIS incident, and a specific named control — not just "improve security."</div>
+  </div>
+
+  <!-- PART B: STUDENT CARDS -->
+  <div style="margin-bottom:28px;">
+    <div class="sec-title" style="margin-bottom:16px;">// PART B — YOUR TURN &nbsp;<span style="font-size:.72rem;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:0;">Complete every field on all 6 technique cards</span></div>
+
+    <!-- T1133 -->
+    <div class="tech-form-card">
+      <div class="tfc-header">
+        <div class="tfc-badge">T1133</div>
+        <div class="tfc-name">External Remote Services</div>
+        <div class="tfc-tag">Initial Access</div>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">How was this technique used in the Colonial Pipeline attack?</label>
+        <textarea id="t1133-how" class="ws-input" placeholder="Type your answer..."></textarea>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">What is one defensive mitigation? (Look up T1133 on attack.mitre.org → Mitigations tab)</label>
+        <textarea id="t1133-def" class="ws-input" placeholder="Type your answer..."></textarea>
+      </div>
+    </div>
+
+    <!-- T1021 -->
+    <div class="tech-form-card">
+      <div class="tfc-header">
+        <div class="tfc-badge">T1021</div>
+        <div class="tfc-name" style="color:var(--muted);font-style:italic;">What is this technique called? ↓</div>
+        <div class="tfc-tag">Lateral Movement</div>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">What is the full name of technique T1021?</label>
+        <textarea id="t1021-name" class="ws-input" style="min-height:52px;" placeholder="Type your answer..."></textarea>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">How did attackers use this technique to move through Colonial's network after VPN access?</label>
+        <textarea id="t1021-how" class="ws-input" placeholder="Type your answer..."></textarea>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">What architecture change would have stopped this lateral movement?</label>
+        <textarea id="t1021-def" class="ws-input" placeholder="Type your answer..."></textarea>
+      </div>
+    </div>
+
+    <!-- T1048 — ID blank, name given -->
+    <div class="tech-form-card">
+      <div class="tfc-header">
+        <div class="tfc-badge" style="background:rgba(255,214,0,.15);border-color:rgba(255,214,0,.4);color:var(--yellow);">? ? ? ?</div>
+        <div class="tfc-name">Exfiltration Over Alternative Protocol</div>
+        <div class="tfc-tag">Exfiltration</div>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">What is the MITRE ATT&CK Technique ID for "Exfiltration Over Alternative Protocol"?</label>
+        <textarea id="t1048-id" class="ws-input" style="min-height:52px;" placeholder="Type the technique ID (e.g. T1XXX)..."></textarea>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">How did DarkSide use this technique — what did they steal and when?</label>
+        <textarea id="t1048-how" class="ws-input" placeholder="Type your answer..."></textarea>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">What tool monitors outbound data transfers and would have detected this?</label>
+        <textarea id="t1048-def" class="ws-input" placeholder="Type your answer..."></textarea>
+      </div>
+    </div>
+
+    <!-- T1490 — both ID and name blank -->
+    <div class="tech-form-card">
+      <div class="tfc-header">
+        <div class="tfc-badge" style="background:rgba(255,214,0,.15);border-color:rgba(255,214,0,.4);color:var(--yellow);">? ? ? ?</div>
+        <div class="tfc-name" style="color:var(--muted);font-style:italic;">Identify this technique ↓</div>
+        <div class="tfc-tag">Impact</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 20px 0;">
+        <div class="tfc-field" style="padding:0;border:none;">
+          <label class="tfc-label">What is the Technique ID?</label>
+          <textarea id="t1490-id" class="ws-input" style="min-height:52px;" placeholder="T1XXX..."></textarea>
+        </div>
+        <div class="tfc-field" style="padding:0;border:none;">
+          <label class="tfc-label">What is the Technique Name?</label>
+          <textarea id="t1490-name" class="ws-input" style="min-height:52px;" placeholder="Hint: involves deleting backups..."></textarea>
+        </div>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">What specific backup feature did DarkSide delete before deploying ransomware, and why?</label>
+        <textarea id="t1490-how" class="ws-input" placeholder="Type your answer..."></textarea>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">What type of backup can ransomware NOT reach or delete?</label>
+        <textarea id="t1490-def" class="ws-input" placeholder="Type your answer..."></textarea>
+      </div>
+    </div>
+
+    <!-- T1486 -->
+    <div class="tech-form-card">
+      <div class="tfc-header">
+        <div class="tfc-badge">T1486</div>
+        <div class="tfc-name" style="color:var(--muted);font-style:italic;">What is this technique called? ↓</div>
+        <div class="tfc-tag">Impact</div>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">What is the full name of technique T1486?</label>
+        <textarea id="t1486-name" class="ws-input" style="min-height:52px;" placeholder="Type your answer..."></textarea>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">What exactly did DarkSide ransomware do to Colonial Pipeline's files?</label>
+        <textarea id="t1486-how" class="ws-input" placeholder="Type your answer..."></textarea>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">What endpoint security tool can detect and stop ransomware encryption behavior in real time?</label>
+        <textarea id="t1486-def" class="ws-input" placeholder="Type your answer..."></textarea>
+      </div>
+    </div>
+
+    <!-- T1489 -->
+    <div class="tech-form-card">
+      <div class="tfc-header">
+        <div class="tfc-badge">T1489</div>
+        <div class="tfc-name">Service Stop</div>
+        <div class="tfc-tag">Impact</div>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">Why did Colonial Pipeline shut down 5,500 miles of pipeline, and what was the national impact?</label>
+        <textarea id="t1489-how" class="ws-input" placeholder="Type your answer..."></textarea>
+      </div>
+      <div class="tfc-field">
+        <label class="tfc-label">What network design principle would have made this OT shutdown unnecessary?</label>
+        <textarea id="t1489-def" class="ws-input" placeholder="Type your answer..."></textarea>
+      </div>
+    </div>
+
+    <div class="ws-note">💡 Stuck? Use the Technique Breakdown tab (Step 3) or search the technique ID at attack.mitre.org → Mitigations tab.</div>
+  </div>
+
+  <!-- PART C: CRITICAL THINKING -->
+  <div>
+    <div class="sec-title" style="margin-bottom:16px;">// PART C — CRITICAL THINKING</div>
+
+    <div class="tech-form-card">
+      <div style="padding:20px 24px;">
+        <div style="font-size:.72rem;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Question 1 — The Chain Reaction</div>
+        <div style="font-size:.85rem;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:12px;">T1078 (Valid Accounts) is listed under TWO tactics: Initial Access AND Persistence. Why does the same technique appear in multiple tactics? What does this tell you about how attackers think about maintaining access?</div>
+        <textarea id="crit-q1" class="ws-input" style="min-height:100px;" placeholder="Type your answer..."></textarea>
+      </div>
+      <div style="padding:0 24px 20px;">
+        <div style="font-size:.72rem;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Question 2 — The Defender's View</div>
+        <div style="font-size:.85rem;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:12px;">Several tactics have NO confirmed techniques for Colonial Pipeline (Execution, Discovery, etc.). Does this mean those phases didn't happen — or does it mean something else? Explain.</div>
+        <textarea id="crit-q2" class="ws-input" style="min-height:100px;" placeholder="Type your answer..."></textarea>
+      </div>
+      <div style="padding:0 24px 24px;">
+        <div style="font-size:.72rem;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Question 3 — One Control to Rule Them All</div>
+        <div style="font-size:.85rem;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:12px;">If Colonial Pipeline could have implemented only ONE security control before May 7, 2021 — which one would have had the greatest impact? Justify using specific ATT&CK technique IDs.</div>
+        <textarea id="crit-q3" class="ws-input" style="min-height:100px;" placeholder="Type your answer..."></textarea>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:24px;">
+      <button id="submit-btn" onclick="submitMITREMapping()" style="flex:1;min-width:200px;">🗺️ SUBMIT MAPPING</button>
+      <button onclick="saveMITREDraft()" style="padding:14px 24px;background:rgba(0,245,255,.1);border:1px solid rgba(0,245,255,.3);color:var(--cyan);font-family:'Orbitron',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:1px;border-radius:8px;cursor:pointer;">💾 SAVE DRAFT</button>
+    </div>
+    <div id="submit-status"></div>
+    <div id="draft-status" style="font-size:.75rem;color:var(--muted);margin-top:6px;text-align:right;"></div>
+    <div id="mitre-grade-panel" style="display:none;margin-top:24px;background:rgba(0,166,81,.08);border:1px solid rgba(0,166,81,.35);border-radius:12px;padding:20px 24px;">
+      <div style="font-family:'Orbitron',sans-serif;font-size:.8rem;color:#00e676;letter-spacing:1px;margin-bottom:12px;">// YOUR GRADE</div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:2rem;color:#00e676;" id="grade-score-display">—</div>
+        <div>
+          <div style="font-size:.75rem;color:rgba(255,255,255,.5);">out of 50 points</div>
+          <div style="font-size:.72rem;color:rgba(255,255,255,.4);margin-top:2px;" id="grade-date-display"></div>
+        </div>
+      </div>
+      <div style="font-size:.85rem;color:rgba(255,255,255,.8);line-height:1.8;white-space:pre-wrap;" id="grade-feedback-display"></div>
+    </div>
+    <div id="no-grade-panel" style="display:none;margin-top:16px;padding:16px 18px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);border-radius:8px;text-align:center;">
+      <div style="font-size:.8rem;color:rgba(255,255,255,.45);margin-bottom:10px;">Your submission is in — your instructor will grade it and your score will appear here automatically.</div>
+      <button onclick="loadMITREGrade()" style="padding:7px 18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);border-radius:6px;font-size:.78rem;cursor:pointer;">↻ Check for My Grade</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<script>
+var _fbDb = null;
+(function(){
+  try {
+    var app = firebase.initializeApp({
+      apiKey:"AIzaSyBpK8uLCD0_m83a1xFiOQVaS1PKWSGcEc8",
+      authDomain:"mccoe-platform-a9710.firebaseapp.com",
+      databaseURL:"https://mccoe-platform-a9710-default-rtdb.firebaseio.com",
+      projectId:"mccoe-platform-a9710"
+    });
+    _fbDb = firebase.database(app);
+  } catch(e) { console.warn('Firebase init error:', e); }
+})();
+
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('on'));
+  document.getElementById('panel-' + name).classList.add('on');
+  if (btn) btn.classList.add('on');
+}
+
+// Read student identity from URL params (passed by Hub SSO)
+(function(){
+  var sp = new URLSearchParams(window.location.search);
+  var name = sp.get('name') || localStorage.getItem('hub_name') || '';
+  var id   = sp.get('id')   || localStorage.getItem('hub_id')   || '';
+  if (name) {
+    document.getElementById('sb-name-text').textContent = name;
+    document.getElementById('sb-id-text').textContent   = id || 'No student ID on file';
+    document.getElementById('student-banner').style.borderColor = 'rgba(0,230,118,.35)';
+    var p = '?name=' + encodeURIComponent(name) + '&id=' + encodeURIComponent(id);
+    document.getElementById('hub-btn').href = 'MCCoE_Hub.html' + p;
+  }
+  var panel = sp.get('panel');
+  if (panel) { var pBtn = document.querySelector('.step[onclick*="' + panel + '"]'); showPanel(panel, pBtn || null); }
+  setTimeout(loadMITREGrade, 1200);
+  setTimeout(loadMITREDraft, 400);
+  setTimeout(function() {
+    _DRAFT_FIELDS.forEach(function(fid) {
+      var el = document.getElementById(fid);
+      if (el) el.addEventListener('input', _scheduleDraftSave);
+    });
+  }, 600);
+})();
+
+function submitMITREMapping() {
+  var sp   = new URLSearchParams(window.location.search);
+  var name = sp.get('name') || localStorage.getItem('hub_name') || '';
+  var id   = sp.get('id')   || localStorage.getItem('hub_id')   || '';
+
+  if (!name) {
+    alert('Could not identify you. Please launch this tool from your Hub checklist so your name is passed automatically.');
+    return;
+  }
+  if (!_fbDb) {
+    alert('Firebase not connected. Please check your internet connection and try again.');
+    return;
+  }
+
+  var data = {
+    name: name,
+    studentId: id || '',
+    submitted: new Date().toISOString(),
+    partB: {
+      t1133: { how: v('t1133-how'), defense: v('t1133-def') },
+      t1021: { name: v('t1021-name'), how: v('t1021-how'), defense: v('t1021-def') },
+      t1048: { id: v('t1048-id'), how: v('t1048-how'), defense: v('t1048-def') },
+      t1490: { id: v('t1490-id'), name: v('t1490-name'), how: v('t1490-how'), defense: v('t1490-def') },
+      t1486: { name: v('t1486-name'), how: v('t1486-how'), defense: v('t1486-def') },
+      t1489: { how: v('t1489-how'), defense: v('t1489-def') }
+    },
+    partC: { q1: v('crit-q1'), q2: v('crit-q2'), q3: v('crit-q3') }
+  };
+
+  var key  = (id || name).replace(/[^a-zA-Z0-9_-]/g, '-');
+  var date = new Date().toISOString().split('T')[0];
+  var btn  = document.getElementById('submit-btn');
+  var status = document.getElementById('submit-status');
+
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  status.textContent = '';
+
+  _fbDb.ref('mccoe_mitre/' + key + '/' + date).set(data, function(err) {
+    btn.disabled = false;
+    btn.textContent = '🗺️ SUBMIT MAPPING';
+    if (err) {
+      status.style.color = '#ff5252';
+      status.textContent = '❌ Error: ' + err.message;
+    } else {
+      status.style.color = 'var(--green)';
+      status.textContent = '✅ Mapping submitted! Your instructor will grade it and your score will appear below.';
+      localStorage.removeItem(_draftKey());
+      var ds = document.getElementById('draft-status');
+      if (ds) ds.textContent = '';
+      loadMITREGrade();
+    }
+  });
+}
+
+function v(id) {
+  var el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+var _DRAFT_FIELDS = ['t1133-how','t1133-def','t1021-name','t1021-how','t1021-def',
+  't1048-id','t1048-how','t1048-def','t1490-id','t1490-name','t1490-how','t1490-def',
+  't1486-name','t1486-how','t1486-def','t1489-how','t1489-def','crit-q1','crit-q2','crit-q3'];
+var _draftTimer = null;
+
+function _draftKey() {
+  var sp = new URLSearchParams(window.location.search);
+  var id = sp.get('id') || localStorage.getItem('hub_id') || sp.get('name') || localStorage.getItem('hub_name') || 'anon';
+  return 'mitre_draft_' + id.replace(/[^a-zA-Z0-9_-]/g, '-');
+}
+
+function saveMITREDraft() {
+  var draft = {};
+  _DRAFT_FIELDS.forEach(function(fid) { draft[fid] = v(fid); });
+  draft._saved = new Date().toISOString();
+  localStorage.setItem(_draftKey(), JSON.stringify(draft));
+  var ds = document.getElementById('draft-status');
+  if (ds) {
+    var t = new Date();
+    ds.textContent = '💾 Draft saved at ' + t.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  }
+}
+
+function loadMITREDraft() {
+  var raw = localStorage.getItem(_draftKey());
+  if (!raw) return;
+  try {
+    var draft = JSON.parse(raw);
+    var any = false;
+    _DRAFT_FIELDS.forEach(function(fid) {
+      if (draft[fid]) {
+        var el = document.getElementById(fid);
+        if (el) { el.value = draft[fid]; any = true; }
+      }
+    });
+    if (any && draft._saved) {
+      var ds = document.getElementById('draft-status');
+      var t = new Date(draft._saved);
+      if (ds) ds.textContent = '📂 Draft restored from ' + t.toLocaleDateString([], {month:'short',day:'numeric'}) + ' at ' + t.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    }
+  } catch(e) {}
+}
+
+function _scheduleDraftSave() {
+  clearTimeout(_draftTimer);
+  _draftTimer = setTimeout(saveMITREDraft, 1500);
+}
+
+function loadMITREGrade() {
+  var sp   = new URLSearchParams(window.location.search);
+  var name = sp.get('name') || localStorage.getItem('hub_name') || '';
+  var id   = sp.get('id')   || localStorage.getItem('hub_id')   || '';
+  if ((!name && !id) || !_fbDb) return;
+  var key = (id || name).replace(/[^a-zA-Z0-9_-]/g, '-');
+  _fbDb.ref('mccoe_mitre/' + key + '/grade').on('value', function(snap) {
+    var grade = snap.val();
+    var gPanel  = document.getElementById('mitre-grade-panel');
+    var ngPanel = document.getElementById('no-grade-panel');
+    if (!gPanel || !ngPanel) return;
+    if (grade && grade.score != null) {
+      document.getElementById('grade-score-display').textContent    = grade.score + '/50';
+      document.getElementById('grade-date-display').textContent     = grade.gradedAt ? 'Graded ' + grade.gradedAt.slice(0,10) : '';
+      document.getElementById('grade-feedback-display').textContent = grade.feedback || '';
+      gPanel.style.display  = 'block';
+      ngPanel.style.display = 'none';
+    } else {
+      gPanel.style.display  = 'none';
+      ngPanel.style.display = 'block';
+    }
+  });
+}
+</script>
+</body>
+</html>

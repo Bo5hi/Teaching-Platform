@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MCCoE — Pillar 4: Ethical Hacking Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --green:  #00ff41;
+  --gd:     #00aa2a;
+  --gk:     #003d10;
+  --red:    #EE2207;
+  --cyan:   #00f5ff;
+  --navy:   #050510;
+  --navy2:  #0a0f0a;
+  --text:   #c8ffc8;
+  --muted:  rgba(0,255,65,0.45);
+  --border: rgba(0,255,65,0.2);
+  --glow-green: 0 0 10px #00ff41, 0 0 30px rgba(0,255,65,0.35);
+  --glow-red:   0 0 10px #EE2207, 0 0 30px rgba(238,34,7,0.4);
+  --card-bg: rgba(10,15,10,0.92);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Rajdhani','Segoe UI',sans-serif;font-weight:500;background:var(--navy2);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,65,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,65,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);pointer-events:none;z-index:0}
+
+/* HEADER */
+header{position:relative;z-index:10;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(5,10,5,0.98) 0%,rgba(5,10,5,0.85) 100%);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo-block{display:flex;align-items:center;gap:14px}
+.logo-icon{width:40px;height:40px;border:2px solid var(--green);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:var(--glow-green);flex-shrink:0}
+.logo-text{font-family:'Orbitron',monospace;font-size:14px;font-weight:900;color:#fff;letter-spacing:2px;line-height:1.2}
+.logo-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(0,255,65,0.55);letter-spacing:3px;text-transform:uppercase}
+.header-badge{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,255,65,0.7);letter-spacing:2px;border:1px solid rgba(0,255,65,0.3);padding:4px 10px;border-radius:4px}
+.back-btn{font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--green);background:rgba(0,255,65,0.08);padding:8px 18px;border-radius:5px;text-decoration:none;border:1px solid rgba(0,255,65,0.35);transition:all .2s}
+.back-btn:hover{background:rgba(0,255,65,0.2);box-shadow:var(--glow-green)}
+
+/* HERO */
+.hero{position:relative;z-index:5;text-align:center;padding:60px 2rem 30px}
+.hero-eyebrow{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--green);text-transform:uppercase;margin-bottom:16px;opacity:0.8}
+.hero-title{font-family:'Orbitron',monospace;font-size:clamp(24px,4vw,44px);font-weight:900;line-height:1.1;margin-bottom:12px}
+.hero-title .gr{color:var(--green);text-shadow:var(--glow-green)}
+.hero-title .wh{color:#fff}
+.hero-sub{font-size:15px;color:var(--muted);max-width:560px;margin:0 auto 20px;line-height:1.6;letter-spacing:0.5px}
+.hero-divider{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--green),transparent);margin:0 auto 40px;box-shadow:var(--glow-green)}
+.pulse-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:var(--glow-green);animation:pulse-g 2s ease-in-out infinite;vertical-align:middle;margin-right:6px}
+@keyframes pulse-g{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* PHASE NAV */
+.phase-nav{position:relative;z-index:5;display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:0 2rem 30px}
+.phase-btn{font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:2px;padding:10px 18px;border-radius:5px;border:1px solid rgba(0,255,65,0.3);background:rgba(0,255,65,0.05);color:var(--muted);cursor:pointer;transition:all .2s;text-transform:uppercase}
+.setup-nav-btn{font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:2px;padding:10px 18px;border-radius:5px;border:1px solid rgba(0,255,65,0.3);background:rgba(0,255,65,0.05);color:var(--muted);cursor:pointer;transition:all .2s;text-transform:uppercase}
+.phase-btn:hover{border-color:rgba(0,255,65,0.6);color:var(--green);background:rgba(0,255,65,0.1)}
+.setup-nav-btn:hover{border-color:rgba(0,255,65,0.6);color:var(--green);background:rgba(0,255,65,0.1)}
+.phase-btn.active{border-color:var(--green);color:var(--green);background:rgba(0,255,65,0.15);box-shadow:var(--glow-green)}
+.setup-nav-btn.active{border-color:var(--green);color:var(--green);background:rgba(0,255,65,0.15);box-shadow:var(--glow-green)}
+
+/* MAIN CONTENT */
+.content-area{position:relative;z-index:5;max-width:960px;margin:0 auto;padding:0 2rem 80px}
+.phase-panel{display:none}
+.phase-panel.active{display:block}
+
+/* SECTION CARDS */
+.sec-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:20px;backdrop-filter:blur(6px)}
+.sec-card::before{content:'';position:absolute;top:-1px;left:-1px;width:20px;height:20px;border-top:2px solid var(--green);border-left:2px solid var(--green);border-radius:10px 0 0 0}
+.sec-card{position:relative}
+.sec-title{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:var(--green);letter-spacing:2px;margin-bottom:16px;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(0,255,65,0.4),transparent)}
+.sec-body{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:12px}
+.sec-body:last-child{margin-bottom:0}
+
+/* PHASE HEADER BANNER */
+.phase-banner{background:linear-gradient(135deg,rgba(0,255,65,0.12),rgba(0,255,65,0.03));border:1px solid rgba(0,255,65,0.35);border-radius:10px;padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;gap:20px}
+.phase-icon{font-size:48px;flex-shrink:0}
+.phase-num-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--gd);letter-spacing:3px;margin-bottom:6px}
+.phase-title-large{font-family:'Orbitron',monospace;font-size:20px;font-weight:900;color:#fff;margin-bottom:8px}
+.phase-desc-short{font-size:14px;color:var(--muted);line-height:1.6}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+.data-table th{background:rgba(0,255,65,0.15);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid rgba(0,255,65,0.3)}
+.data-table td{padding:10px 14px;border-bottom:1px solid rgba(0,255,65,0.08);color:var(--text);vertical-align:top;line-height:1.55}
+.data-table tr:nth-child(even) td{background:rgba(0,255,65,0.03)}
+.data-table tr:last-child td{border-bottom:none}
+.tag-green{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border:1px solid rgba(0,255,65,0.4);border-radius:3px;color:var(--green);background:rgba(0,255,65,0.07)}
+.tag-red{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border:1px solid rgba(238,34,7,0.4);border-radius:3px;color:#ff6b6b;background:rgba(238,34,7,0.07)}
+
+/* BREACH BOX */
+.breach-box{background:rgba(238,34,7,0.06);border:1px solid rgba(238,34,7,0.3);border-radius:8px;padding:20px;margin-top:12px}
+.breach-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:#ff6b6b;letter-spacing:2px;margin-bottom:10px}
+.breach-text{font-size:13px;color:rgba(255,200,200,0.85);line-height:1.65}
+
+/* EXERCISE BOX */
+.exercise-box{background:rgba(0,255,65,0.04);border:1px solid rgba(0,255,65,0.25);border-radius:8px;padding:20px;margin-top:12px}
+.exercise-label{font-family:'Orbitron',monospace;font-size:11px;color:var(--green);letter-spacing:2px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.exercise-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(0,255,65,0.4),transparent)}
+.step{display:flex;gap:12px;margin-bottom:10px;font-size:13px;color:var(--text);line-height:1.55}
+.step-num{font-family:'Orbitron',monospace;font-size:10px;color:var(--green);background:rgba(0,255,65,0.12);border:1px solid rgba(0,255,65,0.3);border-radius:4px;padding:2px 8px;flex-shrink:0;height:fit-content;margin-top:1px}
+
+/* DELIVERABLE BOX */
+.deliv-box{background:rgba(0,245,255,0.04);border:1px solid rgba(0,245,255,0.2);border-radius:8px;padding:18px;margin-top:12px}
+.deliv-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan);letter-spacing:2px;margin-bottom:12px}
+.deliv-item{display:flex;gap:10px;margin-bottom:8px;font-size:13px;color:var(--text);line-height:1.55}
+.deliv-item::before{content:'▶';color:var(--cyan);flex-shrink:0;font-size:10px;margin-top:2px}
+
+/* WARNING BOX */
+.warn-box{background:rgba(255,183,0,0.05);border:1px solid rgba(255,183,0,0.3);border-radius:8px;padding:18px;margin-top:12px}
+.warn-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:#ffb700;letter-spacing:2px;margin-bottom:10px}
+.warn-text{font-size:13px;color:#ffe0aa;line-height:1.65}
+
+/* PROGRESS TRACKER */
+.progress-tracker{display:flex;justify-content:center;gap:0;margin-bottom:30px;position:relative;z-index:5;padding:0 2rem}
+.prog-step{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;max-width:120px}
+.prog-circle{width:36px;height:36px;border-radius:50%;border:2px solid rgba(0,255,65,0.3);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:var(--muted);background:var(--card-bg);transition:all .3s;cursor:pointer}
+.prog-circle.done{border-color:var(--green);color:var(--green);box-shadow:var(--glow-green);background:rgba(0,255,65,0.1)}
+.prog-circle.active{border-color:var(--green);color:#fff;background:rgba(0,255,65,0.2);box-shadow:var(--glow-green)}
+.prog-label{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--muted);text-align:center;text-transform:uppercase;line-height:1.3}
+.prog-label.active{color:var(--green)}
+.prog-line{flex:1;height:2px;background:rgba(0,255,65,0.15);align-self:center;margin-bottom:20px}
+.prog-line.done{background:var(--green);box-shadow:0 0 6px rgba(0,255,65,0.4)}
+
+/* CAPSTONE */
+.capstone-card{background:linear-gradient(135deg,rgba(0,255,65,0.08),rgba(0,245,255,0.04));border:1px solid rgba(0,255,65,0.4);border-radius:12px;padding:32px;margin-bottom:20px;text-align:center}
+.capstone-icon{font-size:56px;margin-bottom:16px;display:block}
+.capstone-title{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:#fff;margin-bottom:12px;letter-spacing:2px}
+.capstone-desc{font-size:14px;color:var(--muted);line-height:1.7;max-width:600px;margin:0 auto 24px}
+
+/* TRYHACKME CARDS */
+.room-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:16px}
+.room-card{background:rgba(0,255,65,0.04);border:1px solid rgba(0,255,65,0.2);border-radius:8px;padding:20px;transition:all .2s}
+.room-card:hover{border-color:rgba(0,255,65,0.5);box-shadow:0 0 20px rgba(0,255,65,0.1)}
+.room-name{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:#fff;margin-bottom:8px}
+.room-diff{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;border-radius:3px;display:inline-block;margin-bottom:10px}
+.diff-beginner{background:rgba(0,255,65,0.12);border:1px solid rgba(0,255,65,0.4);color:var(--green)}
+.diff-intermediate{background:rgba(255,183,0,0.1);border:1px solid rgba(255,183,0,0.4);color:#ffb700}
+.room-phases{font-size:12px;color:var(--muted);margin-bottom:10px}
+.room-note{font-size:12px;color:rgba(200,255,200,0.6);line-height:1.5}
+
+/* LAUNCH BUTTONS */
+.btn-green{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:6px;font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(0,255,65,0.5);background:rgba(0,255,65,0.1);color:var(--green);text-decoration:none;cursor:pointer;transition:all .2s;margin-right:10px;margin-bottom:10px}
+.btn-green:hover{background:rgba(0,255,65,0.25);box-shadow:var(--glow-green)}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:6px;font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(0,255,65,0.25);background:transparent;color:var(--muted);text-decoration:none;cursor:pointer;transition:all .2s;margin-right:10px;margin-bottom:10px}
+.btn-outline:hover{border-color:rgba(0,255,65,0.5);color:var(--green)}
+
+/* RESOURCES GRID */
+.res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px}
+.res-card{background:rgba(0,255,65,0.04);border:1px solid rgba(0,255,65,0.15);border-radius:8px;padding:16px;transition:all .2s}
+.res-card:hover{border-color:rgba(0,255,65,0.4);background:rgba(0,255,65,0.08)}
+.res-name{font-family:'Orbitron',monospace;font-size:11px;color:#fff;margin-bottom:6px}
+.res-desc{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* GRADING TABLE */
+.rubric-card{background:var(--card-bg);border:1px solid rgba(0,255,65,0.2);border-radius:8px;overflow:hidden;margin-top:14px}
+.rubric-hdr{background:rgba(0,255,65,0.12);padding:12px 16px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--green);display:grid;grid-template-columns:2fr 2fr 1.5fr 1fr;gap:10px}
+.rubric-row{padding:12px 16px;display:grid;grid-template-columns:2fr 2fr 1.5fr 1fr;gap:10px;border-top:1px solid rgba(0,255,65,0.08);font-size:12px;color:var(--text);align-items:start}
+.rubric-row:nth-child(even){background:rgba(0,255,65,0.02)}
+.points-badge{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:var(--green)}
+.total-row{background:rgba(0,255,65,0.08);border-top:1px solid rgba(0,255,65,0.3);padding:14px 16px;display:grid;grid-template-columns:2fr 2fr 1.5fr 1fr;gap:10px;font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:var(--green)}
+
+/* LEGAL */
+.legal-box{background:rgba(255,183,0,0.04);border:1px solid rgba(255,183,0,0.25);border-radius:8px;padding:20px}
+.legal-item{display:flex;gap:10px;margin-bottom:10px;font-size:13px;color:#ffe0aa;line-height:1.55}
+.legal-item:last-child{margin-bottom:0}
+.legal-item::before{content:'⚠';flex-shrink:0;color:#ffb700}
+
+/* STATS BAR */
+.stats-bar{position:relative;z-index:5;display:flex;justify-content:center;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(10,15,10,0.7);margin:0}
+.stat-item{padding:16px 36px;text-align:center;border-right:1px solid var(--border)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:'Orbitron',monospace;font-size:20px;font-weight:900;color:var(--green);text-shadow:var(--glow-green);display:block;line-height:1}
+.stat-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:4px;display:block}
+
+/* FOOTER */
+footer{position:relative;z-index:5;text-align:center;padding:24px 2rem;border-top:1px solid var(--border);background:rgba(5,10,5,0.9)}
+footer p{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+footer strong{color:var(--green)}
+
+@media(max-width:700px){.phase-banner{flex-direction:column;text-align:center}.phase-nav{gap:6px}.phase-btn{font-size:8px;padding:8px 12px}.rubric-hdr,.rubric-row,.total-row{grid-template-columns:1fr;gap:4px}}
+
+/* SUBMISSION LINK FIELD */
+.submit-wrap{margin:18px 0 6px;background:rgba(0,255,65,0.04);border:1px solid rgba(0,255,65,0.25);border-radius:8px;padding:16px}
+.submit-wrap-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);letter-spacing:2px;margin-bottom:10px}
+.submit-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.submit-input{flex:1;min-width:220px;background:rgba(0,0,0,0.4);border:1px solid rgba(0,255,65,0.35);border-radius:6px;padding:10px 14px;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--green);outline:none;transition:border .2s}
+.submit-input:focus{border-color:var(--green);box-shadow:0 0 8px rgba(0,255,65,0.2)}
+.submit-input::placeholder{color:rgba(0,255,65,0.3)}
+.submit-input:disabled{opacity:.6;cursor:default}
+.saved-link-box{margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:11px}
+.saved-link-box a{color:var(--cyan);word-break:break-all;text-decoration:underline}
+
+/* SAMPLE DELIVERABLE BOX */
+.sample-box{background:rgba(0,245,255,0.03);border:1px dashed rgba(0,245,255,0.22);border-radius:8px;padding:16px;margin-top:10px}
+.sample-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan);letter-spacing:2px;margin-bottom:10px}
+.sample-item{font-size:12px;color:rgba(180,240,255,0.65);line-height:1.65;margin-bottom:7px;padding-left:14px;border-left:2px solid rgba(0,245,255,0.22)}
+
+/* FIREBASE PROGRESS */
+.mark-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 28px;border-radius:6px;font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:2px solid rgba(0,255,65,0.5);background:rgba(0,255,65,0.06);color:var(--green);cursor:pointer;transition:all .2s;margin:8px 6px}
+.mark-btn:hover{background:rgba(0,255,65,0.22);box-shadow:var(--glow-green)}
+.mark-btn:disabled{opacity:.45;cursor:default;box-shadow:none}
+.done-badge{font-family:'Share Tech Mono',monospace;font-size:11px;color:#00ff41;letter-spacing:1px;padding:8px 16px;border:1px solid rgba(0,255,65,0.45);border-radius:4px;background:rgba(0,255,65,0.08);display:inline-block;margin:8px 6px;vertical-align:middle}
+.student-banner{position:relative;z-index:5;text-align:center;padding:9px 2rem;background:rgba(0,255,65,0.06);border-bottom:1px solid rgba(0,255,65,0.18);font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green);letter-spacing:2px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-block">
+    <div class="logo-icon">🔓</div>
+    <div>
+      <div class="logo-text">MCCoE</div>
+      <div class="logo-sub">Pillar 4 — Ethical Hacking Lab</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="header-badge">▶ PILLAR 04 — ACTIVE</div>
+    <a href="#" onclick="var _n=encodeURIComponent(_studentName||''),_i=encodeURIComponent(_studentId||'');window.location.href='MCCoE_Hub.html'+(_n||_i?'?name='+_n+'&id='+_i:'');return false;" class="back-btn">← Hub</a>
+  </div>
+</header>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-num">5</span><span class="stat-lbl">Phases</span></div>
+  <div class="stat-item"><span class="stat-num">5</span><span class="stat-lbl">Exercises</span></div>
+  <div class="stat-item"><span class="stat-num">1</span><span class="stat-lbl">Capstone</span></div>
+  <div class="stat-item"><span class="stat-num">100</span><span class="stat-lbl">Points</span></div>
+  <div class="stat-item"><span class="stat-num">FREE</span><span class="stat-lbl">All Platforms</span></div>
+</div>
+
+<div id="student-banner" class="student-banner" style="display:none"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow"><span class="pulse-dot"></span>Lab Environment Ready — Authorization Required</div>
+  <h1 class="hero-title">
+    <span class="gr">Ethical Hacking</span><br/>
+    <span class="wh">Hands-On Lab</span>
+  </h1>
+  <p class="hero-sub">Work through all 5 phases of a real penetration test using the HTB AttackBox — real Nmap scans, real Metasploit sessions, real shells. Your Kali VM. Real HTB targets. Real VPN.</p>
+  <div class="hero-divider"></div>
+</section>
+
+<!-- PHASE NAV -->
+<div class="phase-nav">
+  <button class="setup-nav-btn" id="setup-nav-btn" onclick="showSetup()" style="border-color:rgba(0,245,255,0.5);color:var(--cyan);">⚙ Lab Setup</button>
+  <button class="phase-btn active" onclick="showPhase(0)">01 — Recon</button>
+  <button class="phase-btn" onclick="showPhase(1)">02 — Scanning</button>
+  <button class="phase-btn" onclick="showPhase(2)">03 — Exploitation</button>
+  <button class="phase-btn" onclick="showPhase(3)">04 — Persistence</button>
+  <button class="phase-btn" onclick="showPhase(4)">05 — Reporting</button>
+  <button class="phase-btn" onclick="showPhase(5)">🏁 Capstone</button>
+</div>
+
+<!-- PROGRESS TRACKER -->
+<div class="progress-tracker">
+  <div class="prog-step">
+    <div class="prog-circle active" id="pc0" onclick="showPhase(0)">1</div>
+    <div class="prog-label active" id="pl0">Recon</div>
+  </div>
+  <div class="prog-line" id="pline0"></div>
+  <div class="prog-step">
+    <div class="prog-circle" id="pc1" onclick="showPhase(1)">2</div>
+    <div class="prog-label" id="pl1">Scanning</div>
+  </div>
+  <div class="prog-line" id="pline1"></div>
+  <div class="prog-step">
+    <div class="prog-circle" id="pc2" onclick="showPhase(2)">3</div>
+    <div class="prog-label" id="pl2">Exploit</div>
+  </div>
+  <div class="prog-line" id="pline2"></div>
+  <div class="prog-step">
+    <div class="prog-circle" id="pc3" onclick="showPhase(3)">4</div>
+    <div class="prog-label" id="pl3">Persist</div>
+  </div>
+  <div class="prog-line" id="pline3"></div>
+  <div class="prog-step">
+    <div class="prog-circle" id="pc4" onclick="showPhase(4)">5</div>
+    <div class="prog-label" id="pl4">Report</div>
+  </div>
+  <div class="prog-line" id="pline4"></div>
+  <div class="prog-step">
+    <div class="prog-circle" id="pc5" onclick="showPhase(5)">🏁</div>
+    <div class="prog-label" id="pl5">Capstone</div>
+  </div>
+</div>
+
+<!-- LAB SETUP PANEL -->
+<div id="panel-setup" style="display:none;position:relative;z-index:5;max-width:960px;margin:0 auto;padding:0 2rem 60px">
+
+  <div class="phase-banner" style="border-color:rgba(0,245,255,0.4);background:linear-gradient(135deg,rgba(0,245,255,0.08),rgba(0,245,255,0.02))">
+    <div class="phase-icon">⚙</div>
+    <div>
+      <div class="phase-num-label" style="color:var(--cyan)">REQUIRED — COMPLETE BEFORE STARTING PHASES</div>
+      <div class="phase-title-large">MCCoE Hacking Lab Setup</div>
+      <div class="phase-desc-short">Real targets. Real tools. No external accounts required. Choose how you want to work below.</div>
+    </div>
+  </div>
+
+  <!-- ATTACKBOX SETUP -->
+  <div class="sec-card">
+    <div class="sec-title" style="color:var(--cyan)">Lab Setup &#8212; HTB AttackBox + Target Machine</div>
+    <div style="font-size:.9rem;color:var(--muted);margin-bottom:16px">HTB gives you a full Ubuntu attack machine that runs in your browser &#8212; no Kali VM, no VPN, no install. Just a browser and your HTB account.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px">
+      <div style="background:rgba(0,255,65,0.06);border:1px solid rgba(0,255,65,0.25);border-radius:8px;padding:16px;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:6px">&#127758;</div>
+        <div style="font-weight:700;color:var(--green);margin-bottom:4px">HTB AttackBox</div>
+        <div style="font-size:.82rem;color:var(--muted)">Ubuntu machine with all tools pre-installed &#8212; runs in your browser</div>
+      </div>
+      <div style="background:rgba(0,245,255,0.06);border:1px solid rgba(0,245,255,0.25);border-radius:8px;padding:16px;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:6px">&#128279;</div>
+        <div style="font-weight:700;color:var(--cyan);margin-bottom:4px">Already Connected</div>
+        <div style="font-size:.82rem;color:var(--muted)">AttackBox connects to HTB network automatically &#8212; no VPN needed</div>
+      </div>
+      <div style="background:rgba(255,60,60,0.06);border:1px solid rgba(255,60,60,0.25);border-radius:8px;padding:16px;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:6px">&#127919;</div>
+        <div style="font-weight:700;color:#ff6060;margin-bottom:4px">HTB Target Machine</div>
+        <div style="font-size:.82rem;color:var(--muted)">Vulnerable machine in the cloud &#8212; your target for each phase</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="sec-card">
+    <div class="sec-title" style="color:var(--cyan)">Step 1 &#8212; Create Your Free HTB Account</div>
+    <div class="exercise-box">
+      <div class="step"><span class="step-num">01</span><span>Go to <a href="https://account.hackthebox.com/login" target="_blank" style="color:var(--green)"><strong>hackthebox.com</strong></a> and click <strong>Sign Up</strong></span></div>
+      <div class="step"><span class="step-num">02</span><span>Use your personal email &#8212; free account is all you need</span></div>
+      <div class="step"><span class="step-num">03</span><span>Verify your email and log in</span></div>
+      <div class="step"><span class="step-num">04</span><span>Save your HTB username &#8212; you will submit it with each phase report</span></div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="sec-card">
+    <div class="sec-title" style="color:var(--cyan)">Step 2 &#8212; Go to Starting Point</div>
+    <div class="exercise-box">
+      <div class="step"><span class="step-num">01</span><span>Log in to HTB and click <strong>HTB Labs</strong> from the top menu</span></div>
+      <div class="step"><span class="step-num">02</span><span>Click <strong>Starting Point</strong> in the left sidebar</span></div>
+      <div class="step"><span class="step-num">03</span><span>Find your assigned machine for the current phase (see table below)</span></div>
+      <div class="step"><span class="step-num">04</span><span>Click the machine name to open its page</span></div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="sec-card">
+    <div class="sec-title" style="color:var(--cyan)">Step 3 &#8212; Start the AttackBox</div>
+    <div class="warn-box">
+      <div class="warn-label">THE ATTACKBOX IS YOUR HACKING MACHINE</div>
+      <div class="warn-text">The HTB AttackBox is a full Ubuntu Linux desktop that opens right in your browser. It has Nmap, Metasploit, Gobuster, and every tool you need already installed. No setup. No VPN. No Kali required.</div>
+    </div>
+    <div class="exercise-box" style="margin-top:14px">
+      <div class="step"><span class="step-num">01</span><span>On the machine page, click <strong>Start Machine</strong> to spawn your target</span></div>
+      <div class="step"><span class="step-num">02</span><span>Click <strong>Start AttackBox</strong> (button at the top of the page) &#8212; an Ubuntu desktop opens in your browser</span></div>
+      <div class="step"><span class="step-num">03</span><span>Wait about 30 seconds for the AttackBox to fully load</span></div>
+      <div class="step"><span class="step-num">04</span><span>Right-click the desktop and open a <strong>Terminal</strong></span></div>
+      <div class="step"><span class="step-num">05</span><span>Copy your target IP from the machine page and paste it into the terminal &#8212; you are ready to start hacking</span></div>
+    </div>
+    <div style="background:#0a0a0a;border:1px solid rgba(0,255,65,0.3);border-radius:8px;padding:14px;font-family:monospace;font-size:.85rem;margin-top:14px">
+      <div style="color:#888;margin-bottom:6px"># Verify you can reach the target (replace with your actual target IP)</div>
+      <div style="color:var(--green)">ping -c 3 10.129.x.x</div>
+      <div style="color:#888;margin-top:8px"># If you see replies -- you are connected and ready</div>
+    </div>
+  </div>
+
+  <!-- PHASE MAP TABLE -->
+  <div class="sec-card">
+    <div class="sec-title" style="color:var(--cyan)">Machine Assignments by Phase</div>
+    <div style="font-size:.88rem;color:var(--muted);margin-bottom:14px">All machines below are <strong>free tier</strong> on HTB Starting Point. Spawn the machine for your current phase, then open the AttackBox to begin.</div>
+    <table class="data-table">
+      <tr><th>Phase</th><th>HTB Machine</th><th>Skills Practiced</th><th>Difficulty</th></tr>
+      <tr>
+        <td style="color:var(--cyan);font-weight:700">Phase 1 &#8212; Recon</td>
+        <td><a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:var(--green);font-weight:700">Meow + Fawn</a></td>
+        <td>Nmap scanning, service ID, Telnet, FTP anonymous login</td>
+        <td><span style="color:var(--green)">Very Easy</span></td>
+      </tr>
+      <tr>
+        <td style="color:var(--cyan);font-weight:700">Phase 2 &#8212; Scanning</td>
+        <td><a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:var(--green);font-weight:700">Dancing + Redeemer</a></td>
+        <td>SMB enumeration, smbclient, Redis enumeration</td>
+        <td><span style="color:var(--green)">Very Easy</span></td>
+      </tr>
+      <tr>
+        <td style="color:var(--cyan);font-weight:700">Phase 3 &#8212; Exploitation</td>
+        <td><a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:var(--green);font-weight:700">Preignition + Appointment</a></td>
+        <td>Gobuster, default credentials, SQL injection login bypass</td>
+        <td><span style="color:#ffd700">Easy</span></td>
+      </tr>
+      <tr>
+        <td style="color:var(--cyan);font-weight:700">Phase 4 &#8212; Post-Exploitation</td>
+        <td><a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:var(--green);font-weight:700">Sequel + Mongod</a></td>
+        <td>MySQL, database enumeration, MongoDB data exfiltration</td>
+        <td><span style="color:#ffd700">Easy</span></td>
+      </tr>
+      <tr>
+        <td style="color:var(--cyan);font-weight:700">Phase 5 &#8212; Reporting</td>
+        <td>Any completed machine</td>
+        <td>Professional pentest report covering all findings</td>
+        <td><span style="color:var(--cyan)">Written</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- SUBMISSION -->
+  <div class="sec-card">
+    <div class="deliv-box">
+      <div class="deliv-label">WHAT TO SUBMIT FOR EACH PHASE</div>
+      <div class="deliv-item"><strong>Your HTB username</strong> &#8212; instructor will verify on your public HTB profile</div>
+      <div class="deliv-item"><strong>The flag you captured</strong> &#8212; format: <code style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px">HTB{...}</code></div>
+      <div class="deliv-item"><strong>A screenshot</strong> of your AttackBox terminal showing the completed exploit and flag</div>
+      <div class="deliv-item"><strong>3&#8211;5 sentences</strong> explaining what you did and what vulnerability you exploited</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:20px;padding-bottom:10px">
+    <a href="https://app.hackthebox.com/starting-point" target="_blank" class="btn-green" style="border-color:var(--cyan);color:var(--cyan);display:inline-block;text-decoration:none;margin-bottom:16px">Open HTB Starting Point</a>
+    <br/>
+    <button class="btn-green" onclick="showPhase(0)" style="margin-top:8px">&#9654; AttackBox Ready &#8212; Go to Phase 1</button>
+  </div>
+
+</div>
+
+<!-- CONTENT AREA -->
+<div class="content-area">
+
+  <!-- ══ PHASE 1: RECON ══ -->
+  <div class="phase-panel active" id="panel0">
+    <div class="phase-banner">
+      <div class="phase-icon">🔍</div>
+      <div>
+        <div class="phase-num-label">PHASE 01 OF 05</div>
+        <div class="phase-title-large">Reconnaissance</div>
+        <div class="phase-desc-short">Gather intelligence on the target without making direct contact. Build your picture from public sources before sending a single packet.</div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">⚠ Legal &amp; Ethical Boundaries — Read Before You Start</div>
+      <div class="legal-box">
+        <div class="legal-item">You may NEVER scan, probe, or exploit any system without explicit written permission</div>
+        <div class="legal-item">You may NEVER use these tools on school, workplace, or public networks without authorization</div>
+        <div class="legal-item">ALWAYS use <a href="https://tryhackme.com" target="_blank" style="color:#ffb700;">TryHackMe</a> or <a href="https://hackthebox.com" target="_blank" style="color:#ffb700;">HackTheBox</a> authorized machines — or your own isolated VirtualBox VM</div>
+        <div class="legal-item">ALWAYS document your authorization before beginning any real-world penetration test</div>
+        <div class="legal-item">Report every vulnerability you find — withholding findings is unethical and potentially illegal</div>
+        <div class="legal-item">Responsible disclosure: if you find a real vulnerability, report it to the organization privately — not on social media</div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Passive vs. Active Recon</div>
+      <table class="data-table">
+        <tr><th>Type</th><th>Description</th><th>Detection Risk</th></tr>
+        <tr><td><span class="tag-green">PASSIVE</span></td><td>Gather from public sources only. Zero contact with target systems.</td><td>Very Low</td></tr>
+        <tr><td><span class="tag-red">ACTIVE</span></td><td>Directly interact with the target — DNS queries, ping sweeps, banner grabbing.</td><td>Medium — may appear in logs</td></tr>
+      </table>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Key Recon Tools</div>
+      <table class="data-table">
+        <tr><th>Tool</th><th>Purpose</th><th>Free?</th></tr>
+        <tr><td>Google Dorking</td><td>Advanced search operators to surface exposed files, login pages, and configs</td><td><span class="tag-green">YES</span></td></tr>
+        <tr><td>WHOIS Lookup</td><td>Domain registration records — owner, registrar, nameservers, creation date</td><td><span class="tag-green">YES</span></td></tr>
+        <tr><td>theHarvester</td><td>Collects emails, subdomains, and IPs from public sources (Google, LinkedIn, Shodan)</td><td><span class="tag-green">YES — in Kali</span></td></tr>
+        <tr><td>Shodan</td><td>Search engine for internet-connected devices and open services worldwide</td><td><span class="tag-green">YES — free tier</span></td></tr>
+        <tr><td>Maltego Community</td><td>Visual OSINT mapping — link people, domains, IPs, and organizations</td><td><span class="tag-green">YES — free tier</span></td></tr>
+        <tr><td>LinkedIn / Social Media</td><td>Employee names, roles, tech stack — social engineering preparation</td><td><span class="tag-green">YES</span></td></tr>
+      </table>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Real-World Connection</div>
+      <div class="breach-box">
+        <div class="breach-label">⚡ TARGET BREACH 2013 — RECON PHASE</div>
+        <div class="breach-text">Attackers identified Fazio Mechanical Services — a small HVAC vendor with remote network access to Target's systems — through public procurement records and LinkedIn profiles of Target facilities staff. No packets were sent to Target's network during this phase. The entire attack plan was assembled from publicly available information. Zero technical skills required. Zero detection risk.</div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Exercise 1 — OSINT Challenge</div>
+      <div class="exercise-box">
+        <div class="exercise-label">🎯 Objective: Build an intelligence profile using public sources only</div>
+        <div class="sec-body" style="margin-bottom:14px;font-size:13px;color:var(--muted)">Option A — TryHackMe (Beginner Recommended)</div>
+        <div class="step"><span class="step-num">01</span><span>Create a free account at <a href="https://tryhackme.com" target="_blank" style="color:var(--green);">tryhackme.com</a></span></div>
+        <div class="step"><span class="step-num">02</span><span>Complete the <a href="https://tryhackme.com/room/passiverecon" target="_blank" style="color:var(--green);"><strong>"Passive Recon"</strong></a> room or the <a href="https://tryhackme.com/room/ohsint" target="_blank" style="color:var(--green);"><strong>"OhSINT"</strong></a> room (both free)</span></div>
+        <div class="step"><span class="step-num">03</span><span>Practice Google Dorking: use the <strong>site:</strong> and <strong>filetype:</strong> operators to surface exposed files or login pages</span></div>
+        <div class="step"><span class="step-num">04</span><span>Use <a href="https://who.is" target="_blank" style="color:var(--green);"><strong>who.is</strong></a> to look up a domain and examine registration records</span></div>
+        <div class="step"><span class="step-num">05</span><span>Search <a href="https://www.shodan.io" target="_blank" style="color:var(--green);"><strong>Shodan</strong></a> (free tier) for a publicly known vulnerable device type</span></div>
+        <div style="border-top:1px solid rgba(0,255,65,0.15);margin:14px 0;"></div>
+        <div class="sec-body" style="margin-bottom:14px;font-size:13px;color:var(--muted)">Option B — HackTheBox Starting Point</div>
+        <div class="step"><span class="step-num">06</span><span>Create a free account at <a href="https://hackthebox.com" target="_blank" style="color:var(--green);">hackthebox.com</a></span></div>
+        <div class="step"><span class="step-num">07</span><span>Navigate to <strong>Starting Point → Tier 0</strong> and complete the <a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:var(--green);"><strong>"Meow"</strong></a> machine — guided walkthrough included</span></div>
+        <div class="step"><span class="step-num">08</span><span>Read the walkthrough questions carefully — they teach you what information to gather during recon</span></div>
+      </div>
+      <div class="deliv-box">
+        <div class="deliv-label">📋 DELIVERABLE — OSINT REPORT</div>
+        <div class="deliv-item">Target Summary — name, domain, industry, estimated company size</div>
+        <div class="deliv-item">Employee Intelligence — names, roles, departments found from public sources</div>
+        <div class="deliv-item">Technology Stack — software or platforms identified from job postings or page metadata</div>
+        <div class="deliv-item">Exposed Assets — files, login pages, or devices found via Dorking or Shodan</div>
+        <div class="deliv-item">Attack Surface Summary — one paragraph: which findings pose the highest risk and why</div>
+      </div>
+      <div class="sample-box">
+        <div class="sample-label">📝 SAMPLE SUBMISSION — OSINT REPORT</div>
+        <div class="sample-item"><strong>Target:</strong> TryHackMe OhSINT target — "OWoodflint" persona</div>
+        <div class="sample-item"><strong>Employee Intel:</strong> Found Twitter handle @OWoodflint via Google search. LinkedIn showed job title "Software Developer" at a UK firm. GitHub profile revealed real name Oliver Woodflint.</div>
+        <div class="sample-item"><strong>Technology Stack:</strong> WordPress blog identified via page source meta tag. BSSID found in Wigle.net — geolocated to New York City area.</div>
+        <div class="sample-item"><strong>Exposed Asset:</strong> Personal email address found in a public GitHub commit (owoodflint@gmail.com). Password hint found in WordPress blog HTML source.</div>
+        <div class="sample-item"><strong>Attack Surface Summary:</strong> The target's OSINT footprint is extremely high. A real attacker could launch a targeted phishing campaign using the email, craft a convincing spear-phishing message referencing the target's employer, and attempt credential stuffing using the GitHub password hint. Highest risk: exposed email combined with reused password patterns.</div>
+      </div>
+    </div>
+
+    <div class="submit-wrap">
+      <div class="submit-wrap-label">📎 SUBMIT YOUR DELIVERABLE LINK — REQUIRED BEFORE MARKING COMPLETE</div>
+      <div class="submit-row">
+        <input class="submit-input" id="link0" type="url" placeholder="Paste your Google Doc, GitHub, or Drive link here..." oninput="toggleMarkBtn(0)"/>
+      </div>
+      <div class="saved-link-box" id="saved-link0" style="display:none"></div>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <button class="mark-btn" id="mark0" onclick="markPhaseComplete(0)" disabled>✓ &nbsp; Mark Recon Complete</button>
+      <span class="done-badge" id="done0" style="display:none">✓ Phase 1 Saved!</span>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <button class="btn-green" onclick="showPhase(1)">▶ &nbsp; Next: Scanning</button>
+    </div>
+  </div>
+
+  <!-- ══ PHASE 2: SCANNING ══ -->
+  <div class="phase-panel" id="panel1">
+    <div class="phase-banner">
+      <div class="phase-icon">📡</div>
+      <div>
+        <div class="phase-num-label">PHASE 02 OF 05</div>
+        <div class="phase-title-large">Scanning & Enumeration</div>
+        <div class="phase-desc-short">Actively probe the target to map live hosts, open ports, running services, and known vulnerabilities. Go from a name to a full attack surface.</div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Types of Scanning</div>
+      <table class="data-table">
+        <tr><th>Scan Type</th><th>Purpose</th><th>Tool</th></tr>
+        <tr><td>Host Discovery</td><td>Find which IP addresses are live on the network</td><td>Nmap ping sweep</td></tr>
+        <tr><td>Port Scanning</td><td>Identify which TCP and UDP ports are open on a host</td><td>Nmap SYN scan</td></tr>
+        <tr><td>Service / Version</td><td>Determine what software runs on each open port</td><td>Nmap version detection</td></tr>
+        <tr><td>OS Fingerprinting</td><td>Guess the operating system from network response patterns</td><td>Nmap OS detection</td></tr>
+        <tr><td>Vulnerability Scanning</td><td>Match discovered services to known CVEs in the NVD database</td><td>Nessus, Nikto, OpenVAS</td></tr>
+        <tr><td>Web App Scanning</td><td>Find SQL injection, XSS, and misconfigurations on web targets</td><td>Nikto, Burp Suite</td></tr>
+      </table>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Common Nmap Scan Modes</div>
+      <table class="data-table">
+        <tr><th>Mode</th><th>What It Does</th></tr>
+        <tr><td>Basic port scan</td><td>Scans the 1,000 most common TCP ports on the target host</td></tr>
+        <tr><td>Version detection (-sV)</td><td>Identifies software name and version on each open port</td></tr>
+        <tr><td>OS detection (-O)</td><td>Attempts to fingerprint the operating system</td></tr>
+        <tr><td>Full pentest scan (-sV -O -sC)</td><td>Version, OS, and default NSE scripts — standard starting point</td></tr>
+        <tr><td>All ports (-p-)</td><td>Scans all 65,535 TCP ports — slower but thorough</td></tr>
+        <tr><td>Ping sweep (-sn)</td><td>Finds all live hosts on a subnet without port scanning</td></tr>
+      </table>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Real-World Connection</div>
+      <div class="breach-box">
+        <div class="breach-label">⚡ COLONIAL PIPELINE 2021 — SCANNING PHASE</div>
+        <div class="breach-text">DarkSide affiliates scanned the internet for exposed VPN endpoints belonging to Colonial Pipeline. They found a legacy VPN account — no MFA, password likely reused from a prior breach — that was still active and reachable. That single open port and single weak credential was the entire entry point for a $4.4 million ransom attack that shut down fuel supplies to 17 states for six days.</div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Exercise 2 — Nmap Scanning Lab</div>
+      <div class="warn-box">
+        <div class="warn-label">⚠ LEGAL REQUIREMENT</div>
+        <div class="warn-text">Only scan systems you own or have explicit written permission to scan. All practice must use <a href="https://tryhackme.com" target="_blank" style="color:#ffb700;">TryHackMe</a>, <a href="https://hackthebox.com" target="_blank" style="color:#ffb700;">HackTheBox</a>, or your own isolated VirtualBox VM. Unauthorized scanning violates federal law.</div>
+      </div>
+      <div class="exercise-box" style="margin-top:14px">
+        <div class="exercise-label">🎯 Objective: Scan an authorized target and produce a vulnerability findings report</div>
+        <div class="sec-body" style="margin-bottom:14px;font-size:13px;color:var(--muted)">Option A — TryHackMe</div>
+        <div class="step"><span class="step-num">01</span><span>Complete the <a href="https://tryhackme.com/room/furthernmap" target="_blank" style="color:var(--green);"><strong>"Further Nmap"</strong></a> room — free, fully guided, authorized targets</span></div>
+        <div class="step"><span class="step-num">02</span><span>Also try the <a href="https://tryhackme.com/room/nmap01" target="_blank" style="color:var(--green);"><strong>"Nmap Live Host Discovery"</strong></a> room for deeper scanning techniques</span></div>
+        <div style="border-top:1px solid rgba(0,255,65,0.15);margin:14px 0;"></div>
+        <div class="sec-body" style="margin-bottom:14px;font-size:13px;color:var(--muted)">Option B — HackTheBox Starting Point</div>
+        <div class="step"><span class="step-num">03</span><span>Study the <a href="https://academy.hackthebox.com/app/module/19/section/104" target="_blank" style="color:var(--green);font-weight:800;text-decoration:underline;">HTB Academy — Network Enumeration with Nmap ↗</a> — learn scan types, flags, and output before touching a live target</span></div>
+        <div class="step"><span class="step-num">04</span><span>Complete <a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:var(--green);"><strong>"Fawn"</strong></a> (Tier 0) — Nmap scan reveals an open FTP port; guided questions teach you to interpret scan output</span></div>
+        <div class="step"><span class="step-num">05</span><span>Complete <a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:var(--green);"><strong>"Dancing"</strong></a> (Tier 0) — Nmap scan of SMB ports (445/TCP); identify the service and enumerate shares</span></div>
+      </div>
+      <div class="deliv-box">
+        <div class="deliv-label">📋 DELIVERABLE — SCANNING REPORT TABLE</div>
+        <div class="deliv-item">Port and Protocol (example: 22 TCP, 80 TCP, 445 TCP)</div>
+        <div class="deliv-item">Service and Version (example: OpenSSH 7.2, Apache 2.4.18)</div>
+        <div class="deliv-item">CVE found — number from NVD if a known vulnerability exists</div>
+        <div class="deliv-item">CVSS Score — severity score from 0 to 10</div>
+        <div class="deliv-item">Risk Rating — Critical, High, Medium, or Low</div>
+        <div class="deliv-item">Recommended Fix — patch, disable, or reconfigure</div>
+      </div>
+      <div class="sample-box">
+        <div class="sample-label">📝 SAMPLE SUBMISSION — SCANNING REPORT</div>
+        <div class="sample-item"><strong>21/TCP</strong> — vsftpd 2.3.4 — CVE-2011-2523 — CVSS 10.0 — CRITICAL — Patch immediately: upgrade to vsftpd 3.0+</div>
+        <div class="sample-item"><strong>22/TCP</strong> — OpenSSH 4.7p1 — CVE-2008-0166 — CVSS 7.8 — HIGH — Replace with OpenSSH 8.9+; disable weak key algorithms</div>
+        <div class="sample-item"><strong>80/TCP</strong> — Apache 2.2.8 — CVE-2017-7679 — CVSS 9.8 — CRITICAL — Upgrade to Apache 2.4.54+; disable mod_mime</div>
+        <div class="sample-item"><strong>445/TCP</strong> — Samba 3.0.20 — CVE-2007-2447 — CVSS 10.0 — CRITICAL — Upgrade Samba immediately; restrict SMB access by firewall</div>
+        <div class="sample-item"><strong>3306/TCP</strong> — MySQL 5.0.51a — CVE-2008-0226 — CVSS 7.5 — HIGH — Patch to MySQL 8.0+; disable remote root login</div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Exercise 2b — Web Enumeration</div>
+      <div class="exercise-box">
+        <div class="exercise-label">🎯 Objective: Discover hidden directories, files, and entry points on a web target</div>
+        <div class="sec-body" style="margin-bottom:14px;font-size:13px;color:var(--muted)">Option A — TryHackMe</div>
+        <div class="step"><span class="step-num">01</span><span>Complete the <a href="https://tryhackme.com/room/contentdiscovery" target="_blank" style="color:var(--green);"><strong>"Content Discovery"</strong></a> room — covers manual, automated, and OSINT-based discovery of hidden web content</span></div>
+        <div class="step"><span class="step-num">02</span><span>Complete the <a href="https://tryhackme.com/room/webfundamentals" target="_blank" style="color:var(--green);"><strong>"Web Fundamentals"</strong></a> room to understand HTTP requests, response codes, and how web applications are structured</span></div>
+        <div style="border-top:1px solid rgba(0,255,65,0.15);margin:14px 0;"></div>
+        <div class="sec-body" style="margin-bottom:14px;font-size:13px;color:var(--muted)">Option B — HackTheBox Starting Point</div>
+        <div class="step"><span class="step-num">03</span><span>Complete <a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:var(--green);"><strong>"Ignition"</strong></a> (Tier 1) — find a hidden admin login page and gain access using a default credential</span></div>
+        <div class="step"><span class="step-num">04</span><span>Complete <a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:var(--green);"><strong>"Bike"</strong></a> (Tier 1) — Server-Side Template Injection on a Node.js app; introduces web vulnerability concepts beyond basic scanning</span></div>
+      </div>
+      <div class="deliv-box">
+        <div class="deliv-label">📋 DELIVERABLE — WEB ENUMERATION FINDINGS</div>
+        <div class="deliv-item">List of hidden directories or files discovered — path and HTTP status code for each</div>
+        <div class="deliv-item">Admin or login pages found — URL and what technology is running it</div>
+        <div class="deliv-item">Any default credentials that worked — username, password, and what access they granted</div>
+        <div class="deliv-item">Risk Assessment — one sentence on why exposed admin panels are dangerous in production</div>
+      </div>
+    </div>
+
+    <div class="submit-wrap">
+      <div class="submit-wrap-label">📎 SUBMIT YOUR DELIVERABLE LINK — REQUIRED BEFORE MARKING COMPLETE</div>
+      <div class="submit-row">
+        <input class="submit-input" id="link1" type="url" placeholder="Paste your Google Doc, GitHub, or Drive link here..." oninput="toggleMarkBtn(1)"/>
+      </div>
+      <div class="saved-link-box" id="saved-link1" style="display:none"></div>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <button class="mark-btn" id="mark1" onclick="markPhaseComplete(1)" disabled>✓ &nbsp; Mark Scanning Complete</button>
+      <span class="done-badge" id="done1" style="display:none">✓ Phase 2 Saved!</span>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <button class="btn-outline" onclick="showPhase(0)">← Recon</button>
+      <button class="btn-green" onclick="showPhase(2)">▶ &nbsp; Next: Exploitation</button>
+    </div>
+  </div>
+
+  <!-- ══ PHASE 3: EXPLOITATION ══ -->
+  <div class="phase-panel" id="panel2">
+    <div class="phase-banner">
+      <div class="phase-icon">💥</div>
+      <div>
+        <div class="phase-num-label">PHASE 03 OF 05</div>
+        <div class="phase-title-large">Gaining Access</div>
+        <div class="phase-desc-short">Use a discovered vulnerability to gain entry. In ethical hacking this proves a vulnerability is real — not just theoretical. Gain access, don't cause damage.</div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Common Exploitation Techniques</div>
+      <table class="data-table">
+        <tr><th>Technique</th><th>Description</th><th>Example</th></tr>
+        <tr><td>CVE Exploitation</td><td>Exploit a known, unpatched software vulnerability</td><td>Equifax Apache Struts — no authentication required</td></tr>
+        <tr><td>Password Attacks</td><td>Brute force, credential stuffing, or dictionary attacks</td><td>Automated login attempts against SSH or web forms</td></tr>
+        <tr><td>Social Engineering</td><td>Manipulate people into revealing credentials or clicking malicious links</td><td>Phishing emails, vishing phone calls</td></tr>
+        <tr><td>SQL Injection</td><td>Insert malicious database code into input fields to access data</td><td>DVWA SQL injection practice lab</td></tr>
+        <tr><td>Cross-Site Scripting</td><td>Inject JavaScript into web pages to steal sessions or redirect users</td><td>PortSwigger Web Security Academy XSS labs</td></tr>
+        <tr><td>Metasploit Modules</td><td>Pre-built exploit framework with hundreds of attack modules</td><td>vsftpd 2.3.4 backdoor on Metasploitable2</td></tr>
+      </table>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Key Exploitation Tools</div>
+      <table class="data-table">
+        <tr><th>Tool</th><th>Purpose</th><th>Free?</th></tr>
+        <tr><td>Metasploit Framework</td><td>Industry-standard exploit and post-exploitation platform</td><td><span class="tag-green">YES — Community</span></td></tr>
+        <tr><td>Burp Suite Community</td><td>Web application proxy — intercept and modify HTTP traffic</td><td><span class="tag-green">YES — Community</span></td></tr>
+        <tr><td>Hydra</td><td>Fast multi-protocol password brute-force tool</td><td><span class="tag-green">YES — in Kali</span></td></tr>
+        <tr><td>SQLmap</td><td>Automated SQL injection detection and database extraction</td><td><span class="tag-green">YES — in Kali</span></td></tr>
+        <tr><td>DVWA</td><td>Damn Vulnerable Web Application — safe local practice target</td><td><span class="tag-green">YES — free download</span></td></tr>
+      </table>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Real-World Connection</div>
+      <div class="breach-box">
+        <div class="breach-label">⚡ EQUIFAX 2017 — EXPLOITATION PHASE</div>
+        <div class="breach-text">Attackers exploited CVE-2017-5638 — a critical remote code execution flaw in Apache Struts. The CVE was published March 7, 2017 with a patch available the same day. Equifax was breached on May 13, 2017 — 69 days after the patch was released. The exploit required zero authentication and could be triggered with a single crafted HTTP request. Result: 147 million Americans had their Social Security numbers, birthdates, and financial data stolen.</div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Exercise 3 — Exploitation Lab</div>
+      <div class="exercise-box">
+        <div class="exercise-label">🎯 Objective: Exploit a known vulnerability on an authorized target</div>
+        <div class="sec-body" style="margin-bottom:14px;font-size:13px;color:var(--muted)">Option A — TryHackMe (Beginner Recommended)</div>
+        <div class="step"><span class="step-num">01</span><span>Complete the <a href="https://tryhackme.com/room/basicpentestingjt" target="_blank" style="color:var(--green);"><strong>"Basic Pentesting"</strong></a> room — free, fully guided, authorized</span></div>
+        <div class="step"><span class="step-num">02</span><span>Complete the <a href="https://tryhackme.com/room/owasptop10" target="_blank" style="color:var(--green);"><strong>"OWASP Top 10"</strong></a> room for hands-on web application exploitation</span></div>
+        <div class="step"><span class="step-num">03</span><span>Document every step — what you tried, what succeeded, and what failed, with screenshots</span></div>
+        <div style="border-top:1px solid rgba(0,255,65,0.15);margin:14px 0;"></div>
+        <div class="sec-body" style="margin-bottom:14px;font-size:13px;color:var(--muted)">Option B — HackTheBox Starting Point</div>
+        <div class="step"><span class="step-num">04</span><span>Study the <a href="https://academy.hackthebox.com/app/module/19/section/103" target="_blank" style="color:var(--green);font-weight:800;text-decoration:underline;">HTB Academy — Service Enumeration ↗</a> — understand how to identify services and versions before exploiting them</span></div>
+        <div class="step"><span class="step-num">05</span><span>Complete <a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:var(--green);"><strong>"Appointment"</strong></a> (Tier 1) — SQL injection exploitation against a login form; no Metasploit needed</span></div>
+        <div class="step"><span class="step-num">06</span><span>Complete <a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:var(--green);"><strong>"Sequel"</strong></a> (Tier 1) — MySQL exploitation with unauthenticated access; practice extracting database content</span></div>
+      </div>
+      <div class="deliv-box">
+        <div class="deliv-label">📋 DELIVERABLE</div>
+        <div class="deliv-item">Screenshot proof of successful access — a command shell or Meterpreter session</div>
+        <div class="deliv-item">Exploit used: name, CVE number, and plain-English explanation of the vulnerability</div>
+        <div class="deliv-item">Access level gained: standard user, root, or administrator</div>
+        <div class="deliv-item">One paragraph: what could a real attacker accomplish with this level of access?</div>
+      </div>
+      <div class="sample-box">
+        <div class="sample-label">📝 SAMPLE SUBMISSION — EXPLOITATION</div>
+        <div class="sample-item"><strong>Platform:</strong> TryHackMe — "Basic Pentesting" room</div>
+        <div class="sample-item"><strong>Exploit Used:</strong> SSH brute-force via Hydra against port 22. Username discovered from SMB enumeration (enum4linux). CVE: N/A — weak credential, not a software vulnerability.</div>
+        <div class="sample-item"><strong>Access Gained:</strong> Standard user shell as "jan". Ran "whoami" — output: jan. Ran "id" — output: uid=1000(jan) gid=1000(jan) groups=1000(jan).</div>
+        <div class="sample-item"><strong>Impact Analysis:</strong> A real attacker with this access level could read all files owned by the jan account, attempt privilege escalation to root, enumerate running services, and establish persistence via a cron job or SSH key. The weak password (123456) on an internet-facing SSH port would be discovered by an automated scanner within minutes of deployment.</div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Exercise 3b — Web Application Attacks</div>
+      <div class="warn-box">
+        <div class="warn-label">⚠ AUTHORIZED PLATFORMS ONLY</div>
+        <div class="warn-text">PortSwigger Web Academy and TryHackMe provide fully isolated, legal targets. Never attempt these techniques on any real website — SQL injection and XSS against unauthorized targets is a federal crime.</div>
+      </div>
+      <div class="exercise-box" style="margin-top:14px">
+        <div class="exercise-label">🎯 Objective: Exploit SQL injection and XSS vulnerabilities on authorized practice targets</div>
+        <div class="sec-body" style="margin-bottom:14px;font-size:13px;color:var(--muted)">Option A — PortSwigger Web Security Academy (Free)</div>
+        <div class="step"><span class="step-num">01</span><span>Create a free account at <a href="https://portswigger.net/web-security" target="_blank" style="color:var(--green);"><strong>portswigger.net/web-security</strong></a></span></div>
+        <div class="step"><span class="step-num">02</span><span>Complete <a href="https://portswigger.net/web-security/sql-injection" target="_blank" style="color:var(--green);"><strong>SQL Injection — Lab 1</strong></a>: retrieve hidden data by injecting into a search query — no tools needed, just your browser</span></div>
+        <div class="step"><span class="step-num">03</span><span>Complete <a href="https://portswigger.net/web-security/cross-site-scripting" target="_blank" style="color:var(--green);"><strong>Reflected XSS — Lab 1</strong></a>: inject a script tag into a search parameter and confirm it executes in the browser</span></div>
+        <div style="border-top:1px solid rgba(0,255,65,0.15);margin:14px 0;"></div>
+        <div class="sec-body" style="margin-bottom:14px;font-size:13px;color:var(--muted)">Option B — TryHackMe</div>
+        <div class="step"><span class="step-num">04</span><span>Complete the <a href="https://tryhackme.com/room/sqlinjectionlm" target="_blank" style="color:var(--green);"><strong>"SQL Injection"</strong></a> room — covers in-band, blind, and time-based injection with hands-on live targets</span></div>
+        <div class="step"><span class="step-num">05</span><span>Complete the <a href="https://tryhackme.com/room/xss" target="_blank" style="color:var(--green);"><strong>"Cross-site Scripting"</strong></a> room — reflected, stored, and DOM-based XSS in a live browser environment</span></div>
+      </div>
+      <div class="deliv-box">
+        <div class="deliv-label">📋 DELIVERABLE — WEB ATTACK REPORT</div>
+        <div class="deliv-item">SQL Injection: the exact payload you used, what data came back, and why the query broke</div>
+        <div class="deliv-item">XSS: the script you injected, where it executed, and what a real attacker could steal with it</div>
+        <div class="deliv-item">Business Impact: one paragraph — what real data or accounts could be compromised using these two techniques?</div>
+        <div class="deliv-item">Remediation: how a developer fixes each — parameterized queries for SQLi, output encoding for XSS</div>
+      </div>
+      <div class="sample-box">
+        <div class="sample-label">📝 SAMPLE — SQL INJECTION FINDING</div>
+        <div class="sample-item"><strong>Target:</strong> PortSwigger Lab — "SQL injection vulnerability in WHERE clause allowing retrieval of hidden data"</div>
+        <div class="sample-item"><strong>Payload:</strong> ' OR 1=1-- injected into the category parameter. The query became: SELECT * FROM products WHERE category='Gifts' OR 1=1--' AND released=1</div>
+        <div class="sample-item"><strong>Result:</strong> All products returned including unreleased items. 1=1 is always true, and -- commented out the released=1 filter entirely.</div>
+        <div class="sample-item"><strong>Remediation:</strong> Use parameterized queries. Replace string concatenation with: SELECT * FROM products WHERE category=? AND released=1 — user input is passed as a bound parameter and can never alter the query structure.</div>
+      </div>
+    </div>
+
+    <div class="submit-wrap">
+      <div class="submit-wrap-label">📎 SUBMIT YOUR DELIVERABLE LINK — REQUIRED BEFORE MARKING COMPLETE</div>
+      <div class="submit-row">
+        <input class="submit-input" id="link2" type="url" placeholder="Paste your Google Doc, GitHub, or Drive link here..." oninput="toggleMarkBtn(2)"/>
+      </div>
+      <div class="saved-link-box" id="saved-link2" style="display:none"></div>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <button class="mark-btn" id="mark2" onclick="markPhaseComplete(2)" disabled>✓ &nbsp; Mark Exploitation Complete</button>
+      <span class="done-badge" id="done2" style="display:none">✓ Phase 3 Saved!</span>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <button class="btn-outline" onclick="showPhase(1)">← Scanning</button>
+      <button class="btn-green" onclick="showPhase(3)">▶ &nbsp; Next: Persistence</button>
+    </div>
+  </div>
+
+  <!-- ══ PHASE 4: PERSISTENCE ══ -->
+  <div class="phase-panel" id="panel3">
+    <div class="phase-banner">
+      <div class="phase-icon">🕷️</div>
+      <div>
+        <div class="phase-num-label">PHASE 04 OF 05</div>
+        <div class="phase-title-large">Maintaining Access</div>
+        <div class="phase-desc-short">Ensure continued entry even after reboots, patches, or if the original vulnerability is closed. Move laterally. Escalate privileges. Stay invisible.</div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Key Post-Exploitation Concepts</div>
+      <table class="data-table">
+        <tr><th>Concept</th><th>Definition</th><th>Example</th></tr>
+        <tr><td>Persistence</td><td>Mechanisms that survive system reboots and session timeouts</td><td>Registry startup keys, scheduled tasks, backdoor user accounts</td></tr>
+        <tr><td>Lateral Movement</td><td>Moving from the initial host to other systems on the network</td><td>Pass-the-hash, Remote Desktop pivoting, SMB share access</td></tr>
+        <tr><td>Privilege Escalation</td><td>Gaining higher permissions than initially obtained</td><td>Escalating from standard user to root or SYSTEM</td></tr>
+        <tr><td>Command and Control (C2)</td><td>Maintaining a communication channel for attacker instructions</td><td>Reverse shell, Metasploit multi-handler, Cobalt Strike</td></tr>
+        <tr><td>Pivoting</td><td>Using a compromised host to reach otherwise inaccessible systems</td><td>Port forwarding through an active Meterpreter session</td></tr>
+        <tr><td>Living Off the Land</td><td>Using built-in OS tools instead of custom malware to avoid detection</td><td>PowerShell, WMI, certutil — all built into Windows</td></tr>
+      </table>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Real-World Connection</div>
+      <div class="breach-box">
+        <div class="breach-label">⚡ SOLARWINDS 2020 — PERSISTENCE PHASE</div>
+        <div class="breach-text">After gaining initial access via the poisoned Orion software update, attackers maintained presence for 9 months across approximately 100 high-value targets including US Treasury, Commerce, and Homeland Security departments. They used SAML token forgery for persistent cloud access, scheduled tasks for local system persistence, and lived off the land — using PowerShell, WMI, and other built-in Windows tools to avoid triggering antivirus. Some organizations did not discover the compromise for over a year.</div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Exercise 4 — Post-Exploitation Lab</div>
+      <div class="exercise-box">
+        <div class="exercise-label">🎯 Objective: Demonstrate 2+ post-exploitation techniques from Exercise 3 access</div>
+        <div class="sec-body" style="margin-bottom:14px;font-size:13px;color:var(--muted)">Option A — TryHackMe</div>
+        <div class="step"><span class="step-num">01</span><span>Complete the <a href="https://tryhackme.com/room/postexploit" target="_blank" style="color:var(--green);"><strong>"Post-Exploitation Basics"</strong></a> room — covers hashdump, Mimikatz, persistence techniques</span></div>
+        <div class="step"><span class="step-num">02</span><span>Complete the <a href="https://tryhackme.com/room/linprivesc" target="_blank" style="color:var(--green);"><strong>"Linux Privilege Escalation"</strong></a> room for escalation techniques on Linux targets</span></div>
+        <div style="border-top:1px solid rgba(0,255,65,0.15);margin:14px 0;"></div>
+        <div class="sec-body" style="margin-bottom:14px;font-size:13px;color:var(--muted)">Option B — HackTheBox</div>
+        <div class="step"><span class="step-num">03</span><span>Complete <a href="https://app.hackthebox.com/machines/Blue" target="_blank" style="color:var(--green);"><strong>"Blue"</strong></a> — EternalBlue (MS17-010) exploitation; post-exploit to dump hashes and escalate to SYSTEM</span></div>
+        <div class="step"><span class="step-num">04</span><span>Complete <a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:var(--green);"><strong>"Unified"</strong></a> (Starting Point Tier 2) — demonstrates persistence via a planted SSH key after initial access</span></div>
+      </div>
+      <div class="deliv-box">
+        <div class="deliv-label">📋 DELIVERABLE</div>
+        <div class="deliv-item">Initial Access Level — what user account and permissions did you start with?</div>
+        <div class="deliv-item">Privilege Escalation — method used, and what level did you reach?</div>
+        <div class="deliv-item">Network Discovery — what other hosts or services were visible from inside the system?</div>
+        <div class="deliv-item">Credentials Found — any usernames or hashes discovered (document only — do not crack)</div>
+        <div class="deliv-item">Persistence Plan — what method would a real attacker use to guarantee return access? Describe it.</div>
+      </div>
+      <div class="sample-box">
+        <div class="sample-label">📝 SAMPLE SUBMISSION — POST-EXPLOITATION</div>
+        <div class="sample-item"><strong>Initial Access:</strong> Standard user "jan" via SSH brute-force. uid=1000, no sudo permissions initially.</div>
+        <div class="sample-item"><strong>Privilege Escalation:</strong> Ran "sudo -l" — discovered jan can run /bin/cat as root with no password. Used this to read /etc/shadow and retrieve root password hash. Escalated to root using the cracked hash. Final level: root (uid=0).</div>
+        <div class="sample-item"><strong>Network Discovery:</strong> Ran "arp -a" from root shell — found 3 additional hosts on 192.168.1.0/24. Identified a Windows host at 192.168.1.50 running SMB on port 445.</div>
+        <div class="sample-item"><strong>Credentials Found:</strong> /etc/shadow retrieved — 4 password hashes documented. Not cracked. Hashes saved to notes for reporting only.</div>
+        <div class="sample-item"><strong>Persistence Plan:</strong> A real attacker would add an SSH public key to /root/.ssh/authorized_keys for keyless re-entry. This method survives password changes and persists across reboots with no new open ports or services that would trigger alerts.</div>
+      </div>
+    </div>
+
+    <div class="submit-wrap">
+      <div class="submit-wrap-label">📎 SUBMIT YOUR DELIVERABLE LINK — REQUIRED BEFORE MARKING COMPLETE</div>
+      <div class="submit-row">
+        <input class="submit-input" id="link3" type="url" placeholder="Paste your Google Doc, GitHub, or Drive link here..." oninput="toggleMarkBtn(3)"/>
+      </div>
+      <div class="saved-link-box" id="saved-link3" style="display:none"></div>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <button class="mark-btn" id="mark3" onclick="markPhaseComplete(3)" disabled>✓ &nbsp; Mark Persistence Complete</button>
+      <span class="done-badge" id="done3" style="display:none">✓ Phase 4 Saved!</span>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <button class="btn-outline" onclick="showPhase(2)">← Exploitation</button>
+      <button class="btn-green" onclick="showPhase(4)">▶ &nbsp; Next: Reporting</button>
+    </div>
+  </div>
+
+  <!-- ══ PHASE 5: REPORTING ══ -->
+  <div class="phase-panel" id="panel4">
+    <div class="phase-banner">
+      <div class="phase-icon">📝</div>
+      <div>
+        <div class="phase-num-label">PHASE 05 OF 05</div>
+        <div class="phase-title-large">Covering Tracks / Reporting</div>
+        <div class="phase-desc-short">Criminal hackers delete logs. Ethical hackers document everything. Your professional pentest report is what separates you from a script kiddie.</div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Professional Pentest Report Structure</div>
+      <table class="data-table">
+        <tr><th>Section</th><th>What to Include</th></tr>
+        <tr><td>Executive Summary</td><td>Non-technical overview: what was tested, overall risk rating, top 3 findings. Written for leadership — no jargon.</td></tr>
+        <tr><td>Scope and Rules of Engagement</td><td>Systems in scope, what was off-limits, test dates, authorization reference document</td></tr>
+        <tr><td>Methodology</td><td>Which of the 5 phases were performed, tools used, and general approach</td></tr>
+        <tr><td>Findings Summary Table</td><td>All vulnerabilities ranked: Critical, High, Medium, Low, Informational</td></tr>
+        <tr><td>Detailed Findings</td><td>Per vulnerability: description, screenshot evidence, CVSS score, business impact, step-by-step remediation</td></tr>
+        <tr><td>Recommendations</td><td>Prioritized fix list — Critical and High first, specific and actionable</td></tr>
+        <tr><td>Appendix</td><td>Full tool output, raw scan results, and complete evidence logs</td></tr>
+      </table>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Risk Rating Reference</div>
+      <table class="data-table">
+        <tr><th>Rating</th><th>CVSS Score</th><th>Meaning</th><th>Real Example</th></tr>
+        <tr><td style="color:#ff3a3a;font-weight:700">Critical</td><td>9.0 – 10.0</td><td>Remote code execution, full compromise, no auth required</td><td>EternalBlue MS17-010, Log4Shell</td></tr>
+        <tr><td style="color:#ff8c00;font-weight:700">High</td><td>7.0 – 8.9</td><td>Significant data exposure, may require some conditions</td><td>SQL injection with full database dump</td></tr>
+        <tr><td style="color:#ffb700;font-weight:700">Medium</td><td>4.0 – 6.9</td><td>Limited impact or requires user interaction</td><td>Stored XSS, weak password policy</td></tr>
+        <tr><td style="color:#00ff41;font-weight:700">Low</td><td>0.1 – 3.9</td><td>Minimal direct impact, informational value</td><td>Verbose error messages, version banners</td></tr>
+        <tr><td style="color:var(--muted)">Info</td><td>N/A</td><td>No direct risk but a best-practice concern</td><td>HTTP where HTTPS is recommended</td></tr>
+      </table>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Exercise 5 — Write Your Pentest Report</div>
+      <div class="exercise-box">
+        <div class="exercise-label">🎯 Objective: Turn Exercises 1–4 into a professional client-ready report</div>
+        <div class="step"><span class="step-num">01</span><span>Use the <strong>MCCoE Executive Summary Template</strong> as your starting document (download below)</span></div>
+        <div class="step"><span class="step-num">02</span><span>Write an Executive Summary — one page maximum, readable by a non-technical executive in two minutes</span></div>
+        <div class="step"><span class="step-num">03</span><span>Create a Findings Summary Table ranking all vulnerabilities you discovered with severity ratings</span></div>
+        <div class="step"><span class="step-num">04</span><span>Write a Detailed Finding for your highest-severity vulnerability: description, screenshot, CVSS score, business impact, and step-by-step remediation</span></div>
+        <div class="step"><span class="step-num">05</span><span>Close with a prioritized Recommendations section — most critical fixes first</span></div>
+        <div class="step"><span class="step-num">06</span><span>Reference <a href="https://tryhackme.com/room/wreath" target="_blank" style="color:var(--green);"><strong>TryHackMe "Wreath"</strong></a> or <a href="https://tryhackme.com/room/reportwriting" target="_blank" style="color:var(--green);"><strong>"Report Writing for Pentesters"</strong></a> for professional report structure guidance</span></div>
+      </div>
+      <div class="rubric-card" style="margin-top:16px">
+        <div class="rubric-hdr"><span>CRITERIA</span><span>FULL CREDIT</span><span>PARTIAL</span><span>POINTS</span></div>
+        <div class="rubric-row"><span>Executive Summary</span><span>Clear, non-technical, covers scope and top risk</span><span>Too technical or missing elements</span><span class="points-badge">20</span></div>
+        <div class="rubric-row"><span>All 5 Phases Documented</span><span>Each phase documented with specific actions</span><span>3–4 phases covered</span><span class="points-badge">30</span></div>
+        <div class="rubric-row"><span>Findings Table</span><span>All findings rated with CVSS scores</span><span>Some ratings missing</span><span class="points-badge">15</span></div>
+        <div class="rubric-row"><span>Detailed Finding</span><span>Description, proof, impact, remediation</span><span>Missing one element</span><span class="points-badge">20</span></div>
+        <div class="rubric-row"><span>Recommendations</span><span>Prioritized and actionable</span><span>Generic or unordered</span><span class="points-badge">15</span></div>
+        <div class="total-row"><span>TOTAL</span><span></span><span></span><span>100 pts</span></div>
+      </div>
+      <div class="sample-box" style="margin-top:14px">
+        <div class="sample-label">📝 SAMPLE — EXECUTIVE SUMMARY PARAGRAPH</div>
+        <div class="sample-item"><strong>Overall Risk Rating: HIGH</strong></div>
+        <div class="sample-item">On August 14, 2026, an authorized penetration test was conducted against the Metasploitable2 training environment. Testing covered all five phases of a standard penetration test. Five vulnerabilities were discovered: two rated Critical, two High, and one Medium. The most severe finding was CVE-2011-2523 (vsftpd 2.3.4 backdoor) — a remotely exploitable vulnerability requiring no authentication that resulted in full root-level system access. An attacker exploiting this flaw would have complete control of the server and all data stored on it. Immediate patching of all Critical and High findings is strongly recommended before this system is connected to any production or campus network.</div>
+        <div class="sample-label" style="margin-top:12px">📝 SAMPLE — DETAILED FINDING ENTRY</div>
+        <div class="sample-item"><strong>Finding:</strong> vsftpd 2.3.4 Backdoor Command Execution</div>
+        <div class="sample-item"><strong>CVE:</strong> CVE-2011-2523 | <strong>CVSS Score:</strong> 10.0 | <strong>Severity:</strong> CRITICAL</div>
+        <div class="sample-item"><strong>Description:</strong> vsftpd version 2.3.4 contains a deliberately planted backdoor. When a username containing a smiley face string ":)" is sent, the server opens a command shell on port 6200. No password is required.</div>
+        <div class="sample-item"><strong>Evidence:</strong> [Screenshot of Metasploit session output showing root shell — see Appendix A]</div>
+        <div class="sample-item"><strong>Business Impact:</strong> Full root access to the server. An attacker could exfiltrate all data, install ransomware, pivot to other systems, or destroy the host entirely.</div>
+        <div class="sample-item"><strong>Remediation:</strong> Immediately upgrade vsftpd to version 3.0.5 or later. Verify package integrity before deployment. Block port 6200 at the firewall as a secondary control.</div>
+      </div>
+    </div>
+
+    <div class="submit-wrap">
+      <div class="submit-wrap-label">📎 SUBMIT YOUR PENTEST REPORT LINK — REQUIRED BEFORE MARKING COMPLETE</div>
+      <div class="submit-row">
+        <input class="submit-input" id="link4" type="url" placeholder="Paste your Google Doc, GitHub, or Drive link here..." oninput="toggleMarkBtn(4)"/>
+      </div>
+      <div class="saved-link-box" id="saved-link4" style="display:none"></div>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <button class="mark-btn" id="mark4" onclick="markPhaseComplete(4)" disabled>✓ &nbsp; Mark Reporting Complete</button>
+      <span class="done-badge" id="done4" style="display:none">✓ Phase 5 Saved!</span>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <button class="btn-outline" onclick="showPhase(3)">← Persistence</button>
+      <button class="btn-green" onclick="showPhase(5)">🏁 &nbsp; Go to Capstone</button>
+    </div>
+  </div>
+
+  <!-- ══ CAPSTONE ══ -->
+  <div class="phase-panel" id="panel5">
+    <div class="capstone-card">
+      <span class="capstone-icon">🏁</span>
+      <div class="capstone-title">CAPSTONE CHALLENGE</div>
+      <p class="capstone-desc">All 5 phases. One target. One report. Pick a TryHackMe room, work through it end-to-end while documenting every action across all 5 phases, then deliver a professional pentest report as your final submission.</p>
+      <a href="https://app.hackthebox.com/starting-point" target="_blank" class="btn-green">▶ &nbsp; Launch HTB Starting Point</a>
+      <a href="https://tryhackme.com" target="_blank" class="btn-outline">▶ &nbsp; Launch TryHackMe</a>
+      <a href="MCCoE_5Phases_Pentesting_Student_Guide.docx" download class="btn-outline">⬇ &nbsp; Download Lab Guide</a>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Recommended Rooms by Difficulty</div>
+      <div class="room-grid">
+        <div class="room-card">
+          <div class="room-name">Basic Pentesting</div>
+          <span class="room-diff diff-beginner">BEGINNER</span>
+          <div class="room-phases">Phases: 1, 2, 3, 5</div>
+          <div class="room-note">Best first full pentest experience. Start here if you've never done this before.</div>
+        </div>
+        <div class="room-card">
+          <div class="room-name">RootMe</div>
+          <span class="room-diff diff-beginner">BEGINNER</span>
+          <div class="room-phases">Phases: 2, 3, 4</div>
+          <div class="room-note">File upload exploitation and Linux privilege escalation. Clean and well-guided.</div>
+        </div>
+        <div class="room-card">
+          <div class="room-name">Mr. Robot CTF</div>
+          <span class="room-diff diff-intermediate">INTERMEDIATE</span>
+          <div class="room-phases">Phases: 1, 2, 3, 4, 5</div>
+          <div class="room-note">All 5 phases. Excellent recon phase. Themed after the TV show — iconic room.</div>
+        </div>
+        <div class="room-card">
+          <div class="room-name">Vulnversity</div>
+          <span class="room-diff diff-beginner">BEGINNER–INT</span>
+          <div class="room-phases">Phases: 2, 3, 4</div>
+          <div class="room-note">Web exploitation and Linux privilege escalation. Great Metasploit practice.</div>
+        </div>
+        <div class="room-card">
+          <div class="room-name">Blue (EternalBlue)</div>
+          <span class="room-diff diff-beginner">BEGINNER</span>
+          <div class="room-phases">Phases: 2, 3, 4</div>
+          <div class="room-note">Experience the exact MS17-010 exploit used in the WannaCry ransomware attack.</div>
+        </div>
+        <div class="room-card">
+          <div class="room-name">Pickle Rick</div>
+          <span class="room-diff diff-beginner">BEGINNER</span>
+          <div class="room-phases">Phases: 1, 2, 3</div>
+          <div class="room-note">Web enumeration + command injection. Short, fun, and teaches directory busting. Great for practicing Exercise 2b skills.</div>
+        </div>
+        <div class="room-card">
+          <div class="room-name">OWASP Juice Shop</div>
+          <span class="room-diff diff-intermediate">INTERMEDIATE</span>
+          <div class="room-phases">Phases: 2, 3, 5</div>
+          <div class="room-note">Real Node.js web app with 100+ vulnerabilities. SQL injection, XSS, broken auth — closest thing to attacking a real web application.</div>
+        </div>
+        <div class="room-card">
+          <div class="room-name">Anthem</div>
+          <span class="room-diff diff-beginner">BEGINNER</span>
+          <div class="room-phases">Phases: 1, 2, 3</div>
+          <div class="room-note">Windows-based. OSINT recon reveals credentials, then RDP access. Great for practicing the full Phase 1 → Phase 3 flow on a Windows target.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">HackTheBox — Recommended Machines</div>
+      <div style="margin-bottom:12px;font-size:13px;color:var(--muted)">Create a free account at <a href="https://hackthebox.com" target="_blank" style="color:var(--green);">hackthebox.com</a> · Starting Point machines are fully guided and free</div>
+      <div class="room-grid">
+        <div class="room-card" style="cursor:pointer" onclick="window.open('https://app.hackthebox.com/starting-point','_blank')">
+          <div class="room-name"><a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:#fff;text-decoration:none;">Meow / Fawn / Dancing ↗</a></div>
+          <span class="room-diff diff-beginner">STARTING POINT</span>
+          <div class="room-phases">Phases: 1, 2</div>
+          <div class="room-note">Tier 0 guided machines. Teaches Telnet, FTP, and SMB scanning from scratch — perfect first HTB experience.</div>
+        </div>
+        <div class="room-card" style="cursor:pointer" onclick="window.open('https://app.hackthebox.com/starting-point','_blank')">
+          <div class="room-name"><a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:#fff;text-decoration:none;">Appointment / Sequel ↗</a></div>
+          <span class="room-diff diff-beginner">STARTING POINT</span>
+          <div class="room-phases">Phases: 2, 3</div>
+          <div class="room-note">Tier 1 machines covering SQL injection exploitation — no Metasploit needed. Great web app intro.</div>
+        </div>
+        <div class="room-card" style="cursor:pointer" onclick="window.open('https://app.hackthebox.com/machines/Blue','_blank')">
+          <div class="room-name"><a href="https://app.hackthebox.com/machines/Blue" target="_blank" style="color:#fff;text-decoration:none;">Blue (MS17-010) ↗</a></div>
+          <span class="room-diff diff-beginner">BEGINNER</span>
+          <div class="room-phases">Phases: 2, 3, 4, 5</div>
+          <div class="room-note">EternalBlue exploit. Nmap scan → Metasploit exploit → hashdump → full report. All 5 phases in one machine.</div>
+        </div>
+        <div class="room-card" style="cursor:pointer" onclick="window.open('https://app.hackthebox.com/machines/Legacy','_blank')">
+          <div class="room-name"><a href="https://app.hackthebox.com/machines/Legacy" target="_blank" style="color:#fff;text-decoration:none;">Legacy ↗</a></div>
+          <span class="room-diff diff-beginner">BEGINNER</span>
+          <div class="room-phases">Phases: 1, 2, 3, 5</div>
+          <div class="room-note">Classic Windows SMB vulnerabilities (MS08-067). Excellent for capstone — clear attack path and report structure.</div>
+        </div>
+        <div class="room-card" style="cursor:pointer" onclick="window.open('https://app.hackthebox.com/machines/Lame','_blank')">
+          <div class="room-name"><a href="https://app.hackthebox.com/machines/Lame" target="_blank" style="color:#fff;text-decoration:none;">Lame ↗</a></div>
+          <span class="room-diff diff-beginner">BEGINNER</span>
+          <div class="room-phases">Phases: 2, 3, 4, 5</div>
+          <div class="room-note">Samba 3.0.20 exploit (CVE-2007-2447). Instant root via Metasploit. Great for practicing post-exploitation documentation.</div>
+        </div>
+        <div class="room-card" style="cursor:pointer" onclick="window.open('https://app.hackthebox.com/starting-point','_blank')">
+          <div class="room-name"><a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:#fff;text-decoration:none;">Three ↗</a></div>
+          <span class="room-diff diff-beginner">STARTING POINT</span>
+          <div class="room-phases">Phases: 1, 2, 3</div>
+          <div class="room-note">Tier 1 — AWS S3 bucket misconfiguration leads to a web shell upload. Real-world cloud attack vector used in actual breaches.</div>
+        </div>
+        <div class="room-card" style="cursor:pointer" onclick="window.open('https://app.hackthebox.com/starting-point','_blank')">
+          <div class="room-name"><a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:#fff;text-decoration:none;">Crocodile ↗</a></div>
+          <span class="room-diff diff-beginner">STARTING POINT</span>
+          <div class="room-phases">Phases: 2, 3</div>
+          <div class="room-note">Tier 1 — FTP anonymous login leaks credentials; those same credentials unlock a web admin panel. Teaches credential reuse attacks.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Capstone Deliverables</div>
+      <div class="deliv-box">
+        <div class="deliv-label">📋 WHAT TO SUBMIT</div>
+        <div class="deliv-item">Phase-by-Phase Log — running document of every action taken, tool used, and output observed</div>
+        <div class="deliv-item">Professional Pentest Report — full report following Exercise 5 structure, minimum 3 pages</div>
+        <div class="deliv-item">Risk Summary — overall risk rating for the target machine with written justification</div>
+        <div class="deliv-item">Remediation Roadmap — numbered list of recommended fixes in priority order</div>
+      </div>
+      <div class="rubric-card" style="margin-top:16px">
+        <div class="rubric-hdr"><span>COMPONENT</span><span>DESCRIPTION</span><span>REQUIREMENT</span><span>POINTS</span></div>
+        <div class="rubric-row"><span>Phase Documentation</span><span>All 5 phases documented with specific actions</span><span>All 5 required</span><span class="points-badge">30</span></div>
+        <div class="rubric-row"><span>Executive Summary</span><span>Clear, non-technical, 1 page max</span><span>Leadership-readable</span><span class="points-badge">15</span></div>
+        <div class="rubric-row"><span>Findings Table</span><span>All vulnerabilities rated with CVSS scores</span><span>Complete table</span><span class="points-badge">15</span></div>
+        <div class="rubric-row"><span>Detailed Finding</span><span>With proof, impact, and remediation</span><span>Highest severity</span><span class="points-badge">25</span></div>
+        <div class="rubric-row"><span>Recommendations</span><span>Prioritized and actionable</span><span>Ordered by urgency</span><span class="points-badge">15</span></div>
+        <div class="total-row"><span>TOTAL</span><span></span><span></span><span>100 pts</span></div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Free Practice Platforms</div>
+      <div class="res-grid">
+        <div class="res-card"><div class="res-name">TryHackMe</div><div class="res-desc">Guided beginner to intermediate rooms. Best place to start — fully authorized targets.</div></div>
+        <div class="res-card" style="cursor:pointer" onclick="window.open('https://app.hackthebox.com/starting-point','_blank')"><div class="res-name"><a href="https://app.hackthebox.com/starting-point" target="_blank" style="color:#fff;text-decoration:none;">Hack The Box ↗</a></div><div class="res-desc">Starting Point machines are free and fully guided. Click to open HTB directly.</div></div>
+        <div class="res-card"><div class="res-name">PicoCTF</div><div class="res-desc">Beginner CTF challenges covering cryptography, forensics, and web exploitation.</div></div>
+        <div class="res-card"><div class="res-name">PortSwigger Web Academy</div><div class="res-desc">The best free web application security lab available — SQL injection, XSS, and more.</div></div>
+        <div class="res-card"><div class="res-name">DVWA</div><div class="res-desc">Damn Vulnerable Web App — install locally for safe SQL injection and XSS practice.</div></div>
+        <div class="res-card"><div class="res-name">Metasploitable2</div><div class="res-desc">Intentionally vulnerable Linux VM. Run in VirtualBox on host-only network only.</div></div>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title">Legal and Ethical Boundaries</div>
+      <div class="legal-box">
+        <div class="legal-item">You may NEVER scan, probe, or exploit any system without explicit written permission</div>
+        <div class="legal-item">You may NEVER use these tools on school, workplace, or public networks without authorization</div>
+        <div class="legal-item">ALWAYS use TryHackMe authorized machines or your own isolated VirtualBox VM for all practice</div>
+        <div class="legal-item">ALWAYS document your authorization before beginning any real-world penetration test</div>
+        <div class="legal-item">Report every vulnerability you find — withholding findings is unethical and potentially illegal</div>
+        <div class="legal-item">Responsible disclosure: if you find a real vulnerability, report it to the organization privately — not on social media</div>
+      </div>
+    </div>
+
+    <div class="submit-wrap">
+      <div class="submit-wrap-label">📎 SUBMIT YOUR CAPSTONE REPORT LINK — REQUIRED BEFORE MARKING COMPLETE</div>
+      <div class="submit-row">
+        <input class="submit-input" id="link5" type="url" placeholder="Paste your Google Doc, GitHub, or Drive link here..." oninput="toggleMarkBtn(5)"/>
+      </div>
+      <div class="saved-link-box" id="saved-link5" style="display:none"></div>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <button class="mark-btn" id="mark5" onclick="markPhaseComplete(5)" disabled>🏁 &nbsp; Mark Capstone Complete</button>
+      <span class="done-badge" id="done5" style="display:none">✓ Capstone Complete — Lab Finished!</span>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <button class="btn-outline" onclick="showPhase(4)">← Reporting</button>
+      <a href="MCCoE_Hub.html" class="btn-green">🏠 &nbsp; Back to Hub</a>
+    </div>
+  </div>
+
+</div><!-- /content-area -->
+
+<footer>
+  <p>Missouri Cybersecurity Center of Excellence &nbsp;|&nbsp; <strong>Pillar 4 — Ethical Hacking Lab</strong> &nbsp;|&nbsp; Mr. King &nbsp;·&nbsp; cking@mccoe.org</p>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+// Firebase
+firebase.initializeApp({
+  apiKey: "AIzaSyBpK8uLCD0_m83a1xFiOQVaS1PKWSGcEc8",
+  authDomain: "mccoe-platform-a9710.firebaseapp.com",
+  databaseURL: "https://mccoe-platform-a9710-default-rtdb.firebaseio.com",
+  projectId: "mccoe-platform-a9710",
+  storageBucket: "mccoe-platform-a9710.firebasestorage.app",
+  messagingSenderId: "435411134511",
+  appId: "1:435411134511:web:face8dfcc670df20f1beda"
+});
+const _db = firebase.database();
+
+// Student identity from URL params (passed by student platform)
+const _params      = new URLSearchParams(window.location.search);
+const _studentName = _params.get('name') || '';
+const _studentId   = _params.get('id')   || '';
+const _fbKey       = _studentId ? _studentId.replace(/[.#$[\]]/g, '_') : null;
+
+const panels    = document.querySelectorAll('.phase-panel');
+const btns      = document.querySelectorAll('.phase-btn');
+const completed = new Set();
+
+// Show student identity banner when launched from platform
+if (_studentName) {
+  const banner = document.getElementById('student-banner');
+  if (banner) {
+    banner.textContent = '▶ ' + _studentName + '  —  Progress synced to Admin Tracker';
+    banner.style.display = 'block';
+  }
+}
+
+function selectSetup(method) {
+  const dockerCard = document.getElementById('opt-docker-card');
+  const vmCard     = document.getElementById('opt-vm-card');
+  const dockerSec  = document.getElementById('setup-docker');
+  const vmSec      = document.getElementById('setup-vm');
+  const stopCard   = document.getElementById('stop-card');
+  const startBtn   = document.getElementById('start-btn-wrap');
+
+  if (method === 'docker') {
+    dockerCard.style.borderColor  = 'var(--cyan)';
+    dockerCard.style.background   = 'rgba(0,245,255,0.10)';
+    vmCard.style.borderColor      = 'rgba(0,255,65,0.3)';
+    vmCard.style.background       = 'rgba(0,255,65,0.03)';
+    dockerSec.style.display = 'block';
+    vmSec.style.display     = 'none';
+  } else {
+    vmCard.style.borderColor      = 'var(--green)';
+    vmCard.style.background       = 'rgba(0,255,65,0.10)';
+    dockerCard.style.borderColor  = 'rgba(0,245,255,0.3)';
+    dockerCard.style.background   = 'rgba(0,245,255,0.03)';
+    dockerSec.style.display = 'none';
+    vmSec.style.display     = 'block';
+  }
+  stopCard.style.display  = 'block';
+  startBtn.style.display  = 'block';
+}
+
+function showSetup() {
+  document.getElementById('panel-setup').style.display = 'block';
+  panels.forEach(p => p.classList.remove('active'));
+  btns.forEach(b => b.classList.remove('active'));
+  document.getElementById('setup-nav-btn').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showPhase(idx) {
+  document.getElementById('panel-setup').style.display = 'none';
+  panels.forEach((p, i) => p.classList.toggle('active', i === idx));
+  btns.forEach((b, i)   => b.classList.toggle('active', i === idx));
+  updateProgressUI(idx);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgressUI(currentIdx) {
+  for (let i = 0; i < 6; i++) {
+    const circle = document.getElementById('pc' + i);
+    const label  = document.getElementById('pl' + i);
+    if (!circle || !label) continue;
+    const isDone   = completed.has(i);
+    const isActive = (i === currentIdx);
+    circle.classList.toggle('done',   isDone && !isActive);
+    circle.classList.toggle('active', isActive);
+    label.classList.toggle('active',  isActive);
+    // Checkmark for completed circles, number otherwise
+    if (isDone && !isActive) circle.textContent = '✓';
+    else circle.textContent = i < 5 ? String(i + 1) : '🏁';
+    // Connecting lines glow green when that phase is done
+    const line = document.getElementById('pline' + i);
+    if (line) line.classList.toggle('done', completed.has(i));
+  }
+}
+
+function toggleMarkBtn(idx) {
+  const input = document.getElementById('link' + idx);
+  const btn   = document.getElementById('mark' + idx);
+  if (!input || !btn) return;
+  btn.disabled = input.value.trim().length < 10;
+}
+
+function markPhaseComplete(idx) {
+  const input = document.getElementById('link' + idx);
+  const link  = input ? input.value.trim() : '';
+  if (link.length < 10) return;
+  completed.add(idx);
+  const btn  = document.getElementById('mark' + idx);
+  const done = document.getElementById('done' + idx);
+  if (btn)   { btn.disabled = true; btn.textContent = '✓  Saved!'; }
+  if (done)  done.style.display = 'inline-block';
+  if (input) { input.disabled = true; }
+  showSavedLink(idx, link);
+  const currentActive = Array.from(panels).findIndex(p => p.classList.contains('active'));
+  updateProgressUI(currentActive);
+  savePentestProgress();
+}
+
+function showSavedLink(idx, link) {
+  const box = document.getElementById('saved-link' + idx);
+  if (!box) return;
+  box.style.display = 'block';
+  box.innerHTML = '✓ Submitted: <a href="' + link + '" target="_blank">' + link + '</a>';
+}
+
+function savePentestProgress() {
+  if (!_fbKey) return;
+  const data = { name: _studentName, id: _studentId, lastActivity: new Date().toISOString() };
+  for (let i = 0; i < 6; i++) {
+    data['phase' + i] = completed.has(i);
+    const input = document.getElementById('link' + i);
+    data['phase' + i + '_link'] = (input && input.value.trim()) ? input.value.trim() : '';
+  }
+  data.phasesCompleted = completed.size;
+  _db.ref('mccoe_pentest/' + _fbKey).set(data);
+}
+
+function loadProgress() {
+  if (!_fbKey) { updateProgressUI(0); return; }
+  _db.ref('mccoe_pentest/' + _fbKey).once('value', snap => {
+    const d = snap.val();
+    if (d) {
+      for (let i = 0; i < 6; i++) {
+        const savedLink = d['phase' + i + '_link'] || '';
+        const input = document.getElementById('link' + i);
+        const btn   = document.getElementById('mark' + i);
+        const done  = document.getElementById('done' + i);
+        if (savedLink && input) {
+          input.value = savedLink;
+          input.disabled = true;
+        }
+        if (d['phase' + i]) {
+          completed.add(i);
+          if (btn)  { btn.disabled = true; btn.textContent = '✓  Saved!'; }
+          if (done) done.style.display = 'inline-block';
+          if (savedLink) showSavedLink(i, savedLink);
+        } else if (savedLink) {
+          toggleMarkBtn(i);
+        }
+      }
+    }
+    updateProgressUI(0);
+  });
+}
+
+loadProgress();
+</script>
+</body>
+</html>
