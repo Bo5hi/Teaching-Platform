@@ -32,7 +32,7 @@ body { font-family: 'Rajdhani', 'Segoe UI', sans-serif; font-size: 15px; font-we
   width: 420px; max-width: 95vw; text-align: center;
   box-shadow: 0 20px 60px rgba(0,0,0,0.4);
 }
-.login-logo { font-size: 42px; margin-bottom: 6px; }
+.login-logo { width: 72px; height: 72px; object-fit: contain; display: block; margin: 0 auto 10px; }
 .login-org { font-size: 11px; letter-spacing: 2px; color: #888; text-transform: uppercase; margin-bottom: 24px; }
 .login-title { font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 28px; }
 .login-box input, .login-box select {
@@ -349,12 +349,12 @@ body::after {
   position:relative; z-index:1;
 }
 .login-logo {
-  filter: drop-shadow(0 0 10px var(--cyan));
+  filter: drop-shadow(0 0 8px rgba(238,34,7,0.5));
   animation: logoPulse 3s ease-in-out infinite;
 }
 @keyframes logoPulse {
-  0%,100%{ filter:drop-shadow(0 0 8px var(--cyan)); }
-  50%{ filter:drop-shadow(0 0 22px var(--cyan)) drop-shadow(0 0 44px rgba(0,245,255,0.35)); }
+  0%,100%{ filter:drop-shadow(0 0 6px rgba(238,34,7,0.45)); }
+  50%{ filter:drop-shadow(0 0 16px rgba(238,34,7,0.6)) drop-shadow(0 0 32px rgba(238,34,7,0.25)); }
 }
 .login-org {
   color: var(--cyan) !important;
@@ -575,7 +575,7 @@ hr { border-color: rgba(0,245,255,0.12) !important; }
 <!-- ══ LOGIN SCREEN ══ -->
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">🛡️</div>
+    <img class="login-logo" src="assets/mccoe-logo.png" alt="MCCoE logo">
     <div class="login-org">Missouri Cybersecurity Center of Excellence</div>
     <div class="login-title">Student Learning Portal</div>
 

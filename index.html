@@ -83,14 +83,10 @@ header {
 }
 
 .logo-icon {
-  width: 40px; height: 40px;
-  border: 2px solid var(--red);
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-  box-shadow: var(--glow-red);
+  width: 44px; height: 44px;
   flex-shrink: 0;
 }
+.logo-icon img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
 .logo-text {
   font-family: 'Orbitron', monospace;
@@ -465,7 +461,7 @@ footer strong {
 <!-- ══════════ HEADER ══════════ -->
 <header>
   <div class="logo-block">
-    <div class="logo-icon">🛡️</div>
+    <div class="logo-icon"><img src="assets/mccoe-logo.png" alt="MCCoE logo"></div>
     <div>
       <div class="logo-text">MCCoE</div>
       <div class="logo-sub">Missouri Cybersecurity Center of Excellence</div>
