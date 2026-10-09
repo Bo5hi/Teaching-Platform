@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northgate Interviews · MCCoE</title>
+<link rel="icon" type="image/png" href="assets/mccoe-logo.png">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="interviews/evidence-map.js"></script>
+<script src="interviews/int-01.js"></script>
+<script src="interviews/int-02.js"></script>
+<script src="interviews/int-03.js"></script>
+<script src="interviews/int-04.js"></script>
+<script src="interviews/int-05.js"></script>
+<style>
+:root {
+  --red: #C8102E;
+  --red-dark: #8E0C22;
+  --red-tint: #FBE9EC;
+  --ink: #16191D;
+  --ink-soft: #3B4149;
+  --muted: #6B7280;
+  --line: #E4E7EB;
+  --bg: #FFFFFF;
+  --bg-soft: #F6F7F9;
+  --bg-soft-2: #EEF1F4;
+  --good: #1B873F;
+  --good-tint: #E6F4EA;
+  --bad: #C8102E;
+  --bad-tint: #FBE9EC;
+  --gold: #B7791F;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(16,25,29,.08), 0 6px 24px rgba(16,25,29,.06);
+  --shadow-lg: 0 8px 40px rgba(16,25,29,.14);
+  --maxw: 1120px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.65;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--red-dark); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+.btn:hover { text-decoration: none; }
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--red); color: #fff; box-shadow: var(--shadow); }
+.btn-primary:hover { background: var(--red-dark); color: #fff; }
+.btn-ghost { background: #fff; color: var(--ink); border-color: var(--line); }
+.btn-ghost:hover { background: var(--bg-soft); color: var(--ink); }
+.muted { color: var(--muted); }
+.btn-sm { padding: 7px 12px; font-size: 14px; }
+.crumbs { font-size: 14px; color: var(--muted); margin-bottom: 14px; }
+.crumbs a { color: var(--muted); font-weight: 600; }
+.week-hero .wh-top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.week-hero .big-num {
+  width: 58px; height: 58px; border-radius: 14px; background: var(--red); color: #fff;
+  display: grid; place-items: center; font-weight: 800; font-size: 24px; flex: 0 0 auto;
+}
+.week-hero h1 { font-size: clamp(26px, 4vw, 38px); margin: 6px 0 8px; letter-spacing: -.4px; }
+.week-hero .overview { font-size: 18px; color: var(--ink-soft); max-width: 780px; margin: 18px 0 0; }
+.callout h3 { margin: 0 0 6px; font-size: 19px; }
+.callout .goal { color: var(--ink-soft); margin: 0 0 12px; }
+.callout ol, .callout ul { margin: 8px 0 0; padding-left: 22px; }
+.callout li { margin-bottom: 6px; }
+body { font-size: 16px; }
+.site-top { background:#050510; color:#fff; padding:10px 24px; display:flex; align-items:center; gap:12px; }
+.site-top img { width:34px; height:34px; object-fit:contain; }
+.site-top a { color:#c8d8e8; text-decoration:none; font-size:14px; }
+.site-top .brand { font-weight:800; letter-spacing:2px; margin-right:auto; color:#fff; }
+.gate { max-width:520px; margin:80px auto; padding:0 24px; text-align:center; }
+/* ---------- interview simulator (Week 9) ---------- */
+/* hub: the list of people */
+.iv-wrap { padding-block: 28px 70px; }
+.iv-cards { display: grid; gap: 12px; margin-top: 20px; }
+.iv-card { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; background: #fff; box-shadow: var(--shadow); }
+.iv-card.is-done { border-left: 5px solid var(--good); }
+.iv-card-main { flex: 1; min-width: 220px; }
+.iv-avatar { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: var(--red-tint); color: var(--red-dark); font-weight: 800; flex: none; }
+.iv-name { font-size: 17px; }
+.iv-meta { font-size: 13.5px; }
+.iv-status { font-size: 14px; font-weight: 600; color: var(--ink-soft); margin-top: 2px; }
+
+/* session: "interview mode" fills the whole window. The conversation scrolls on its own; the four
+   choices sit in a fixed dock at the bottom so they are always fully visible. */
+body.iv-mode { overflow: hidden; }
+body.iv-mode .site-header, body.iv-mode .preview-banner, body.iv-mode .site-footer { display: none; }
+.iv-app { display: flex; flex-direction: column; height: 100vh; padding: 0; background: #fff; }
+.iv-top { display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--line); flex: none; }
+.iv-backlink { font-size: 22px; line-height: 1; text-decoration: none; color: var(--ink-soft); padding: 4px 6px; border-radius: 6px; }
+.iv-backlink:hover { background: var(--bg-soft); text-decoration: none; }
+.iv-top-main { flex: 1; min-width: 0; }
+.iv-top-main .iv-meta { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.iv-top-time { min-width: 170px; }
+.iv-time { font-size: 15px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+.iv-time.low { color: var(--red); }
+.iv-bar { height: 6px; width: 180px; max-width: 100%; background: var(--bg-soft-2); border-radius: 99px; overflow: hidden; margin-top: 4px; }
+.iv-bar-fill { height: 100%; width: 0; background: #1F4E9B; transition: width .3s; }
+.iv-bar-fill.low { background: var(--red); }
+.iv-head-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.iv-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 300px; }
+.iv-main { display: flex; flex-direction: column; min-height: 0; }
+.iv-chat { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 18px; background: var(--bg-soft); }
+.iv-log { display: grid; gap: 10px; max-width: 980px; margin: 0 auto; }
+.iv-msg { max-width: 80%; border-radius: 12px; padding: 10px 14px; box-shadow: 0 1px 2px rgba(16,25,29,.06); }
+.iv-msg.them { background: #fff; justify-self: start; border-top-left-radius: 4px; }
+.iv-msg.you { background: #E3ECFA; justify-self: end; border-top-right-radius: 4px; }
+.iv-who { font-size: 11.5px; font-weight: 800; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .4px; }
+.iv-text { white-space: pre-wrap; font-size: 16.5px; }
+.iv-evlinks { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.iv-ev { font-size: 14px; font-weight: 700; }
+.iv-dots { display: inline-flex; gap: 4px; padding: 6px 0 2px; }
+.iv-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: iv-blink 1s infinite ease-in-out; }
+.iv-dots span:nth-child(2) { animation-delay: .15s; }
+.iv-dots span:nth-child(3) { animation-delay: .3s; }
+@keyframes iv-blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+.iv-dock { flex: none; border-top: 1px solid var(--line); background: #fff; padding: 10px 18px 14px; box-shadow: 0 -4px 14px rgba(16,25,29,.05); }
+.iv-dock-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.iv-dock-head b { font-size: 15px; }
+.iv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.iv-q { display: flex; gap: 10px; align-items: flex-start; text-align: left; font: inherit; font-size: 15px; line-height: 1.4; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); cursor: pointer; }
+.iv-q:hover:not(:disabled), .iv-q:focus-visible { border-color: #1F4E9B; background: #F4F8FE; outline: none; }
+.iv-q:disabled { opacity: .5; cursor: wait; }
+.iv-q.is-asked { opacity: .55; }
+.iv-qn { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--bg-soft-2); color: var(--ink-soft); font-size: 13px; font-weight: 800; margin-top: 1px; }
+.iv-qt { flex: 1; }
+.iv-asked { flex: none; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+.iv-chips { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 8px; margin-bottom: 2px; }
+.iv-chip { position: relative; flex: none; white-space: nowrap; font: inherit; font-size: 13px; font-weight: 600; padding: 5px 10px; border: 1px solid var(--line); border-radius: 99px; background: #fff; color: var(--ink-soft); cursor: pointer; }
+.iv-chip:hover:not(:disabled) { border-color: #1F4E9B; }
+.iv-chip.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+.iv-chip.is-done { opacity: .5; cursor: default; text-decoration: line-through; }
+.iv-chip-n { margin-left: 6px; font-size: 11.5px; opacity: .7; }
+.iv-ready { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.iv-ready h3 { margin: 0 0 4px; }
+.iv-ready p { margin: 0 0 4px; max-width: 760px; }
+.iv-side { border-left: 1px solid var(--line); overflow-y: auto; padding: 14px 16px; background: #fff; }
+.iv-side-block { margin-bottom: 18px; }
+.iv-side-block h4 { margin: 0 0 8px; }
+.iv-debrief-card h3 { margin: 0 0 6px; }
+.iv-debrief-card h4 { margin: 14px 0 6px; }
+.iv-debrief-card ul { padding-left: 20px; margin: 0; }
+.iv-quality li.good b { color: var(--good); }
+.iv-quality li.weak b { color: var(--red-dark); }
+.iv-next { background: var(--bg-soft); border-radius: 8px; padding: 10px 12px; font-weight: 600; margin-top: 12px; }
+.iv-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+[dir="rtl"] .iv-q { text-align: right; }
+[dir="rtl"] .iv-side { border-left: 0; border-right: 1px solid var(--line); }
+@media (max-width: 1100px) { .iv-body { grid-template-columns: minmax(0, 1fr) 240px; } }
+@media (max-width: 860px) {
+  .iv-body { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; }
+  .iv-side { border-left: 0; border-top: 1px solid var(--line); max-height: 28vh; }
+  .iv-grid { grid-template-columns: 1fr; }
+  .iv-msg { max-width: 94%; }
+  .iv-top { flex-wrap: wrap; }
+  .iv-top-time { order: 5; width: 100%; }
+  .iv-bar { width: 100%; }
+}
+
+
+</style>
+</head>
+<body data-page="interview">
+<div id="root"></div>
+<script>
+/* Northgate Supply Co. interview simulator (Week 9 capstone).
+   Ported from the MCCoE 12-week curriculum; students sign in through the Hub and each
+   interview is saved to Firebase under mccoe_interviews/<student id>. */
+(function () {
+  "use strict";
+  firebase.initializeApp({
+    apiKey: "AIzaSyCHOnjuN7xIR9ChuCI2lRBSufauLW8yH1c",
+    authDomain: "mccoe-platform-b0e80.firebaseapp.com",
+    databaseURL: "https://mccoe-platform-b0e80-default-rtdb.firebaseio.com",
+    projectId: "mccoe-platform-b0e80"
+  });
+  var db = firebase.database();
+
+  var EN_UI = {
+    brand_sub: "Cybersecurity Program",
+    nav_home: "Home",
+    nav_weeks: "12 Weeks",
+    nav_phases: "Phases",
+    nav_glossary: "Glossary",
+    lang_label: "Language",
+    hero_start: "Start Week 1  →",
+    hero_all: "See all 12 weeks",
+    progress_title: "Your progress",
+    progress_count: "{done} of {total} weeks complete",
+    reset: "Reset progress",
+    reset_confirm: "Reset all saved progress on this device?",
+    phases_eyebrow: "How the program is built",
+    phases_title: "Three phases, one path",
+    phases_desc: "Each phase builds on the last. You attack in a sanctioned lab, defend against attacks, and write about both the way a real client would receive it.",
+    phase_word: "Phase",
+    weeks_eyebrow: "The student journey",
+    weeks_title: "12 weeks, module by module",
+    weeks_desc: "Click any week to open its lessons, lab, deliverable, and knowledge check.",
+    done_label: "✓ Done",
+    toc_title: "On this page",
+    sec_objectives: "Objectives",
+    objectives_sub: "By the end of this week, you can:",
+    sec_topics: "What it covers",
+    sec_lessons: "Lessons",
+    keyterms: "Key terms",
+    sec_resources: "Readings & videos",
+    resources_sub: "Required for this week. Each link opens the exact reading or video, and the note under it tells you what to read or watch.",
+    readings: "Readings",
+    videos: "Videos",
+    suggested: "suggested",
+    sec_lab: "Lab",
+    sec_deliverable: "What you turn in",
+    must_include: "Must include:",
+    format_label: "Format:",
+    sec_quiz: "Knowledge check",
+    quiz_sub: "You get {n} questions picked at random from this week's lessons. Score {p}% or higher to pass and unlock the next week. Your result is saved on this device only.",
+    quiz_fail_title: "Not yet. You need {p}% to pass.",
+    quiz_fail_hint: "Correct answers are shown after you pass. Review these lessons, then try a new set of questions:",
+    quiz_review_item: "{title} ({m} missed)",
+    quiz_new_set: "Try a new set of questions",
+    quiz_best: "Best score: {p}%",
+    quiz_status_passed: "✓ Passed. The next week is unlocked.",
+    mat_read: "I've read this",
+    mat_watched: "I've watched this",
+    mat_open_first: "Open the link first",
+    mat_checked_on: "Checked {date}",
+    mat_progress: "{done} of {total} readings and videos checked off",
+    mat_all_done: "✓ All readings and videos checked off",
+    quiz_needs_materials_title: "🔒 Finish this week's readings and videos first",
+    quiz_needs_materials: "Open each reading and video, then check it off. The knowledge check opens when all {total} are checked. ({done} of {total} done.)",
+    quiz_needs_materials_btn: "Go to readings & videos ↑",
+    locked_label: "🔒 Locked",
+    locked_title: "This week is locked",
+    locked_msg: "Pass the Week {n} knowledge check with {p}% or higher to unlock this week.",
+    locked_btn: "Go to the Week {n} knowledge check →",
+    staff_banner: "Staff view ({role}): every week is unlocked for you.",
+    nav_admin: "Admin",
+    sign_in: "Sign in",
+    sign_out: "Sign out",
+    hero_signin: "Sign in to start  →",
+    auth_title_in: "Sign in",
+    auth_title_up: "Create your student account",
+    auth_title_setup: "Set up the first admin account",
+    auth_setup_sub: "No admin account exists yet. The account you create here will be the site administrator.",
+    auth_name: "Full name",
+    auth_email: "Email",
+    auth_password: "Password (at least 8 characters)",
+    auth_code: "Class code (from your instructor)",
+    auth_submit_in: "Sign in",
+    auth_submit_up: "Create account",
+    auth_submit_setup: "Create admin account",
+    auth_to_up: "New student? Create an account",
+    auth_to_in: "Already have an account? Sign in",
+    demo_notice: "Demo mode: accounts and progress are saved only in this browser on this computer. Connect a real backend before using this with students.",
+    quiz_qof: "Question {n} of {total}",
+    quiz_check: "Check my answers",
+    quiz_retry: "Try again",
+    quiz_answer_all: "Please answer all {total} questions first. ({n} left.)",
+    quiz_correct: "Correct",
+    quiz_notquite: "Not quite",
+    quiz_score: "You scored {c}/{t} ({p}%)",
+    quiz_passed: " — passed!",
+    quiz_review: " — review and try again.",
+    cap_proven: "Capability proven:",
+    crumb_home: "Home",
+    crumb_weeks: "12 Weeks",
+    week_word: "Week",
+    prev: "← Previous",
+    next: "Next →",
+    pager_start: "Start of program",
+    pager_end: "You reached the end 🎉",
+    footer_note: "100% online · works on any device",
+    glossary_title: "Glossary",
+    glossary_sub: "Every key term from the 12 weeks, in plain language, sorted A–Z.",
+    glossary_week_sub: "Words from this week, in plain language.",
+    not_found: "Week not found",
+    back_all: "← Back to all weeks",
+    sec_practice: "Daily Practice Tests",
+    practice_sub: "One practice test for each weekday. Take one per day, check your answers, and read the explanations. Your scores are saved on this device.",
+    open_test: "Open test",
+    hide_test: "Hide test",
+    test_qcount: "{n} questions",
+    best_score: "Best score: {p}%",
+    not_taken: "Not attempted yet",
+    tests_done: "{done} of {total} tests done",
+    iv_title: "Fieldwork Interviews",
+    iv_sub: "Interview five Northgate Supply Co. staff members. You choose each question. Every question uses some of the person's time, so choose carefully.",
+    iv_how_title: "How it works",
+    iv_how: [
+      "After every answer you choose one of four next questions. Each one leads somewhere different. Use Change topic to move on.",
+      "Each interview has a real countdown clock: 30 minutes with James Chen, 20 minutes with everyone else. The clock starts when you press Start and keeps running even if you leave the page.",
+      "People answer at speaking speed, so long answers take longer. Choose questions that matter.",
+      "Open questions and follow-ups get useful detail. Very broad or yes/no questions usually do not.",
+      "Ask for proof. When someone gives you a document, it appears as an evidence link (for example EV-04).",
+      "People are sometimes wrong. Check what they say against the evidence.",
+      "You get ONE interview with each person. When it ends, it is over, just like real fieldwork. Plan your questions before you start."
+    ],
+    iv_plan: "Plan your questions first (Week 9 lab, step 2).",
+    iv_min: "{n} min",
+    iv_status_new: "Not started",
+    iv_status_going: "In progress · {left} left",
+    iv_status_done: "Finished · {q} questions · {e} evidence items",
+    iv_start: "Start interview",
+    iv_continue: "Continue",
+    iv_review: "Review",
+    iv_back: "← All interviews",
+    iv_time: "Time left: {left}",
+    iv_time_over: "Interview over · {used} of {min} minutes used",
+    iv_ready_title: "Ready to start?",
+    iv_over_note: "This interview is over. Your summary is on the right.",
+    iv_ready: "You have {min} minutes with {name}. The clock starts when you press Start and keeps running even if you leave this page. When time runs out, the interview ends and cannot be restarted.",
+    iv_ready_tip: "Tip: have your planned questions and a notes page open before you start.",
+    iv_begin: "Start the interview",
+    iv_you: "You",
+    iv_choose: "Choose your next question",
+    iv_choose_short: "Questions",
+    iv_next_q: "What do you ask next?",
+    iv_change_topic: "Change topic",
+    iv_back_thread: "← Back to the conversation",
+    iv_pick_topic: "Choose a topic, then pick one of its four opening questions.",
+    iv_thread_end: "{name} has nothing more to add on that. Choose a topic.",
+    iv_asked_tag: "Already asked",
+    iv_topic_done: "done",
+    iv_typing: "{name} is typing",
+    iv_print_short: "Transcript",
+    iv_end: "End interview",
+    iv_end_confirm: "End this interview now? You cannot ask any more questions, and the interview cannot be restarted.",
+    iv_restart: "Reset (staff preview)",
+    iv_restart_confirm: "Staff preview: clear your own practice interview and start again?",
+    iv_print: "Print or save transcript",
+    iv_evidence: "Evidence received",
+    iv_no_evidence: "No evidence yet. Ask for proof!",
+    iv_debrief: "Interview summary",
+    iv_debrief_stats: "You asked {q} questions in {used} of {min} minutes.",
+    iv_quality: "Your questions",
+    iv_missed: "Topics you did not ask about",
+    iv_missed_none: "You covered every topic. Well done.",
+    iv_improve: "Questions that could be better",
+    iv_next: "Next: add what you learned to your notes and questionnaire. Cite this interview as {id}, and the evidence IDs you received.",
+    iv_type_open: "Open questions",
+    iv_type_followup: "Follow-up questions",
+    iv_type_evidence: "Requests for proof",
+    iv_type_closing: "Closing questions",
+    iv_type_vague: "Too broad",
+    iv_type_leading: "Leading or yes/no",
+    iv_fb_open: "Good. Open questions get real detail.",
+    iv_fb_followup: "Good. Follow-ups find the gaps.",
+    iv_fb_evidence: "Good. Always ask for proof.",
+    iv_fb_closing: "Good. Closing questions often reveal surprises.",
+    iv_fb_vague: "Too broad. You got a general answer you cannot score.",
+    iv_fb_leading: "Leading. The question suggests the answer, so people just agree. You cannot trust the reply.",
+    iv_locked: "The interviews open with Week 9.",
+    iv_not_found: "Interview not found.",
+    lab_files: "Files for this lab",
+    deliverable_files: "Files for this assignment",
+    file_download: "Download",
+    instructor_guide: "Instructor guide for this week (answer key, staff only) →",
+    answer_label: "Your answer",
+    answer_placeholder: "Write your answer here. You can use English or your own language.",
+    work_title: "Turn in your work",
+    work_lang_note: "You can write in English or in your own language. Your instructor will read it either way.",
+    work_lab_count: "Lab answers: {done} of {total} written",
+    work_lab_link: "Go to the lab ↑",
+    work_text_label: "Your written work",
+    work_text_hint: "Type or paste your writing here, or attach it as a file below.",
+    work_lang_label: "Language you wrote in",
+    work_lang_other: "Another language",
+    work_files_label: "Attach files (PDF, Word, screenshots, and so on)",
+    work_files_hint: "Up to {n} files. Each file must be under {mb} MB.",
+    work_file_remove: "Remove",
+    work_submit: "Turn in my Week {n} work",
+    work_resubmit: "Turn in my work again",
+    work_withdraw: "Take it back to make changes",
+    work_print: "Print or save as PDF",
+    work_confirm: "Turn in your Week {n} work now? You cannot change it while your instructor reviews it.",
+    work_confirm_missing: "You have {m} lab answer box(es) still empty. Turn in your work anyway?",
+    work_status_draft: "Not turned in yet",
+    work_status_submitted: "Turned in {date}. Waiting for your instructor to review it.",
+    work_status_returned: "Your instructor returned this for changes on {date}. Read the feedback below, update your work, and turn it in again.",
+    work_status_complete: "✓ Approved by your instructor on {date}.",
+    work_feedback: "Feedback from {name} · {date}",
+    work_saving: "Saving…",
+    work_saved: "Draft saved",
+    quiz_status_passed_work: "✓ Passed. Turn in this week's work to unlock the next week.",
+    quiz_status_passed_approve: "✓ Passed. The next week unlocks when your instructor approves this week's work.",
+    locked_msg_work: "Turn in your Week {n} work to unlock this week.",
+    locked_msg_approve: "Your Week {n} work must be approved by your instructor to unlock this week.",
+    locked_also_work: "You also need to turn in your Week {n} work.",
+    locked_also_approve: "Your Week {n} work also needs to be approved by your instructor.",
+    locked_btn_work: "Go to the Week {n} work →",
+    welcome_title: "Welcome to the MCCoE Cybersecurity Program",
+    welcome_sub: "Choose your language",
+    welcome_note: "You can change your language anytime from the menu at the top."
+  };
+  var UI = {};  // single language (English); t() falls back to EN_UI
+  function t(key, params) {
+    var s = (UI && UI[key] != null) ? UI[key] : (EN_UI[key] != null ? EN_UI[key] : key);
+    if (params) {
+      s = s.replace(/\{(\w+)\}/g, function (m, k) { return params[k] != null ? params[k] : m; });
+    }
+    return s;
+  }
+  function el(tag, attrs, children) {
+    var e = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        if (k === "class") e.className = attrs[k];
+        else if (k === "html") e.innerHTML = attrs[k];
+        else if (k === "text") e.textContent = attrs[k];
+        else if (k.indexOf("on") === 0 && typeof attrs[k] === "function") e.addEventListener(k.slice(2), attrs[k]);
+        else e.setAttribute(k, attrs[k]);
+      });
+    }
+    (children || []).forEach(function (c) {
+      if (c == null) return;
+      e.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    });
+    return e;
+  }
+  function getParam(name) {
+    var m = new RegExp("[?&]" + name + "=([^&#]*)").exec(window.location.search);
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+
+  var USER = null, PROG = {};
+  function isStaff() { return false; }
+  function loadProgress() { return PROG; }
+  function saveProgress(p) {
+    PROG = p;
+    try { localStorage.setItem("mccoe_iv_" + USER.id, JSON.stringify(p._interviews || {})); } catch (e) {}
+    db.ref("mccoe_interviews/" + USER.id).set(p._interviews || {});
+  }
+  function header() {
+    return el("div", { class: "site-top" }, [
+      el("img", { src: "assets/mccoe-logo.png", alt: "MCCoE logo" }),
+      el("span", { class: "brand", text: "MCCoE" }),
+      el("a", { href: "MCCoE_Student_Platform.html" }, ["Student Platform"]),
+      el("a", { href: "MCCoE_Hub.html" }, ["Hub"])
+    ]);
+  }
+  function footer() { return null; }
+  function mount(nodes) {
+    var root = document.getElementById("root");
+    root.innerHTML = "";
+    nodes.forEach(function (n) { if (n) root.appendChild(n); });
+  }
+
+  var INTERVIEW_WEEK = 9;
+  var IV_WPS = 3;            // answers appear at about speaking speed (words per second)
+  var IV_THINK_MS = 600;     // short pause before the person starts answering
+  var IV_GOOD = ["open", "followup", "evidence", "closing"];
+  function interviews() {
+    var all = window.MCCOE_INTERVIEWS || {};
+    return Object.keys(all).sort().map(function (k) { return all[k]; });
+  }
+  function ivState(id) {
+    var all = PROG._interviews || {};
+    return all[id] || { asked: [], done: false, attempts: 0 };
+  }
+  function ivSave(id, st) {
+    var p = loadProgress();
+    p._interviews = p._interviews || {};
+    p._interviews[id] = st;
+    saveProgress(p);
+  }
+  // Format v2 (data/interviews/_README.md): a flat question list; each topic opens with four
+  // questions and each answer offers four follow-ups ("next") or ends the thread ([]).
+  function ivQuestions(iv) {
+    if (!iv._index) {
+      var topics = {};
+      iv.topics.forEach(function (tp) { topics[tp.id] = tp; });
+      iv._index = {};
+      iv._list = (iv.questions || []).map(function (q) { var x = { q: q, topic: topics[q.topic] || { id: q.topic, title: q.topic } }; iv._index[q.id] = x; return x; });
+    }
+    return iv._list;
+  }
+  function ivFind(iv, qid) { ivQuestions(iv); return iv._index[qid]; }
+  // Real countdown: the clock starts when the learner presses Start and keeps running if they leave.
+  function ivLimitMs(iv) { return iv.minutes * 60000; }
+  function ivLeftMs(iv, st) { return st.startedAt ? Math.max(0, st.startedAt + ivLimitMs(iv) - Date.now()) : ivLimitMs(iv); }
+  function ivUsedMin(iv, st) {
+    if (!st.startedAt) return 0;
+    return Math.min(iv.minutes, Math.round(((st.finishedAt || Date.now()) - st.startedAt) / 60000));
+  }
+  function ivClock(ms) { var sec = Math.ceil(ms / 1000); return Math.floor(sec / 60) + ":" + ("0" + (sec % 60)).slice(-2); }
+  // Close an interview whose time ran out while the learner was away.
+  function ivExpire(iv, st) {
+    if (st.startedAt && !st.done && ivLeftMs(iv, st) <= 0) {
+      st.done = true;
+      st.finishedAt = st.startedAt + ivLimitMs(iv);
+      ivSave(iv.id, st);
+    }
+    return st;
+  }
+  // The four follow-ups to the last answer, or null when that thread has ended.
+  function ivThread(iv, st) {
+    var last = st.asked.length ? ivFind(iv, st.asked[st.asked.length - 1]) : null;
+    if (!last || !(last.q.next || []).length) return null;
+    var ids = last.q.next.filter(function (id) { return ivFind(iv, id); });
+    return ids.some(function (id) { return st.asked.indexOf(id) === -1; }) ? ids : null;
+  }
+  function ivTopicLeft(iv, st, tp) { return tp.opens.filter(function (id) { return st.asked.indexOf(id) === -1; }).length; }
+  function ivHasMore(iv, st) { return !!ivThread(iv, st) || iv.topics.some(function (tp) { return ivTopicLeft(iv, st, tp) > 0; }); }
+  // Show each set of four in a fixed, shuffled order (the same every time for this learner).
+  function ivOrder(ids, seed) {
+    function h(str) { var x = 2166136261; for (var i = 0; i < str.length; i++) { x ^= str.charCodeAt(i); x = Math.imul(x, 16777619); } return x >>> 0; }
+    return ids.slice().sort(function (a, b) { return h(seed + a) - h(seed + b); });
+  }
+  function ivEvidence(iv, st) {
+    var seen = [];
+    st.asked.forEach(function (qid) { var x = ivFind(iv, qid); (x && x.q.evidence || []).forEach(function (e) { if (seen.indexOf(e) === -1) seen.push(e); }); });
+    return seen;
+  }
+  function evidenceLink(id) {
+    var ev = (window.MCCOE_EVIDENCE || {})[id];
+    return ev ? el("a", { class: "iv-ev", href: ev.file, target: "_blank", rel: "noopener" }, ["📎 " + id + " · " + ev.title])
+              : el("span", { class: "iv-ev", text: "📎 " + id });
+  }
+  function ivAvatar(iv) { return el("span", { class: "iv-avatar", "aria-hidden": "true", text: iv.initials || iv.name.charAt(0) }); }
+
+  function ivHero(title, sub) {
+    return el("section", { class: "week-hero" }, [el("div", { class: "wrap" }, [
+      el("div", { class: "crumbs" }, [
+        el("a", { href: "MCCoE_Hub.html" }, ["MCCoE Hub"]), " / ",
+        el("a", { href: "MCCoE_Student_Platform.html" }, ["Week " + INTERVIEW_WEEK]), " / ",
+        el("span", { text: t("iv_title") })
+      ]),
+      el("h1", { text: title }),
+      sub ? el("p", { class: "overview", text: sub }) : null
+    ])]);
+  }
+
+  function renderInterview() {
+    document.title = t("iv_title") + " · MCCoE";
+    if (false) {
+      mount([header(), ivHero(t("iv_title")), el("section", { class: "wrap", style: "padding:40px 24px 70px;" }, [
+        el("div", { class: "callout locked-panel" }, [el("h3", { text: "🔒 " + t("iv_locked") }), el("a", { class: "btn btn-primary", href: "MCCoE_Student_Platform.html" }, [t("locked_btn", { n: INTERVIEW_WEEK - 1 })])])
+      ]), footer()]);
+      return;
+    }
+    var pid = getParam("p");
+    if (!pid) { renderInterviewHub(); return; }
+    var iv = (window.MCCOE_INTERVIEWS || {})[pid];
+    if (!iv) {
+      mount([header(), ivHero(t("iv_not_found")), el("section", { class: "wrap", style: "padding:40px 24px;" }, [el("a", { href: "interview.html" }, [t("iv_back")])]), footer()]);
+      return;
+    }
+    renderInterviewSession(iv);
+  }
+
+  function renderInterviewHub() {
+    var cards = interviews().map(function (iv) {
+      var st = ivExpire(iv, ivState(iv.id));
+      var status = st.done ? t("iv_status_done", { q: st.asked.length, e: ivEvidence(iv, st).length })
+        : (st.startedAt ? t("iv_status_going", { left: ivClock(ivLeftMs(iv, st)) }) : t("iv_status_new"));
+      var label = st.done ? t("iv_review") : (st.startedAt ? t("iv_continue") : t("iv_start"));
+      return el("div", { class: "iv-card" + (st.done ? " is-done" : "") }, [
+        ivAvatar(iv),
+        el("div", { class: "iv-card-main" }, [
+          el("div", { class: "iv-name" }, [el("b", { text: iv.name }), el("span", { class: "muted", text: " · " + iv.role })]),
+          el("div", { class: "iv-meta muted", text: iv.id + " · " + iv.setting + " · " + t("iv_min", { n: iv.minutes }) }),
+          el("div", { class: "iv-status", text: status })
+        ]),
+        el("a", { class: "btn " + (st.done ? "btn-ghost" : "btn-primary") + " btn-sm", href: "interview.html?p=" + encodeURIComponent(iv.id) }, [label])
+      ]);
+    });
+    var how = el("div", { class: "callout" }, [
+      el("h3", { text: t("iv_how_title") }),
+      el("ul", {}, (UI.iv_how || EN_UI.iv_how).map(function (s) { return el("li", { text: s }); })),
+      el("p", { class: "goal", style: "margin:10px 0 0;" }, [el("a", { href: "MCCoE_Student_Platform.html" }, [t("iv_plan")])])
+    ]);
+    mount([header(), ivHero(t("iv_title"), t("iv_sub")),
+      el("section", { class: "wrap iv-wrap" }, [how, el("div", { class: "iv-cards" }, cards)]), footer()]);
+  }
+
+  // One interview, laid out like a chat app: the page stays still, the conversation and the
+  // four choices sit in a fixed dock so they are always fully visible. A real countdown runs from
+  // Start; answers appear word by word at speaking speed, so every question costs real time.
+  function renderInterviewSession(iv) {
+    document.title = iv.name + " · " + t("iv_title") + " · MCCoE";
+    var st = ivExpire(iv, ivState(iv.id));
+    var busy = false;            // true while the person is answering
+    var pendingEnd = false;      // time ran out mid-answer: end when the answer finishes
+    var ticker = null;
+    var menu = !ivThread(iv, st); // true = showing the topic menu instead of the four follow-ups
+    var endedNote = false;        // the last answer ended its thread
+    var topic = null;             // selected topic id in the menu
+
+    var chat = el("div", { class: "iv-chat" });
+    var log = el("div", { class: "iv-log", "aria-live": "polite" });
+    chat.appendChild(log);
+    var bar = el("div", { class: "iv-bar-fill" });
+    var timeText = el("span", { class: "iv-time" });
+    var dock = el("div", { class: "iv-dock" });      // the four choices, always fully visible
+    var side = el("aside", { class: "iv-side" });    // evidence received, then the summary
+    var endBtn = el("button", { class: "btn btn-ghost btn-sm", type: "button", text: t("iv_end"), onclick: function () { if (!busy && confirm(t("iv_end_confirm"))) endNow(); } });
+
+    function bubble(who, text, cls, extra) {
+      return el("div", { class: "iv-msg " + cls }, [el("div", { class: "iv-who", text: who }), el("div", { class: "iv-text", dir: "auto", text: text }), extra || null]);
+    }
+    function toBottom() { chat.scrollTop = chat.scrollHeight; }
+    function drawLog() {
+      log.innerHTML = "";
+      log.appendChild(bubble(iv.name, iv.opening, "them"));
+      st.asked.forEach(function (qid) {
+        var x = ivFind(iv, qid);
+        if (!x) return;
+        log.appendChild(bubble(t("iv_you"), x.q.ask, "you"));
+        var ev = (x.q.evidence || []).length ? el("div", { class: "iv-evlinks" }, x.q.evidence.map(evidenceLink)) : null;
+        log.appendChild(bubble(iv.name, x.q.answer, "them", ev));
+      });
+      if (st.done) log.appendChild(bubble(iv.name, iv.closing, "them"));
+      toBottom();
+    }
+    function drawTime() {
+      var left = ivLeftMs(iv, st);
+      var low = !!st.startedAt && !st.done && left <= 5 * 60000;
+      bar.style.width = Math.round((1 - left / ivLimitMs(iv)) * 100) + "%";
+      bar.className = "iv-bar-fill" + (low ? " low" : "");
+      timeText.className = "iv-time" + (low ? " low" : "");
+      timeText.textContent = st.done ? t("iv_time_over", { used: ivUsedMin(iv, st), min: iv.minutes }) : t("iv_time", { left: ivClock(left) });
+      endBtn.style.display = st.done || !st.startedAt ? "none" : "";
+    }
+
+    /* ---- bottom dock: start card, topic menu, or the four follow-ups ---- */
+    function choiceGrid(ids) {
+      return el("div", { class: "iv-grid" }, ids.map(function (id, i) {
+        var x = ivFind(iv, id);
+        var done = st.asked.indexOf(id) !== -1;
+        var b = el("button", { class: "iv-q" + (done ? " is-asked" : ""), type: "button", "data-q": id, onclick: function () { ask(x.q); } }, [
+          el("span", { class: "iv-qn", text: String(i + 1) }), el("span", { class: "iv-qt", text: x.q.ask }),
+          done ? el("span", { class: "iv-asked", text: t("iv_asked_tag") }) : null]);
+        if (busy || done) b.disabled = true;
+        return b;
+      }));
+    }
+    function drawDock() {
+      dock.innerHTML = "";
+      if (st.done) {
+        dock.appendChild(el("div", { class: "iv-dock-head" }, [
+          el("b", { text: t("iv_over_note") }),
+          el("a", { class: "btn btn-primary btn-sm", href: "interview.html" }, [t("iv_back")])
+        ]));
+        return;
+      }
+      if (!st.startedAt) {
+        dock.appendChild(el("div", { class: "iv-ready" }, [
+          el("div", {}, [
+            el("h3", { text: t("iv_ready_title") }),
+            el("p", { text: t("iv_ready", { min: iv.minutes, name: iv.name }) }),
+            el("p", { class: "muted", text: t("iv_ready_tip") })
+          ]),
+          el("button", { class: "btn btn-primary", type: "button", text: t("iv_begin") + " (" + ivClock(ivLimitMs(iv)) + ")", onclick: begin })
+        ]));
+        return;
+      }
+      var seed = (USER ? USER.id : "") + iv.id;
+      var thread = menu ? null : ivThread(iv, st);
+      if (!thread) menu = true;
+      var head = el("div", { class: "iv-dock-head" });
+      if (!menu) {
+        head.appendChild(el("b", { text: t("iv_next_q") }));
+        var change = el("button", { class: "btn btn-ghost btn-sm", type: "button", text: t("iv_change_topic"),
+          onclick: function () { menu = true; endedNote = false; drawDock(); } });
+        change.disabled = busy;
+        head.appendChild(change);
+        dock.appendChild(head);
+        dock.appendChild(choiceGrid(ivOrder(thread, seed)));
+        return;
+      }
+      var open = iv.topics.filter(function (tp) { return ivTopicLeft(iv, st, tp) > 0; });
+      if (!open.some(function (tp) { return tp.id === topic; })) topic = open.length ? open[0].id : null;
+      head.appendChild(el("b", { text: endedNote ? t("iv_thread_end", { name: iv.name }) : t("iv_pick_topic") }));
+      if (ivThread(iv, st)) head.appendChild(el("button", { class: "btn btn-ghost btn-sm", type: "button", text: t("iv_back_thread"), onclick: function () { menu = false; drawDock(); } }));
+      dock.appendChild(head);
+      dock.appendChild(el("div", { class: "iv-chips" }, iv.topics.map(function (tp) {
+        var left = ivTopicLeft(iv, st, tp);
+        var chip = el("button", { type: "button", class: "iv-chip" + (tp.id === topic ? " active" : "") + (left ? "" : " is-done"),
+          onclick: function () { if (left) { topic = tp.id; drawDock(); } } }, [tp.title, el("span", { class: "iv-chip-n", text: left ? String(left) : t("iv_topic_done") })]);
+        if (!left || busy) chip.disabled = true;
+        return chip;
+      })));
+      var tpObj = iv.topics.filter(function (tp) { return tp.id === topic; })[0];
+      dock.appendChild(choiceGrid(tpObj ? ivOrder(tpObj.opens, seed) : []));
+    }
+
+    /* ---- right column: evidence received, and the summary when the interview is over ---- */
+    function drawSide() {
+      side.innerHTML = "";
+      var ev = ivEvidence(iv, st);
+      var evBlock = el("div", { class: "iv-side-block" }, [
+        el("h4", { text: t("iv_evidence") + " (" + ev.length + ")" }),
+        ev.length ? el("div", { class: "iv-evlinks" }, ev.map(evidenceLink)) : el("p", { class: "muted", text: t("iv_no_evidence") })
+      ]);
+      if (!st.done) { side.appendChild(evBlock); return; }
+      var asked = st.asked.map(function (qid) { return ivFind(iv, qid); }).filter(Boolean);
+      var counts = {};
+      asked.forEach(function (x) { counts[x.q.type] = (counts[x.q.type] || 0) + 1; });
+      var quality = el("ul", { class: "iv-quality" }, ["open", "followup", "evidence", "closing", "vague", "leading"].filter(function (k) { return counts[k]; }).map(function (k) {
+        return el("li", { class: IV_GOOD.indexOf(k) !== -1 ? "good" : "weak" }, [el("b", { text: t("iv_type_" + k) + ": " + counts[k] }), " — " + t("iv_fb_" + k)]);
+      }));
+      var missed = iv.topics.filter(function (tp) { return !asked.some(function (x) { return x.topic.id === tp.id; }); });
+      var weak = asked.filter(function (x) { return IV_GOOD.indexOf(x.q.type) === -1; });
+      side.appendChild(el("div", { class: "iv-side-block iv-debrief-card" }, [
+        el("h3", { text: t("iv_debrief") }),
+        el("p", { class: "goal", text: t("iv_debrief_stats", { q: asked.length, used: ivUsedMin(iv, st), min: iv.minutes }) }),
+        el("h4", { text: t("iv_quality") }), quality,
+        weak.length ? el("h4", { text: t("iv_improve") }) : null,
+        weak.length ? el("ul", {}, weak.map(function (x) { return el("li", {}, [el("i", { text: "“" + x.q.ask + "”" }), " — " + t("iv_fb_" + x.q.type)]); })) : null,
+        el("h4", { text: t("iv_missed") }),
+        missed.length ? el("ul", {}, missed.map(function (tp) { return el("li", { text: tp.title }); })) : el("p", { text: t("iv_missed_none") }),
+        el("p", { class: "iv-next", text: t("iv_next", { id: iv.id }) }),
+        isStaff() ? el("div", { class: "iv-actions" }, [el("button", { class: "btn btn-ghost btn-sm", type: "button", text: t("iv_restart"), onclick: restart })]) : null
+      ]));
+      side.appendChild(evBlock);
+    }
+    function drawAll() { drawLog(); drawTime(); drawDock(); drawSide(); fit(); }
+
+    /* ---- clock and actions ---- */
+    function begin() {
+      if (st.startedAt || st.done) return;
+      st.startedAt = Date.now();
+      st.attempts = (st.attempts || 0) + 1;
+      ivSave(iv.id, st);
+      startTicker();
+      drawAll();
+    }
+    function startTicker() {
+      if (ticker || st.done || !st.startedAt) return;
+      ticker = setInterval(function () {
+        drawTime();
+        if (!st.done && ivLeftMs(iv, st) <= 0) { if (busy) pendingEnd = true; else endNow(); }
+      }, 1000);
+    }
+    function endNow() {
+      if (st.done) return;
+      st.done = true;
+      st.finishedAt = Math.min(Date.now(), st.startedAt + ivLimitMs(iv));
+      ivSave(iv.id, st);
+      clearInterval(ticker);
+      ticker = null;
+      drawAll();
+    }
+    function ask(q) {
+      if (st.done || busy || !st.startedAt) return;
+      if (ivLeftMs(iv, st) <= 0) { endNow(); return; }
+      busy = true;
+      st.asked = st.asked.concat([q.id]);   // saved now, so leaving mid-answer still counts the question
+      ivSave(iv.id, st);
+      log.appendChild(bubble(t("iv_you"), q.ask, "you"));
+      var reply = el("div", { class: "iv-msg them iv-typing" }, [el("div", { class: "iv-who", text: iv.name }),
+        el("div", { class: "iv-dots", "aria-label": t("iv_typing", { name: iv.name }) }, [el("span"), el("span"), el("span")])]);
+      log.appendChild(reply);
+      toBottom();
+      drawDock();
+      drawSide();
+      setTimeout(function () {
+        // replace the dots with the answer, one word at a time
+        var words = String(q.answer).split(/\s+/);
+        var textEl = el("div", { class: "iv-text", dir: "auto" });
+        reply.className = "iv-msg them";
+        reply.innerHTML = "";
+        reply.appendChild(el("div", { class: "iv-who", text: iv.name }));
+        reply.appendChild(textEl);
+        var i = 0;
+        var stream = setInterval(function () {
+          textEl.textContent += (i ? " " : "") + words[i];
+          i++;
+          toBottom();
+          if (i < words.length) return;
+          clearInterval(stream);
+          busy = false;
+          menu = !ivThread(iv, st);
+          endedNote = menu;
+          if (pendingEnd || ivLeftMs(iv, st) <= 0 || !ivHasMore(iv, st)) { endNow(); return; }
+          drawAll();
+        }, 1000 / IV_WPS);
+      }, IV_THINK_MS);
+    }
+    function restart() {  // staff preview only; students get one interview per person
+      if (!isStaff() || !confirm(t("iv_restart_confirm"))) return;
+      clearInterval(ticker);
+      ticker = null;
+      pendingEnd = false;
+      st = { asked: [], done: false, attempts: st.attempts || 0 };
+      menu = true;
+      endedNote = false;
+      topic = null;
+      ivSave(iv.id, st);
+      drawAll();
+    }
+
+    /* ---- layout: interview mode fills the whole window (site menu hidden) ---- */
+    var top = el("div", { class: "iv-top" }, [
+      el("a", { class: "iv-backlink", href: "interview.html", title: t("iv_back"), "aria-label": t("iv_back") }, ["←"]),
+      ivAvatar(iv),
+      el("div", { class: "iv-top-main" }, [
+        el("div", { class: "iv-name" }, [el("b", { text: iv.name }), el("span", { class: "muted", text: " · " + iv.role })]),
+        el("div", { class: "iv-meta muted", text: iv.id + " · " + iv.setting })
+      ]),
+      el("div", { class: "iv-top-time" }, [timeText, el("div", { class: "iv-bar", role: "presentation" }, [bar])]),
+      el("div", { class: "iv-head-actions" }, [
+        el("button", { class: "btn btn-ghost btn-sm", type: "button", text: t("iv_print_short"), title: t("iv_print"), onclick: function () { printTranscript(iv, st); } }),
+        endBtn
+      ])
+    ]);
+    var app = el("section", { class: "iv-app" }, [top, el("div", { class: "iv-body" }, [el("div", { class: "iv-main" }, [chat, dock]), side])]);
+    document.body.classList.add("iv-mode");
+    mount([app]);
+    function fit() { app.style.height = window.innerHeight + "px"; toBottom(); }
+    window.addEventListener("resize", fit);
+    drawAll();
+    startTicker();
+  }
+
+  function printTranscript(iv, st, learnerName) {
+    function esc(v) { return String(v == null ? "" : v).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
+    var rows = ["<p><b>" + esc(iv.name) + ":</b> " + esc(iv.opening) + "</p>"];
+    st.asked.forEach(function (qid) {
+      var x = ivFind(iv, qid);
+      if (!x) return;
+      rows.push("<p class=\"q\"><b>" + esc(t("iv_you")) + ":</b> " + esc(x.q.ask) + "</p>");
+      rows.push("<p><b>" + esc(iv.name) + ":</b> " + esc(x.q.answer) + ((x.q.evidence || []).length ? " <i>[" + esc(x.q.evidence.join(", ")) + "]</i>" : "") + "</p>");
+    });
+    if (st.done) rows.push("<p><b>" + esc(iv.name) + ":</b> " + esc(iv.closing) + "</p>");
+    var ev = ivEvidence(iv, st);
+    var win = window.open("", "_blank");
+    if (!win) return;
+    win.document.write("<!doctype html><html><head><meta charset=\"utf-8\"><title>" + esc(iv.id + " " + iv.name) + "</title>" +
+      "<style>body{font:15px/1.6 -apple-system,'Segoe UI',Roboto,Arial,sans-serif;color:#16191D;max-width:760px;margin:32px auto;padding:0 20px}" +
+      "h1{font-size:22px;margin:0 0 4px}.meta{color:#6B7280;margin:0 0 16px}.q{margin-top:16px}</style></head><body>" +
+      "<h1>" + esc(iv.id + " · " + iv.name + ", " + iv.role) + "</h1>" +
+      "<p class=\"meta\">" + esc(iv.setting) + " · " + esc(learnerName || (USER && USER.name) || "") + " · Northgate Supply Co. (fictional training scenario)</p>" +
+      rows.join("") + "<p><b>" + esc(t("iv_evidence")) + ":</b> " + esc(ev.join(", ") || "—") + "</p></body></html>");
+    win.document.close();
+    win.focus();
+    win.print();
+  }
+
+
+  /* ---------- boot: identify the student from their Hub sign-in, then load saved interviews ---------- */
+  document.addEventListener("DOMContentLoaded", function () {
+    var id = localStorage.getItem("hub_id"), name = localStorage.getItem("hub_name");
+    if (!id) {
+      mount([header(), el("div", { class: "gate" }, [
+        el("h2", { text: "Sign in first" }),
+        el("p", { text: "Sign in on the MCCoE Hub, then come back to this page to start your Northgate interviews." }),
+        el("a", { class: "btn btn-primary", href: "MCCoE_Hub.html" }, ["Go to the Hub"])
+      ])]);
+      return;
+    }
+    USER = { id: id, name: name || "" };
+    function fromLocal() {
+      try { PROG = { _interviews: JSON.parse(localStorage.getItem("mccoe_iv_" + id) || "{}") }; } catch (e) { PROG = { _interviews: {} }; }
+    }
+    // Use the saved copy in Firebase; fall back to this browser's copy if Firebase is slow or unreachable.
+    var slow = new Promise(function (_, reject) { setTimeout(function () { reject(new Error("timeout")); }, 4000); });
+    Promise.race([db.ref("mccoe_interviews/" + id).once("value"), slow]).then(function (snap) {
+      PROG = { _interviews: snap.val() || {} };
+    }).catch(fromLocal).then(renderInterview);
+  });
+})();
+</script>
+</body>
+</html>

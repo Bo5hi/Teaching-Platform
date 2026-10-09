@@ -1,0 +1,27 @@
+/* Evidence ID -> title and file, used by the interview simulator. */
+window.MCCOE_EVIDENCE = {
+  "EV-01": {"title": "Information Security Policy", "file": "materials/week9/evidence/EV-01-information-security-policy.html"},
+  "EV-02": {"title": "Risk register", "file": "materials/week9/evidence/EV-02-risk-register.csv"},
+  "EV-03": {"title": "Hardware asset inventory", "file": "materials/week9/evidence/EV-03-asset-inventory.csv"},
+  "EV-04": {"title": "MFA enrollment report", "file": "materials/week9/evidence/EV-04-mfa-enrollment-report.csv"},
+  "EV-05": {"title": "Firewall configuration excerpt", "file": "materials/week9/evidence/EV-05-firewall-config-excerpt.txt"},
+  "EV-06": {"title": "Security awareness training log", "file": "materials/week9/evidence/EV-06-security-awareness-training-log.csv"},
+  "EV-07": {"title": "Logging and alerting configuration", "file": "materials/week9/evidence/EV-07-log-alerting-configuration.html"},
+  "EV-08": {"title": "Incident response plan, draft v0.3", "file": "materials/week9/evidence/EV-08-incident-response-plan.html"},
+  "EV-09": {"title": "Backup job report", "file": "materials/week9/evidence/EV-09-backup-job-report.txt"},
+  "EV-10": {"title": "Vendor and contractor access list", "file": "materials/week9/evidence/EV-10-vendor-access-list.csv"},
+  "EV-11": {"title": "Post-incident review summary INC-2026-001", "file": "materials/week9/evidence/EV-11-post-incident-review-summary.html"},
+  "EV-12": {"title": "Network diagram dated June 2023", "file": "materials/week9/evidence/EV-12-network-diagram-2023.html"},
+  "EV-13": {"title": "Employee handbook security acknowledgement records", "file": "materials/week9/evidence/EV-13-policy-acknowledgement-records.csv"},
+  "EV-14": {"title": "HR onboarding/offboarding checklist + 2026 leaver log", "file": "materials/week9/evidence/EV-14-hr-onboarding-offboarding-checklist.html"},
+  "EV-15": {"title": "Cyber insurance policy summary", "file": "materials/week9/evidence/EV-15-cyber-insurance-policy-summary.html"},
+  "EV-16": {"title": "Patch status report", "file": "materials/week9/evidence/EV-16-patch-status-report.csv"},
+  "EV-17": {"title": "Endpoint protection console export", "file": "materials/week9/evidence/EV-17-endpoint-protection-export.csv"},
+  "EV-18": {"title": "Laptop encryption status", "file": "materials/week9/evidence/EV-18-laptop-encryption-status.csv"},
+  "EV-19": {"title": "Board meeting minutes excerpts, Nov 2025 to Aug 2026", "file": "materials/week9/evidence/EV-19-board-meeting-minutes.html"},
+  "EV-20": {"title": "Org chart and IT Manager job description", "file": "materials/week9/evidence/EV-20-org-chart-it-manager-job-description.html"},
+  "EV-21": {"title": "Bluebird Web Studio contract excerpt", "file": "materials/week9/evidence/EV-21-bluebird-contract-excerpt.html"},
+  "SCAN-01": {"title": "Nmap scan from the internet", "file": "materials/week9/scans/SCAN-01-nmap-external.txt"},
+  "SCAN-02": {"title": "Nmap scan of the internal network", "file": "materials/week9/scans/SCAN-02-nmap-internal.txt"},
+  "SCAN-03": {"title": "Nessus vulnerability scan summary", "file": "materials/week9/scans/SCAN-03-nessus-summary.html"}
+};

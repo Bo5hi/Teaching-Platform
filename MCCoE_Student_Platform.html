@@ -2183,6 +2183,11 @@ const WEEKS = [
       "goal": "Carry out evidence-based fieldwork on Northgate Supply Co.: interview the IT Manager, review documents and scan results, and score all 41 questionnaire questions with evidence IDs, weighted compliance, CMM maturity, and hygiene ratings.",
       "safety": "Northgate Supply Co. is a fictional client. The scans were run by the MCCoE team, with permission, in an isolated lab; you only read the results. Never scan, log in to, or test any real system, and never add real company data, passwords, or personal information to your work.",
       "materials": [
+          {
+            "title": "Interview simulator: Northgate staff (INT-01 to INT-05)",
+            "file": "interview.html",
+            "note": "Interview the CEO, IT Manager, HR, Finance, and Warehouse leads. One timed interview each, so plan your questions first (step 2)."
+          },
         {
           "title": "Client brief: Northgate Supply Co.",
           "file": "materials/week9/northgate-organization-profile.html",
@@ -7939,6 +7944,7 @@ function enterApp() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   document.getElementById('hdr-name').textContent = state.student.name;
+  try { localStorage.setItem('hub_id', state.student.tempId); localStorage.setItem('hub_name', state.student.name); } catch(e) {}
   document.getElementById('hdr-cohort').textContent = state.student.cohort;
   buildNav();
   updateOverallProgress();

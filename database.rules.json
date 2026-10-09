@@ -13,6 +13,7 @@
     "mccoe_feedback":          { ".read": true, ".write": true },
     "mccoe_hours":             { ".read": true, ".write": true },
     "mccoe_htb":               { ".read": true, ".write": true },
+    "mccoe_interviews":        { ".read": true, ".write": true },
     "mccoe_library":           { ".read": true, ".write": true },
     "mccoe_logins":            { ".read": true, ".write": true },
     "mccoe_mitre":             { ".read": true, ".write": true },
