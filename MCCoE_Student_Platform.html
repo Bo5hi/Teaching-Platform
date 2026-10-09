@@ -8218,6 +8218,14 @@ function renderWeek(num) {
 
     <!-- CONTENT TAB -->
     <div class="tab-panel active" id="tab-content">
+      ${(w.num === 9 || w.num === 10) ? `<div class="card" style="border:2px solid var(--red);">
+        <h3><span class="icon">🏢</span> Capstone: Northgate Supply Co. Mock Assessment</h3>
+        <p style="font-size:14px;line-height:1.6;margin:0 0 14px;">${w.num === 9 ? 'This week you do the fieldwork: interview the five Northgate staff, gather evidence, and score the questionnaire.' : 'This week you turn your fieldwork into the assessment report, executive summary, and outbrief.'}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+          ${[['🎙️ Interview Simulator','interview.html'],['📄 Client Brief','materials/week9/northgate-organization-profile.html'],['🗂️ Evidence Library','materials/week9/evidence/index.html'],['🛰️ Scan Results','materials/week9/scans/index.html'],['📊 Questionnaire Workbook','materials/week9/northgate-questionnaire.xlsx'],['📝 Fieldwork Worksheets','materials/week9/fieldwork-worksheets.html']]
+            .map(([label, href]) => `<a href="${href}" target="_blank" style="padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;background:${href==='interview.html'?'var(--red)':'transparent'};color:#fff;border:1px solid ${href==='interview.html'?'var(--red)':'var(--border)'};">${label}</a>`).join('')}
+        </div>
+      </div>` : ''}
       ${w.overview ? `<div class="card"><h3><span class="icon">🧭</span> This Week</h3><p style="font-size:14px;line-height:1.7;margin:0;">${w.overview}</p></div>` : ''}
       <div class="card">
         <h3><span class="icon">🎯</span> Learning Objectives</h3>

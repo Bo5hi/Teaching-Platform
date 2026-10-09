@@ -575,7 +575,9 @@ body.iv-mode .site-header, body.iv-mode .preview-banner, body.iv-mode .site-foot
     var how = el("div", { class: "callout" }, [
       el("h3", { text: t("iv_how_title") }),
       el("ul", {}, (UI.iv_how || EN_UI.iv_how).map(function (s) { return el("li", { text: s }); })),
-      el("p", { class: "goal", style: "margin:10px 0 0;" }, [el("a", { href: "MCCoE_Student_Platform.html" }, [t("iv_plan")])])
+      el("p", { class: "goal", style: "margin:10px 0 0;" }, [el("a", { href: "MCCoE_Student_Platform.html" }, [t("iv_plan")]), " · ",
+        el("a", { href: "materials/week9/northgate-organization-profile.html", target: "_blank" }, ["Client brief"]), " · ",
+        el("a", { href: "materials/week9/evidence/index.html", target: "_blank" }, ["Evidence library"])])
     ]);
     mount([header(), ivHero(t("iv_title"), t("iv_sub")),
       el("section", { class: "wrap iv-wrap" }, [how, el("div", { class: "iv-cards" }, cards)]), footer()]);
