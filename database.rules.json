@@ -1,0 +1,31 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "mccoe_academy":           { ".read": true, ".write": true },
+    "mccoe_acronyms":          { ".read": true, ".write": true },
+    "mccoe_blueteam":          { ".read": true, ".write": true },
+    "mccoe_checkins":          { ".read": true, ".write": true },
+    "mccoe_checklists":        { ".read": true, ".write": true },
+    "mccoe_content":           { ".read": true, ".write": true },
+    "mccoe_ctf":               { ".read": true, ".write": true },
+    "mccoe_drafts":            { ".read": true, ".write": true },
+    "mccoe_feedback":          { ".read": true, ".write": true },
+    "mccoe_hours":             { ".read": true, ".write": true },
+    "mccoe_htb":               { ".read": true, ".write": true },
+    "mccoe_library":           { ".read": true, ".write": true },
+    "mccoe_logins":            { ".read": true, ".write": true },
+    "mccoe_mitre":             { ".read": true, ".write": true },
+    "mccoe_nist":              { ".read": true, ".write": true },
+    "mccoe_pentest":           { ".read": true, ".write": true },
+    "mccoe_progress":          { ".read": true, ".write": true },
+    "mccoe_registry":          { ".read": true, ".write": true },
+    "mccoe_rubric":            { ".read": true, ".write": true },
+    "mccoe_schedule":          { ".read": true, ".write": true },
+    "mccoe_submissions":       { ".read": true, ".write": true },
+    "mccoe_tickets":           { ".read": true, ".write": true },
+    "mccoe_tracker_deletions": { ".read": true, ".write": true },
+    "mccoe_tracker_students":  { ".read": true, ".write": true },
+    "mccoe_xp":                { ".read": true, ".write": true }
+  }
+}
