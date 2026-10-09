@@ -1550,7 +1550,7 @@ function _renderProjectModal(n, hubName, hubId) {
   var saved = _projectStatuses[n] || {};
   var submitted = !!saved.submittedAt;
   var grade = saved.grade;
-  var draft = JSON.parse(localStorage.getItem('mccoe_proj_draft_' + n) || 'null');
+  var draft = JSON.parse(localStorage.getItem(_projDraftKey(n)) || 'null');
 
   var fieldsHTML = proj.fields.map(function(f, fIdx) {
     var val = (saved.answers && saved.answers[f.id]) ? saved.answers[f.id] : (draft && draft.answers && draft.answers[f.id] ? draft.answers[f.id] : '');
@@ -1646,7 +1646,7 @@ function _renderProjectModal(n, hubName, hubId) {
           var el = document.getElementById('hp-' + n + '-' + f.id);
           if (el && fbDraft.answers[f.id] !== undefined) el.value = fbDraft.answers[f.id];
         });
-        localStorage.setItem('mccoe_proj_draft_' + n, JSON.stringify(fbDraft));
+        localStorage.setItem(_projDraftKey(n), JSON.stringify(fbDraft));
         var statusEl = document.getElementById('proj-draft-status');
         if (statusEl) {
           var t = new Date(fbDraft.savedAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
@@ -1661,6 +1661,8 @@ function _renderProjectModal(n, hubName, hubId) {
   _autosaveTimer = setInterval(saveDraftHub, 2 * 60 * 1000);
 }
 
+function _projDraftKey(n) { return 'mccoe_proj_draft_' + (localStorage.getItem('hub_id') || 'guest') + '_' + n; }
+
 function saveDraftHub() {
   if (!_currentProjectNum) return;
   var proj = HUB_PROJECTS[_currentProjectNum];
@@ -1670,7 +1672,7 @@ function saveDraftHub() {
     if (el) answers[f.id] = el.value;
   });
   var draftData = { answers: answers, savedAt: new Date().toISOString() };
-  localStorage.setItem('mccoe_proj_draft_' + _currentProjectNum, JSON.stringify(draftData));
+  localStorage.setItem(_projDraftKey(_currentProjectNum), JSON.stringify(draftData));
   var hubId = localStorage.getItem('hub_id');
   if (_hubDb && hubId) _hubDb.ref('mccoe_drafts/' + hubId + '/proj' + _currentProjectNum).set(draftData);
   var statusEl = document.getElementById('proj-draft-status');
@@ -1715,7 +1717,7 @@ function submitProjectHub() {
   var projNum = _currentProjectNum;
   _hubDb.ref('mccoe_submissions/' + hubId + '/week' + projNum).set(entry, function(err) {
     if (err) { alert('Error submitting: ' + err.message); return; }
-    localStorage.removeItem('mccoe_proj_draft_' + projNum);
+    localStorage.removeItem(_projDraftKey(projNum));
     if (_hubDb && hubId) _hubDb.ref('mccoe_drafts/' + hubId + '/proj' + projNum).remove();
     _projectStatuses[projNum] = entry;
     updateSubmitButtons();

@@ -7995,6 +7995,7 @@ function doLogout() {
   _idleWarningShown = false;
   stopHoursTracking();
   saveState();
+  try { localStorage.removeItem('hub_id'); localStorage.removeItem('hub_name'); } catch(e) {}
   _selectedProfile = null;
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';

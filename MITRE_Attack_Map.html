@@ -646,6 +646,8 @@ function submitMITREMapping() {
       status.style.color = 'var(--green)';
       status.textContent = '✅ Mapping submitted! Your instructor will grade it and your score will appear below.';
       localStorage.removeItem(_draftKey());
+      var cloud = _draftCloudRef();
+      if (cloud) cloud.remove();
       var ds = document.getElementById('draft-status');
       if (ds) ds.textContent = '';
       loadMITREGrade();
@@ -669,11 +671,19 @@ function _draftKey() {
   return 'mitre_draft_' + id.replace(/[^a-zA-Z0-9_-]/g, '-');
 }
 
+function _draftCloudRef() {
+  var sp = new URLSearchParams(window.location.search);
+  var id = sp.get('id') || localStorage.getItem('hub_id');
+  return (_fbDb && id) ? _fbDb.ref('mccoe_drafts/' + id.replace(/[.#$[\]]/g, '_') + '/mitre') : null;
+}
+
 function saveMITREDraft() {
   var draft = {};
   _DRAFT_FIELDS.forEach(function(fid) { draft[fid] = v(fid); });
   draft._saved = new Date().toISOString();
   localStorage.setItem(_draftKey(), JSON.stringify(draft));
+  var cloud = _draftCloudRef();
+  if (cloud) cloud.set(draft);
   var ds = document.getElementById('draft-status');
   if (ds) {
     var t = new Date();
@@ -682,6 +692,22 @@ function saveMITREDraft() {
 }
 
 function loadMITREDraft() {
+  var cloud = _draftCloudRef();
+  if (cloud) {
+    // Use the cloud copy when it is newer, so a draft started on another computer comes along
+    cloud.once('value', function(snap) {
+      var fb = snap.val();
+      var local = null;
+      try { local = JSON.parse(localStorage.getItem(_draftKey()) || 'null'); } catch(e) {}
+      if (fb && (!local || (fb._saved || '') > (local._saved || ''))) localStorage.setItem(_draftKey(), JSON.stringify(fb));
+      _applyMITREDraft();
+    }, function() { _applyMITREDraft(); });
+    return;
+  }
+  _applyMITREDraft();
+}
+
+function _applyMITREDraft() {
   var raw = localStorage.getItem(_draftKey());
   if (!raw) return;
   try {

@@ -662,6 +662,12 @@ function _draftKey() {
   return 'nist_draft_' + id.replace(/[^a-zA-Z0-9_-]/g, '-');
 }
 
+function _draftCloudRef() {
+  var sp = new URLSearchParams(window.location.search);
+  var id = sp.get('id') || localStorage.getItem('hub_id');
+  return (_fbDb && id) ? _fbDb.ref('mccoe_drafts/' + id.replace(/[.#$[\]]/g, '_') + '/nist') : null;
+}
+
 function saveNISTDraft() {
   var draft = {};
   _DRAFT_FIELDS.forEach(function(fid) {
@@ -670,6 +676,8 @@ function saveNISTDraft() {
   });
   draft._saved = new Date().toISOString();
   localStorage.setItem(_draftKey(), JSON.stringify(draft));
+  var cloud = _draftCloudRef();
+  if (cloud) cloud.set(draft);
   var ds = document.getElementById('draft-status');
   if (ds) {
     var t = new Date();
@@ -678,6 +686,22 @@ function saveNISTDraft() {
 }
 
 function loadNISTDraft() {
+  var cloud = _draftCloudRef();
+  if (cloud) {
+    // Use the cloud copy when it is newer, so a draft started on another computer comes along
+    cloud.once('value', function(snap) {
+      var fb = snap.val();
+      var local = null;
+      try { local = JSON.parse(localStorage.getItem(_draftKey()) || 'null'); } catch(e) {}
+      if (fb && (!local || (fb._saved || '') > (local._saved || ''))) localStorage.setItem(_draftKey(), JSON.stringify(fb));
+      _applyNISTDraft();
+    }, function() { _applyNISTDraft(); });
+    return;
+  }
+  _applyNISTDraft();
+}
+
+function _applyNISTDraft() {
   var raw = localStorage.getItem(_draftKey());
   if (!raw) return;
   try {
@@ -755,6 +779,8 @@ function submitNISTMapping() {
       status.style.color = 'var(--green)';
       status.textContent = '✅ Analysis submitted! Your instructor will grade it and your score will appear below.';
       localStorage.removeItem(_draftKey());
+      var cloud = _draftCloudRef();
+      if (cloud) cloud.remove();
       var ds = document.getElementById('draft-status');
       if (ds) ds.textContent = '';
       loadNISTGrade();

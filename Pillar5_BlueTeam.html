@@ -392,8 +392,8 @@ Find large transfers:    frame.len > 10000</div>
 
 <script>
 const _params      = new URLSearchParams(window.location.search);
-const _studentName = _params.get('name') || '';
-const _studentId   = _params.get('id')   || '';
+const _studentName = _params.get('name') || localStorage.getItem('hub_name') || '';
+const _studentId   = _params.get('id')   || localStorage.getItem('hub_id')   || '';
 const _fbKey       = _studentId ? _studentId.replace(/[.#$[\]]/g, '_') : null;
 const panels       = document.querySelectorAll('.phase-panel');
 const btns         = document.querySelectorAll('.phase-btn');

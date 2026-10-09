@@ -293,8 +293,8 @@ var _studentId   = '';
 
 (function initFirebase() {
   var params = new URLSearchParams(window.location.search);
-  _studentName = params.get('name') || sessionStorage.getItem('acad_name') || '';
-  _studentId   = params.get('id')   || sessionStorage.getItem('acad_id')   || '';
+  _studentName = params.get('name') || sessionStorage.getItem('acad_name') || localStorage.getItem('hub_name') || '';
+  _studentId   = params.get('id')   || sessionStorage.getItem('acad_id')   || localStorage.getItem('hub_id')   || '';
   if (_studentName) sessionStorage.setItem('acad_name', _studentName);
   if (_studentId)   sessionStorage.setItem('acad_id',   _studentId);
 
