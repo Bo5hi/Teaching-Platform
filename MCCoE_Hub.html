@@ -894,7 +894,7 @@ function doHubLogin() {
     snap.forEach(function(child) {
       var d = child.val();
       if (d && d.name && d.name.toLowerCase() === name.toLowerCase()) {
-        found = { key: child.key, name: d.name, password: d.password, status: d.status || 'approved' };
+        found = { key: child.key, name: d.name, password: d.password, status: d.status || 'approved', mustChangePassword: !!d.mustChangePassword };
       }
     });
     if (!found) {
@@ -911,8 +911,45 @@ function doHubLogin() {
       hubMsg('Your account is pending instructor approval. Please wait for your instructor to approve your account before signing in.', '#ffd700');
       return;
     }
+    if (found.mustChangePassword) {
+      _hubForcePasswordChange(found.key, pass, function() { hubLoginSuccess(found.name, found.key, true); });
+      return;
+    }
     hubLoginSuccess(found.name, found.key, true);
   });
+}
+
+// ── First sign-in: students with a temporary password must set their own ──
+function _hubForcePasswordChange(key, tempPass, done) {
+  var ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:16px;';
+  var inp = 'width:100%;box-sizing:border-box;padding:12px;margin-bottom:12px;background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.3);border-radius:6px;color:#fff;font-size:15px;';
+  ov.innerHTML =
+    '<div style="background:#0a1628;border:1px solid rgba(0,245,255,0.35);border-radius:10px;padding:28px;max-width:380px;width:100%;font-family:Rajdhani,sans-serif;color:#e8e8e8;">' +
+      '<div style="font-family:Orbitron,monospace;font-size:15px;letter-spacing:2px;color:#00f5ff;margin-bottom:10px;">SET YOUR PASSWORD</div>' +
+      '<div style="font-size:15px;margin-bottom:18px;color:rgba(255,255,255,0.75);">You signed in with a temporary password. Choose your own password to continue.</div>' +
+      '<input type="password" id="fpc-new" placeholder="New password (6+ characters)" style="' + inp + '">' +
+      '<input type="password" id="fpc-confirm" placeholder="Confirm new password" style="' + inp + '">' +
+      '<div id="fpc-msg" style="min-height:20px;font-size:14px;color:#ff6b6b;margin-bottom:10px;"></div>' +
+      '<button id="fpc-btn" style="width:100%;padding:12px;background:rgba(238,34,7,0.3);border:1px solid #ee2207;border-radius:6px;color:#fff;font-family:Orbitron,monospace;font-size:13px;letter-spacing:2px;cursor:pointer;">SAVE & CONTINUE</button>' +
+    '</div>';
+  document.body.appendChild(ov);
+  var newEl = document.getElementById('fpc-new'), confEl = document.getElementById('fpc-confirm'), msg = document.getElementById('fpc-msg'), btn = document.getElementById('fpc-btn');
+  newEl.focus();
+  function submit() {
+    var np = newEl.value.trim(), cp = confEl.value.trim();
+    if (np.length < 6)   { msg.textContent = 'Password must be at least 6 characters.'; return; }
+    if (np !== cp)       { msg.textContent = 'Passwords do not match.'; return; }
+    if (np === tempPass) { msg.textContent = 'Choose a password different from the temporary one.'; return; }
+    btn.disabled = true;
+    _hubDb.ref('mccoe_registry/' + key).update({ password: _hubHashSync(np), mustChangePassword: null }, function(err) {
+      if (err) { btn.disabled = false; msg.textContent = 'Could not save. Try again.'; return; }
+      ov.remove();
+      done();
+    });
+  }
+  btn.onclick = submit;
+  confEl.onkeydown = function(e) { if (e.key === 'Enter') submit(); };
 }
 
 // ── Hub Register ──
