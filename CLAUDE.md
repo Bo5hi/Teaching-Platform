@@ -106,14 +106,14 @@ Admin users: jharbour, cking, cdaniels
 
 ## FIREBASE
 
-**Project:** mccoe-platform-a9710
+**Project:** mccoe-platform-b0e80
 **Config:**
 ```javascript
 {
-  apiKey: "AIzaSyBpK8uLCD0_m83a1xFiOQVaS1PKWSGcEc8",
-  authDomain: "mccoe-platform-a9710.firebaseapp.com",
-  databaseURL: "https://mccoe-platform-a9710-default-rtdb.firebaseio.com",
-  projectId: "mccoe-platform-a9710"
+  apiKey: "AIzaSyCHOnjuN7xIR9ChuCI2lRBSufauLW8yH1c",
+  authDomain: "mccoe-platform-b0e80.firebaseapp.com",
+  databaseURL: "https://mccoe-platform-b0e80-default-rtdb.firebaseio.com",
+  projectId: "mccoe-platform-b0e80"
 }
 ```
 
