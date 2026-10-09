@@ -1,0 +1,45 @@
+hostname,device_type,os,assigned_user,antivirus_agent,agent_version,definitions_updated,real_time_protection,last_check_in,local_administrators_members,user_rights,edr_sensor,policy_group
+NG-WS-101,Desktop,Windows 11 23H2,jchen,Installed,Antivirus 4.18,2026-09-09,On,2026-09-09,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-102,Desktop,Windows 11 23H2,gpike,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-103,Desktop,Windows 11 23H2,hortiz,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-104,Desktop,Windows 11 23H2,sboateng,Installed,Antivirus 4.18,2026-09-08,On,2026-09-08,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-105,Desktop,Windows 11 23H2,glindqvist,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-106,Desktop,Windows 11 23H2,ohaddad,Installed,Antivirus 4.18,2026-09-08,On,2026-09-08,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-107,Desktop,Windows 10 22H2,kbell,Installed,Antivirus 4.18,2025-12-19,On,2025-12-19,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-108,Desktop,Windows 11 23H2,abrown,Installed,Antivirus 4.18,2026-09-08,On,2026-09-08,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-109,Desktop,Windows 11 23H2,npetrova,Installed,Antivirus 4.18,2026-01-22,On,2026-01-22,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-110,Desktop,Windows 11 23H2,jprice,Installed,Antivirus 4.18,2026-09-08,On,2026-09-08,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-111,Desktop,Windows 11 23H2,hnguyen,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-112,Desktop,Windows 11 23H2,ogrant,Installed,Antivirus 4.18,2026-09-08,On,2026-09-08,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-113,Desktop,Windows 11 23H2,dcastillo,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-114,Desktop,Windows 11 23H2,mrivera,Installed,Antivirus 4.18,2026-09-09,On,2026-09-09,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-115,Desktop,Windows 11 23H2,mlin,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-116,Desktop,Windows 11 23H2,padeyemi,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-117,Desktop,Windows 11 23H2,sklein,Installed,Antivirus 4.18,2026-09-09,On,2026-09-09,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-118,Desktop,Windows 11 23H2,arahimi,Installed,Antivirus 4.18,2026-09-08,On,2026-09-08,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-119,Desktop,Windows 11 23H2,lpham,Installed,Antivirus 4.18,2026-09-08,On,2026-09-08,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-120,Desktop,Windows 11 23H2,vstone,Installed,Antivirus 4.18,2026-09-09,On,2026-09-09,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-121,Desktop,Windows 11 23H2,etran,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-122,Desktop,Windows 11 23H2,mwebb,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-123,Desktop,Windows 11 23H2,fyusuf,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-124,Desktop,Windows 11 23H2,tokafor,Installed,Antivirus 4.18,2026-09-09,On,2026-09-09,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-125,Desktop,Windows 11 23H2,reception (shared),Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-WS-126,Desktop,Windows 10 22H2,unassigned,Installed,Antivirus 4.18,2025-10-03,On,2025-10-03,Administrator (disabled); it-admin,Standard user,Not licensed,Workstations-Default
+NG-LT-201,Laptop,Windows 11 23H2,lharper,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin; lharper,Local administrator,Not licensed,Laptops-Default
+NG-LT-202,Laptop,Windows 11 23H2,dpatel,Installed,Antivirus 4.18,2026-09-08,On,2026-09-08,Administrator (disabled); it-admin; dpatel,Local administrator,Not licensed,Laptops-Sales
+NG-LT-203,Laptop,Windows 11 23H2,kmurphy,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin; kmurphy,Local administrator,Not licensed,Laptops-Sales
+NG-LT-204,Laptop,Windows 11 23H2,rdelgado,Installed,Antivirus 4.18,2026-09-08,On,2026-09-08,Administrator (disabled); it-admin; rdelgado,Local administrator,Not licensed,Laptops-Sales
+NG-LT-205,Laptop,Windows 11 23H2,bfoster,Installed,Antivirus 4.18,2026-09-09,On,2026-09-09,Administrator (disabled); it-admin; bfoster,Local administrator,Not licensed,Laptops-Sales
+NG-LT-206,Laptop,Windows 11 23H2,amohammed,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin; amohammed,Local administrator,Not licensed,Laptops-Sales
+NG-LT-207,Laptop,Windows 11 23H2,lherrera,Installed,Antivirus 4.18,2026-09-08,On,2026-09-08,Administrator (disabled); it-admin; lherrera,Local administrator,Not licensed,Laptops-Sales
+NG-LT-208,Laptop,Windows 11 23H2,unassigned,Installed,Antivirus 4.18,2025-10-03,On,2025-10-03,Administrator (disabled); it-admin,Standard user,Not licensed,Laptops-Default
+NG-LT-209,Laptop,Windows 11 23H2,tkowalski,Installed,Antivirus 4.18,2026-09-03,On,2026-09-03,Administrator (disabled); it-admin; tkowalski,Local administrator,Not licensed,Laptops-Sales
+NG-LT-210,Laptop,Windows 11 23H2,jchen,Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Laptops-Default
+NG-WH-01,Shared PC,Windows 10 22H2 (ESU),Warehouse (shared),Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Warehouse-Shared
+NG-WH-02,Shared PC,Windows 10 22H2 (ESU),Warehouse (shared),Installed,Antivirus 4.18,2026-09-10,On,2026-09-10,Administrator (disabled); it-admin,Standard user,Not licensed,Warehouse-Shared
+NG-WH-03,Shared PC,Windows 10 22H2 (ESU),Warehouse (shared),Installed,Antivirus 4.18,2026-09-09,On,2026-09-09,Administrator (disabled); it-admin; WH-SCAN,Local administrator,Not licensed,Warehouse-Shared
+NG-WH-04,Shared PC,Windows 10 22H2 (ESU),Warehouse (shared),Installed,Antivirus 4.18,2026-09-08,On,2026-09-08,Administrator (disabled); it-admin,Standard user,Not licensed,Warehouse-Shared
+ng-web01,Server (found by network discovery),Linux (Ubuntu 22.04),,Not installed,,,,,,,Not licensed,Unmanaged
+ng-files01,Server (found by network discovery),Linux (Ubuntu 22.04),,Not installed,,,,,,,Not licensed,Unmanaged
+ng-backup01,Server (found by network discovery),Linux (Ubuntu 22.04),,Not installed,,,,,,,Not licensed,Unmanaged
+ng-legacy01,Server (found by network discovery),Linux (Ubuntu 18.04),,Not installed,,,,,,,Not licensed,Unmanaged

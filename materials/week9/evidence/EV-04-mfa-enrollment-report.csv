@@ -1,0 +1,63 @@
+user_principal_name,display_name,department,admin_role,mfa_required_by_policy,mfa_status,mfa_method,registered_on,last_sign_in
+lharper@northgate-supply.example,Linda Harper,Leadership,None,No,Enrolled,Authenticator app,2025-01-09,2026-09-09
+gpike@northgate-supply.example,Gordon Pike,Leadership,None,No,Enrolled,SMS,2025-01-09,2026-09-10
+hortiz@northgate-supply.example,Helen Ortiz,Finance,None,Yes,Enrolled,Authenticator app,2026-04-16,2026-09-08
+mrivera@northgate-supply.example,Maria Rivera,Finance,None,Yes,Enrolled,Authenticator app,2026-04-16,2026-09-10
+sboateng@northgate-supply.example,Samuel Boateng,Finance,None,Yes,Enrolled,Authenticator app,2026-04-16,2026-09-04
+glindqvist@northgate-supply.example,Grace Lindqvist,Finance,None,Yes,Enrolled,Authenticator app,2026-04-17,2026-09-10
+ohaddad@northgate-supply.example,Omar Haddad,Finance,None,Yes,Enrolled,Authenticator app,2026-04-17,2026-09-09
+abrown@northgate-supply.example,Alicia Brown,Human Resources,User administrator,Yes,Enrolled,Authenticator app,2024-02-14,2026-09-09
+npetrova@northgate-supply.example,Nadia Petrova,Human Resources,None,No,Enrolled,Authenticator app,2026-04-22,2026-09-10
+jchen@northgate-supply.example,James Chen,IT,Global administrator,Yes,Enrolled,Authenticator app,2024-02-12,2026-09-08
+dpatel@northgate-supply.example,Dev Patel,Sales,None,No,Not enrolled,,,2026-09-10
+kmurphy@northgate-supply.example,Kevin Murphy,Sales,None,No,Enrolled,Authenticator app,2026-05-05,2026-09-04
+rdelgado@northgate-supply.example,Rosa Delgado,Sales,None,No,Enrolled,Authenticator app,2026-05-06,2026-09-10
+bfoster@northgate-supply.example,Brian Foster,Sales,None,No,Enrolled,Authenticator app,2026-05-07,2026-09-09
+amohammed@northgate-supply.example,Aisha Mohammed,Sales,None,No,Enrolled,Authenticator app,2026-05-12,2026-09-09
+lherrera@northgate-supply.example,Luis Herrera,Sales,None,No,Enrolled,Authenticator app,2026-05-13,2026-09-10
+etran@northgate-supply.example,Emily Tran,Sales,None,No,Enrolled,Authenticator app,2026-05-19,2026-09-08
+mwebb@northgate-supply.example,Marcus Webb,Sales,None,No,Enrolled,Authenticator app,2026-06-02,2026-09-10
+fyusuf@northgate-supply.example,Fatima Yusuf,Sales,None,No,Enrolled,Authenticator app,2026-06-09,2026-09-04
+tkowalski@northgate-supply.example,Tom Kowalski,Sales,None,No,Not enrolled,,,2026-09-10
+jprice@northgate-supply.example,Janet Price,Customer Service,None,No,Enrolled,Authenticator app,2026-05-05,2026-09-09
+hnguyen@northgate-supply.example,Hoang Nguyen,Customer Service,None,No,Enrolled,Authenticator app,2026-05-06,2026-09-09
+ogrant@northgate-supply.example,Olivia Grant,Customer Service,None,No,Enrolled,Authenticator app,2026-05-07,2026-09-10
+dcastillo@northgate-supply.example,Diego Castillo,Customer Service,None,No,Enrolled,Authenticator app,2026-05-12,2026-09-08
+mlin@northgate-supply.example,Mei Lin,Customer Service,None,No,Enrolled,Authenticator app,2026-05-13,2026-09-10
+padeyemi@northgate-supply.example,Paul Adeyemi,Customer Service,None,No,Enrolled,Authenticator app,2026-05-19,2026-09-04
+sklein@northgate-supply.example,Sarah Klein,Purchasing,None,No,Enrolled,Authenticator app,2026-06-02,2026-09-10
+arahimi@northgate-supply.example,Ahmed Rahimi,Purchasing,None,No,Enrolled,Authenticator app,2026-06-09,2026-09-09
+lpham@northgate-supply.example,Linh Pham,Purchasing,None,No,Enrolled,Authenticator app,2026-05-05,2026-09-09
+vstone@northgate-supply.example,Victor Stone,Purchasing,None,No,Enrolled,Authenticator app,2026-05-06,2026-09-10
+tokafor@northgate-supply.example,Tunde Okafor,Warehouse,None,No,Enrolled,SMS,2026-05-07,2026-09-08
+cmendez@northgate-supply.example,Carlos Mendez,Warehouse,None,No,Enrolled,SMS,2026-05-12,2026-09-10
+jhill@northgate-supply.example,Jerome Hill,Warehouse,None,No,Enrolled,Authenticator app,2026-05-13,2026-09-04
+asilva@northgate-supply.example,Ana Silva,Warehouse,None,No,Enrolled,Authenticator app,2026-05-19,2026-09-10
+mfarah@northgate-supply.example,Mohamed Farah,Warehouse,None,No,Enrolled,Authenticator app,2026-06-02,2026-09-09
+kwright@northgate-supply.example,Keisha Wright,Warehouse,None,No,Enrolled,Authenticator app,2026-06-09,2026-09-09
+pnovak@northgate-supply.example,Pavel Novak,Warehouse,None,No,Not enrolled,,,2026-09-10
+jramirez@northgate-supply.example,Juan Ramirez,Warehouse,None,No,Not enrolled,,,2026-09-08
+beze@northgate-supply.example,Blessing Eze,Warehouse,None,No,Not enrolled,,,2026-09-10
+rdunn@northgate-supply.example,Ricky Dunn,Warehouse,None,No,Not enrolled,,,2026-09-04
+smorales@northgate-supply.example,Sofia Morales,Warehouse,None,No,Enrolled,Authenticator app,2026-05-05,2026-09-10
+ipetrov@northgate-supply.example,Ivan Petrov,Warehouse,None,No,Not enrolled,,,2026-09-09
+tbanks@northgate-supply.example,Tyrone Banks,Warehouse,None,No,Not enrolled,,,2026-09-09
+hali@northgate-supply.example,Hassan Ali,Warehouse,None,No,Enrolled,Authenticator app,2026-05-06,2026-09-10
+mlopez@northgate-supply.example,Maria Lopez,Warehouse,None,No,Not enrolled,,,2026-09-08
+dolsen@northgate-supply.example,Derek Olsen,Warehouse,None,No,Not enrolled,,,2026-09-10
+adiallo@northgate-supply.example,Amina Diallo,Warehouse,None,No,Not enrolled,,,2026-09-04
+jgarcia@northgate-supply.example,Jose Garcia,Warehouse,None,No,Not enrolled,,,2026-09-10
+cboyd@northgate-supply.example,Chris Boyd,Warehouse,None,No,Not enrolled,,,2026-09-09
+nobi@northgate-supply.example,Nkechi Obi,Warehouse,None,No,Not enrolled,,,2026-09-09
+lortega@northgate-supply.example,Luis Ortega,Warehouse,None,No,Not enrolled,,,2026-09-10
+dvolkov@northgate-supply.example,Dmitri Volkov,Warehouse,None,No,Not enrolled,,,2026-09-08
+hkim@northgate-supply.example,Hana Kim,Warehouse,None,No,Enrolled,Authenticator app,2026-05-07,2026-09-10
+ajackson@northgate-supply.example,Andre Jackson,Warehouse,None,No,Not enrolled,,,2026-09-04
+yhassan@northgate-supply.example,Yusuf Hassan,Warehouse,None,No,Not enrolled,,,2026-09-10
+gmwangi@northgate-supply.example,Grace Mwangi,Warehouse,None,No,Not enrolled,,,2026-09-09
+kbrooks@northgate-supply.example,Kyle Brooks,Warehouse,None,No,Not enrolled,,,2026-07-24
+emensah@northgate-supply.example,Esther Mensah,Warehouse,None,No,Not enrolled,,,2026-08-14
+rcruz@northgate-supply.example,Rafael Cruz,Warehouse,None,No,Not enrolled,,,2026-09-08
+awarsame@northgate-supply.example,Abdi Warsame,Warehouse,None,No,Not enrolled,,,2026-09-10
+tnguyen@northgate-supply.example,Tina Nguyen,Warehouse,None,No,Enrolled,Authenticator app,2026-05-12,2026-09-04
+sreyes@northgate-supply.example,Sam Reyes,Warehouse,None,No,Not enrolled,,,2026-09-10

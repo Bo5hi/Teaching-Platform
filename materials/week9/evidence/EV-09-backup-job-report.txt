@@ -1,0 +1,76 @@
+===============================================================
+ FICTIONAL TRAINING MATERIAL - Northgate Supply Co. (MCCoE Week 9)
+ Evidence EV-09: backup job report
+===============================================================
+ BACKUP JOB SUMMARY REPORT
+ Backup server ........ ng-backup01 (10.20.1.30)
+ Report period ........ 2026-08-28 00:00 to 2026-09-10 23:59 CDT
+ Generated ............ 2026-09-11 07:00 CDT (scheduled report)
+ Sent to .............. jchen@northgate-supply.example
+===============================================================
+
+JOB DEFINITIONS
+---------------------------------------------------------------
+Job name          Source                 Schedule     Retention  Copies
+web01-nightly     ng-web01  /var/www,    01:00 daily  14 days    1) local repo /backup/repo1
+                  /etc, database dump                            2) offsite cloud bucket
+                                                                    (immutable 30 days)
+files01-nightly   ng-files01 /srv/shares 01:30 daily  14 days    1) local repo /backup/repo1
+                  /etc                                           2) (none) - offsite copy
+                                                                    disabled 2025-02-03:
+                                                                    "cloud storage quota full"
+backup01-config   ng-backup01 /etc,      03:00 daily   7 days    1) local repo /backup/repo1
+                  job catalog
+
+Hosts with no backup job: ng-legacy01 (10.20.1.50)
+
+Repository /backup/repo1: local disk on ng-backup01, 4.0 TB, 71% used.
+Repository is mounted read/write on ng-backup01 at all times.
+
+JOB HISTORY (last 14 runs)
+---------------------------------------------------------------
+Date        Job               Start  End    Result   Size      Offsite
+2026-08-28  web01-nightly     01:00  01:09  Success  3.1 GB    Success
+2026-08-28  files01-nightly   01:30  02:22  Success  412.6 GB  -
+2026-08-29  web01-nightly     01:00  01:08  Success  3.1 GB    Success
+2026-08-29  files01-nightly   01:30  02:19  Success  412.9 GB  -
+2026-08-30  web01-nightly     01:00  01:08  Success  3.1 GB    Success
+2026-08-30  files01-nightly   01:30  02:18  Success  413.0 GB  -
+2026-08-31  web01-nightly     01:00  01:09  Success  3.1 GB    Success
+2026-08-31  files01-nightly   01:30  02:18  Success  413.0 GB  -
+2026-09-01  web01-nightly     01:00  01:10  Success  3.2 GB    Success
+2026-09-01  files01-nightly   01:30  02:24  Success  413.8 GB  -
+2026-09-02  web01-nightly     01:00  01:09  Success  3.2 GB    Success
+2026-09-02  files01-nightly   01:30  02:31  Warning  414.2 GB  -
+            (warning: 3 files skipped, locked by user: /srv/shares/sales/*.xlsx)
+2026-09-03  web01-nightly     01:00  01:09  Success  3.2 GB    Success
+2026-09-03  files01-nightly   01:30  02:23  Success  414.3 GB  -
+2026-09-04  web01-nightly     01:00  01:08  Success  3.2 GB    Success
+2026-09-04  files01-nightly   01:30  02:21  Success  414.6 GB  -
+2026-09-05  web01-nightly     01:00  01:08  Success  3.2 GB    Success
+2026-09-05  files01-nightly   01:30  02:20  Success  414.6 GB  -
+2026-09-06  web01-nightly     01:00  01:08  Success  3.2 GB    Success
+2026-09-06  files01-nightly   01:30  02:19  Success  414.6 GB  -
+2026-09-07  web01-nightly     01:00  01:09  Success  3.2 GB    Success
+2026-09-07  files01-nightly   01:30  02:20  Success  414.7 GB  -
+2026-09-08  web01-nightly     01:00  01:09  Success  3.2 GB    Success
+2026-09-08  files01-nightly   01:30  02:25  Success  415.1 GB  -
+2026-09-09  web01-nightly     01:00  01:09  Success  3.2 GB    Success
+2026-09-09  files01-nightly   01:30  02:26  Success  415.4 GB  -
+2026-09-10  web01-nightly     01:00  01:09  Success  3.2 GB    Success
+2026-09-10  files01-nightly   01:30  02:24  Success  415.7 GB  -
+
+backup01-config: 14 of 14 runs Success (not listed).
+
+Totals: 42 runs, 41 Success, 1 Warning, 0 Failed.
+
+RESTORE TEST HISTORY (from job catalog)
+---------------------------------------------------------------
+Date        Job               What was restored              Result   By
+2025-06-12  files01-nightly   /srv/shares/hr (one folder)    Success  jchen
+2024-11-20  web01-nightly     full site to test folder       Success  pnair
+
+No restore tests recorded after 2025-06-12.
+===============================================================
+ END OF REPORT
+===============================================================

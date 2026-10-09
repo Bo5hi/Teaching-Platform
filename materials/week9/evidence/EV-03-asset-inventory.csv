@@ -1,0 +1,53 @@
+asset_id,hostname,type,ip_address,location,owner,os,last_seen,status,notes
+A-001,ng-fw01,Firewall,10.20.0.1,Server room,jchen,Firewall OS 7.2,2026-09-10,Active,Edge firewall and VPN
+A-002,ng-sw01,Switch,10.20.0.2,Server room,jchen,Switch firmware,2026-09-10,Active,Core switch
+A-003,ng-sw02,Switch,10.20.0.3,Warehouse,jchen,Switch firmware,2026-09-10,Active,Warehouse switch
+A-004,ng-ap01,Wireless AP,10.20.0.11,Office,jchen,AP firmware,2026-09-10,Active,
+A-005,ng-ap02,Wireless AP,10.20.0.12,Warehouse,jchen,AP firmware,2026-09-10,Active,
+A-006,ng-ap03,Wireless AP,10.20.0.13,Warehouse,jchen,AP firmware,2026-09-10,Active,
+A-010,ng-web01,Server,10.20.1.10,Server room,jchen,Ubuntu 22.04,2026-09-10,Active,Website and ordering portal
+A-011,ng-files01,Server,10.20.1.20,Server room,jchen,Ubuntu 22.04,2026-09-10,Active,"File server (finance, hr, sales, warehouse shares)"
+A-012,ng-backup01,Server,10.20.1.30,Server room,jchen,Ubuntu 22.04,2026-09-10,Active,Backups and central syslog
+A-101,NG-WS-101,Workstation,10.20.3.101,Office,jchen,Windows 11,2026-09-10,Active,
+A-102,NG-WS-102,Workstation,10.20.3.102,Office,gpike,Windows 11,2026-09-10,Active,
+A-103,NG-WS-103,Workstation,10.20.3.103,Office,hortiz,Windows 11,2026-09-10,Active,
+A-104,NG-WS-104,Workstation,10.20.3.104,Office,sboateng,Windows 11,2026-09-10,Active,
+A-105,NG-WS-105,Workstation,10.20.3.105,Office,glindqvist,Windows 11,2026-09-10,Active,
+A-106,NG-WS-106,Workstation,10.20.3.106,Office,ohaddad,Windows 11,2026-09-10,Active,
+A-107,NG-WS-107,Workstation,10.20.3.107,Office,kbell,Windows 10,2025-12-19,Active,
+A-108,NG-WS-108,Workstation,10.20.3.108,Office,abrown,Windows 11,2026-09-10,Active,
+A-109,NG-WS-109,Workstation,10.20.3.109,Office,npetrova,Windows 11,2026-01-22,Active,
+A-110,NG-WS-110,Workstation,10.20.3.110,Office,jprice,Windows 11,2026-09-10,Active,
+A-111,NG-WS-111,Workstation,10.20.3.111,Office,hnguyen,Windows 11,2026-09-10,Active,
+A-112,NG-WS-112,Workstation,10.20.3.112,Office,ogrant,Windows 11,2026-09-10,Active,
+A-113,NG-WS-113,Workstation,10.20.3.113,Office,dcastillo,Windows 11,2026-09-10,Active,
+A-114,NG-WS-114,Workstation,10.20.3.114,Office,mrivera,Windows 11,2026-09-10,Active,
+A-115,NG-WS-115,Workstation,10.20.3.115,Office,mlin,Windows 11,2026-09-10,Active,
+A-116,NG-WS-116,Workstation,10.20.3.116,Office,padeyemi,Windows 11,2026-09-10,Active,
+A-117,NG-WS-117,Workstation,10.20.3.117,Office,sklein,Windows 11,2026-09-10,Active,
+A-118,NG-WS-118,Workstation,10.20.3.118,Office,arahimi,Windows 11,2026-09-10,Active,
+A-119,NG-WS-119,Workstation,10.20.3.119,Office,lpham,Windows 11,2026-09-10,Active,
+A-120,NG-WS-120,Workstation,10.20.3.120,Office,vstone,Windows 11,2026-09-10,Active,
+A-121,NG-WS-121,Workstation,10.20.3.121,Office,etran,Windows 11,2026-09-10,Active,
+A-122,NG-WS-122,Workstation,10.20.3.122,Office,mwebb,Windows 11,2026-09-10,Active,
+A-123,NG-WS-123,Workstation,10.20.3.123,Office,fyusuf,Windows 11,2026-09-10,Active,
+A-124,NG-WS-124,Workstation,10.20.3.124,Warehouse office,tokafor,Windows 11,2026-09-10,Active,
+A-125,NG-WS-125,Workstation,10.20.3.125,Office,reception (shared),Windows 11,2026-09-10,Active,
+A-126,NG-WS-126,Workstation,10.20.3.126,Office,unassigned,Windows 10,2025-10-03,Active,spare
+A-201,NG-LT-201,Laptop,DHCP,Mobile,lharper,Windows 11,2026-09-10,Active,
+A-202,NG-LT-202,Laptop,DHCP,Mobile,dpatel,Windows 11,2026-09-10,Active,
+A-203,NG-LT-203,Laptop,DHCP,Mobile,kmurphy,Windows 11,2026-09-10,Active,
+A-204,NG-LT-204,Laptop,DHCP,Mobile,rdelgado,Windows 11,2026-09-10,Active,
+A-205,NG-LT-205,Laptop,DHCP,Mobile,bfoster,Windows 11,2026-09-10,Active,
+A-206,NG-LT-206,Laptop,DHCP,Mobile,amohammed,Windows 11,2026-09-10,Active,
+A-207,NG-LT-207,Laptop,DHCP,Mobile,lherrera,Windows 11,2026-09-10,Active,
+A-208,NG-LT-208,Laptop,DHCP,Mobile,unassigned,Windows 11,2025-10-03,Active,
+A-209,NG-LT-209,Laptop,DHCP,Mobile,tkowalski,Windows 11,2026-09-03,Active,
+A-210,NG-LT-210,Laptop,DHCP,Mobile,jchen,Windows 11,2026-09-10,Active,
+A-301,NG-WH-01,Shared PC,10.20.5.21,Warehouse floor,Warehouse (shared),Windows 10,2026-09-10,Active,Scanner software; shared login per shift
+A-302,NG-WH-02,Shared PC,10.20.5.22,Warehouse floor,Warehouse (shared),Windows 10,2026-09-10,Active,Scanner software; shared login per shift
+A-303,NG-WH-03,Shared PC,10.20.5.23,Warehouse floor,Warehouse (shared),Windows 10,2026-09-10,Active,Scanner software; shared login per shift
+A-304,NG-WH-04,Shared PC,10.20.5.24,Warehouse floor,Warehouse (shared),Windows 10,2026-09-10,Active,Scanner software; shared login per shift
+A-310,Handheld scanners (x14),Mobile scanner,10.20.5.100-140 (DHCP),Warehouse floor,tokafor,Scanner OS,2026-09-10,Active,Counted as a group
+A-320,ng-prn01,Printer,10.20.3.200,Office,jchen,Printer firmware,2026-09-10,Active,Managed by print vendor
+A-321,ng-prn02,Printer,10.20.5.200,Warehouse,jchen,Printer firmware,2026-09-10,Active,Managed by print vendor

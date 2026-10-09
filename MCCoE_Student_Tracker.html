@@ -852,7 +852,7 @@ select option { background:var(--surface); color:var(--text); }
       <select id="sv-filter-week" onchange="renderCheckinTable()"
         style="padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.85rem;outline:none;">
         <option value="all">All Weeks</option>
-        ${[1,2,3,4,5,6,7,8,9].map(n=>`<option value="${n}">Week ${n}</option>`).join('')}
+        ${[1,2,3,4,5,6,7,8,9,10,11,12].map(n=>`<option value="${n}">Week ${n}</option>`).join('')}
       </select>
       <select id="sv-filter-student" onchange="renderCheckinTable()"
         style="padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.85rem;outline:none;">
@@ -3446,7 +3446,7 @@ function _quizScoresFromProgress(s) {
   if (!key || !_progressCache[key]) return [];
   const prog = _progressCache[key].progress || {};
   const pcts = [];
-  [1,2,3,4,5,6,7,8].forEach(n => {
+  [1,2,3,4,5,6,7,8,9,10,11,12].forEach(n => {
     const w = prog[n] || {};
     if (w.quizScore != null && w.quizTotal) {
       pcts.push(Math.round((w.quizScore / w.quizTotal) * 100));
@@ -4638,7 +4638,7 @@ function loadPortalProgress(rosterId, portalTempId) {
     const skills = data.softSkills || {};
     const updated = data.lastUpdated ? new Date(data.lastUpdated).toLocaleString() : '—';
 
-    const weekRows = [1,2,3,4,5,6,7,8].map(n => {
+    const weekRows = [1,2,3,4,5,6,7,8,9,10,11,12].map(n => {
       const w = prog[n] || {};
       const submitted = w.submitted;
       const score = w.quizScore !== null && w.quizScore !== undefined ? w.quizScore : null;
@@ -4679,7 +4679,7 @@ function loadPortalProgress(rosterId, portalTempId) {
       </div>`;
     }).join('');
 
-    const totalWeeks = 8;
+    const totalWeeks = 12;
     const submittedCount = Object.values(prog).filter(w => w.submitted).length;
     const overallPct = Math.round((submittedCount / totalWeeks) * 100);
 
@@ -7547,7 +7547,7 @@ function loadRecoveryTool() {
 
     const rows = orphans.map(key => {
       const prog = all[key].progress || {};
-      const weeks = [1,2,3,4,5,6,7,8].filter(n => prog[n] && prog[n].quizScore != null);
+      const weeks = [1,2,3,4,5,6,7,8,9,10,11,12].filter(n => prog[n] && prog[n].quizScore != null);
       const scores = weeks.map(n => {
         const w = prog[n];
         return 'Wk' + n + ': ' + w.quizScore + '/' + w.quizTotal;
@@ -8022,11 +8022,21 @@ const EXPORT_WEEK_TASKS = {
     {icon:'📋',label:'Pillar 3 — Curriculum Project',color:'#7c3aed',items:['📄 Project 8: Equifax — Frameworks & Writing (100 pts)']},
     {icon:'🛡️',label:'Pillar 5 — Blue Team Lab',color:'#00bcd4',items:['🚨 Phase 4: Incident Response','📝 Phase 5: Defensive Report']}
   ]},
-  9:{title:'Cybersecurity Careers & Capstone',groups:[
+  9:{title:'Capstone — Assessment',groups:[
     {icon:'🎓',label:'Pillar 1 — Student Platform',color:'#ee2207',items:['📖 Study Week 9 Content','📝 Take Week 9 Quiz','🔤 Acronym Drill','🔬 Complete Lab Activity']},
-    {icon:'💻',label:'Pillar 2 — CyberSec Academy',color:'#00c853',items:['📚 Review All 8 Curriculum Modules','🎮 Quiz: Careers & Certs','🎮 Quiz: Cloud Security','🃏 Complete All Flashcard Decks']},
-    {icon:'📋',label:'Pillar 3 — Curriculum Project',color:'#7c3aed',items:['📄 Project 8: Equifax — Frameworks & Writing (100 pts)']},
-    {icon:'🚩',label:'CTF — Capture The Flag',color:'#f59e0b',items:['🚩 Complete All 4 CTF Scenarios (12 Flags)']}
+    {icon:'📋',label:'Capstone — Northgate Supply Co.',color:'#a78bfa',items:['🗂️ Review the client brief and evidence files','📝 Fieldwork package: scored questionnaire workbook']}
+  ]},
+  10:{title:'Capstone — Outbrief',groups:[
+    {icon:'🎓',label:'Pillar 1 — Student Platform',color:'#ee2207',items:['📖 Study Week 10 Content','📝 Take Week 10 Quiz','🔬 Complete Lab Activity']},
+    {icon:'📋',label:'Capstone — Northgate Supply Co.',color:'#a78bfa',items:['📄 Assessment report and executive summary','🎤 Present findings to MCCoE staff at the outbrief']}
+  ]},
+  11:{title:'Security+ Review',groups:[
+    {icon:'🎓',label:'Pillar 1 — Student Platform',color:'#ee2207',items:['📖 Study Week 11 Content','📝 Domain Knowledge Check','🗓️ Daily Practice Tests (Mon–Fri)','🎯 Study plan for your 2 weakest domains']},
+    {icon:'💻',label:'Pillar 2 — CyberSec Academy',color:'#00c853',items:['🎮 Quiz: Careers & Certs','🃏 Complete All Flashcard Decks']}
+  ]},
+  12:{title:'Security+ Mock Exam',groups:[
+    {icon:'🎓',label:'Pillar 1 — Student Platform',color:'#ee2207',items:['📖 Study Week 12 Content','⏱️ Full-Length Timed Mock Exam','🔬 Review every missed question']},
+    {icon:'🚩',label:'CTF — Capture The Flag',color:'#ffd700',items:['🚩 Complete All 4 CTF Scenarios (12 Flags)']}
   ]}
 };
 function exportWeeklyReport() {
@@ -8035,7 +8045,7 @@ function exportWeeklyReport() {
 
   const today = new Date();
   const msPerWeek = 7 * 24 * 60 * 60 * 1000;
-  const weekNum = Math.min(9, Math.max(1, Math.floor((today - COHORT_START) / msPerWeek) + 1));
+  const weekNum = Math.min(12, Math.max(1, Math.floor((today - COHORT_START) / msPerWeek) + 1));
 
   const weekStart = new Date(COHORT_START);
   weekStart.setDate(COHORT_START.getDate() + (weekNum - 1) * 7);

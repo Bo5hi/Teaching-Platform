@@ -1,0 +1,156 @@
+#=====================================================================
+# FICTIONAL TRAINING MATERIAL - Northgate Supply Co. (MCCoE Week 9)
+# Evidence EV-05: firewall configuration excerpt
+#=====================================================================
+# Device ........ ng-fw01 (10.20.0.1)
+# Exported ...... 2026-09-10 09:12 CDT by jchen
+# Purpose ....... Provided to MCCoE assessment team on request
+# Note .......... Secrets and pre-shared keys removed. Only the
+#                 address objects, NAT, VPN users, and security
+#                 policies sections are included.
+#=====================================================================
+
+config system interface
+  edit "wan1"      ip 203.0.113.10/29   role wan
+  edit "lan-core"  ip 10.20.0.1/24      role lan
+  edit "vlan-srv"  ip 10.20.1.1/24      role lan   vlan-id 10
+  edit "vlan-off"  ip 10.20.3.1/24      role lan   vlan-id 30
+  edit "vlan-wh"   ip 10.20.5.1/24      role lan   vlan-id 50
+  edit "ssl-vpn"   ip 10.20.9.1/24      role vpn
+end
+
+config firewall address
+  edit "net-servers"     subnet 10.20.1.0/24
+  edit "net-office"      subnet 10.20.3.0/24
+  edit "net-warehouse"   subnet 10.20.5.0/24
+  edit "net-vpn"         subnet 10.20.9.0/24
+  edit "host-web01"      subnet 10.20.1.10/32
+  edit "host-files01"    subnet 10.20.1.20/32
+  edit "host-backup01"   subnet 10.20.1.30/32
+  edit "host-legacy01"   subnet 10.20.1.50/32   comment "old inventory/test box"
+  edit "blk-203.0.113.45" subnet 203.0.113.45/32 comment "SSH guessing 2026-03-10"
+end
+
+config firewall vip   # inbound NAT (port-forwards)
+  edit 10
+    set name "web-https"
+    set extintf "wan1"
+    set extport 443
+    set mappedip 10.20.1.10
+    set mappedport 443
+    set comment "public website and ordering portal"
+  next
+  # edit 20
+  #   set name "files-ssh"
+  #   set extintf "wan1"
+  #   set extport 2222
+  #   set mappedip 10.20.1.20
+  #   set mappedport 22
+  #   set comment "remote admin - temp 2021"
+  # next
+  # --- rule 20 deleted 2026-04-15 07:48 by jchen (INC-2026-001) ---
+end
+
+config vpn ssl users
+  #  user            group          mfa       status     last-login
+  edit "jchen"       it-admin       totp      enabled    2026-09-09
+  edit "pnair"       it-admin       totp      enabled    2026-09-05
+  edit "bbws-dev"    vendor-web     none      enabled    2026-08-27
+  edit "oakline"     vendor-edi     none      enabled    2025-10-29
+end
+
+config firewall policy   # evaluated top to bottom, first match wins
+  edit 5
+    set name "block-ssh-guesser"
+    set srcintf "wan1"  srcaddr "blk-203.0.113.45"
+    set dstintf "any"   dstaddr "all"
+    set service "ALL"   action deny   logtraffic all
+    set comment "added 2026-03-11 jchen"
+  next
+  edit 10
+    set name "inbound-web"
+    set srcintf "wan1"  srcaddr "all"
+    set dstintf "vlan-srv" dstaddr "host-web01"
+    set service "HTTPS" action accept logtraffic all
+  next
+  edit 20
+    set name "vpn-admin-to-servers"
+    set srcintf "ssl-vpn" srcaddr "net-vpn"  srcgroup "it-admin"
+    set dstintf "vlan-srv" dstaddr "net-servers"
+    set service "SSH HTTPS" action accept logtraffic all
+    set comment "admin access only through VPN"
+  next
+  edit 21
+    set name "vpn-vendor-web"
+    set srcintf "ssl-vpn" srcaddr "net-vpn"  srcgroup "vendor-web"
+    set dstintf "vlan-srv" dstaddr "host-web01"
+    set service "SSH"  action accept logtraffic all
+  next
+  edit 22
+    set name "vpn-vendor-edi"
+    set srcintf "ssl-vpn" srcaddr "net-vpn"  srcgroup "vendor-edi"
+    set dstintf "vlan-srv" dstaddr "host-legacy01"
+    set service "SSH"  action accept logtraffic all
+    set comment "Oakline SFTP drop"
+  next
+  edit 30
+    set name "office-to-files"
+    set srcintf "vlan-off" srcaddr "net-office"
+    set dstintf "vlan-srv" dstaddr "host-files01"
+    set service "SMB"  action accept logtraffic utm
+  next
+  edit 31
+    set name "office-to-web"
+    set srcintf "vlan-off" srcaddr "net-office"
+    set dstintf "vlan-srv" dstaddr "host-web01"
+    set service "HTTPS" action accept logtraffic utm
+  next
+  edit 40
+    set name "warehouse-to-web"
+    set srcintf "vlan-wh" srcaddr "net-warehouse"
+    set dstintf "vlan-srv" dstaddr "host-web01"
+    set service "HTTPS" action accept logtraffic utm
+  next
+  edit 45
+    set name "wh-temp-any"
+    set srcintf "vlan-wh" srcaddr "net-warehouse"
+    set dstintf "vlan-srv" dstaddr "net-servers"
+    set service "ALL"  action accept logtraffic disable
+    set comment "TEMP scanner app setup 2023-06-02 - remove after go-live"
+  next
+  edit 50
+    set name "backup-jobs"
+    set srcintf "vlan-srv" srcaddr "host-backup01"
+    set dstintf "vlan-srv" dstaddr "net-servers"
+    set service "SSH"  action accept logtraffic all
+  next
+  edit 80
+    set name "internal-to-internet"
+    set srcintf "vlan-off vlan-wh vlan-srv" srcaddr "all"
+    set dstintf "wan1"  dstaddr "all"
+    set service "ALL"   action accept  logtraffic all
+    set comment "outbound open; bandwidth alert AL-01 watches this (see syslog)"
+  next
+  edit 99
+    set name "default-deny-inbound"
+    set srcintf "wan1"  srcaddr "all"
+    set dstintf "any"   dstaddr "all"
+    set service "ALL"   action deny   logtraffic all
+    set comment "added 2026-04-15 jchen - explicit deny and log"
+  next
+end
+
+# Policy hit counts (last 90 days), from: diagnose firewall policy stats
+#  id   hits        last-hit
+#   5   0           2026-03-11 02:40
+#  10   1,904,332   2026-09-10 09:11
+#  20   412         2026-09-09 16:02
+#  21   37          2026-08-27 14:21
+#  22   0           -
+#  30   288,410     2026-09-10 09:12
+#  31   51,207      2026-09-10 09:10
+#  40   96,114      2026-09-10 09:08
+#  45   14,982      2026-09-10 08:57
+#  50   540         2026-09-10 01:31
+#  80   3,882,019   2026-09-10 09:12
+#  99   71,560      2026-09-10 09:12

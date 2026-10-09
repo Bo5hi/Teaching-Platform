@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>EV-11 Post-Incident Review Summary · Week 9 · MCCoE</title>
+  <link rel="stylesheet" href="../../materials.css" />
+</head>
+<body>
+  <main class="doc">
+    <header class="doc-head">
+      <div class="doc-kicker">Evidence · Northgate Supply Co. · EV-11</div>
+      <h1>Post-Incident Review Summary: INC-2026-001</h1>
+      <p class="doc-sub">Notes from the lessons-learned meeting on 28 April 2026, with the action tracker as of 1 September 2026. Provided by James Chen on request.</p>
+      <span class="fictional">Fictional scenario for training. All names, companies, and addresses are made up.</span>
+    </header>
+
+    <section class="summary">
+      <h2>In short</h2>
+      <p>After the April 2026 break-in, Northgate held a meeting to review what happened and what to fix. This is the summary James wrote, plus the list of actions and their status. It is useful for two things: it is evidence of a lessons-learned process, and each action gives you something to check against the other evidence.</p>
+    </section>
+
+    <h2>Meeting details</h2>
+    <table>
+      <tr><th>Field</th><th>Value</th></tr>
+      <tr><td>Incident</td><td>INC-2026-001, unauthorized access to ng-files01 and theft of finance files</td></tr>
+      <tr><td>Meeting date</td><td>28 April 2026, 10:00 to 11:30</td></tr>
+      <tr><td>Attendees</td><td>Linda Harper (CEO), James Chen (IT Manager), Priya Nair (IT contractor), Alicia Brown (HR Manager), Maria Rivera (Accounts Payable)</td></tr>
+      <tr><td>Written by</td><td>James Chen</td></tr>
+    </table>
+
+    <h2>What happened (short timeline, US Central time)</h2>
+    <table>
+      <tr><th>When</th><th>What</th></tr>
+      <tr><td>About 7 April</td><td>Maria Rivera received a phishing email and entered her password on a fake login page. Her account did not have MFA.</td></tr>
+      <tr><td>15 April, 02:14</td><td>Someone logged in to ng-files01 as <code>mrivera</code> from 198.51.100.77, using SSH through an old port-forward on the firewall.</td></tr>
+      <tr><td>15 April, early morning</td><td>The attacker became root through a badly set <code>sudo</code> rule, created a backdoor account <code>support2</code>, added a cron job to keep access, zipped <code>/srv/shares/finance</code>, and copied it to 192.0.2.200.</td></tr>
+      <tr><td>15 April, about 07:30</td><td>James saw unusual outbound traffic in the firewall's daily bandwidth email and started to investigate.</td></tr>
+      <tr><td>15 April, 07:48 to 11:00</td><td>James removed the port-forward, disabled <code>mrivera</code> and <code>support2</code>, removed the cron job, and reset passwords. Linda was told at 08:15.</td></tr>
+      <tr><td>16 April</td><td>sudo rule fixed. Maria enrolled in MFA. Finance team told to watch for fake bank-change requests.</td></tr>
+    </table>
+
+    <h2>Data affected</h2>
+    <p>The finance share: vendor invoices and payment records, including bank account details for about 140 vendors. After legal advice, Northgate notified these vendors on 15 May 2026.</p>
+
+    <h2>Why it happened (root causes agreed in the meeting)</h2>
+    <ol>
+      <li>A password was stolen by phishing, and MFA was not required.</li>
+      <li>SSH on the file server was reachable from the internet through a forgotten port-forward, even though policy said "VPN only".</li>
+      <li>A misconfigured <code>sudo</code> rule let a normal user become root.</li>
+      <li>Nothing alerted on the new account or the cron job. The outbound traffic was only seen hours later.</li>
+      <li>There was no written incident response plan, so people were not sure who to call (insurance, lawyer).</li>
+    </ol>
+
+    <h2>What went well</h2>
+    <ul>
+      <li>James noticed within about 5 hours and contained the attacker the same morning.</li>
+      <li>Backups were not touched, and no systems needed to be rebuilt.</li>
+      <li>Staff reported two more phishing emails the same week.</li>
+    </ul>
+
+    <h2>Action tracker (status as of 1 September 2026)</h2>
+    <table>
+      <tr><th>#</th><th>Action</th><th>Owner</th><th>Due</th><th>Status</th></tr>
+      <tr><td>1</td><td>Remove SSH port-forward; add explicit default-deny inbound rule</td><td>J. Chen</td><td>2026-04-15</td><td>Done 2026-04-15</td></tr>
+      <tr><td>2</td><td>Remove <code>support2</code> and cron job; reset all server passwords</td><td>J. Chen</td><td>2026-04-15</td><td>Done 2026-04-15</td></tr>
+      <tr><td>3</td><td>Fix sudo rule on ng-files01; check other servers</td><td>P. Nair</td><td>2026-04-17</td><td>Done 2026-04-16 (files01); others "looked OK"</td></tr>
+      <tr><td>4</td><td>Require MFA for all staff</td><td>J. Chen</td><td>2026-06-30</td><td>In progress. Required for admins and Finance. Warehouse waiting on phones.</td></tr>
+      <tr><td>5</td><td>Real-time alert for large outbound transfers</td><td>J. Chen</td><td>2026-04-30</td><td>Done 2026-04-20 (AL-01)</td></tr>
+      <tr><td>6</td><td>Alerts for new server accounts and admin group changes</td><td>J. Chen</td><td>2026-07-31</td><td>Open</td></tr>
+      <tr><td>7</td><td>Write an incident response plan with a contact list</td><td>J. Chen</td><td>2026-06-30</td><td>In progress (draft v0.3)</td></tr>
+      <tr><td>8</td><td>Security awareness training for all staff, plus a phishing test</td><td>A. Brown</td><td>2026-06-30</td><td>Done (training June, phishing test July)</td></tr>
+      <tr><td>9</td><td>Update the risk register with lessons from this incident</td><td>J. Chen</td><td>2026-05-31</td><td>Open</td></tr>
+      <tr><td>10</td><td>Retire ng-legacy01</td><td>J. Chen</td><td>2026-06-30</td><td>Open. Tunde says the warehouse may still need old reports.</td></tr>
+      <tr><td>11</td><td>List all vendors with access to our systems</td><td>J. Chen</td><td>2026-05-15</td><td>Done 2026-05-12</td></tr>
+      <tr><td>12</td><td>Notify affected vendors (after legal advice)</td><td>L. Harper</td><td>2026-05-15</td><td>Done 2026-05-15</td></tr>
+      <tr><td>13</td><td>Hire an outside assessor to check our security against NIST CSF</td><td>L. Harper</td><td>2026-09-30</td><td>In progress (MCCoE team, September)</td></tr>
+    </table>
+
+    <section class="task">
+      <h2>What to do with this</h2>
+      <ol>
+        <li>Lab steps 4 to 6: this can support a Respond control (for example RS.AN, analysis, or lessons learned) or an Identify improvement control (ID.IM).</li>
+        <li>Corroborate: pick two or three actions marked "Done" or "In progress" and check them against the other evidence files. Do they agree?</li>
+      </ol>
+    </section>
+
+    <footer class="doc-foot">Missouri Cybersecurity Center of Excellence · 12-Week Cybersecurity Program · Training material</footer>
+  </main>
+</body>
+</html>

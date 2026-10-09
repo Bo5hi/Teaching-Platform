@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Northgate Client Brief · Week 9 · MCCoE</title>
+  <link rel="stylesheet" href="../materials.css" />
+</head>
+<body>
+  <main class="doc">
+    <header class="doc-head">
+      <div class="doc-kicker">MCCoE Lab Material · Week 9 · Lab scenario</div>
+      <h1>Client Brief: Northgate Supply Co. NIST CSF 2.0 Assessment</h1>
+      <p class="doc-sub">Your engagement letter, the organization profile, and the rules for fieldwork.</p>
+      <span class="fictional">Fictional scenario for training. All names, companies, and addresses are made up.</span>
+    </header>
+
+    <section class="summary">
+      <h2>In short</h2>
+      <p>Northgate Supply Co. is a small wholesale company. In April 2026 an attacker broke into its file server and stole finance files. Now the CEO has hired your team to check Northgate's security against the NIST Cybersecurity Framework (CSF) 2.0. This week you do the fieldwork: you interview five Northgate staff members, review Northgate's documents and the MCCoE scan results, and score a 41-question assessment questionnaire. Next week (Week 10) you turn your fieldwork into a report and present it to Northgate's leaders.</p>
+    </section>
+
+    <h2>1. Engagement letter</h2>
+    <div class="email">
+      <div class="email-headers">
+        <div><b>From:</b> Linda Harper &lt;lharper@northgate-supply.example&gt;</div>
+        <div><b>To:</b> MCCoE Assessment Team</div>
+        <div><b>Date:</b> Tuesday, 1 September 2026</div>
+        <div><b>Subject:</b> Engagement: NIST CSF 2.0 security assessment of Northgate Supply Co.</div>
+      </div>
+      <div class="email-body">
+        <p>Dear MCCoE Assessment Team,</p>
+        <p>Thank you for agreeing to assess Northgate Supply Co. This letter confirms what we are asking you to do.</p>
+        <p><b>Why now.</b> In April 2026 we had a security incident. An attacker used an employee's stolen password to get into our file server and took files from our finance share. We contained it the same morning, but it showed us that we do not really know how strong our security is. Our cyber insurance renews in November, and the insurer is asking what we have changed.</p>
+        <p><b>Scope.</b> Please assess Northgate's cybersecurity program against the six functions of the NIST Cybersecurity Framework 2.0: Govern, Identify, Protect, Detect, Respond, and Recover. This covers our office, warehouse, servers, cloud email, and the vendors who connect to our systems.</p>
+        <p><b>Testing.</b> We give the MCCoE team written permission to run one round of network and vulnerability scans (an external scan from the internet, an internal network scan, and a vulnerability scan), at a time agreed with James. Please do not log in to or change any of our systems, and do not try to break in. The rest of your work is interviews and a review of documents and settings that we give you.</p>
+        <p><b>Fieldwork dates.</b> 8 to 12 September 2026. <b>Report due:</b> 25 September 2026. <b>Outbrief</b> (a meeting where you present your results to me and my managers): after we receive the report.</p>
+        <p><b>Point of contact.</b> James Chen, our IT Manager, will be your main contact. He can answer your questions and share documents and reports. I, Alicia Brown (HR), Helen Ortiz (Finance), and Tunde Okafor (Warehouse) will also meet your team. You can reach James at jchen@northgate-supply.example or 555-0147. If you need me, call 555-0142.</p>
+        <p><b>What I want at the end.</b> An honest picture. For each area, tell me what is working, what is missing, and what we should fix first. I would rather hear bad news from you than from the next attacker.</p>
+        <p><b>Confidentiality.</b> Please treat everything you learn as confidential and use it only for this assessment.</p>
+        <p>Regards,<br />Linda Harper<br />Chief Executive Officer, Northgate Supply Co.</p>
+      </div>
+    </div>
+
+    <h2>2. Company overview</h2>
+    <table>
+      <tr><th>Item</th><th>Details</th></tr>
+      <tr><td>Business</td><td>Wholesale distributor of restaurant and cleaning supplies (paper goods, food containers, cleaning chemicals)</td></tr>
+      <tr><td>Location</td><td>One site in Springfield, Missouri: an office building and a warehouse</td></tr>
+      <tr><td>Employees</td><td>62 (office staff, sales, customer service, purchasing, and the warehouse)</td></tr>
+      <tr><td>Customers</td><td>Restaurants, schools, hotels, and cleaning companies. Many order online through the ordering portal.</td></tr>
+      <tr><td>IT team</td><td>One full-time IT Manager (James Chen) and one part-time IT contractor (Priya Nair)</td></tr>
+      <tr><td>Domain</td><td><code>northgate-supply.example</code></td></tr>
+    </table>
+
+    <h2>3. People and roles</h2>
+    <table>
+      <tr><th>Name</th><th>Role</th><th>Why they matter to you</th></tr>
+      <tr><td>Linda Harper</td><td>CEO</td><td>Hired you. Approves policies and budget. Owns cyber risk decisions.</td></tr>
+      <tr><td>James Chen</td><td>IT Manager (only full-time IT person)</td><td>Your point of contact and main interviewee. Admin on all servers.</td></tr>
+      <tr><td>Priya Nair</td><td>IT support contractor (part-time)</td><td>Helps James with servers and support, about 16 hours a week.</td></tr>
+      <tr><td>Maria Rivera</td><td>Accounts Payable Specialist</td><td>Her password was stolen in the April incident.</td></tr>
+      <tr><td>Helen Ortiz</td><td>Finance Manager</td><td>Runs Finance, the team whose files were stolen in April.</td></tr>
+      <tr><td>Alicia Brown</td><td>HR Manager</td><td>Handles new hires and leavers. Ran the 2026 security training.</td></tr>
+      <tr><td>Tunde Okafor</td><td>Warehouse Manager</td><td>Runs the warehouse (about half of all staff).</td></tr>
+      <tr><td>Dev Patel</td><td>Sales Lead</td><td>Leads the sales team, which travels and works remotely.</td></tr>
+    </table>
+    <p class="note">In this lab you interview all five of these people in the <a href="../../interview.html">interview simulator</a>. You choose each question, and each person's time is limited.</p>
+
+    <h2>4. Systems and network</h2>
+    <p>Northgate's network has separate parts (called VLANs, or virtual networks) for servers, office computers, and the warehouse. A firewall sits between these parts and the internet.</p>
+    <table>
+      <tr><th>Part</th><th>Address range</th><th>What is there</th></tr>
+      <tr><td>Firewall <code>ng-fw01</code></td><td>10.20.0.1</td><td>Connects everything to the internet. Also runs the VPN (a secure, encrypted connection for remote access).</td></tr>
+      <tr><td>Server network</td><td>10.20.1.0/24</td><td>The servers listed below</td></tr>
+      <tr><td>Office network</td><td>10.20.3.0/24</td><td>Office workstations, laptops, and printers</td></tr>
+      <tr><td>Warehouse network</td><td>10.20.5.0/24</td><td>Shared warehouse PCs, handheld scanners, and a printer</td></tr>
+      <tr><td>VPN users</td><td>10.20.9.0/24</td><td>Addresses given to people connected through the VPN</td></tr>
+    </table>
+    <h3>Servers (all Linux)</h3>
+    <table>
+      <tr><th>Server</th><th>Address</th><th>Purpose</th></tr>
+      <tr><td><code>ng-web01</code></td><td>10.20.1.10</td><td>Public website and online ordering portal</td></tr>
+      <tr><td><code>ng-files01</code></td><td>10.20.1.20</td><td>File server with shared folders for finance, HR, sales, and the warehouse</td></tr>
+      <tr><td><code>ng-backup01</code></td><td>10.20.1.30</td><td>Nightly backups; also collects logs</td></tr>
+      <tr><td><code>ng-legacy01</code></td><td>10.20.1.50</td><td>An old test and inventory server that was never retired</td></tr>
+    </table>
+    <h3>Cloud services</h3>
+    <p>Email and office applications are in the cloud. Multi-factor authentication (MFA: a second check, such as a code on a phone, in addition to a password) is available.</p>
+
+    <h2>5. What happened in April 2026</h2>
+    <p>This is a plain-language summary. You studied this incident in Week 7.</p>
+    <ol>
+      <li>In early April, Maria Rivera got a phishing email (a fake email that tries to trick you). She typed her password into a fake login page. Her account did not have MFA.</li>
+      <li>At 2:14 a.m. on Wednesday 15 April, the attacker used her password to log in to the file server <code>ng-files01</code>. This worked because an old firewall setting (a port-forward) let people reach the server's SSH remote login from the internet, even though the rules said remote access must go through the VPN.</li>
+      <li>The attacker gave themselves full admin rights through a badly configured setting, created a hidden account, and set up a scheduled task so they could come back later.</li>
+      <li>They copied the finance folder, including vendor bank details, to a computer on the internet.</li>
+      <li>James Chen saw unusual outbound traffic the next morning. He blocked the attacker, removed the hidden account, and closed the old port-forward the same day.</li>
+    </ol>
+    <p>Northgate made several changes after the incident. Part of your job is to check which changes really happened and how well they work.</p>
+
+    <h2>6. What leadership is worried about</h2>
+    <ul>
+      <li><b>"Could it happen again?"</b> Linda wants to know if the same kind of attack would still work today.</li>
+      <li><b>Cyber insurance.</b> The policy renews in November 2026. The insurer has asked about MFA, tested backups, and an incident response plan.</li>
+      <li><b>Customer and vendor trust.</b> Vendors were notified that their bank details were exposed. Leadership does not want a second letter.</li>
+      <li><b>One-person IT.</b> James does almost everything. What happens when he is sick or on vacation?</li>
+      <li><b>Limited budget.</b> Northgate is a small company. Leadership needs to know what to fix first.</li>
+    </ul>
+
+    <h2>7. Rules for fieldwork</h2>
+    <ul>
+      <li>Use <b>only</b> the evidence provided: the Northgate evidence library, your interview transcripts and notes, and the MCCoE scan results. Do not invent evidence, and do not guess what a document "probably" says.</li>
+      <li>Never use real data. Do not add real company information, real screenshots, real passwords, or anything about a real employer to your fieldwork package.</li>
+      <li>You do not scan or log in to anything yourself. The MCCoE team already ran the scans that Northgate approved in writing. You review their results.</li>
+      <li>Be respectful. James is helping you. Ask questions without blaming anyone. People share more when they do not feel judged.</li>
+      <li>Treat your notes as confidential client information. Share them only with your team and your instructor.</li>
+    </ul>
+
+    <h2>8. How fieldwork works here</h2>
+    <p>MCCoE assessments follow the same method every time. You answer a questionnaire, you back up every answer with evidence, and you write down where the evidence came from.</p>
+
+    <h3>Step 1. Score the questionnaire</h3>
+    <p>Open the questionnaire workbook, <a href="northgate-questionnaire.xlsx">northgate-questionnaire.xlsx</a>. It has 41 questions. Each question is linked to a NIST CSF 2.0 category (for example GV.PO, policy) and has a <b>weight</b>: a number that shows how important the question is. For each question, choose one of five levels:</p>
+    <table>
+      <tr><th>Level</th><th>Score</th><th>What it means</th></tr>
+      <tr><td>Fully</td><td>100%</td><td>The practice is in place, written down where needed, and working everywhere. The evidence proves it.</td></tr>
+      <tr><td>Almost</td><td>75%</td><td>The practice is in place and working, with only small gaps.</td></tr>
+      <tr><td>Mostly</td><td>50%</td><td>The practice is partly in place. There are real gaps, or it covers only some people or systems.</td></tr>
+      <tr><td>Somewhat</td><td>25%</td><td>The practice is informal, just started, or has very little evidence.</td></tr>
+      <tr><td>Not Compliant</td><td>0%</td><td>The practice is not in place, or there is no evidence for it at all.</td></tr>
+    </table>
+    <p>The workbook multiplies each level by the question's weight. It adds these up for each CSF function and for Northgate as a whole, so heavier questions count more.</p>
+
+    <h3>Step 2. Gather evidence from three sources</h3>
+    <ol>
+      <li><b>Policy and artifact review.</b> Documents, exports, and reports from Northgate, such as policies, settings, and logs. Each has an ID (EV-01, EV-02, and so on) in the <a href="evidence/index.html">evidence library</a>. Open an item only when an interview gives you its ID.</li>
+      <li><b>Interviews.</b> Interview all five staff members in the <a href="../../interview.html">interview simulator</a> (INT-01 to INT-05). Each person has limited time, so plan first. Before the interviews, write at least five open questions (questions that need a full answer, not just yes or no) that cover different CSF functions. Example: "How does a new employee get access to the file server?" is better than "Do you control access?" After each answer, ask for proof: "Can you show me that?" or "Is that written down anywhere?"</li>
+      <li><b>Scans.</b> The MCCoE team ran network and vulnerability scans with Northgate's written permission. Read the <a href="scans/index.html">scan results</a> (SCAN-01, SCAN-02, SCAN-03). Scans show what is really on the network, which is not always what the documents say.</li>
+    </ol>
+
+    <h3>Step 3. Record the evidence for every answer</h3>
+    <ul>
+      <li>Next to every answer in the workbook, list the IDs of the evidence you used, for example "EV-04, INT-02, SCAN-01". If you can, add the row, line, or section.</li>
+      <li><b>No evidence is a result too.</b> Sometimes a person says "we don't have that written down" or "I just know how it works." There is no file for that. Write "no evidence provided". That usually means a low score.</li>
+      <li><b>Compare sources.</b> What people say and what the evidence shows are not always the same. When they disagree, trust the evidence, score on the evidence, and write down the difference.</li>
+    </ul>
+    <p class="note">Use the <a href="fieldwork-worksheets.html">fieldwork worksheets</a> for your interview notes and your contradictions log.</p>
+
+    <section class="task">
+      <h2>What to do with this</h2>
+      <ol>
+        <li>Lab step 1: read this brief before you write any questions.</li>
+        <li>Lab step 2: use sections 4 to 6 to plan at least five open questions for James across Govern, Identify, Protect, Detect, Respond, and Recover.</li>
+        <li>Lab steps 3 to 7: follow section 8 while you gather evidence and score the questionnaire.</li>
+      </ol>
+    </section>
+
+    <footer class="doc-foot">Missouri Cybersecurity Center of Excellence · 12-Week Cybersecurity Program · Training material</footer>
+  </main>
+</body>
+</html>

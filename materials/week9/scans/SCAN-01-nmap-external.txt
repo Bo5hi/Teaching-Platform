@@ -1,0 +1,63 @@
+#=====================================================================
+# FICTIONAL TRAINING MATERIAL - Northgate Supply Co. (MCCoE Week 9)
+# Scan result SCAN-01: Nmap external scan of Northgate's public IP address
+#=====================================================================
+# Collected by .. MCCoE assessment team (scan operator: assessment lead)
+# Authorized by . Linda Harper, CEO (rules of engagement signed 2026-09-02)
+# Scan source ... MCCoE cloud scan host 198.51.100.140 (on the internet)
+# Target ........ 203.0.113.10 (Northgate firewall ng-fw01, interface wan1)
+# Date .......... Wednesday 9 September 2026
+# Note .......... Two runs. Run 1 = full TCP port sweep + common UDP.
+#                 Run 2 = targeted check of the old SSH forward.
+#                 Output is standard Nmap normal output (-oN).
+#=====================================================================
+
+# Nmap 7.95 scan initiated Wed Sep  9 07:40:12 2026 as: nmap -Pn -sS -sU -sV -sC -p T:1-65535,U:53,123,161,500,4500 -T3 -oN SCAN-01-nmap-external.txt 203.0.113.10
+Nmap scan report for www.northgate-supply.example (203.0.113.10)
+Host is up (0.031s latency).
+Not shown: 65534 filtered tcp ports (no-response), 3 open|filtered udp ports (no-response)
+PORT     STATE SERVICE   VERSION
+443/tcp  open  ssl/http  nginx
+| ssl-cert: Subject: commonName=www.northgate-supply.example
+| Subject Alternative Name: DNS:www.northgate-supply.example, DNS:northgate-supply.example, DNS:orders.northgate-supply.example
+| Issuer: commonName=Example Issuing CA R1/organizationName=Example Trust Services
+| Public Key type: rsa
+| Public Key bits: 2048
+| Signature Algorithm: sha256WithRSAEncryption
+| Not valid before: 2026-07-14T00:00:00
+|_Not valid after:  2026-10-12T23:59:59
+|_http-title: Northgate Supply Co. | Online Ordering
+|_http-server-header: nginx
+| tls-alpn: 
+|   h2
+|_  http/1.1
+500/udp  open  isakmp?
+| ike-version: 
+|   attributes: 
+|     IKE v2
+|_    Dead Peer Detection v1.0
+4500/udp open  nat-t-ike?
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Wed Sep  9 08:57:46 2026 -- 1 IP address (1 host up) scanned in 4654.21 seconds
+
+# ---------------------------------------------------------------------
+# Run 2: targeted check of SSH (22) and the old admin forward (2222).
+# Reason: the June 2023 network diagram still shows an SSH port-forward.
+# ---------------------------------------------------------------------
+
+# Nmap 7.95 scan initiated Wed Sep  9 09:02:30 2026 as: nmap -Pn -sS -p 22,2222 --reason -oN - 203.0.113.10
+Nmap scan report for www.northgate-supply.example (203.0.113.10)
+Host is up, received user-set (0.030s latency).
+
+PORT     STATE    SERVICE      REASON
+22/tcp   filtered ssh          no-response
+2222/tcp filtered EtherNetIP-1 no-response
+
+# Nmap done at Wed Sep  9 09:02:33 2026 -- 1 IP address (1 host up) scanned in 2.64 seconds
+
+# ---------------------------------------------------------------------
+# Assessor note: "filtered" means the firewall dropped the probe and
+# nothing answered. SSH is not reachable from the internet. Only HTTPS
+# (443/tcp) and the IPsec VPN (500/udp, 4500/udp) answer.
+# ---------------------------------------------------------------------

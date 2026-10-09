@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>EV-07 Logging and Alerting Configuration · Week 9 · MCCoE</title>
+  <link rel="stylesheet" href="../../materials.css" />
+</head>
+<body>
+  <main class="doc">
+    <header class="doc-head">
+      <div class="doc-kicker">Evidence · Northgate Supply Co. · EV-07</div>
+      <h1>Logging and Alerting Configuration</h1>
+      <p class="doc-sub">Settings export from the central log server on ng-backup01, plus the alert rule list. Provided by James Chen on 10 September 2026.</p>
+      <span class="fictional">Fictional scenario for training. All names, companies, and addresses are made up.</span>
+    </header>
+
+    <section class="summary">
+      <h2>In short</h2>
+      <p>Northgate collects some logs in one place (a central syslog server) and has a few alert rules that send email. This page shows which systems send logs, how long logs are kept, and which alert rules are turned on. Compare it with what happened in April 2026: which of the attacker's actions would these rules catch today?</p>
+    </section>
+
+    <h2>1. Log collector</h2>
+    <table>
+      <tr><th>Setting</th><th>Value</th></tr>
+      <tr><td>Collector</td><td>rsyslog on <code>ng-backup01</code> (10.20.1.30), TCP port 514</td></tr>
+      <tr><td>Storage</td><td><code>/var/log/central/&lt;hostname&gt;/</code>, one file per host per day</td></tr>
+      <tr><td>Retention</td><td>90 days, then deleted automatically</td></tr>
+      <tr><td>Alerting tool</td><td>Small rule engine that reads the central logs every 5 minutes and sends email</td></tr>
+      <tr><td>Alert recipients</td><td><code>jchen@northgate-supply.example</code> only</td></tr>
+      <tr><td>Set up</td><td>November 2024 (collector); alert rules added over time, see section 3</td></tr>
+    </table>
+
+    <h2>2. Log sources</h2>
+    <table>
+      <tr><th>Source</th><th>What it sends</th><th>Sending since</th><th>Last message received</th></tr>
+      <tr><td>ng-fw01 (10.20.0.1)</td><td>Traffic logs, VPN logins, admin changes</td><td>2024-11-18</td><td>2026-09-10 09:14</td></tr>
+      <tr><td>ng-web01 (10.20.1.10)</td><td>auth.log, syslog, web server access log</td><td>2024-11-18</td><td>2026-09-10 09:14</td></tr>
+      <tr><td>ng-files01 (10.20.1.20)</td><td>auth.log, syslog</td><td>2024-11-18</td><td>2026-09-10 09:13</td></tr>
+      <tr><td>ng-backup01 (10.20.1.30)</td><td>auth.log, syslog, backup job results</td><td>2024-11-18</td><td>2026-09-10 09:14</td></tr>
+      <tr><td>Workstations and laptops</td><td>Not collected</td><td>-</td><td>-</td></tr>
+      <tr><td>Cloud email and office suite</td><td>Not forwarded. Sign-in logs stay in the cloud admin console (kept 30 days).</td><td>-</td><td>-</td></tr>
+    </table>
+    <p class="note">ng-legacy01 (10.20.1.50) is not in the source list.</p>
+
+    <h2>3. Alert rules (enabled)</h2>
+    <table>
+      <tr><th>ID</th><th>Rule</th><th>Log source</th><th>Action</th><th>Created</th></tr>
+      <tr><td>AL-01</td><td>Outbound traffic from one internal host to one external address is more than 500 MB in 60 minutes</td><td>ng-fw01</td><td>Email jchen</td><td>2026-04-20</td></tr>
+      <tr><td>AL-02</td><td>10 or more failed SSH logins from one source address within 5 minutes</td><td>ng-web01, ng-files01, ng-backup01</td><td>Email jchen</td><td>2026-03-11</td></tr>
+      <tr><td>AL-03</td><td>Firewall configuration changed</td><td>ng-fw01</td><td>Email jchen</td><td>2024-11-18</td></tr>
+      <tr><td>AL-04</td><td>Backup job result is "Failed"</td><td>ng-backup01</td><td>Email jchen</td><td>2024-11-18</td></tr>
+    </table>
+    <p class="note">Comment in the rule file for AL-01: "Real-time rule. Replaces the daily bandwidth summary email that first showed the April traffic the next morning."</p>
+
+    <h2>4. Alert rules (available but not enabled)</h2>
+    <p>The alerting tool includes a library of suggested rules. These are in the library but switched off:</p>
+    <table>
+      <tr><th>Library rule</th><th>Status</th><th>Comment in rule file</th></tr>
+      <tr><td>Successful login outside business hours (20:00 to 06:00)</td><td>Disabled 2026-05-06</td><td>"too noisy - warehouse night shift and backups"</td></tr>
+      <tr><td>New local user account created on a server</td><td>Not enabled</td><td>-</td></tr>
+      <tr><td>User added to <code>sudo</code> or admin group</td><td>Not enabled</td><td>-</td></tr>
+      <tr><td>New or changed cron job</td><td>Not enabled</td><td>-</td></tr>
+      <tr><td>Login from a country or network never seen before</td><td>Not enabled</td><td>-</td></tr>
+    </table>
+
+    <h2>5. Alert history, last 30 days</h2>
+    <pre><code>2026-08-14 03:05  AL-04  backup01-config Failed (disk check)   ack: jchen 08:10
+2026-08-22 11:42  AL-03  firewall config changed by jchen       ack: jchen 11:50
+2026-09-02 02:31  AL-02  12 failed SSH logins on ng-web01
+                         from 203.0.113.88                      ack: jchen 07:55
+2026-09-06 14:17  AL-01  NG-WS-122 sent 612 MB to 198.51.100.140
+                         (cloud file-sharing site)              ack: none</code></pre>
+
+    <h2>6. Log review</h2>
+    <p>There is no written schedule for reviewing logs. The alert history shows who acknowledged (answered) each alert and when.</p>
+
+    <section class="task">
+      <h2>What to do with this</h2>
+      <ol>
+        <li>Lab steps 4 to 6: use this for a Detect control (for example DE.CM, continuous monitoring). Ask yourself which April 2026 attacker actions would cause an alert today, and which would not.</li>
+        <li>Lab step 7: note anything that is missing, and who would see an alert at 2 a.m. or while James is on vacation.</li>
+      </ol>
+    </section>
+
+    <footer class="doc-foot">Missouri Cybersecurity Center of Excellence · 12-Week Cybersecurity Program · Training material</footer>
+  </main>
+</body>
+</html>

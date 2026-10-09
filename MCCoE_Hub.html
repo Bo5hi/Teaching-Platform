@@ -496,7 +496,7 @@ footer strong {
     <span class="stat-lbl">Total Points</span>
   </div>
   <div class="stat-item">
-    <span class="stat-num">9</span>
+    <span class="stat-num">12</span>
     <span class="stat-lbl">Weeks</span>
   </div>
 </div>
@@ -543,7 +543,7 @@ footer strong {
       </p>
       <div class="pillar-tags">
         <span class="tag r">Login &amp; Profiles</span>
-        <span class="tag r">9 Weeks</span>
+        <span class="tag r">12 Weeks</span>
         <span class="tag r">XP &amp; Badges</span>
         <span class="tag r">Leaderboard</span>
         <span class="tag r">Security+ Quizzes</span>
@@ -1076,7 +1076,7 @@ function hubLogout() {
 var PROGRAM_START = new Date('2026-08-31');
 function getCurrentWeek() {
   var days = Math.floor((new Date() - PROGRAM_START) / (1000*60*60*24));
-  return Math.min(9, Math.max(1, Math.floor(days/7) + 1));
+  return Math.min(12, Math.max(1, Math.floor(days/7) + 1));
 }
 var WEEK_TASKS = {
   1:{title:'Cybersecurity Foundations',groups:[
@@ -1181,15 +1181,33 @@ var WEEK_TASKS = {
     {icon:'🛡️',label:'Pillar 5 — Blue Team Lab',color:'#00f5ff',items:[
       {t:'🚨 Phase 4: Incident Response',p:'p5'},{t:'📝 Phase 5: Defensive Report',p:'p5'}]}
   ]},
-  9:{title:'Cybersecurity Careers & Capstone',groups:[
+  9:{title:'Capstone — Assessment',groups:[
     {icon:'🎓',label:'Pillar 1 — Student Platform',color:'#ee2207',items:[
       {t:'📖 Study Week 9 Content',p:'p1',w:9},{t:'📝 Take Week 9 Quiz',p:'p1',w:9},
       {t:'🔤 Acronym Drill',p:'p1',w:9},{t:'🔬 Complete Lab Activity',p:'p1',w:9}]},
+    {icon:'📋',label:'Capstone — Northgate Supply Co.',color:'#a78bfa',items:[
+      {t:'🗂️ Review the client brief and evidence files',p:'p1',w:9},
+      {t:'📝 Fieldwork package: scored questionnaire workbook',p:'p1',w:9}]}
+  ]},
+  10:{title:'Capstone — Outbrief',groups:[
+    {icon:'🎓',label:'Pillar 1 — Student Platform',color:'#ee2207',items:[
+      {t:'📖 Study Week 10 Content',p:'p1',w:10},{t:'📝 Take Week 10 Quiz',p:'p1',w:10},
+      {t:'🔬 Complete Lab Activity',p:'p1',w:10}]},
+    {icon:'📋',label:'Capstone — Northgate Supply Co.',color:'#a78bfa',items:[
+      {t:'📄 Assessment report and executive summary',p:'p1',w:10},
+      {t:'🎤 Present findings to MCCoE staff at the outbrief',p:'p1',w:10}]}
+  ]},
+  11:{title:'Security+ Review',groups:[
+    {icon:'🎓',label:'Pillar 1 — Student Platform',color:'#ee2207',items:[
+      {t:'📖 Study Week 11 Content',p:'p1',w:11},{t:'📝 Domain Knowledge Check',p:'p1',w:11},
+      {t:'🗓️ Daily Practice Tests (Mon–Fri)',p:'p1',w:11},{t:'🎯 Study plan for your 2 weakest domains',p:'p1',w:11}]},
     {icon:'💻',label:'Pillar 2 — CyberSec Academy',color:'#00e676',items:[
-      {t:'📚 Review All 8 Curriculum Modules',p:'p2'},
-      {t:'🎮 Quiz: Careers & Certs',p:'p2'},{t:'🎮 Quiz: Cloud Security',p:'p2'},{t:'🃏 Complete All Flashcard Decks',p:'p2'}]},
-    {icon:'📋',label:'Pillar 3 — Curriculum Project',color:'#a78bfa',items:[
-      {t:'📄 Project 8: Equifax — Frameworks & Writing (100 pts)',p:'p3',proj:8}]},
+      {t:'🎮 Quiz: Careers & Certs',p:'p2'},{t:'🃏 Complete All Flashcard Decks',p:'p2'}]}
+  ]},
+  12:{title:'Security+ Mock Exam',groups:[
+    {icon:'🎓',label:'Pillar 1 — Student Platform',color:'#ee2207',items:[
+      {t:'📖 Study Week 12 Content',p:'p1',w:12},{t:'⏱️ Full-Length Timed Mock Exam',p:'p1',w:12},
+      {t:'🔬 Review every missed question',p:'p1',w:12}]},
     {icon:'🚩',label:'CTF — Capture The Flag',color:'#ffd700',items:[
       {t:'🚩 Complete All 4 CTF Scenarios (12 Flags)',p:'ctf'}]}
   ]}
@@ -1203,7 +1221,7 @@ function renderThisWeekPanel(hubName, hubId) {
   var wk = getCurrentWeek();
   var sel = document.getElementById('tw-week-select');
   if (sel) {
-    var titles = ['Cybersecurity Foundations','Network Fundamentals','Threat Landscape','Core Classes','Kali Linux Fundamentals','Human Factors','Defensive Security & Tools','Incident Response Basics','Careers & Capstone'];
+    var titles = ['Cybersecurity Foundations','Network Fundamentals','Threat Landscape','Core Classes','Kali Linux Fundamentals','Human Factors','Defensive Security & Tools','Incident Response Basics','Capstone — Assessment','Capstone — Outbrief','Security+ Review','Security+ Mock Exam'];
     sel.innerHTML = titles.map(function(t, i) {
       var n = i + 1;
       var label = 'Week ' + n + ' — ' + t + (n === wk ? '  ◄ Current Week' : '');

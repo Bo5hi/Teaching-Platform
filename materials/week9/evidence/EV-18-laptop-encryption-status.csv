@@ -1,0 +1,11 @@
+hostname,assigned_user,department,os,encryption_status,encryption_method,protection_on,recovery_key,last_check_in,notes
+NG-LT-201,lharper,Leadership,Windows 11 23H2,Encrypted,BitLocker XTS-AES 128 (full disk),Yes,Stored in device management console,2026-09-10,
+NG-LT-202,dpatel,Sales,Windows 11 23H2,Encrypted,BitLocker XTS-AES 128 (full disk),Yes,Stored in device management console,2026-09-08,
+NG-LT-203,kmurphy,Sales,Windows 11 23H2,Encrypted,BitLocker XTS-AES 128 (full disk),Yes,Stored in device management console,2026-09-10,
+NG-LT-204,rdelgado,Sales,Windows 11 23H2,Encrypted,BitLocker XTS-AES 128 (full disk),Yes,Stored in device management console,2026-09-08,
+NG-LT-205,bfoster,Sales,Windows 11 23H2,Not encrypted,None,No,N/A,2026-09-09,Encryption started 2025-02 and paused by user; never resumed
+NG-LT-206,amohammed,Sales,Windows 11 23H2,Encrypted,BitLocker XTS-AES 128 (full disk),Yes,Stored in device management console,2026-09-10,
+NG-LT-207,lherrera,Sales,Windows 11 23H2,Encrypted,BitLocker XTS-AES 128 (full disk),Yes,Stored in device management console,2026-09-08,
+NG-LT-208,unassigned,(unassigned),Windows 11 23H2,Not encrypted,None,No,N/A,2025-10-03,Unassigned spare; last seen 2025-10-03
+NG-LT-209,tkowalski,Sales,Windows 11 23H2,Not encrypted,None,No,N/A,2026-09-03,Security chip (TPM) turned off in firmware
+NG-LT-210,jchen,IT,Windows 11 23H2,Encrypted,BitLocker XTS-AES 128 (full disk),Yes,Stored in device management console,2026-09-10,

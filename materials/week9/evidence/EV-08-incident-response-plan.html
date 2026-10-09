@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>EV-08 Incident Response Plan (Draft) · Week 9 · MCCoE</title>
+  <link rel="stylesheet" href="../../materials.css" />
+</head>
+<body>
+  <main class="doc">
+    <header class="doc-head">
+      <div class="doc-kicker">Evidence · Northgate Supply Co. · EV-08</div>
+      <h1>Incident Response Plan (DRAFT v0.3)</h1>
+      <p class="doc-sub">Draft plan written by James Chen after the April 2026 incident. Provided on request.</p>
+      <span class="fictional">Fictional scenario for training. All names, companies, and addresses are made up.</span>
+    </header>
+
+    <section class="summary">
+      <h2>In short</h2>
+      <p>An incident response (IR) plan tells people what to do, and who to call, when a security incident happens. This is Northgate's plan exactly as provided. Read the document control table and the contact list carefully, and look for any sign that the plan has been tested.</p>
+    </section>
+
+    <h2>Document control</h2>
+    <table>
+      <tr><th>Field</th><th>Value</th></tr>
+      <tr><td>Document</td><td>NG-IRP-001 Incident Response Plan</td></tr>
+      <tr><td>Version</td><td>0.3 DRAFT</td></tr>
+      <tr><td>Author</td><td>James Chen, IT Manager</td></tr>
+      <tr><td>Last edited</td><td>2 June 2026</td></tr>
+      <tr><td>Status</td><td>Draft - not yet approved</td></tr>
+      <tr><td>Approved by</td><td>&nbsp;</td></tr>
+      <tr><td>Where stored</td><td><code>\\ng-files01\it\IR\NG-IRP-001-draft-v0.3.docx</code></td></tr>
+    </table>
+
+    <h2>1. Purpose</h2>
+    <p>This plan helps Northgate find, stop, and recover from security incidents quickly. It was written after incident INC-2026-001 (April 2026) so that next time we are ready.</p>
+
+    <h2>2. What is an incident?</h2>
+    <p>Any event that may harm Northgate's data, systems, or money. Examples: a stolen password, a virus or ransomware, a lost laptop with company data, an unknown account on a server, or a fake bank-change request from a "vendor".</p>
+
+    <h2>3. Severity levels</h2>
+    <table>
+      <tr><th>Level</th><th>Meaning</th><th>Example</th><th>Tell the CEO?</th></tr>
+      <tr><td>1 - Low</td><td>One user or device, no data lost</td><td>Phishing email reported, nobody clicked</td><td>No</td></tr>
+      <tr><td>2 - Medium</td><td>One account or system affected</td><td>A user entered a password on a fake site</td><td>Within 1 day</td></tr>
+      <tr><td>3 - High</td><td>Server affected, or data may have left the company</td><td>April 2026 incident</td><td>Right away</td></tr>
+    </table>
+
+    <h2>4. Roles</h2>
+    <table>
+      <tr><th>Role</th><th>Person</th><th>Backup</th></tr>
+      <tr><td>Incident lead</td><td>James Chen, IT Manager</td><td>TBD</td></tr>
+      <tr><td>Technical support</td><td>Priya Nair, IT contractor (part-time)</td><td>TBD</td></tr>
+      <tr><td>Decision maker</td><td>Linda Harper, CEO</td><td>TBD</td></tr>
+      <tr><td>Communications (staff, customers)</td><td>TBD</td><td>TBD</td></tr>
+    </table>
+
+    <h2>5. Steps</h2>
+    <ol>
+      <li><b>Prepare:</b> keep this plan and the contact list up to date. Keep admin passwords in the IT password vault.</li>
+      <li><b>Detect and analyze:</b> check alerts (see the log server). Decide the severity level. Start an incident log (time, what happened, who did what).</li>
+      <li><b>Contain:</b> disconnect affected computers from the network. Disable affected accounts. Block bad IP addresses at the firewall.</li>
+      <li><b>Eradicate:</b> remove unknown accounts, scheduled tasks, and software. Reset passwords.</li>
+      <li><b>Recover:</b> restore from backup if needed. Watch the system closely for 2 weeks.</li>
+      <li><b>Lessons learned:</b> meet within 2 weeks. Write down what went well, what did not, and actions with owners.</li>
+    </ol>
+
+    <h2>6. Contact list</h2>
+    <table>
+      <tr><th>Who</th><th>Name / company</th><th>Phone</th><th>Email</th></tr>
+      <tr><td>IT Manager</td><td>James Chen</td><td>555-0147</td><td>jchen@northgate-supply.example</td></tr>
+      <tr><td>IT contractor</td><td>Priya Nair</td><td>555-0163</td><td>pnair@northgate-supply.example</td></tr>
+      <tr><td>CEO</td><td>Linda Harper</td><td>555-0142</td><td>lharper@northgate-supply.example</td></tr>
+      <tr><td>Cyber insurance claims line</td><td>[TBD - ask Linda for policy number]</td><td>[TBD]</td><td>[TBD]</td></tr>
+      <tr><td>Outside incident response firm</td><td>[TBD - insurance may assign one?]</td><td>[TBD]</td><td>[TBD]</td></tr>
+      <tr><td>Legal counsel</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+      <tr><td>Bank (fraud line)</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+      <tr><td>Law enforcement</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+      <tr><td>Website developer</td><td>Bluebird Web Studio</td><td>[TBD]</td><td>[TBD]</td></tr>
+    </table>
+
+    <h2>7. Testing and review</h2>
+    <p>TODO: run a tabletop exercise (a practice discussion of a pretend incident) with Linda, Priya, and department managers in Q3 2026. Review this plan every year.</p>
+
+    <h2>8. Related documents</h2>
+    <p>Information Security Policy NG-POL-001. INC-2026-001 post-incident review (EV-11).</p>
+
+    <p class="note">Assessor's note: this is the complete document as provided. No record of a tabletop exercise or other test was provided with it.</p>
+
+    <section class="task">
+      <h2>What to do with this</h2>
+      <ol>
+        <li>Lab steps 4 to 6: use this for a Respond control (for example RS.MA, incident management). Decide what the plan does well and what is missing before it could be used in a real incident.</li>
+        <li>Lab step 7: list the missing parts as gaps. Remember that today's date in the scenario is late September 2026.</li>
+      </ol>
+    </section>
+
+    <footer class="doc-foot">Missouri Cybersecurity Center of Excellence · 12-Week Cybersecurity Program · Training material</footer>
+  </main>
+</body>
+</html>

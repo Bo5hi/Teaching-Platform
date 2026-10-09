@@ -1,0 +1,715 @@
+#=====================================================================
+# FICTIONAL TRAINING MATERIAL - Northgate Supply Co. (MCCoE Week 9)
+# Scan result SCAN-02: Nmap internal scan of the server, office, and warehouse networks
+#=====================================================================
+# Collected by .. MCCoE assessment team
+# Authorized by . Linda Harper, CEO (rules of engagement signed 2026-09-02)
+# Assisted by ... James Chen, IT Manager (added temporary firewall policy
+#                 'mccoe-scan-temp' so the scanner could reach all three
+#                 networks; policy removed 2026-09-09 17:30)
+# Scan source ... MCCoE assessment laptop 10.20.0.250 (core network)
+# Targets ....... 10.20.1.0/24 (servers), 10.20.3.0/24 (office),
+#                 10.20.5.0/24 (warehouse)
+# Date .......... Wednesday 9 September 2026, during business hours
+# Note .......... Hosts that did not answer (powered off or not present)
+#                 are not listed. Output is standard Nmap normal output.
+#=====================================================================
+
+# Nmap 7.95 scan initiated Wed Sep  9 10:05:03 2026 as: nmap -sS -sU -sV -sC -p T:1-10000,U:53,123,161,500,514 -T3 -oN SCAN-02-nmap-internal.txt 10.20.1.0/24 10.20.3.0/24 10.20.5.0/24
+Nmap scan report for 10.20.1.1
+Host is up (0.0014s latency).
+All 10005 scanned ports on 10.20.1.1 are in ignored states.
+Not shown: 10000 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+
+Nmap scan report for ng-web01.northgate-supply.example (10.20.1.10)
+Host is up (0.0022s latency).
+Not shown: 9997 closed tcp ports (reset), 5 closed udp ports (port-unreach)
+PORT    STATE SERVICE  VERSION
+22/tcp  open  ssh      OpenSSH (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 67:09:cd:f7:ed:2c:74:41:20:b4:18:63:64:19:f8:c0 (ECDSA)
+|_  256 76:44:40:0a:68:dc:08:9c:08:88:8d:0f:fa:06:43:13 (ED25519)
+80/tcp  open  http     nginx
+|_http-title: Did not follow redirect to https://www.northgate-supply.example/
+|_http-server-header: nginx
+443/tcp open  ssl/http nginx
+| ssl-cert: Subject: commonName=www.northgate-supply.example
+| Subject Alternative Name: DNS:www.northgate-supply.example, DNS:northgate-supply.example, DNS:orders.northgate-supply.example
+| Issuer: commonName=Example Issuing CA R1/organizationName=Example Trust Services
+| Not valid before: 2026-07-14T00:00:00
+|_Not valid after:  2026-10-12T23:59:59
+|_http-title: Northgate Supply Co. | Online Ordering
+| ssl-enum-ciphers: 
+|   TLSv1.0: 
+|     (cipher list omitted by assessor)
+|   TLSv1.1: 
+|     (cipher list omitted by assessor)
+|   TLSv1.2: 
+|     (cipher list omitted by assessor)
+|   TLSv1.3: 
+|_    (cipher list omitted by assessor)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Nmap scan report for ng-files01.northgate-supply.example (10.20.1.20)
+Host is up (0.0044s latency).
+Not shown: 9997 closed tcp ports (reset), 5 closed udp ports (port-unreach)
+PORT    STATE SERVICE     VERSION
+22/tcp  open  ssh         OpenSSH (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 dc:a7:af:69:1e:74:48:2f:b3:ed:7d:e4:34:20:9f:49 (ECDSA)
+|_  256 d1:b3:ef:88:86:92:86:88:df:ab:af:26:90:3d:4d:45 (ED25519)
+139/tcp open  netbios-ssn Samba smbd 4
+445/tcp open  netbios-ssn Samba smbd 4
+Service Info: Host: NG-FILES01; OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled but not required
+|_nbstat: NetBIOS name: NG-FILES01, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:12:40
+|_  start_date: N/A
+
+Nmap scan report for ng-backup01.northgate-supply.example (10.20.1.30)
+Host is up (0.0023s latency).
+Not shown: 9998 closed tcp ports (reset), 4 closed udp ports (port-unreach)
+PORT     STATE         SERVICE  VERSION
+22/tcp   open          ssh      OpenSSH (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 eb:80:7d:b0:f0:4e:46:e1:35:9f:87:0e:ba:e8:8a:21 (ECDSA)
+|_  256 ca:87:4d:57:c7:af:63:08:5d:50:ba:2b:4a:d0:0f:af (ED25519)
+8443/tcp open          ssl/http Backup console web interface
+|_http-title: Backup Console - Sign In
+| ssl-cert: Subject: commonName=ng-backup01/organizationName=Backup Appliance/countryName=US
+| Issuer: commonName=ng-backup01/organizationName=Backup Appliance/countryName=US
+| Public Key type: rsa
+| Public Key bits: 2048
+| Signature Algorithm: sha256WithRSAEncryption
+| Not valid before: 2023-03-01T14:22:05
+|_Not valid after:  2025-03-01T14:22:05
+514/udp  open|filtered syslog
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Nmap scan report for ng-legacy01.northgate-supply.example (10.20.1.50)
+Host is up (0.0033s latency).
+Not shown: 9996 closed tcp ports (reset), 5 closed udp ports (port-unreach)
+PORT     STATE SERVICE VERSION
+21/tcp   open  ftp     FTP server (old release; banner: "NG inventory FTP ready")
+| ftp-syst: 
+|_  SYST: UNIX Type: L8
+22/tcp   open  ssh     OpenSSH (old release; protocol 2.0)
+| ssh-auth-methods: 
+|   Supported authentication methods: 
+|     publickey
+|_    password
+| ssh-hostkey: 
+|   256 b4:38:23:68:5e:dc:4c:d2:fa:e7:89:6f:64:d7:e3:31 (ECDSA)
+|_  256 01:54:21:7a:92:47:e1:94:75:96:b3:f6:d2:a0:47:cd (ED25519)
+80/tcp   open  http    Apache httpd
+|_http-title: NG Inventory - Login
+|_http-server-header: Apache
+3306/tcp open  mysql   MySQL (old release)
+| mysql-info: 
+|   Protocol: 10
+|_  Status: Autocommit
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Nmap scan report for 10.20.1.61
+Host is up (0.0028s latency).
+Not shown: 9998 closed tcp ports (reset), 5 closed udp ports (port-unreach)
+PORT    STATE SERVICE  VERSION
+80/tcp  open  http     lighttpd
+|_http-title: NAS Web Administration
+443/tcp open  ssl/http lighttpd
+|_http-title: NAS Web Administration
+| ssl-cert: Subject: commonName=NAS/organizationName=Storage Device/countryName=US
+| Issuer: commonName=NAS/organizationName=Storage Device/countryName=US
+| Public Key type: rsa
+| Public Key bits: 2048
+| Signature Algorithm: sha256WithRSAEncryption
+| Not valid before: 2018-05-14T08:00:00
+|_Not valid after:  2028-05-11T08:00:00
+
+Nmap scan report for 10.20.3.1
+Host is up (0.0006s latency).
+All 10005 scanned ports on 10.20.3.1 are in ignored states.
+Not shown: 10000 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+
+Nmap scan report for ng-ws-101.northgate-supply.example (10.20.3.101)
+Host is up (0.0017s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-101, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T16:14:36
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-102.northgate-supply.example (10.20.3.102)
+Host is up (0.0039s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-102, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:15:43
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-103.northgate-supply.example (10.20.3.103)
+Host is up (0.0023s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-103, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T16:54:57
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-104.northgate-supply.example (10.20.3.104)
+Host is up (0.0032s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-104, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T16:47:26
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-106.northgate-supply.example (10.20.3.106)
+Host is up (0.0032s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-106, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:22:51
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-107.northgate-supply.example (10.20.3.107)
+Host is up (0.0010s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-107, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T16:33:47
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-108.northgate-supply.example (10.20.3.108)
+Host is up (0.0011s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-108, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:37:17
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-109.northgate-supply.example (10.20.3.109)
+Host is up (0.0020s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-109, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:44:54
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-110.northgate-supply.example (10.20.3.110)
+Host is up (0.0031s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-110, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:53:25
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-111.northgate-supply.example (10.20.3.111)
+Host is up (0.0033s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-111, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T16:24:21
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-112.northgate-supply.example (10.20.3.112)
+Host is up (0.0025s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-112, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T16:22:39
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-114.northgate-supply.example (10.20.3.114)
+Host is up (0.0008s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-114, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:33:55
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-115.northgate-supply.example (10.20.3.115)
+Host is up (0.0031s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-115, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:35:41
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-116.northgate-supply.example (10.20.3.116)
+Host is up (0.0034s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-116, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T16:51:11
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-117.northgate-supply.example (10.20.3.117)
+Host is up (0.0045s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-117, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:46:33
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-119.northgate-supply.example (10.20.3.119)
+Host is up (0.0038s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-119, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:41:19
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-120.northgate-supply.example (10.20.3.120)
+Host is up (0.0023s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-120, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:17:07
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-122.northgate-supply.example (10.20.3.122)
+Host is up (0.0016s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-122, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:04:24
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-123.northgate-supply.example (10.20.3.123)
+Host is up (0.0015s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-123, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T16:25:09
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-124.northgate-supply.example (10.20.3.124)
+Host is up (0.0039s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-124, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:51:46
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-125.northgate-supply.example (10.20.3.125)
+Host is up (0.0018s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-125, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T16:51:53
+|_  start_date: N/A
+
+Nmap scan report for ng-ws-126.northgate-supply.example (10.20.3.126)
+Host is up (0.0038s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WS-126, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T16:39:31
+|_  start_date: N/A
+
+Nmap scan report for ng-lt-202.northgate-supply.example (10.20.3.151)
+Host is up (0.0041s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-LT-202, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:17:41
+|_  start_date: N/A
+
+Nmap scan report for ng-lt-206.northgate-supply.example (10.20.3.157)
+Host is up (0.0044s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-LT-206, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:46:51
+|_  start_date: N/A
+
+Nmap scan report for ng-lt-210.northgate-supply.example (10.20.3.162)
+Host is up (0.0017s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-LT-210, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T16:51:07
+|_  start_date: N/A
+
+Nmap scan report for ng-prn01.northgate-supply.example (10.20.3.200)
+Host is up (0.0011s latency).
+Not shown: 9997 closed tcp ports (reset), 4 closed udp ports (port-unreach)
+PORT     STATE SERVICE    VERSION
+80/tcp   open  http       Printer embedded web server
+|_http-title: Printer Status
+9100/tcp open  jetdirect?
+161/udp  open  snmp       SNMPv1 server (default community string accepted)
+| snmp-sysdescr: Network multifunction printer; firmware (vendor-managed)
+|_  System uptime: 41 days, 3:12:08.55 (355272855 timeticks)
+
+Nmap scan report for 10.20.5.1
+Host is up (0.0017s latency).
+All 10005 scanned ports on 10.20.5.1 are in ignored states.
+Not shown: 10000 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+
+Nmap scan report for ng-wh-01.northgate-supply.example (10.20.5.21)
+Host is up (0.0009s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WH-01, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:20:26
+|_  start_date: N/A
+
+Nmap scan report for ng-wh-02.northgate-supply.example (10.20.5.22)
+Host is up (0.0041s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WH-02, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:55:57
+|_  start_date: N/A
+
+Nmap scan report for ng-wh-03.northgate-supply.example (10.20.5.23)
+Host is up (0.0040s latency).
+Not shown: 9996 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+8040/tcp open  ssl/http      Remote support agent listener (vendor-supplied)
+|_http-title: Remote Support Agent
+| ssl-cert: Subject: commonName=remote-support-agent
+|_Issuer: commonName=remote-support-agent
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WH-03, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T15:06:00
+|_  start_date: N/A
+
+Nmap scan report for ng-wh-04.northgate-supply.example (10.20.5.24)
+Host is up (0.0041s latency).
+Not shown: 9997 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_nbstat: NetBIOS name: NG-WH-04, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb2-time: 
+|   date: 2026-09-09T16:54:56
+|_  start_date: N/A
+
+Nmap scan report for 10.20.5.103
+Host is up (0.0042s latency).
+All 10005 scanned ports on 10.20.5.103 are in ignored states.
+Not shown: 10000 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+
+Nmap scan report for 10.20.5.107
+Host is up (0.0029s latency).
+All 10005 scanned ports on 10.20.5.107 are in ignored states.
+Not shown: 10000 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+
+Nmap scan report for 10.20.5.111
+Host is up (0.0037s latency).
+All 10005 scanned ports on 10.20.5.111 are in ignored states.
+Not shown: 10000 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+
+Nmap scan report for 10.20.5.118
+Host is up (0.0029s latency).
+All 10005 scanned ports on 10.20.5.118 are in ignored states.
+Not shown: 10000 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+
+Nmap scan report for 10.20.5.126
+Host is up (0.0032s latency).
+All 10005 scanned ports on 10.20.5.126 are in ignored states.
+Not shown: 10000 filtered tcp ports (no-response), 5 open|filtered udp ports (no-response)
+
+Nmap scan report for ng-prn02.northgate-supply.example (10.20.5.200)
+Host is up (0.0007s latency).
+Not shown: 9998 closed tcp ports (reset), 5 closed udp ports (port-unreach)
+PORT     STATE SERVICE    VERSION
+80/tcp   open  http       Printer embedded web server
+|_http-title: Printer Status
+9100/tcp open  jetdirect?
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Wed Sep  9 12:21:37 2026 -- 768 IP addresses (44 hosts up) scanned in 8194.66 seconds

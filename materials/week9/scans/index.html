@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Northgate Scan Results · Week 9 · MCCoE</title>
+  <link rel="stylesheet" href="../../materials.css" />
+</head>
+<body>
+  <main class="doc">
+    <header class="doc-head">
+      <div class="doc-kicker">MCCoE Lab Material · Week 9 · Scan results</div>
+      <h1>Northgate Supply Co. Scan Results</h1>
+      <p class="doc-sub">Network and vulnerability scans collected by the MCCoE assessment team on 9 September 2026.</p>
+      <span class="fictional">Fictional scenario for training. All names, companies, and addresses are made up.</span>
+    </header>
+
+    <section class="summary">
+      <h2>In short</h2>
+      <p>With Linda Harper's written permission, the assessment team scanned Northgate's network. You do <b>not</b> run any scans. You read these results as evidence, the same way you read the EV documents. Compare them with what James Chen tells you and with the asset inventory (EV-03).</p>
+    </section>
+
+    <h2>Scan files</h2>
+    <table>
+      <tr><th>ID</th><th>Title</th><th>Note</th><th>Open</th></tr>
+      <tr><td>SCAN-01</td><td>Nmap external scan</td><td>What someone on the internet can reach at Northgate's public address, 203.0.113.10.</td><td><a href="SCAN-01-nmap-external.txt">SCAN-01-nmap-external.txt</a></td></tr>
+      <tr><td>SCAN-02</td><td>Nmap internal scan</td><td>Every device that answered on the server, office, and warehouse networks, and the ports each one has open.</td><td><a href="SCAN-02-nmap-internal.txt">SCAN-02-nmap-internal.txt</a></td></tr>
+      <tr><td>SCAN-03</td><td>Vulnerability findings (CSV)</td><td>The full list of 18 weaknesses found, with severity, affected hosts, and how to fix each one.</td><td><a href="SCAN-03-nessus-findings.csv">SCAN-03-nessus-findings.csv</a></td></tr>
+      <tr><td>SCAN-03</td><td>Vulnerability scan summary</td><td>One page: scope, counts by severity, and the most serious findings in plain language. Start here.</td><td><a href="SCAN-03-nessus-summary.html">SCAN-03-nessus-summary.html</a></td></tr>
+    </table>
+    <p class="note">TXT files open in any text editor. The CSV file opens in a spreadsheet program (for example LibreOffice Calc or Excel). If your browser downloads a file instead of showing it, open the downloaded copy.</p>
+
+    <h2>How to read a scan</h2>
+    <dl class="terms">
+      <dt>Host</dt>
+      <dd>One device on the network, such as a server, a computer, or a printer. Each host has an IP address (for example 10.20.1.10) and often a name (for example ng-web01).</dd>
+      <dt>Port</dt>
+      <dd>A numbered "door" on a host. Programs listen on ports for connections. A port number has a type: <code>tcp</code> or <code>udp</code>. For example, <code>443/tcp</code> is port 443 using TCP.</dd>
+      <dt>State</dt>
+      <dd><b>open</b>: something answered. <b>closed</b>: the host answered "nothing here". <b>filtered</b>: a firewall blocked the check, so there was no answer. <b>open|filtered</b>: the scanner cannot tell which.</dd>
+      <dt>Service</dt>
+      <dd>The program that answers on a port. Common examples: <code>ssh</code> (22, remote login), <code>http</code> (80, web), <code>https</code> (443, secure web), <code>ftp</code> (21, file transfer), <code>microsoft-ds</code> (445, Windows file sharing), <code>snmp</code> (161, device management), <code>mysql</code> (3306, database).</dd>
+      <dt>Version</dt>
+      <dd>What the scanner guesses the program is. Words like "old release" mean the program is out of date.</dd>
+      <dt>Lines starting with <code>|</code></dt>
+      <dd>Extra details from Nmap's checks, for example a certificate's dates or a web page title.</dd>
+      <dt>Severity</dt>
+      <dd>How serious a weakness is: Critical, High, Medium, or Low. Critical and High should be fixed first.</dd>
+      <dt>CVSS</dt>
+      <dd>Common Vulnerability Scoring System. A score from 0.0 to 10.0 that measures how serious a weakness is. Higher is worse. 9.0 or more is Critical.</dd>
+      <dt>Plugin ID</dt>
+      <dd>The number the scanner uses for one type of check. Use it to point to a finding, for example "plugin 900237".</dd>
+    </dl>
+
+    <h2>Tips</h2>
+    <ul>
+      <li>Most workstations show the same three Windows ports (135, 139, 445). That is normal. Look for the hosts that are <b>different</b>.</li>
+      <li>Check every host name and IP address against EV-03. A host that answers the scan but is not in the inventory is a finding.</li>
+      <li>A scan shows what is there today. It does not show why. Ask James about anything that surprises you.</li>
+    </ul>
+
+    <section class="task">
+      <h2>What to do with this</h2>
+      <ol>
+        <li>Read SCAN-03-nessus-summary.html first, then look at SCAN-01 and SCAN-02 for the details.</li>
+        <li>Cite scan evidence by ID in your evidence file and control review, the same way you cite EV items, for example "SCAN-02, host 10.20.1.10, port 443/tcp".</li>
+        <li>Everything here is fictional practice data. Never scan a real network without written permission.</li>
+      </ol>
+    </section>
+
+    <footer class="doc-foot">Missouri Cybersecurity Center of Excellence · 12-Week Cybersecurity Program · Training material</footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,6 @@
+vendor_id,vendor_or_person,service,access_type,account,systems,mfa,contract_security_terms,last_reviewed,account_status,notes
+V-01,Priya Nair (contractor),Part-time IT support,VPN + server admin,pnair,ng-web01; ng-files01; ng-backup01; email admin console,Yes,NDA only; no security terms,2026-05-12,Active,
+V-02,Bluebird Web Studio,Website and ordering portal developer,VPN + SSH,bbws-dev,ng-web01,No,Contract (2021); no security terms,2026-05-12,Active,One login shared by 3 developers at the vendor
+V-03,ScanPoint Logistics,Warehouse scanner software support,Remote support tool,scanpoint-remote,NG-WH-03,No,Support agreement; no security terms,2026-05-12,Active,Tool is left running so vendor can connect when warehouse calls
+V-04,Ridgeview Office Systems,Managed printers,Printer portal (cloud),rv-print,ng-prn01; ng-prn02,N/A,Service contract,2026-05-12,Active,No access to servers or PCs
+V-05,Oakline EDI,Old order-exchange (EDI) service - contract ended 2025-10-31,VPN + SFTP,oakline-sftp,ng-legacy01,No,Contract ended,2026-05-12,Active,TODO disable? check with Tunde

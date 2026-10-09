@@ -1,0 +1,10 @@
+risk_id,date_added,risk_description,asset_or_area,likelihood,impact,risk_rating,owner,treatment,status,last_reviewed
+R-01,2022-04-05,Ransomware encrypts file server and backups,ng-files01; ng-backup01,Medium,High,High,jchen,Nightly backups; antivirus on workstations,Open,2025-11-18
+R-02,2022-04-05,Website or ordering portal goes down,ng-web01,Medium,Medium,Medium,jchen,Hosting monitoring; backups,Open,2025-11-18
+R-03,2022-04-05,Laptop lost or stolen,Laptops,Medium,Low,Low,jchen,Disk encryption on laptops,Closed,2025-11-18
+R-04,2022-04-05,Phishing email tricks an employee into giving a password,All staff,Medium,Medium,Medium,jchen,Annual awareness training,Open,2025-11-18
+R-05,2023-02-20,Only one IT person; knowledge not written down,IT,High,Medium,High,lharper,Hire part-time contractor (done 2023),Accepted,2025-11-18
+R-06,2023-02-20,Remote access to servers from the internet,Servers,Low,High,Medium,jchen,Remote access only through VPN,Closed,2025-11-18
+R-07,2024-01-15,Vendor payment fraud (fake bank change request),Finance,Medium,High,High,hortiz,Call-back check on bank changes,Open,2025-11-18
+R-08,2024-01-15,Old server ng-legacy01 runs outdated software,ng-legacy01,Medium,Medium,Medium,jchen,Retire server by end of Q1 2026,Open,2025-11-18
+R-09,2025-11-18,Power outage in server room,Server room,Low,Medium,Low,jchen,UPS battery (30 minutes),Open,2025-11-18

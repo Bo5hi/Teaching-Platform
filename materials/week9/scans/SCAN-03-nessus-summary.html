@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>SCAN-03 Vulnerability Scan Summary · Week 9 · MCCoE</title>
+  <link rel="stylesheet" href="../../materials.css" />
+</head>
+<body>
+  <main class="doc">
+    <header class="doc-head">
+      <div class="doc-kicker">MCCoE Lab Material · Week 9 · Scan results</div>
+      <h1>SCAN-03 Vulnerability Scan Summary: Northgate Supply Co.</h1>
+      <p class="doc-sub">One-page summary of the Nessus-style vulnerability scan run by the MCCoE assessment team on 9 September 2026.</p>
+      <span class="fictional">Fictional scenario for training. All names, companies, and addresses are made up.</span>
+    </header>
+
+    <section class="summary">
+      <h2>In short</h2>
+      <p>The assessment team scanned Northgate's internal networks for known weaknesses. The scan found <b>18 findings</b>: 2 Critical, 4 High, 7 Medium, and 5 Low. Most of the serious findings are on systems that are old, forgotten, or not managed by IT. Use this page as evidence. The full list is in <a href="SCAN-03-nessus-findings.csv">SCAN-03-nessus-findings.csv</a>.</p>
+    </section>
+
+    <h2>Scope and method</h2>
+    <table>
+      <tr><th>Item</th><th>Detail</th></tr>
+      <tr><td>Scan date</td><td>Wednesday 9 September 2026, 13:00 to 15:48 CDT (after the Nmap scan in SCAN-02)</td></tr>
+      <tr><td>Authorized by</td><td>Linda Harper, CEO (rules of engagement signed 2 September 2026)</td></tr>
+      <tr><td>Scanner</td><td>MCCoE assessment laptop, 10.20.0.250, with a vulnerability scanner (Nessus-style)</td></tr>
+      <tr><td>Networks in scope</td><td>10.20.1.0/24 (servers), 10.20.3.0/24 (office), 10.20.5.0/24 (warehouse)</td></tr>
+      <tr><td>Hosts scanned</td><td>44 live hosts (the same hosts that answered in SCAN-02)</td></tr>
+      <tr><td>Credentials</td><td>Credentialed scan (the scanner logged in with a read-only account from James Chen) for Windows workstations, ng-web01, ng-files01, and ng-backup01. Uncredentialed (outside view only) for ng-legacy01, 10.20.1.61, printers, and handheld scanners, because no account was available.</td></tr>
+      <tr><td>Out of scope</td><td>Cloud email and office suite, the public website from the internet (see SCAN-01), laptops that were not in the office, and any testing that tries to break in. This was a scan only.</td></tr>
+      <tr><td>How findings are counted</td><td>One row per unique finding. When one finding affects several hosts, the CSV lists all of them in the Host column. Informational results (for example "host is up") are not counted.</td></tr>
+    </table>
+
+    <h2>Findings by severity</h2>
+    <table>
+      <tr><th>Severity</th><th>CVSS v3 range</th><th>Findings</th><th>What it means</th></tr>
+      <tr><td>Critical</td><td>9.0 to 10.0</td><td>2</td><td>Fix now. Serious and easy to misuse.</td></tr>
+      <tr><td>High</td><td>7.0 to 8.9</td><td>4</td><td>Fix within days to a few weeks.</td></tr>
+      <tr><td>Medium</td><td>4.0 to 6.9</td><td>7</td><td>Plan a fix within about 90 days.</td></tr>
+      <tr><td>Low</td><td>0.1 to 3.9</td><td>5</td><td>Fix during normal maintenance.</td></tr>
+      <tr><td><b>Total</b></td><td></td><td><b>18</b></td><td></td></tr>
+    </table>
+
+    <h2>Critical and High findings</h2>
+    <table>
+      <tr><th>Severity</th><th>CVSS v3</th><th>Host</th><th>Finding</th></tr>
+      <tr><td>Critical</td><td>10.0</td><td>ng-legacy01 (10.20.1.50)</td><td>Unsupported operating system version (no security updates since 2023)</td></tr>
+      <tr><td>Critical</td><td>9.8</td><td>ng-legacy01 (10.20.1.50)</td><td>FTP server version is unsupported and has publicly known vulnerabilities</td></tr>
+      <tr><td>High</td><td>8.8</td><td>NG-WS-107, NG-WS-109, NG-WS-126</td><td>Windows monthly security updates missing (3+ months)</td></tr>
+      <tr><td>High</td><td>7.5</td><td>ng-legacy01 (10.20.1.50)</td><td>Database service reachable from the network with weak authentication</td></tr>
+      <tr><td>High</td><td>7.5</td><td>10.20.1.61 (NAS)</td><td>Storage device firmware unsupported; web admin page exposed</td></tr>
+      <tr><td>High</td><td>7.3</td><td>ng-backup01 (10.20.1.30)</td><td>Backup console uses default administrator account name</td></tr>
+    </table>
+    <p class="note">The Medium and Low findings are listed in the CSV. They are mostly "hygiene" issues: old TLS versions, SMB signing not required, a self-signed and expired certificate, a default SNMP community name, unencrypted logins, an unapproved remote-support tool, and old SSH settings.</p>
+
+    <h2>A simple way to think about it</h2>
+    <p>Think of Northgate's network as a house. Each <b>open port</b> is a door or a window. A <b>service</b> is the person who answers when someone knocks. The Nmap scans (SCAN-01 and SCAN-02) walked around the house and counted the doors and windows. This vulnerability scan checked each one: Is the lock old? Is the key still the one that came from the factory? Is there a door that nobody on the family list knows about? From the street, the house looks well locked: only the front door (HTTPS) and the side gate with a guard (VPN) are open. Inside, some rooms have old locks. Your job is to also check the floor plan (the asset inventory, EV-03): is every room in the house on it?</p>
+
+    <h2>Restricted distribution</h2>
+    <p class="note"><b>Restricted.</b> Real scan results are sensitive. They show where a company is weak. In a real engagement, this report goes only to the client's named contacts (here, Linda Harper and James Chen) and the assessment team, is stored encrypted, and is not emailed as a plain attachment or posted anywhere. Treat this training copy the same way in class: use it only inside your fieldwork package.</p>
+
+    <section class="task">
+      <h2>What to do with this</h2>
+      <ol>
+        <li>Compare the hosts in SCAN-02 and this report with the asset inventory (EV-03). Write down any host that is scanned but not listed, and any listed host that looks out of date.</li>
+        <li>Use the findings as evidence for questionnaire items on vulnerability management, patching, secure configuration, and asset inventory. Cite the ID, for example "SCAN-03, plugin 900237".</li>
+        <li>Deliverable: in your findings, explain each Critical or High item in one plain sentence a CEO can understand, and give a fix.</li>
+      </ol>
+    </section>
+
+    <footer class="doc-foot">Missouri Cybersecurity Center of Excellence · 12-Week Cybersecurity Program · Training material</footer>
+  </main>
+</body>
+</html>
