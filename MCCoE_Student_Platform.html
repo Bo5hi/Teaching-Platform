@@ -8223,7 +8223,7 @@ function renderWeek(num) {
         <p style="font-size:14px;line-height:1.6;margin:0 0 14px;">${w.num === 9 ? 'This week you do the fieldwork: interview the five Northgate staff, gather evidence, and score the questionnaire.' : 'This week you turn your fieldwork into the assessment report, executive summary, and outbrief.'}</p>
         <div style="display:flex;flex-wrap:wrap;gap:10px;">
           ${[['🎙️ Interview Simulator','interview.html'],['📄 Client Brief','materials/week9/northgate-organization-profile.html'],['🗂️ Evidence Library','materials/week9/evidence/index.html'],['🛰️ Scan Results','materials/week9/scans/index.html'],['📊 Questionnaire Workbook','materials/week9/northgate-questionnaire.xlsx'],['📝 Fieldwork Worksheets','materials/week9/fieldwork-worksheets.html']]
-            .map(([label, href]) => `<a href="${href}" target="_blank" style="padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;background:${href==='interview.html'?'var(--red)':'transparent'};color:#fff;border:1px solid ${href==='interview.html'?'var(--red)':'var(--border)'};">${label}</a>`).join('')}
+            .map(([label, href]) => `<a href="${href}" style="padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;background:${href==='interview.html'?'var(--red)':'transparent'};color:#fff;border:1px solid ${href==='interview.html'?'var(--red)':'var(--border)'};">${label}</a>`).join('')}
         </div>
       </div>` : ''}
       ${w.overview ? `<div class="card"><h3><span class="icon">🧭</span> This Week</h3><p style="font-size:14px;line-height:1.7;margin:0;">${w.overview}</p></div>` : ''}
@@ -8307,7 +8307,7 @@ function renderWeek(num) {
         <p style="font-size:14px;line-height:1.7;margin:0 0 12px;">${w.labInfo.goal}</p>
         ${w.labInfo.materials.length ? `<div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#888;margin:8px 0;">Case Files</div>
         <div class="resource-grid">${w.labInfo.materials.map(m => `
-          <div class="resource-item" style="cursor:pointer;border-left-color:var(--green);" onclick="window.open('${m.file}','_blank')" title="Click to open">
+          <div class="resource-item" style="cursor:pointer;border-left-color:var(--green);" onclick="window.location.href='${m.file}'" title="Click to open">
             <div class="resource-name">${m.title} <span style="color:var(--green);font-size:11px;font-weight:600;">🔗 Open</span></div>
             <div class="resource-sub">${m.note}</div>
           </div>`).join('')}</div>` : ''}
@@ -9607,8 +9607,8 @@ const DEFAULT_LIBRARY = [
   { id:15, title:'CVSS — Common Vulnerability Scoring System',               url:'https://www.first.org/cvss/',                                                                    category:'Reference & Docs',      desc:'Industry standard framework for assessing severity of security vulnerabilities' },
   { id:16, title:'OSINT Framework',                                          url:'https://osintframework.com/',                                                                    category:'Tools & Platforms',     desc:'OSINT gathering tools organized by category — passive reconnaissance resource' },
   { id:17, title:'TryHackMe — AI Security Path (Medium Walkthrough)',        url:'https://medium.com/@explorer/tryhackme-ai-security-path',                                       category:'Training & Learning',   desc:'AI Security Threats — Room 2 Walkthrough with all flags, July 2026' },
-  { id:18, title:'MCCoE — 5 Phases of Hacking vs Cyber Kill Chain',         url:'https://kingchrischris23-eng.github.io/mccoe-platform/5Phases_KillChain_Correlation.html',      category:'Reference & Docs',      desc:'Visual diagram showing how the 5 phases of hacking map to the Lockheed Martin Cyber Kill Chain framework' },
-  { id:19, title:'MCCoE — OSI Model + CIA Triad + 5 Phases Framework',      url:'https://kingchrischris23-eng.github.io/mccoe-platform/OSI_CIA_Phases_Framework.html',           category:'Reference & Docs',      desc:'Visual framework connecting OSI layers, CIA Triad pillars, and the 5 Phases of Hacking — shows exactly where each attack happens and what it threatens' },
+  { id:18, title:'MCCoE — 5 Phases of Hacking vs Cyber Kill Chain',         url:'5Phases_KillChain_Correlation.html',      category:'Reference & Docs',      desc:'Visual diagram showing how the 5 phases of hacking map to the Lockheed Martin Cyber Kill Chain framework' },
+  { id:19, title:'MCCoE — OSI Model + CIA Triad + 5 Phases Framework',      url:'OSI_CIA_Phases_Framework.html',           category:'Reference & Docs',      desc:'Visual framework connecting OSI layers, CIA Triad pillars, and the 5 Phases of Hacking — shows exactly where each attack happens and what it threatens' },
 ];
 
 let _libraryCache = null;
@@ -9693,7 +9693,7 @@ function renderLibrary() {
             <span style="background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600;color:#666;">${r.category}</span>
           </div>
           <div style="font-size:12px;color:#777;line-height:1.5;flex:1;">${r.desc}</div>
-          <a href="${r.url}" target="_blank"
+          <a href="${r.url}" ${/^https?:/.test(r.url)?'target="_blank"':''}
             style="display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;margin-top:4px;width:fit-content;"
             onmouseover="this.style.background='var(--dark)'" onmouseout="this.style.background='var(--red)'">
             ${r.url.endsWith('.pdf') ? '📄 Open PDF' : '🔗 Open Link'}
@@ -10284,11 +10284,11 @@ function renderJobReadiness(wrap, score, domains, xp, pt, bt, ctf, id) {
           </div>`).join('')}
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0">
-        <a href="MCCoE_Certificate.html?name=${encodeURIComponent(state.student.name)}&id=${encodeURIComponent(id||state.student.name)}" target="_blank"
+        <a href="MCCoE_Certificate.html?name=${encodeURIComponent(state.student.name)}&id=${encodeURIComponent(id||state.student.name)}"
            style="background:#1a1100;border:1px solid #b8860b;color:#ffd700;font-size:.75rem;font-weight:700;padding:10px 18px;border-radius:6px;text-decoration:none;text-align:center;white-space:nowrap;font-family:'Orbitron',sans-serif;letter-spacing:1px">
           &#x1F3C6; My Certificate
         </a>
-        <a href="MCCoE_Scoreboard.html" target="_blank"
+        <a href="MCCoE_Scoreboard.html"
            style="background:#001a00;border:1px solid rgba(0,255,65,0.4);color:#00ff41;font-size:.75rem;font-weight:700;padding:10px 18px;border-radius:6px;text-decoration:none;text-align:center;white-space:nowrap;font-family:'Orbitron',sans-serif;letter-spacing:1px">
           &#x1F4CA; Scoreboard
         </a>
