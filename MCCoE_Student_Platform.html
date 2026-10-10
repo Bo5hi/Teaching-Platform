@@ -8413,6 +8413,13 @@ function renderSubmitTab(w, p) {
     <div class="submit-section">
       <h3>📤 Submit Week ${w.num} to Instructor</h3>
       <p>Your quiz score, lab completion, and reflection will be packaged and sent to your instructor. Your auto-grade is calculated instantly.</p>
+      ${w.deliverable ? `<div style="margin:14px 0;padding:14px;border:1px solid var(--border);border-radius:8px;text-align:left;">
+        <label for="deliv-link-${w.num}" style="display:block;font-weight:700;margin-bottom:6px;">📦 Deliverable link: ${w.deliverable.title}</label>
+        <div style="font-size:12px;color:#888;margin-bottom:8px;">Upload your file to Google Drive or OneDrive, set sharing so your instructor can open it, and paste the link here.</div>
+        <input id="deliv-link-${w.num}" type="url" value="${(p.deliverableLink || '').replace(/"/g, '&quot;')}" placeholder="https://..." oninput="saveDeliverableLink(${w.num}, this.value)"
+          style="width:100%;padding:10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;">
+        <div id="deliv-status-${w.num}" style="font-size:12px;color:#888;margin-top:6px;">${p.deliverableLink ? '✓ Saved — you can update this link any time.' : ''}</div>
+      </div>` : ''}
       ${p.submitted ? `
         <div class="submitted-banner" style="display:block">
           ✅ Week ${w.num} submitted! Your instructor has received your work.
@@ -9316,9 +9323,27 @@ function saveReflection(weekNum) {
 // ══════════════════════════════════════════════
 // SUBMIT WEEK
 // ══════════════════════════════════════════════
+let _delivTimer = null;
+function saveDeliverableLink(weekNum, value) {
+  const p = getWeekProgress(weekNum);
+  p.deliverableLink = value.trim();
+  clearTimeout(_delivTimer);
+  _delivTimer = setTimeout(() => {
+    saveState();
+    const st = document.getElementById('deliv-status-' + weekNum);
+    if (st) st.textContent = p.deliverableLink ? '✓ Saved — you can update this link any time.' : '';
+  }, 600);
+}
+
 function submitWeek(weekNum) {
   const w = WEEKS.find(x => x.num === weekNum);
   const p = getWeekProgress(weekNum);
+  if (w.deliverable && !/^https?:\/\//.test(p.deliverableLink || '')) {
+    alert('Please paste the link to your deliverable (' + w.deliverable.title + ') before submitting.');
+    const inp = document.getElementById('deliv-link-' + weekNum);
+    if (inp) inp.focus();
+    return;
+  }
 
   if (p.quizScore === null) {
     alert('Please complete the quiz before submitting.');
@@ -9347,6 +9372,7 @@ function submitWeek(weekNum) {
     labsTotal:  w.labs.length,
     labPct:     labPct,
     reflection: p.reflection,
+    deliverableLink: p.deliverableLink || '',
     autoGrade:  Math.min(autoGrade, 100),
     gradeBreakdown: {
       quizWeight:  '60%',
@@ -9381,7 +9407,7 @@ RESULTS:
   Labs Completed: ${p.labsChecked.length}/${w.labs.length} (${labPct}%)
   Reflection:     Submitted (${p.reflection.length} chars)
   Auto-Grade:     ${submission.autoGrade}/100
-
+${p.deliverableLink ? '  Deliverable:    ' + p.deliverableLink + '\n' : ''}
 REFLECTION:
 ${p.reflection}
 

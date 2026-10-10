@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MCCoE Student Tracker</title>
+<script src="interviews/int-01.js"></script>
+<script src="interviews/int-02.js"></script>
+<script src="interviews/int-03.js"></script>
+<script src="interviews/int-04.js"></script>
+<script src="interviews/int-05.js"></script>
 <link rel="icon" type="image/png" href="assets/mccoe-logo.png">
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -2602,6 +2607,59 @@ function acadShowTab(tab) {
   if (!isLive) loadAcademyGrades();
 }
 
+// ── Northgate interview simulator results (Week 9 capstone) ──
+function renderStudentInterviews(tempId, elId) {
+  const box = document.getElementById(elId);
+  if (!box || !_fbDb) return;
+  const people = window.MCCOE_INTERVIEWS || {};
+  _fbDb.ref('mccoe_interviews/' + tempId).once('value', snap => {
+    const data = snap.val() || {};
+    const ids = Object.keys(people).sort();
+    const rows = ids.map(id => {
+      const iv = people[id], st = data[id] || {};
+      const asked = st.asked || [];
+      const ev = [];
+      asked.forEach(q => { const x = (iv.questions || []).find(y => y.id === q); (x && x.evidence || []).forEach(e => { if (!ev.includes(e)) ev.push(e); }); });
+      const status = st.done ? '✅ Done' : st.startedAt ? '🔄 In progress' : '○ Not started';
+      const color = st.done ? 'var(--green)' : st.startedAt ? 'var(--yellow)' : 'var(--muted)';
+      return `<tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:7px;">${iv.name} <span style="color:var(--muted);font-size:.72rem;">${iv.role}</span></td>
+        <td style="padding:7px;color:${color};font-weight:600;font-size:.78rem;">${status}</td>
+        <td style="padding:7px;text-align:center;">${asked.length}</td>
+        <td style="padding:7px;text-align:center;">${ev.length}</td>
+        <td style="padding:7px;text-align:center;">${asked.length ? `<button onclick="showInterviewTranscript('${tempId}','${id}')" style="background:rgba(0,245,255,.1);color:var(--cyan);border:1px solid rgba(0,245,255,.3);border-radius:4px;padding:2px 8px;font-size:.7rem;font-weight:700;cursor:pointer;">💬 Transcript</button>` : '—'}</td>
+      </tr>`;
+    }).join('');
+    window._ivCache = window._ivCache || {};
+    window._ivCache[tempId] = data;
+    box.innerHTML = `<div style="font-size:.72rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">🎙️ Northgate Interviews (Week 9)</div>
+      <table style="width:100%;border-collapse:collapse;font-size:.8rem;">
+        <thead><tr>${['Staff member','Status','Questions','Evidence',''].map(h => `<th style="text-align:left;padding:7px;font-size:.66rem;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border);">${h}</th>`).join('')}</tr></thead>
+        <tbody>${rows || '<tr><td colspan="5" style="padding:8px;color:var(--muted);">Interview data not loaded.</td></tr>'}</tbody>
+      </table>`;
+  });
+}
+
+function showInterviewTranscript(tempId, ivId) {
+  const iv = (window.MCCOE_INTERVIEWS || {})[ivId];
+  const st = ((window._ivCache || {})[tempId] || {})[ivId] || {};
+  if (!iv) return;
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const lines = [`<p><b>${esc(iv.name)}:</b> ${esc(iv.opening)}</p>`];
+  (st.asked || []).forEach(qid => {
+    const q = (iv.questions || []).find(x => x.id === qid);
+    if (!q) return;
+    lines.push(`<p style="margin-top:14px;"><b>Student</b> <i style="color:#888;">(${esc(q.type)})</i><b>:</b> ${esc(q.ask)}</p>`);
+    lines.push(`<p><b>${esc(iv.name)}:</b> ${esc(q.answer)}${(q.evidence || []).length ? ' <i>[' + esc(q.evidence.join(', ')) + ']</i>' : ''}</p>`);
+  });
+  const win = window.open('', '_blank');
+  if (!win) return;
+  win.document.write('<!doctype html><html><head><meta charset="utf-8"><title>' + esc(iv.id + ' ' + iv.name) + '</title>' +
+    '<style>body{font:15px/1.6 Segoe UI,Arial,sans-serif;max-width:760px;margin:32px auto;padding:0 20px;color:#16191D}</style></head><body>' +
+    '<h2>' + esc(iv.id + ' · ' + iv.name + ', ' + iv.role) + '</h2>' + lines.join('') + '</body></html>');
+  win.document.close();
+}
+
 function loadAcademyGrades() {
   var wrap = document.getElementById('academy-grades-wrap');
   if (!wrap) return;
@@ -2902,7 +2960,7 @@ function saveRubricGrade() {
     student, sid, framework: fw, scores: _rubricSelections, total, grade,
     strengths: document.getElementById('rub-strengths')?.value || '',
     improve:   document.getElementById('rub-improve')?.value || '',
-    gradedAt:  new Date().toISOString(), gradedBy: 'Chris King'
+    gradedAt:  new Date().toISOString(), gradedBy: sessionStorage.getItem('mccoe_admin_name') || 'Instructor'
   };
   if (_fbDb) {
     _fbDb.ref('mccoe_rubric').push(record, err => {
@@ -4661,6 +4719,7 @@ function loadPortalProgress(rosterId, portalTempId) {
         </td>
         <td style="padding:8px;text-align:center;color:${objColor};font-weight:600;">${quizPassed ? '✅ All '+objTotal : objDone+'/'+objTotal}</td>
         <td style="padding:8px;text-align:center;color:${labs>0?'var(--green)':'var(--muted)'};">${labs > 0 ? labs + ' done' : '—'}</td>
+        <td style="padding:8px;text-align:center;">${w.deliverableLink ? `<a href="${w.deliverableLink}" target="_blank" rel="noopener" style="color:var(--green);font-weight:700;text-decoration:none;">📦 Open</a>` : '<span style="color:var(--muted);">—</span>'}</td>
         <td style="padding:8px;text-align:center;">${hasRef ? `<button onclick="showReflection(${n}, this)" style="background:rgba(0,245,255,.1);color:var(--cyan);border:1px solid rgba(0,245,255,.3);border-radius:4px;padding:2px 8px;font-size:.7rem;font-weight:700;cursor:pointer;">💬 Read</button>` : '<span style="color:var(--muted);">—</span>'}</td>
       </tr>`;
     }).join('');
@@ -4686,7 +4745,7 @@ function loadPortalProgress(rosterId, portalTempId) {
     el.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
         <div style="font-size:.72rem;color:var(--muted);">Last activity: ${updated}</div>
-        <div style="font-weight:700;font-size:.9rem;color:${overallPct>=70?'var(--green)':overallPct>0?'var(--yellow)':'var(--muted)'};">${submittedCount}/8 weeks submitted (${overallPct}%)</div>
+        <div style="font-weight:700;font-size:.9rem;color:${overallPct>=70?'var(--green)':overallPct>0?'var(--yellow)':'var(--muted)'};">${submittedCount}/12 weeks submitted (${overallPct}%)</div>
       </div>
       <div class="progress-wrap" style="margin-bottom:16px;"><div class="progress-bar progress-green" style="width:${overallPct}%"></div></div>
       <div style="font-size:.72rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Weekly Curriculum</div>
@@ -4697,6 +4756,7 @@ function loadPortalProgress(rosterId, portalTempId) {
           <th style="text-align:center;padding:8px;font-size:.68rem;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border);">Quiz</th>
           <th style="text-align:center;padding:8px;font-size:.68rem;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border);">Objectives</th>
           <th style="text-align:center;padding:8px;font-size:.68rem;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border);">Labs</th>
+          <th style="text-align:center;padding:8px;font-size:.68rem;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border);">Deliverable</th>
           <th style="text-align:center;padding:8px;font-size:.68rem;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border);">Reflection</th>
         </tr></thead>
         <tbody>${weekRows}</tbody>
@@ -4704,6 +4764,9 @@ function loadPortalProgress(rosterId, portalTempId) {
       <div style="font-size:.72rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Soft Skills</div>
       ${skillRows}
     `;
+    // Northgate capstone interviews
+    el.innerHTML += `<div style="margin-top:16px;" id="iv-activity-${rosterId}"></div>`;
+    renderStudentInterviews(portalTempId, 'iv-activity-' + rosterId);
     // Load login activity directly from Firebase for accuracy
     el.innerHTML += `<div style="margin-top:16px;" id="login-activity-${rosterId}"><div style="font-size:.78rem;color:var(--muted);">Loading login activity...</div></div>`;
     _fbDb.ref('mccoe_logins/' + portalTempId).once('value', function(loginSnap) {
