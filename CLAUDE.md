@@ -1,5 +1,5 @@
 # CLAUDE.md — MCCoE Platform Briefing
-> Read this first. This file brings you fully up to speed on the MCCoE Cybersecurity Apprenticeship Platform.
+> Read this first. This file brings you fully up to speed on the MCCoE Cybersecurity Associate Platform.
 
 ---
 
@@ -7,13 +7,13 @@
 
 **Joey Harbour** — Instructor, Missouri Cybersecurity Center of Excellence (MCCoE)
 - Email: jharbour@mccoe.org
-- Role: Runs a 12-week cybersecurity apprenticeship cohort for students
+- Role: Runs a 12-week cybersecurity associate cohort for students
 
 ---
 
 ## WHAT THIS PLATFORM IS
 
-A fully custom cybersecurity apprenticeship platform built in plain HTML/JS/CSS, hosted on GitHub Pages, with Firebase Realtime Database as the backend. No frameworks, no build tools — just files.
+A fully custom cybersecurity associate platform built in plain HTML/JS/CSS, hosted on GitHub Pages, with Firebase Realtime Database as the backend. No frameworks, no build tools — just files.
 
 **Live URL:** https://bo5hi.github.io/Teaching-Platform/MCCoE_Hub.html
 **GitHub Repo:** https://github.com/Bo5hi/Teaching-Platform

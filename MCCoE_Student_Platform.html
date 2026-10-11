@@ -1001,7 +1001,7 @@ const WEEKS = [
       { q:'A penetration tester needs to identify all open ports and running services on a target host at 192.168.1.50. Which Kali Linux tool should they use?', opts:['Wireshark', 'Nmap', 'Metasploit', 'Hydra'], ans:1 },
       { q:'During an authorized test, an analyst wants to capture and analyze all network packets on the local subnet in real time. Which Kali tool is designed for this?', opts:['Nmap', 'Metasploit', 'Wireshark', 'Recon-ng'], ans:2 },
       { q:'A red team operator has identified an unpatched vulnerability on a target server. Which Kali Linux framework provides pre-built exploits for common CVEs?', opts:['Wireshark', 'Metasploit', 'Nmap', 'Recon-ng'], ans:1 },
-      { q:'An apprentice playing OverTheWire Bandit needs to read a file containing the next level\'s password. Which Linux command should they use?', opts:['ls', 'mkdir', 'cat', 'chmod'], ans:2 },
+      { q:'An associate playing OverTheWire Bandit needs to read a file containing the next level\'s password. Which Linux command should they use?', opts:['ls', 'mkdir', 'cat', 'chmod'], ans:2 },
       { q:'A security researcher uses Kali Linux for OSINT on a target organization, gathering public information before an authorized test. Which tool is BEST for structured OSINT collection?', opts:['Hydra', 'Aircrack-ng', 'Recon-ng', 'Burp Suite'], ans:2 },
       { q:'During a web application test, an analyst needs to discover hidden directories on a web server. Which Kali tool performs web directory brute-forcing?', opts:['Nmap', 'Dirb', 'Hydra', 'Netcat'], ans:1 },
       { q:'An analyst is conducting an authorized password-spraying test against an SSH service. Which Kali tool is specifically designed for online brute-force attacks?', opts:['Aircrack-ng', 'Nmap', 'Hydra', 'Metasploit'], ans:2 },
@@ -1431,7 +1431,7 @@ const WEEKS = [
       'Complete TryHackMe Linux Fundamentals Parts 1, 2, and 3'
     ],
     quiz: [
-      { q:'A new apprentice is asked to check which directory they are currently working in on a Linux system. Which command should they run?', opts:['ls', 'pwd', 'cd', 'whoami'], ans:1 },
+      { q:'A new associate is asked to check which directory they are currently working in on a Linux system. Which command should they run?', opts:['ls', 'pwd', 'cd', 'whoami'], ans:1 },
       { q:'A security analyst needs to view ALL files in a directory, including hidden files, along with their permissions. Which command is correct?', opts:['ls', 'ls -l', 'ls -la', 'dir -all'], ans:2 },
       { q:'An analyst suspects credentials have been written to a file called auth.log. Which command searches for the word "password" inside that file?', opts:['find "password" auth.log', 'locate password auth.log', 'grep "password" auth.log', 'cat auth.log | search password'], ans:2 },
       { q:'A system administrator sets a script to chmod 755. Which of the following BEST describes those permissions?', opts:['Owner reads only; others have no access', 'Owner has full access; group and others can read and execute', 'Everyone has full read write and execute', 'Owner can write; others can read only'], ans:1 },
@@ -1439,8 +1439,8 @@ const WEEKS = [
       { q:'An analyst identifies a suspicious process with PID 4419 consuming 100% CPU. Which command should they run to terminate it?', opts:['stop 4419', 'kill 4419', 'end 4419', 'terminate 4419'], ans:1 },
       { q:'A junior analyst needs to identify the IP address assigned to a Linux server\'s network interface. Which command provides this information?', opts:['netstat -tulpn', 'ifconfig', 'ipconfig', 'arp -a'], ans:1 },
       { q:'A security engineer runs netstat -tulpn on a Linux server. What information does this command provide?', opts:['All running user processes', 'All logged-in users', 'All listening ports and their associated services', 'Disk usage and storage statistics'], ans:2 },
-      { q:'A team lead asks an apprentice to write a Bash script. What MUST appear on the very first line of every valid Bash script?', opts:['# bash script', '#!/bin/bash', '@bash', '//bash'], ans:1 },
-      { q:'An apprentice runs Nmap against a neighbor\'s home router without permission to practice for class. Which of the following BEST describes this action?', opts:['A minor civil violation if no damage occurs', 'Legal for educational purposes', 'A federal crime under the Computer Fraud and Abuse Act', 'Only illegal if the neighbor files a complaint'], ans:2 }
+      { q:'A team lead asks an associate to write a Bash script. What MUST appear on the very first line of every valid Bash script?', opts:['# bash script', '#!/bin/bash', '@bash', '//bash'], ans:1 },
+      { q:'An associate runs Nmap against a neighbor\'s home router without permission to practice for class. Which of the following BEST describes this action?', opts:['A minor civil violation if no damage occurs', 'Legal for educational purposes', 'A federal crime under the Computer Fraud and Abuse Act', 'Only illegal if the neighbor files a complaint'], ans:2 }
     ]
   },
   {
@@ -6846,7 +6846,7 @@ const SOFT_SKILLS = [
 // ══════════════════════════════════════════════
 const LEVELS = [
   { min:0,    max:99,   level:1, title:'Recruit',         color:'#6c757d' },
-  { min:100,  max:299,  level:2, title:'Apprentice',      color:'#0d6efd' },
+  { min:100,  max:299,  level:2, title:'Associate',      color:'#0d6efd' },
   { min:300,  max:699,  level:3, title:'Analyst',         color:'#6610f2' },
   { min:700,  max:1299, level:4, title:'Specialist',      color:'#fd7e14' },
   { min:1300, max:2199, level:5, title:'Expert',          color:'#dc3545' },
@@ -9182,7 +9182,7 @@ function renderRoadmap() {
     <div style="padding:0 0 60px;">
       <!-- HERO -->
       <div style="background:linear-gradient(135deg,#0a192f 0%,#1e3a5f 100%);padding:32px 28px;margin-bottom:28px;">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,245,255,0.6);letter-spacing:3px;margin-bottom:8px;">MCCoE · CYBERSECURITY APPRENTICESHIP PROGRAM</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,245,255,0.6);letter-spacing:3px;margin-bottom:8px;">MCCoE · CYBERSECURITY ASSOCIATE PROGRAM</div>
         <h1 style="font-size:26px;font-weight:900;color:#fff;margin:0 0 8px;line-height:1.2;">Twelve weeks from foundations<br>to job-ready.</h1>
         <p style="font-size:13px;color:rgba(200,216,232,0.75);margin:0 0 20px;max-width:560px;line-height:1.6;">Every MCCoE associate walks the same road — foundations, tools, the human layer, then proof under pressure and the Security+ exam. This is what an employer is hiring at the end of it.</p>
         <div style="display:flex;gap:20px;flex-wrap:wrap;">

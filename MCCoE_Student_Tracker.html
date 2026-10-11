@@ -692,7 +692,7 @@ select option { background:var(--surface); color:var(--text); }
   <div class="page-header">
     <div>
       <h2>Dashboard</h2>
-      <p>Real-time overview of all apprentice performance</p>
+      <p>Real-time overview of all associate performance</p>
     </div>
     <div style="display:flex;gap:10px;align-items:center;">
       <div style="position:relative;">
@@ -779,7 +779,7 @@ select option { background:var(--surface); color:var(--text); }
   <div class="page-header">
     <div>
       <h2>Student Roster</h2>
-      <p>Manage apprentice records and view detailed profiles</p>
+      <p>Manage associate records and view detailed profiles</p>
     </div>
     <button class="btn btn-red" onclick="openAddStudent()">+ Add Student</button>
   </div>
@@ -807,7 +807,7 @@ select option { background:var(--surface); color:var(--text); }
   <div class="page-header">
     <div>
       <h2>Attendance Tracker</h2>
-      <p>Mark daily attendance for each apprentice</p>
+      <p>Mark daily attendance for each associate</p>
     </div>
     <div style="display:flex;gap:10px;align-items:center;">
       <input type="date" id="attendDate" style="width:160px;" onchange="renderAttendance()">
@@ -3682,7 +3682,7 @@ function renderDashboard() {
   }
 
   document.getElementById('kpiGrid').innerHTML = `
-    <div class="kpi-card red" onclick="showKpiChart('total')" style="cursor:pointer;" title="Click for chart"><div class="kpi-icon">👥</div><div class="kpi-label">Total Apprentices</div><div class="kpi-value">${total}</div><div class="kpi-sub">Active cohort${inactiveCount > 0 ? ` · <span style="color:rgba(255,45,94,.6);font-size:.65rem;">${inactiveCount} inactive</span>` : ''} · <span style="color:rgba(0,245,255,.5);font-size:.65rem;">📊 View chart</span></div></div>
+    <div class="kpi-card red" onclick="showKpiChart('total')" style="cursor:pointer;" title="Click for chart"><div class="kpi-icon">👥</div><div class="kpi-label">Total Associates</div><div class="kpi-value">${total}</div><div class="kpi-sub">Active cohort${inactiveCount > 0 ? ` · <span style="color:rgba(255,45,94,.6);font-size:.65rem;">${inactiveCount} inactive</span>` : ''} · <span style="color:rgba(0,245,255,.5);font-size:.65rem;">📊 View chart</span></div></div>
     <div class="kpi-card green" onclick="showKpiChart('attendance')" style="cursor:pointer;" title="Click for chart"><div class="kpi-icon">📅</div><div class="kpi-label">Avg Attendance</div><div class="kpi-value">${avgAtt}%</div><div class="kpi-sub">This month · <span style="color:rgba(0,245,255,.5);font-size:.65rem;">📊 View chart</span></div></div>
     <div class="kpi-card blue" onclick="showKpiChart('performance')" style="cursor:pointer;" title="Click for chart"><div class="kpi-icon">⭐</div><div class="kpi-label">Avg Performance</div><div class="kpi-value">${avgSc}</div><div class="kpi-sub">Out of 100 · <span style="color:rgba(0,245,255,.5);font-size:.65rem;">📊 View chart</span></div></div>
     <div class="kpi-card yellow" onclick="showKpiChart('hours')" style="cursor:pointer;" title="Click for chart"><div class="kpi-icon">⏱</div><div class="kpi-label">Total Hours Logged</div><div class="kpi-value">${totalHrs.toLocaleString()}</div><div class="kpi-sub">Across all students · <span style="color:rgba(0,245,255,.5);font-size:.65rem;">📊 View chart</span></div></div>
@@ -4072,7 +4072,7 @@ const _CHART_DEFAULTS = {
 function showKpiChart(type) {
   if (_kpiInterval) { clearInterval(_kpiInterval); _kpiInterval = null; }
   const titles = {
-    total:      '👥 Apprentice Enrollment Over Time',
+    total:      '👥 Associate Enrollment Over Time',
     attendance: '📅 Avg Attendance Over Time',
     performance:'⭐ Avg Performance Score Over Time',
     hours:      '⏱ Training Hours Per Student',
@@ -5444,9 +5444,9 @@ function renderEmployerView() {
         <div class="employer-avatar">${initials(s.name)}</div>
         <div>
           <div class="employer-name">${s.name}</div>
-          <div class="employer-sub">MCCoE Cyber Security Support Technician Apprentice</div>
+          <div class="employer-sub">MCCoE Cyber Security Support Technician Associate</div>
           <div class="employer-sub">Cohort: ${s.cohort} | Program Start: ${s.startDate}</div>
-          <span class="employer-badge">DOL-REGISTERED APPRENTICESHIP</span>
+          <span class="employer-badge">MCCoE ASSOCIATE PROGRAM</span>
         </div>
       </div>
 
@@ -5503,8 +5503,8 @@ function renderEmployerView() {
 
       <div class="employer-footer">
         Missouri Cybersecurity Center of Excellence (MCCoE) | 524 N Boonville Ave, Springfield, MO 65806<br>
-        DOL-Registered Apprenticeship | EIN: 83-2010486 | jharbour@mccoe.org | 417-553-1020<br>
-        <em>This profile is generated from MCCoE's apprentice tracking system and reflects verified program data.</em>
+        EIN: 83-2010486 | jharbour@mccoe.org | 417-553-1020<br>
+        <em>This profile is generated from MCCoE's associate tracking system and reflects verified program data.</em>
       </div>
     </div>`;
 }
@@ -6291,7 +6291,7 @@ function aiGradeSubmission() {
   }).join('\n\n');
 
   const meta = PROJECT_META[weekNum];
-  const promptText = 'You are grading a student project submission for a cybersecurity apprenticeship program.\n\nProject: ' + meta.incident + ' — ' + meta.type + '\nMax score: ' + meta.max + ' points\n\nGrade each question against the expected key points. Award partial credit for partially correct answers. Be fair but rigorous.\n\n' + qLines + '\n\nReturn ONLY a valid JSON object with exactly these two fields:\n{"score": <integer 0 to ' + meta.max + '>, "feedback": "<2-4 sentences of specific constructive feedback for the student>"}\n\nNo text outside the JSON object.';
+  const promptText = 'You are grading a student project submission for a cybersecurity associate program.\n\nProject: ' + meta.incident + ' — ' + meta.type + '\nMax score: ' + meta.max + ' points\n\nGrade each question against the expected key points. Award partial credit for partially correct answers. Be fair but rigorous.\n\n' + qLines + '\n\nReturn ONLY a valid JSON object with exactly these two fields:\n{"score": <integer 0 to ' + meta.max + '>, "feedback": "<2-4 sentences of specific constructive feedback for the student>"}\n\nNo text outside the JSON object.';
 
   fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -8309,7 +8309,7 @@ function buildWeeklyModal(weekNum, weekLabel, weekDates, DAY_LABELS, attendRows,
       <!-- header bar -->
       <div style="background:#ee2207;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;">
         <div>
-          <div style="font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:3px;color:rgba(255,255,255,.7);text-transform:uppercase;margin-bottom:4px;">MCCoE Cybersecurity Apprenticeship</div>
+          <div style="font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:3px;color:rgba(255,255,255,.7);text-transform:uppercase;margin-bottom:4px;">MCCoE Cybersecurity Associate Program</div>
           <div style="font-size:1.25rem;font-weight:800;color:#fff;">Week ${weekNum} — Cohort Report</div>
           <div style="font-size:.82rem;color:rgba(255,255,255,.8);margin-top:2px;">${weekLabel}</div>
         </div>
