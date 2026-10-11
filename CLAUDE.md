@@ -5,11 +5,9 @@
 
 ## WHO YOU ARE WORKING WITH
 
-**Chris King** — Director, Missouri Cybersecurity Center of Excellence (MCCoE)
-- Email: cking@mccoe.org
-- Role: Runs a 9-week cybersecurity apprenticeship cohort for students
-- Also pursuing GRC certifications: Security+ ✅ → CRISC (target Dec 2026) → CISA → CISM → CISSP
-- NSF Grant application in progress (NSF-25-515, deadline 2026-09-28)
+**Joey Harbour** — Instructor, Missouri Cybersecurity Center of Excellence (MCCoE)
+- Email: jharbour@mccoe.org
+- Role: Runs a 12-week cybersecurity apprenticeship cohort for students
 
 ---
 
@@ -17,11 +15,11 @@
 
 A fully custom cybersecurity apprenticeship platform built in plain HTML/JS/CSS, hosted on GitHub Pages, with Firebase Realtime Database as the backend. No frameworks, no build tools — just files.
 
-**Live URL:** https://kingchrischris23-eng.github.io/mccoe-platform/
-**GitHub Repo:** https://github.com/kingchrischris23-eng/mccoe-platform
-**Local folder:** C:\Users\ChrisKing\Desktop\mccoe-platform
+**Live URL:** https://bo5hi.github.io/Teaching-Platform/MCCoE_Hub.html
+**GitHub Repo:** https://github.com/Bo5hi/Teaching-Platform
+**Local folder:** C:\Users\JoeyHarbour\Projects\Teaching-Platform
 
-The cohort runs 9 weeks, Mon–Thu, covering cybersecurity fundamentals through incident analysis and ethical hacking. Current cohort started Mon Aug 31, 2026 at 9AM.
+The cohort runs 12 weeks, Mon–Thu, covering cybersecurity fundamentals through incident analysis and ethical hacking. Current cohort started Mon Aug 31, 2026 at 9AM.
 
 ---
 
@@ -58,7 +56,7 @@ The entry point. Students log in here with name + password. Hub SSO passes `?nam
 - 8 projects across 4 incidents: Target (1-2), Colonial Pipeline (3-4), SolarWinds (5-6), Equifax (7-8)
 - Part 1 = Deep Dive (50 pts), Part 2 = Frameworks & Writing (100 pts) = 600 pts total
 - PDF project docs hosted on GitHub Pages
-- Key file: Week2_Colonial_Pipeline_2021.docx (Project 3) at C:\Users\ChrisKing\Desktop\
+- Key file: Week2_Colonial_Pipeline_2021.docx (Project 3) (kept outside this repo)
   - Has MITRE ATT&CK Table 6 (6 techniques), Kill Chain Table 5, NIST CSF Table 7
   - Teaching scaffold added to Executive Summary Section 4 (T1078 worked example + 5 scaffold rows)
   - Source doc links in References section (CISA AA21-131A, CEO Senate Testimony, CISA 2-year reflection)
@@ -76,8 +74,8 @@ The entry point. Students log in here with name + password. Hub SSO passes `?nam
 - Job Readiness Score
 
 ### MCCoE_Student_Tracker.html — Admin Only
-Password: (ask Chris — stored in tracker HTML)
-Admin users: jharbour, cking, cdaniels
+Password: (ask Joey)
+Admin users: jharbour, cdaniels
 
 **Nav sections and views:**
 - Dashboard, Pending Approvals, Students, Attendance
@@ -196,8 +194,8 @@ try {
 
 ## CURRICULUM DOCUMENTS
 
-All at: C:\Users\ChrisKing\Desktop\ (working copies)
-Published PDFs: on GitHub Pages in /mccoe-platform/ folder
+Working copies are kept outside this repo.
+Published PDFs: on GitHub Pages
 
 | File | Project | Points |
 |---|---|---|
@@ -210,14 +208,14 @@ Published PDFs: on GitHub Pages in /mccoe-platform/ folder
 | Week4_Equifax_2017.docx | Project 7 | 50 |
 | Week4b_Equifax_Frameworks.docx | Project 8 | 100 |
 
-Teacher Answer Key DOCX: C:\Users\ChrisKing\Desktop\ (covers all 8 projects)
+Teacher Answer Key DOCX: kept outside this repo (covers all 8 projects)
 
 ---
 
 ## GIT WORKFLOW
 
 ```bash
-cd C:\Users\ChrisKing\Desktop\mccoe-platform
+cd C:\Users\JoeyHarbour\Projects\Teaching-Platform
 git add <files>
 git commit -m "description"
 git push origin main
@@ -229,10 +227,9 @@ GitHub Pages auto-deploys on push. No build step needed.
 
 ## IMPORTANT PREFERENCES
 
-- Chris calls the session done with "save and zip it up" → zip mccoe-platform folder to Desktop
 - Always update memory (MEMORY.md + session summary file) at end of session
 - No comments in code unless absolutely necessary
-- No emojis unless Chris asks
+- No emojis unless Joey asks
 - Use python-docx for all Word document edits (Python 3.13 + python-docx installed)
 - PowerShell is primary shell on this Windows 11 machine
 - When pushing to GitHub, always use `git add <specific files>` not `git add .`
@@ -243,6 +240,3 @@ GitHub Pages auto-deploys on push. No build step needed.
 ## BACKUPS
 
 - GitHub: always up to date (push after every session)
-- Local zips on Desktop: mccoe_platform_backup_YYYYMMDD.zip
-- Claude memory: C:\Users\ChrisKing\.claude\projects\C--Users-ChrisKing\memory\
-  - Copy the entire .claude folder to any new machine to restore full context

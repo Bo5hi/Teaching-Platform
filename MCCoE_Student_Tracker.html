@@ -6603,7 +6603,6 @@ function approveSubmission(pendingIdx) {
 const ADMIN_ACCOUNTS_KEY = 'mccoe_admin_accounts';
 const DEFAULT_ADMINS = [
   { username: 'jharbour',   name: 'Joey Harbour',   password: 'MCCoE-PZQMGNHr2tm6!', master: true },
-  { username: 'cking',      name: 'Chris King',      password: 'MCCoE-PZQMGNHr2tm6!', master: true },
   { username: 'cdaniels',   name: 'Chris Daniels',  password: 'MCCoE-PZQMGNHr2tm6!', master: true },
 ];
 const gate    = document.getElementById('admin-gate');
@@ -6614,7 +6613,13 @@ function getAdminAccounts() {
   const raw = localStorage.getItem(ADMIN_ACCOUNTS_KEY);
   if (raw) {
     try {
-      const accounts = JSON.parse(raw);
+      let accounts = JSON.parse(raw);
+      // Remove retired admin accounts cached in this browser
+      const kept = accounts.filter(a => a.username !== 'cking');
+      if (kept.length !== accounts.length) {
+        accounts = kept;
+        localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(accounts));
+      }
       // Migration: ensure cdaniels is master
       const idx = accounts.findIndex(a => a.username === 'cdaniels');
       if (idx >= 0 && !accounts[idx].master) {
@@ -8103,7 +8108,7 @@ const EXPORT_WEEK_TASKS = {
   ]}
 };
 function exportWeeklyReport() {
-  const EXCLUDED = ['Joey Harbour', 'Chris King', 'Carlos Resto'];
+  const EXCLUDED = ['Joey Harbour', 'Carlos Resto'];
   const COHORT_START = new Date('2026-08-31T00:00:00');
 
   const today = new Date();
@@ -8265,7 +8270,7 @@ function exportWeeklyReport() {
 }
 
 function buildWeeklyModal(weekNum, weekLabel, weekDates, DAY_LABELS, attendRows, cohortAvg, subs, completionMap, allSubs, projNum, statusColor, statusLabel) {
-  const EXCLUDED = ['Joey Harbour', 'Chris King', 'Carlos Resto'];
+  const EXCLUDED = ['Joey Harbour', 'Carlos Resto'];
   const meta = projNum ? PROJECT_META[projNum] : null;
 
   const attendHtml = attendRows.map(r => {

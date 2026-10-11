@@ -9,7 +9,7 @@ This repository contains two MCCoE projects:
 
 ## MCCoE Student Learning Platform
 
-Live at: **https://kingchrischris23-eng.github.io/mccoe-platform/**
+Live at: **https://bo5hi.github.io/Teaching-Platform/MCCoE_Hub.html**
 
 - Student portal with registration, login, weekly objectives, and quiz submissions
 - 4 Pillars: Student Platform, CyberSec Academy, Curriculum Projects, Ethical Hacking Lab
@@ -17,7 +17,7 @@ Live at: **https://kingchrischris23-eng.github.io/mccoe-platform/**
 - Admin tracker with attendance, leaderboard, academy scores, and pentest lab progress
 - 90-question SY0-701 quiz bank, XP system, badges, and streak tracking
 
-**Contact:** cking@mccoe.org
+**Contact:** jharbour@mccoe.org
 
 ---
 
