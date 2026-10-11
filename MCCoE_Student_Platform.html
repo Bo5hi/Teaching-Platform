@@ -756,21 +756,104 @@ const ACRONYM_DATA = {
 // Module-level storage for the dynamically built quiz (rebuilt each render/retake)
 let _activeAcronymQuiz = {};
 
+// Words that don't supply a letter to the acronym; never swapped
+const ACR_SKIP = new Set(['and','of','for','the','as','a','an','to','in','on','over','by','with','or']);
+let _acrWordPool = null;
+let _acrRealDefs = null;
+
+function _acrShuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+function _acrSwappable(token) {
+  const core = token.replace(/,$/, '');
+  return /^[A-Z][a-z]{2,}$/.test(core) && !ACR_SKIP.has(core.toLowerCase()) ? core : null;
+}
+
+// Every capitalized word used in any definition, grouped by first letter
+function _acrPool() {
+  if (_acrWordPool) return _acrWordPool;
+  _acrWordPool = {};
+  _acrRealDefs = new Set();
+  Object.values(ACRONYM_DATA).forEach(week => week.forEach(([, def]) => {
+    def.split(' / ').forEach(m => {
+      _acrRealDefs.add(m.trim().toLowerCase());
+      m.trim().split(' ').forEach(t => {
+        const core = _acrSwappable(t);
+        if (!core) return;
+        const k = core[0].toLowerCase();
+        (_acrWordPool[k] = _acrWordPool[k] || new Set()).add(core);
+      });
+    });
+  }));
+  Object.keys(_acrWordPool).forEach(k => { _acrWordPool[k] = [..._acrWordPool[k]]; });
+  return _acrWordPool;
+}
+
 function buildAcronymQuiz(weekNum) {
   const data = ACRONYM_DATA[weekNum];
   if (!data) return [];
-  return data.map((item, idx) => {
-    const [acronym, correct] = item;
-    const firstLetter = correct[0].toLowerCase();
-    const others = data.filter((_, i) => i !== idx);
-    // Prefer distractors whose definition starts with the same letter as the correct one
-    const sameStart = [...others.filter(o => o[1][0].toLowerCase() === firstLetter)].sort(() => Math.random() - 0.5);
-    const diffStart  = [...others.filter(o => o[1][0].toLowerCase() !== firstLetter)].sort(() => Math.random() - 0.5);
-    const wrongDefs  = [...sameStart, ...diffStart].slice(0, 3).map(o => o[1]);
+  const pool = _acrPool();
+  return data.map(([acronym, full], idx) => {
+    // Multi-meaning entries: quiz one meaning at a time
+    const meanings = full.split(' / ').map(s => s.trim());
+    const correct = meanings[Math.floor(Math.random() * meanings.length)];
+    const tokens = correct.split(' ');
+    const slots = [];
+    tokens.forEach((t, i) => {
+      const core = _acrSwappable(t);
+      if (!core) return;
+      const stem = core.slice(0, 4).toLowerCase();
+      const alts = _acrShuffle((pool[core[0].toLowerCase()] || []).filter(a => a.slice(0, 4).toLowerCase() !== stem));
+      if (alts.length) slots.push({ i, alts });
+    });
+    const swap = changes => tokens.map((t, i) => changes[i] ? t.replace(/^[^,]+/, changes[i]) : t).join(' ');
+    const wrong = [];
+    const add = s => {
+      const k = s.toLowerCase();
+      if (s === correct || _acrRealDefs.has(k) || wrong.some(w => w.toLowerCase() === k)) return false;
+      wrong.push(s);
+      return true;
+    };
+
+    // Distractors are near-misses that share the acronym's letters. With two swappable
+    // words, use a 2x2 grid so every word appears in exactly two options and the
+    // answer can't be found by picking the most common word in each position.
+    const picked = _acrShuffle(slots);
+    if (picked.length >= 2) {
+      const [a, b] = picked;
+      outer:
+      for (const altA of a.alts.slice(0, 6)) {
+        for (const altB of b.alts.slice(0, 6)) {
+          const set = [swap({ [a.i]: altA }), swap({ [b.i]: altB }), swap({ [a.i]: altA, [b.i]: altB })];
+          if (new Set(set.map(s => s.toLowerCase())).size === 3 && set.every(s => s !== correct && !_acrRealDefs.has(s.toLowerCase()))) {
+            set.forEach(add);
+            break outer;
+          }
+        }
+      }
+    }
+    for (const s of picked) {
+      for (const alt of s.alts) { if (wrong.length >= 3) break; add(swap({ [s.i]: alt })); }
+    }
+    // Last resort (e.g. non-English or single-symbol expansions): other definitions
+    if (wrong.length < 3) {
+      const firstLetter = correct[0].toLowerCase();
+      const others = data.filter((_, i) => i !== idx).map(o => o[1].split(' / ')[0].trim());
+      const sameStart = _acrShuffle(others.filter(o => o[0].toLowerCase() === firstLetter));
+      const diffStart = _acrShuffle(others.filter(o => o[0].toLowerCase() !== firstLetter));
+      for (const o of [...sameStart, ...diffStart]) {
+        if (wrong.length >= 3) break;
+        if (!wrong.includes(o) && o !== correct) wrong.push(o);
+      }
+    }
+
     const correctPos = Math.floor(Math.random() * 4);
-    const opts = [...wrongDefs];
+    const opts = wrong.slice(0, 3);
     opts.splice(correctPos, 0, correct);
-    return { acronym, q: `What does ${acronym} stand for?`, opts, ans: correctPos };
+    return { acronym, q: `What does ${acronym} stand for?`, opts, ans: correctPos, full };
   });
 }
 
@@ -9216,7 +9299,7 @@ function _showAcronymReview(quiz, panelId) {
     const sel = document.querySelector(`input[name="aq${qi}"]:checked`);
     if (!sel) return;
     const chosen = parseInt(sel.value);
-    results.push({ acronym: q.acronym, correct: q.opts[q.ans], chosen: q.opts[chosen], isWrong: chosen !== q.ans });
+    results.push({ acronym: q.acronym, correct: q.full || q.opts[q.ans], chosen: q.opts[chosen], isWrong: chosen !== q.ans });
   });
 
   const wrongs = results.filter(r => r.isWrong);
