@@ -9157,7 +9157,7 @@ function renderTicketBoard() {
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;">
           <span style="font-size:.85rem;padding:3px 10px;border-radius:12px;${tkStatusStyle(status)}">${status}</span>
-            ${prog.resolution ? '<span style="font-size:.76rem;padding:1px 6px;border-radius:8px;background:rgba(0,180,255,0.1);color:#00b4ff;border:1px solid rgba(0,180,255,0.3);margin-top:3px;display:block;">&#128274; locked</span>' : ''}
+            ${tkIsLocked(t.id) ? '<span style="font-size:.76rem;padding:1px 6px;border-radius:8px;background:rgba(0,180,255,0.1);color:#00b4ff;border:1px solid rgba(0,180,255,0.3);margin-top:3px;display:block;">&#128274; locked</span>' : ''}
           <span style="font-size:.9rem;${tkPriorityStyle(priority)}">${priority}</span>
           ${_tkGrades[t.id] ? `<span style="font-size:.85rem;font-weight:800;padding:2px 9px;border-radius:10px;border:1px solid ${tkGradeColor(_tkGrades[t.id])};color:${tkGradeColor(_tkGrades[t.id])};">&#9998; ${_tkGrades[t.id].score} / ${_tkGrades[t.id].max || 25}</span>` : ''}
         </div>
@@ -9206,6 +9206,7 @@ function openTicketDetail(ticketId) {
 
     <div style="padding:20px 24px;">
       ${tkIsLocked(t.id) ? `<div style="padding:10px 14px;background:rgba(0,180,255,0.07);border:1px solid rgba(0,180,255,0.3);border-radius:8px;margin-bottom:14px;display:flex;align-items:center;gap:10px;"><span style="font-size:1.1rem;">&#128274;</span><div><div style="font-size:.92rem;font-weight:700;color:#00b4ff;">Ticket Resolved — Read Only</div><div style="font-size:.85rem;color:#d2e4da;margin-top:2px;">${prog.disposition || ''}</div></div></div>` : ''}
+      ${tkIsSentBack(t.id) ? `<div style="padding:12px 14px;background:rgba(255,140,0,0.08);border:1px solid rgba(255,140,0,0.45);border-radius:8px;margin-bottom:14px;"><div style="font-size:.95rem;font-weight:800;color:#ff8c00;">&#8635; Your instructor sent this ticket back</div>${prog.reopenNote ? `<div style="font-size:.92rem;color:#e2f4e6;margin-top:6px;white-space:pre-wrap;"><strong>Message:</strong> ${tkLogEsc(prog.reopenNote)}</div>` : ''}<div style="font-size:.88rem;color:#d2e4da;margin-top:6px;">Your notes and previous answers are saved. Make your changes, then set Status to Resolved &mdash; the close form opens with your previous answers filled in.</div></div>` : ''}
       ${tkGradeBoxHtml(t.id).replace('margin-top:20px;', 'margin-bottom:14px;')}
       <div style="font-size:.85rem;color:#d2e4da;margin-bottom:14px;">&#9200; Open for: <strong style="color:#ffd700;">${tkAge(t.created)}</strong></div>
       <div style="font-size:.88rem;font-weight:700;color:#d2e4da;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Reporter</div>
@@ -9323,7 +9324,13 @@ function tkAge(createdStr) {
 }
 
 function tkIsLocked(ticketId) {
-  return !!(_tkProgress[ticketId] && _tkProgress[ticketId].resolution);
+  const p = _tkProgress[ticketId];
+  return !!(p && p.resolution && (p.status === 'Resolved' || p.status === 'Closed'));
+}
+// Instructor sent it back: the old write-up is kept and pre-fills the close form
+function tkIsSentBack(ticketId) {
+  const p = _tkProgress[ticketId];
+  return !!(p && p.resolution && !tkIsLocked(ticketId));
 }
 
 function tkCheckStatusChange(ticketId, newStatus) {
@@ -9380,6 +9387,15 @@ function openResolveModal(ticketId) {
     + '<button onclick="document.getElementById(\'tk-resolve-modal\').remove()" style="background:rgba(255,45,94,0.15);border:1px solid rgba(255,45,94,0.4);color:#ff2d5e;padding:10px 18px;border-radius:6px;cursor:pointer;font-weight:700;font-family:\'Rajdhani\',sans-serif;">Cancel</button>'
     + '</div></div>';
   document.body.appendChild(overlay);
+  // Sent back by the instructor: start from the student's previous answers
+  const prev = _tkProgress[ticketId] || {};
+  if (prev.resolution) {
+    const r = prev.resolution, set = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
+    set('tk-resolve-disp', prev.disposition);
+    set('tk-resolve-actions', r.actions); set('tk-resolve-rootcause', r.rootCause); set('tk-resolve-rec', r.recommendation);
+    // Easy/Moderate form only has Summary; carry a Hard-form answer over if that is all there is
+    set('tk-resolve-summary', r.summary || [r.actions, r.rootCause, r.recommendation].filter(Boolean).join('\n\n'));
+  }
 }
 
 function submitResolve(ticketId, isHard) {
@@ -9412,10 +9428,11 @@ function submitResolve(ticketId, isHard) {
   const priority = (priSel && priSel.value) || (_tkProgress[ticketId] || {}).priority || tkDef.defaultPriority || 'P3';
   if (!_tkProgress[ticketId]) _tkProgress[ticketId] = { status:'New', priority, notes:[] };
   Object.assign(_tkProgress[ticketId], { status:finalStatus, priority, disposition:disp, resolution, resolvedAt });
+  delete _tkProgress[ticketId].reopenNote;
 
   if (_fbDb) {
     firebase.database().ref('mccoe_tickets/work/' + name + '/' + ticketId).update(
-      { status:finalStatus, priority, disposition:disp, resolution, resolvedAt }
+      { status:finalStatus, priority, disposition:disp, resolution, resolvedAt, reopenNote:null }
     );
   }
   document.getElementById('tk-resolve-modal').remove();

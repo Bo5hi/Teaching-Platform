@@ -8745,7 +8745,8 @@ function tkViewNotes(studentName, ticketId) {
   const work  = (_tkAllWork[studentName] || {})[ticketId] || {};
   const notes = Array.isArray(work.notes) ? work.notes : [];
   const t     = TRACKER_TICKET_BANK.find(x => x.id === ticketId);
-  const isResolved = work.resolution != null;
+  const isResolved = work.resolution != null && (work.status === 'Resolved' || work.status === 'Closed');
+  const isSentBack = work.resolution != null && !isResolved;
 
   let noteHtml = notes.map(n =>
     '<div style="border-left:3px solid var(--cyan);padding:10px 14px;background:rgba(0,245,255,0.04);border-radius:0 6px 6px 0;margin-bottom:10px;">'
@@ -8758,7 +8759,8 @@ function tkViewNotes(studentName, ticketId) {
   if (work.resolution) {
     const r = work.resolution;
     resHtml = '<div style="margin-top:16px;padding:14px;background:rgba(0,180,100,0.05);border:1px solid rgba(0,180,100,0.25);border-radius:8px;">'
-      + '<div style="font-size:.72rem;font-weight:700;color:#00c864;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">&#10003; Resolution</div>'
+      + '<div style="font-size:.72rem;font-weight:700;color:#00c864;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">&#10003; Resolution' + (isSentBack ? ' <span style="color:#ff8c00;">&mdash; sent back, waiting for the student to resubmit</span>' : '') + '</div>'
+      + (isSentBack && work.reopenNote ? '<div style="margin-bottom:8px;"><div style="font-size:.68rem;color:var(--muted);">YOUR MESSAGE WHEN SENDING IT BACK</div><div style="font-size:.85rem;color:#ff8c00;white-space:pre-line;">' + tkKeyEsc(work.reopenNote) + '</div></div>' : '')
       + '<div style="margin-bottom:8px;"><div style="font-size:.68rem;color:var(--muted);">DISPOSITION</div><div style="font-size:.85rem;color:var(--text);font-weight:700;">' + tkKeyEsc(work.disposition || 'Not recorded') + '</div></div>'
       + '<div style="margin-bottom:8px;"><div style="font-size:.68rem;color:var(--muted);">PRIORITY</div><div style="font-size:.85rem;color:var(--text);">' + tkStudentPriority(work, ticketId).label + '</div></div>'
       + (r.summary ? '<div style="margin-bottom:8px;"><div style="font-size:.68rem;color:var(--muted);">SUMMARY</div><div style="font-size:.85rem;color:var(--text);white-space:pre-line;">' + r.summary.replace(/</g,'&lt;') + '</div></div>' : '')
@@ -8780,7 +8782,7 @@ function tkViewNotes(studentName, ticketId) {
     + tkDispositionLine(work, ticketId)
     + '</div>'
     + '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'
-    + (isResolved ? '<button onclick="tkAdminReopen(\'' + studentName + '\',\'' + ticketId + '\');this.closest(\'div[style*=fixed]\').remove()" style="background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.4);color:#ff8c00;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:.78rem;">&#8635; Reopen</button>' : '')
+    + (isResolved ? '<button onclick="tkAdminReopen(\'' + studentName + '\',\'' + ticketId + '\');this.closest(\'div[style*=fixed]\').remove()" style="background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.4);color:#ff8c00;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:.78rem;">&#8635; Send Back</button>' : '')
     + '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:rgba(255,45,94,0.15);border:1px solid rgba(255,45,94,0.4);color:#ff2d5e;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:700;">&#10005;</button>'
     + '</div></div>'
     + '<div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start;">'
@@ -8810,22 +8812,22 @@ function resetTicketProgress() {
   }
 }
 function tkAdminReopen(studentName, ticketId) {
-  if (!confirm('Reopen ' + ticketId + ' for ' + studentName + '? This clears the resolution and sets status to In Progress.')) return;
+  // Sends the ticket back to the student. Their notes, disposition and write-up are KEPT
+  // (the Platform pre-fills the close form with them); only the status changes.
+  const note = prompt('Send ' + ticketId + ' back to ' + studentName + '?\n\nTheir work notes and write-up are kept so they can edit and resubmit.\n\nOptional message to the student (what to fix):', '');
+  if (note === null) return;
   if (!_tkAllWork[studentName]) _tkAllWork[studentName] = {};
   const prog = _tkAllWork[studentName][ticketId] || {};
-  delete prog.resolution; delete prog.disposition; delete prog.resolvedAt;
-  prog.status = 'In Progress';
+  const upd = { status:'In Progress', reopenedAt: new Date().toISOString(), reopenNote: note.trim() || null };
+  Object.assign(prog, upd);
+  if (!upd.reopenNote) delete prog.reopenNote;
   _tkAllWork[studentName][ticketId] = prog;
   if (firebase && firebase.database) {
-    const ref = firebase.database().ref('mccoe_tickets/work/' + studentName + '/' + ticketId);
-    ref.update({ status:'In Progress' }).then(() => {
-      ref.child('resolution').remove();
-      ref.child('disposition').remove();
-      ref.child('resolvedAt').remove();
-    });
+    firebase.database().ref('mccoe_tickets/work/' + studentName + '/' + ticketId).update(upd)
+      .catch(e => alert('Could not reopen: ' + e.message));
   }
   renderTkProgress();
-  alert(ticketId + ' reopened for ' + studentName + '.');
+  alert(ticketId + ' sent back to ' + studentName + '. Their work was kept.');
 }
 
 function tkExportCSV() {
