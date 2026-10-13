@@ -7026,6 +7026,7 @@ const TRACKER_TICKET_BANK = [
 const IT_DISP_NOTE = 'This is a service request, not a security event, so none of the security dispositions fit exactly. Accept "False Positive — Expected Behavior" or "Closed — No Action Required" as long as the summary clearly says what was done.';
 const TICKET_KEYS = {
   'TCK-1001': {
+    logsShow:"Six 4625 failures 07:58–08:06, every one from FINANCE-07 (Dana's own PC, 10.20.14.37) with logon type 2 (typed at the keyboard), then 4740 lockout with caller computer FINANCE-07. She changed her password Fri 08-14 16:52 (4723). No attempts from any other host → simple forgotten password. Directory gives the call-back number on file: (314) 555-0186.",
     priority:'P4', priorityWhy:'One user, no security impact. P3 is defensible because payroll is due this morning.',
     disposition:'Service request — resolved', dispNote:IT_DISP_NOTE,
     rootCause:'The user forgot the password they changed Friday. Repeated wrong guesses tripped the account lockout policy, which is the policy working as designed. The same user (d.reyes) shows up on TCK-2002 later, so it is worth noting the lockout source.',
@@ -7050,6 +7051,7 @@ const TICKET_KEYS = {
     lookFor:['Verified identity before resetting', 'Checked where the failed logins came from', 'Temporary password + forced change', 'Documented the verification method'],
   },
   'TCK-1002': {
+    logsShow:"Sent to 12 users from look-alike domain cedercreek-secure.com (registered 08-16). SPF passes only because the attacker owns that domain; DKIM/DMARC none. Link is a Microsoft 365 credential-phishing page on the same IP as the mail server. Proxy: k.tran opened the page at 08:57 (GET only, no POST) → no password submitted; confirm with k.tran. Purge from all 12 mailboxes, block domain + IP 185.234.72.19.",
     priority:'P3', priorityWhy:'Confirmed phishing, but the reporter did not click. Raise to P2 if anyone else clicked or entered credentials.',
     disposition:'True Positive — Malicious Activity Confirmed',
     rootCause:'Credential-harvesting phish sent from a look-alike domain (cedercreek-secure.com, "ceder" vs "cedar") pretending to be IT Support, linking to a fake mailbox login page.',
@@ -7075,6 +7077,7 @@ const TICKET_KEYS = {
     lookFor:['Header analysis (spotted the look-alike domain)', 'Scoped other recipients and clicks', 'Purge + block', 'Listed IOCs'],
   },
   'TCK-1003': {
+    logsShow:"VPN log: worked 08-17 from home IP 73.44.118.20; every attempt today fails with 'client certificate expired (notAfter 2026-08-17 23:59:59)'. Webmail sign-in succeeded at 08:55, account not locked, password valid, still in VPN groups. Root cause: expired VPN certificate (auto-renew failed 08-10 while the laptop was off network) → renew/re-enroll the certificate.",
     priority:'P3', priorityWhy:'One user blocked from work with a deadline at 11:00, no security indicator yet.',
     disposition:'Service request — resolved', dispNote:IT_DISP_NOTE,
     rootCause:'A VPN-side credential problem, not the user\'s AD password (webmail works). Most likely causes: expired VPN client certificate, stale saved credentials in the VPN client, MFA registration issue, or the account dropped from the VPN access group. The VPN/RADIUS log failure reason tells you which.',
@@ -7100,6 +7103,7 @@ const TICKET_KEYS = {
     lookFor:['Used the webmail clue to rule out the AD password', 'Checked VPN logs for the failure reason', 'Offered a workaround for the deadline', 'Confirmed the fix with the user'],
   },
   'TCK-1004': {
+    logsShow:"HR confirms Priya Nair, Mechanical Engineer, start Mon 08-24, manager Tom Becker. 2 AutoCAD seats available. No approvals on file for the Engineering share, AutoCAD group or VPN — need Tom Becker's approval in the ticket. Laptop LT-ENG-22 has 3 pending updates; AD account not created yet.",
     priority:'P4', priorityWhy:'Planned work with days of lead time.',
     disposition:'Service request — resolved', dispNote:IT_DISP_NOTE,
     rootCause:'Standard onboarding request. The real work is getting the correct approvals and granting least-privilege access.',
@@ -7122,6 +7126,7 @@ const TICKET_KEYS = {
     lookFor:['Got manager approval for drive access', 'Least privilege / role-based groups', 'Secure credential handoff', 'Communicated the timeline to HR'],
   },
   'TCK-1005': {
+    logsShow:"Failures (error 50126) all come from 10.20.14.88 = FIN-LT-09, l.osei's OLD laptop (replaced 08-11, still docked) syncing mail with her pre-Friday password. The 3 MFA prompts come from 10.20.14.103 = her own registered iPhone (Outlook Mobile, correct new password). Both devices are hers → False Positive — Tuning Required: collect/wipe the old laptop, re-sign-in on the phone, turn on number matching.",
     priority:'P3', priorityWhy:'No confirmed compromise yet. Raise to P2 immediately if the user approved a prompt or the source host is not theirs.',
     disposition:'False Positive — Tuning Required if traced to the user\'s own device; otherwise Escalated to Tier II / IR Team',
     rootCause:'Key insight: MFA push prompts only fire AFTER a correct password, so something had l.osei\'s valid password. Because the IPs are internal, it is either one of the user\'s own devices using an old saved password (phone mail app, second PC, mapped drive, scheduled task) or an internal host an attacker is using for MFA fatigue.',
@@ -7145,6 +7150,7 @@ const TICKET_KEYS = {
     lookFor:['Understood that MFA push = password was correct', 'Mapped IPs to hosts', 'Told the user to deny prompts', 'Clear decision path (own device vs. escalate)'],
   },
   'TCK-2001': {
+    logsShow:"Timeline: 08-15 r.castillo got a fake 'SharePoint' email and POSTed credentials to docs-sharepoint-files.com. 08-18 12:37 IMAP login from a Bucharest VPS was single-factor (legacy auth skipped Conditional Access — the alert's 'MFA satisfied' was wrong); a 12:38 web login was denied MFA. Attacker downloaded 1,842 messages, added hidden rule '.' (invoice/payment/wire/bank → RSS Feeds) and forwarding to r.castillo.sales@protonmail.com. True positive; remove rule + forwarding, check for BEC.",
     priority:'P2', priorityWhy:'Likely account compromise. Raise to P1 if sensitive data was accessed or the mailbox was used to send phishing.',
     disposition:'True Positive — Malicious Activity Confirmed (once the user confirms they are not travelling / using a VPN)',
     rootCause:'r.castillo\'s credentials were compromised (likely phishing). The attacker logged in from Bucharest over legacy IMAP, which often bypasses or weakens MFA, and could pull the mailbox.',
@@ -7171,6 +7177,7 @@ const TICKET_KEYS = {
     lookFor:['Verified with the user out of band', 'Revoked sessions (not just a password reset)', 'Flagged legacy IMAP as the weakness', 'Checked mailbox rules / forwarding'],
   },
   'TCK-2002': {
+    logsShow:"The malware DID run: before quarantine it dropped C:\\ProgramData\\odsync\\odsync.exe and created scheduled task 'OneDriveSyncUpd' (on logon); odsync.exe is beaconing to C2 45.142.212.61 every ~30 min. Only the dropper was quarantined. The blocked PowerShell decodes to IEX download of http://45.142.212.61/s2.ps1. Same email went to a.singh, s.morales, g.palmer. TCK-1001 is unrelated (lockout happened before the email). Correct call: isolate + reimage FINANCE-07 — students who close it as 'quarantined' miss the cause of TCK-3001.",
     priority:'P2', priorityWhy:'Malware executed on a Finance host. Quarantine does not prove it is clean.',
     disposition:'True Positive — Malicious Activity Confirmed',
     rootCause:'The user opened a malicious double-extension attachment (invoice_aug.pdf.exe) from a phishing email. The dropper tried to launch encoded PowerShell. Instructor note: FINANCE-07 is where the ransomware in TCK-3001 starts, so strong students question whether "quarantined" really means contained.',
@@ -7195,6 +7202,7 @@ const TICKET_KEYS = {
     lookFor:['Questioned whether quarantine = contained', 'Decoded the PowerShell', 'Hunted the hash across all endpoints', 'Considered the link to TCK-1001'],
   },
   'TCK-2003': {
+    logsShow:"Folder holds Restricted salary data and Confidential budget/bank files besides the marketing numbers Kevin needs. No approval on file from his manager (Laura Kim) or the data owner (Greg Palmer, CFO). Best answer: get both approvals, then give read-only, time-limited access to only 'Marketing Spend Actuals' (or have Finance send that file) — not the whole folder.",
     priority:'P3', priorityWhy:'Routine access request. The user\'s urgency does not change the process.',
     disposition:'Service request — resolved once approvals are on file', dispNote:IT_DISP_NOTE,
     rootCause:'A legitimate business need, but "my manager said it\'s fine" is not approval. Finance data needs the Finance data owner\'s approval, not just a Marketing manager\'s.',
@@ -7217,6 +7225,7 @@ const TICKET_KEYS = {
     lookFor:['Did not grant on the user\'s say-so', 'Got data owner approval', 'Least privilege + read-only', 'Time-limited access'],
   },
   'TCK-2004': {
+    logsShow:"DNS is identical from both sites (203.0.113.80), so not DNS. Plant firewall allows the traffic and NATs it to 192.0.2.45, but the server never answers (SYN, no SYN-ACK); HQ (NAT 198.51.100.24) works. The vendor moved hosting on 08-17 and only allowlists 198.51.100.24 → send the Plant public IP 192.0.2.45 to Acme Supply.",
     priority:'P2', priorityWhy:'Several users at one site cannot reach a business app.',
     disposition:'Service request — resolved', dispNote:IT_DISP_NOTE,
     rootCause:'Same DNS servers and HQ works, so DNS is unlikely. Most likely the Plant traffic leaves through a different path: a firewall / proxy rule for the Plant subnet, or the vendor only allowlists the HQ public IP. The Plant\'s public egress IP is the key thing to check.',
@@ -7241,6 +7250,7 @@ const TICKET_KEYS = {
     lookFor:['Logical elimination (DNS ruled out by evidence)', 'Compared the working site to the failing one', 'Checked firewall / proxy logs', 'Considered the vendor-side allowlist'],
   },
   'TCK-2005': {
+    logsShow:"182 Confidential Halvorsen CAD files (2.3 GB) copied to a personal, unencrypted SanDisk; no exception or customer request on file. Other USB use that day was small files on company encrypted drives. HR context: t.becker resigned 08-14 (last day 08-28) — an insider-risk indicator, not proof. True Positive — Policy Violation; escalate to Director of Engineering / HR, block USB, preserve logs; don't confront first.",
     priority:'P2', priorityWhy:'Confidential data left on removable media. Intent unknown.',
     disposition:'True Positive — Policy Violation (unless an approval is found)',
     rootCause:'Bulk copy of Confidential CAD files to a USB drive without the required approval. Intent is not yet known. Instructor note: the same host shows up again in TCK-3005 (exfiltration).',
@@ -7262,6 +7272,7 @@ const TICKET_KEYS = {
     lookFor:['Neutral, non-accusatory approach', 'Checked for an approval before acting', 'Looped in manager / HR appropriately', 'Preserved evidence'],
   },
   'TCK-3001': {
+    logsShow:"odsync.exe (the TCK-2002 implant) started at dana.reyes' 07:25 logon via the 'OneDriveSyncUpd' task, dropped ckl.exe, tried to delete shadow copies (blocked), then encrypted Finance, Shared and HR on SHARE-01 as dana.reyes — still running at 07:45 (host was in Detect mode). Backups: svc-backup cut retention at 03:14 and deleted 28 restore points; RP-0819 (01:00, before encryption) and offline tape CC-W33 (08-16) survive. Note claims data theft → see TCK-3005.",
     priority:'P1', priorityWhy:'Active ransomware encrypting a production file server. Spreading right now.',
     disposition:'Escalated to Tier II / IR Team (True Positive — Malicious Activity Confirmed)',
     rootCause:'Ransomware launched from a session on FINANCE-07 (most likely the TCK-2002 dropper was not fully contained) and is encrypting files over SMB on SHARE-01.',
@@ -7293,6 +7304,7 @@ const TICKET_KEYS = {
     lookFor:['Containment first, isolate without powering off', 'Linked it to TCK-2002', 'Verified backups before relying on them', 'Correct notification path (leadership, legal, insurance)'],
   },
   'TCK-3002': {
+    logsShow:"9,412 failures from 62 IPs, ~3 tries/user/hour to stay under lockout. Two successes: svc-backup 01:58 (VPN IP 10.99.0.23 — service account, no MFA, password from 2021, never uses VPN) which then queried LDAP, SMB-scanned 212 hosts and reached BACKUP-01 → this is TCK-3004/3001; and j.owens 02:03 (10.99.0.27, 4-min session to email/SharePoint) — verify with j.owens and reset. Both lacked VPN MFA.",
     priority:'P1', priorityWhy:'Two accounts successfully compromised, one of them a privileged service account.',
     disposition:'True Positive — Malicious Activity Confirmed (escalate to IR)',
     rootCause:'Weak / common passwords on VPN accounts without MFA enforcement. Service accounts like svc-backup are often exempt from MFA and should never have VPN access in the first place.',
@@ -7318,6 +7330,7 @@ const TICKET_KEYS = {
     lookFor:['Disabled the two successful accounts first', 'Questioned why a service account had VPN access', 'Assessed blast radius across all targeted users', 'Recommended MFA on VPN'],
   },
   'TCK-3003': {
+    logsShow:"Headers: sent from outside (mail.cedarcreek-lnd.com, 193.29.56.140) with a spoofed From of the real CFO address; DMARC failed but our policy is p=none so it was delivered; Reply-To goes to look-alike cedarcreek-lnd.com (registered 08-13). The CFO mailbox IS compromised: 08-12 22:14 sign-in from Lagos approved on the 5th MFA push (MFA fatigue), then searches for 'wire' and 'Project Northwind' and a rule hiding mail from cedarcreek-lnd.com / 'wire' — that is how they knew the project name. Wire not sent; vendor and account unknown. Reset g.palmer, revoke sessions, remove the rule, enforce DMARC, number-matching MFA.",
     priority:'P1', priorityWhy:'$48,750 at risk and possible executive mailbox compromise.',
     disposition:'True Positive — Malicious Activity Confirmed',
     rootCause:'Business Email Compromise using a look-alike domain (cedarcreek-lnd.com) to impersonate the CFO. The attacker knew a real internal project name, so either the CFO\'s mailbox (or someone close to it) is compromised or the information was gathered from public sources.',
@@ -7343,6 +7356,7 @@ const TICKET_KEYS = {
     lookFor:['Stopped the wire first', 'Out-of-band verification', 'Investigated the real CFO mailbox', 'Recommended payment-verification process'],
   },
   'TCK-3004': {
+    logsShow:"svc-backup from 10.99.0.23 logged on to 9 hosts 03:05–03:27 using psexec (PSEXESVC) and WMI. lsass dumping was blocked on BACKUP-01 but only alerted (Detect mode) on FINANCE-07 — where Domain Admin adm.jharper had a disconnected RDP session → treat Domain Admin creds as stolen (reset adm.jharper, krbtgt twice). 03:31 on ENG-14 it archived the Engineering share (staging for TCK-3005); 03:36 enumerated Domain Admins.",
     priority:'P1', priorityWhy:'Active hands-on-keyboard attacker moving between hosts and dumping credentials.',
     disposition:'Escalated to Tier II / IR Team (True Positive — Malicious Activity Confirmed)',
     rootCause:'svc-backup was compromised in the password spray (TCK-3002). The attacker is using it with PsExec and WMI to move laterally and dump credentials.',
@@ -7370,6 +7384,7 @@ const TICKET_KEYS = {
     lookFor:['Connected it to TCK-3002', 'Collected evidence before reboot', 'Assumed credentials were stolen', 'Scoped beyond the flagged hosts'],
   },
   'TCK-3005': {
+    logsShow:"Proxy user is CEDARCREEK\\svc-backup and the program is rclone (not a person's browser); 7z was launched over WMI by svc-backup at 03:31; t.becker logged off at 17:42 the day before. → Part of the intrusion, NOT the insider from TCK-2005 (different data, account and time). Data includes Confidential CAD, customer contracts and files with employee SSNs → legal / breach-notification review required.",
     priority:'P1', priorityWhy:'Likely data loss of Confidential engineering data. Legal notification may be required.',
     disposition:'True Positive — Malicious Activity Confirmed (escalate to IR)',
     rootCause:'Data staged into encrypted archives and uploaded to cloud storage. The analyst must decide whether it is part of the broader intrusion (TCK-3002 / 3004, timing fits right after the 03:05–03:38 lateral movement) or an insider event tied to the earlier USB alert (TCK-2005). The account and process running the upload answer that.',
@@ -7413,6 +7428,7 @@ function tkKeyHtml(ticketId) {
     + lbl('Expected disposition') + '<div style="font-size:.85rem;color:var(--text);">' + tkKeyEsc(k.disposition) + '</div>'
     + (k.dispNote ? '<div style="font-size:.76rem;color:#8aa0b8;font-style:italic;margin-top:3px;">' + tkKeyEsc(k.dispNote) + '</div>' : '')
     + lbl('Root cause') + '<div style="font-size:.85rem;color:var(--text);line-height:1.55;">' + tkKeyEsc(k.rootCause) + '</div>'
+    + (k.logsShow ? lbl('What the logs show') + '<div style="font-size:.85rem;color:var(--text);line-height:1.55;">' + tkKeyEsc(k.logsShow) + '</div>' : '')
     + lbl('Remediation steps') + steps
     + lbl('What to look for when grading') + '<div style="font-size:.84rem;color:var(--text);line-height:1.6;">' + k.lookFor.map(x => '&#10003; ' + tkKeyEsc(x)).join('<br>') + '</div>'
     + '</div>';
