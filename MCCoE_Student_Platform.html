@@ -4755,6 +4755,16 @@ const TICKET_BANK = [
     reporter:'siem-alerts@cedarcreek-ind.com (automated)',
     created:'2026-08-18 11:02', tags:['authentication','mfa','account'],
     desc:'User l.osei triggered 6 failed sign-ins in 10 minutes followed by 3 MFA push prompts they say they did NOT initiate. Source IPs are all internal (10.20.14.0/24). User states they were at their desk the whole time and only logged in once. No successful malicious login recorded yet. Determine whether this is a misconfigured device (cached credentials) or something worth escalating.' },
+  { id:'TCK-1006', tier:'Easy', type:'Security', defaultPriority:'P3',
+    title:'Reported email — DocuSign "W-9 update" from a supplier',
+    reporter:'phishalert@cedarcreek-ind.com (auto-forwarded from user)',
+    created:'2026-10-08 09:15', tags:['phishing','email','user-report','vendor'],
+    desc:'Accounts Payable user h.brooks reported a DocuSign email asking them to review and sign an updated W-9 from our supplier Acme Supply. The email has a yellow "Review Document" button. The user did not click it because "we were warned about vendor fraud." Check whether this is a real DocuSign envelope or a phish, and tell the user what to do with it.' },
+  { id:'TCK-1007', tier:'Easy', type:'Security', defaultPriority:'P3',
+    title:'Pop-ups say "Your PC is infected — call Microsoft"',
+    reporter:'g.lindqvist@cedarcreek-ind.com (Customer Service)',
+    created:'2026-10-09 13:05', tags:['browser','scam','endpoint','user-report'],
+    desc:'Since this morning I keep getting pop-ups in the bottom-right corner of my screen saying "WARNING: Your PC is infected with 5 viruses — call Microsoft Support at 1-888-555-0143." They show up every few minutes, even when Chrome is minimized. I did NOT call the number. The antivirus scan says my computer is clean, so I do not understand where these are coming from. Did I get hacked?' },
   // ── TIER 2 MODERATE ───────────────────────────────────────────────────────
   { id:'TCK-2001', tier:'Moderate', type:'Security', defaultPriority:'P2',
     title:'Impossible travel alert — sign-in from two countries in 20 minutes',
@@ -4811,6 +4821,10 @@ const TICKET_BANK = [
   {"id": "TCK-4002", "tier": "Hard", "type": "Security", "defaultPriority": "P1", "title": "Workstations beaconing after a third-party software auto-update", "reporter": "edr-alert@cedarcreek-ind.com (automated)", "created": "2026-09-22 11:05", "tags": ["supply-chain", "malware", "incident"], "desc": "Four engineering/sales workstations started beaconing to an unknown external IP within minutes of each other overnight. The only thing they have in common is that they all auto-updated the third-party tool \"NetScan Pro\" (vendor Orbit Labs) to version 4.2.1 around 02:14. The new binary is digitally signed and came through the normal update channel, so the first tech marked it a false positive. Determine whether this signed, vendor-delivered update is actually safe, scope how many hosts are affected, and lay out containment and recovery."},
   {"id": "TCK-4003", "tier": "Hard", "type": "Security", "defaultPriority": "P1", "title": "Suspicious burst of Kerberos service-ticket requests (possible Kerberoasting)", "reporter": "siem-alert@cedarcreek-ind.com (automated)", "created": "2026-09-29 12:10", "tags": ["active-directory", "credential-access", "kerberoasting", "incident"], "desc": "The SIEM flagged an unusual pattern on the domain controller: the account r.castillo (SALES-06) requested Kerberos service tickets for eight different services in under a minute, all using the weak RC4 encryption. A few hours later the service account svc-sql logged on from SALES-06 — a workstation, not its own SQL server — and reached payroll data. There are no failed logons anywhere. Work out what happened to svc-sql, how, and what must be rotated and hardened across Active Directory."},
   {"id": "TCK-4004", "tier": "Hard", "type": "Security", "defaultPriority": "P1", "title": "Abnormal volume of DNS queries from a single host", "reporter": "siem-alert@cedarcreek-ind.com (automated)", "created": "2026-10-06 07:15", "tags": ["exfiltration", "c2", "dns-tunneling", "incident"], "desc": "The SIEM shows host HR-05 (user e.foster) making an abnormal volume of DNS queries — over 14,000 today versus a normal ~200 — almost all to long, random-looking subdomains of a single recently registered domain. The web proxy and DLP show nothing unusual: no large uploads, no suspicious web traffic. Determine what this DNS activity really is, whether data is leaving the company, and how to shut it down and prevent it."},
+  {"id": "TCK-4005", "tier": "Hard", "type": "Security", "defaultPriority": "P2", "title": "Confidential drawings shared with an \"Anyone with the link\" link", "reporter": "casb-alert@cedarcreek-ind.com (automated)", "created": "2026-10-07 10:40", "tags": ["data-exposure", "onedrive", "external-sharing", "policy"], "desc": "The cloud-app security tool flagged that s.whitfield (Engineering) created an \"Anyone with the link\" sharing link on the OneDrive folder \"Line 4 Retrofit - Supplier Pack\" on 09-30. The folder holds CAD drawings and a pricing sheet, some labeled Confidential. Company policy only allows Confidential files to be shared with named external guests. The link has been used several times since. The engineer says they only sent the link to one supplier. Work out who actually opened the files, whether anything reached someone who should not have it, and what needs to happen now."},
+  {"id": "TCK-4006", "tier": "Hard", "type": "Security", "defaultPriority": "P2", "title": "Mailbox still being read after a password reset", "reporter": "m.alvarez@cedarcreek-ind.com (Purchasing) via help desk", "created": "2026-10-08 14:25", "tags": ["m365", "email", "account", "cloud"], "desc": "On 10-07 Purchasing user m.alvarez reported that two vendors received replies they never sent, asking them to \"confirm updated remittance details.\" The help desk reset the password and signed the user out of all sessions at 16:10 on 10-07. MFA was already on and there are no risky or foreign sign-ins. This morning the user found a new inbox rule they did not make, and mail from vendors is disappearing again. No payment has been sent. Figure out how the mailbox is still being accessed after the password reset and what actually removes that access."},
+  {"id": "TCK-4007", "tier": "Hard", "type": "Security", "defaultPriority": "P2", "title": "File server sending 40 GB a night to an unfamiliar IP", "reporter": "fw-alerts@cedarcreek-ind.com (automated)", "created": "2026-10-09 06:30", "tags": ["netflow", "data-transfer", "server"], "desc": "For the past three nights the firewall flagged SHARE-01 (the main file server) sending 38-44 GB between about 01:00 and 03:30 to 198.51.100.200, an IP that never appeared in our traffic before this week. The traffic is encrypted (TLS on port 443). After the ransomware and exfiltration incidents in August, the on-call tech wants to block the IP and isolate SHARE-01, which would take the file server offline for the whole company. Determine whether this is exfiltration or legitimate traffic, and decide what to do BEFORE anything is blocked."},
+  {"id": "TCK-4008", "tier": "Hard", "type": "Security", "defaultPriority": "P3", "title": "Unknown device on the plant network with a constant outbound connection", "reporter": "nac-alerts@cedarcreek-ind.com (automated)", "created": "2026-10-12 08:50", "tags": ["network", "plant", "iot", "unknown-device"], "desc": "Network access control logged a device on the Plant network (10.50.8.0/24) that is not in the asset inventory: MAC b8:27:eb:4c:91:2e, hostname \"line3-mon\". It has been online since 10-02 and keeps a constant outbound TLS connection to a cloud address. Nobody filed a request for it. The Plant network can reach the PLCs that run the production lines. Locate the device, find out what it is and who owns it, decide whether it is malicious, and recommend what should happen to it."},
 ];
 
 const TICKET_LOGS = {
@@ -9655,6 +9669,333 @@ const TICKET_LOGS = {
 "type": "text",
 "guide": "Background to help you read the logs.",
 "text": "In DNS tunneling, malware encodes small chunks of data into the subdomain part of a DNS query (for example <base32-of-data>.d.attacker.com) and sends it to the attacker-controlled authoritative name server for that domain. The server decodes the data and can answer back inside a TXT or A record, giving a two-way covert channel used for command-and-control and slow data exfiltration. It evades web proxies, firewalls and DLP because those usually allow outbound DNS (UDP/53) and do not inspect the contents of the names. Detection signals: a large volume of DNS from one host, many unique high-entropy subdomains under a single parent domain, a high share of TXT records, and a newly registered domain. It is slow, so a steady stream over hours is normal for this technique."
+}
+],
+"TCK-1006": [
+{
+"name": "Email Headers — reported message",
+"type": "kv",
+"guide": "The technical details of the email h.brooks reported. SPF, DKIM and DMARC are checks the receiving mail server runs to confirm the email really came from the domain it claims. \"pass\" on all three means the message really was sent by that domain's mail servers. Also look at where the button actually links to.",
+"rows": [
+["Received", "2026-10-08 08:58:41"],
+["From (display)", "\"Acme Supply via DocuSign\" <dse_na3@docusign.net>"],
+["Return-Path", "bounces+na3@docusign.net"],
+["Reply-To", "billing@acme-supply.com"],
+["To", "h.brooks@cedarcreek-ind.com"],
+["Subject", "Please DocuSign: Acme Supply - 2026 Form W-9 (updated address)"],
+["SPF", "pass (sending IP is listed by docusign.net)"],
+["DKIM", "pass (d=docusign.net)"],
+["DMARC", "pass (policy=reject)"],
+["\"Review Document\" button links to", "https://na3.docusign.net/Signing/EmailStart.aspx?a=7f3c1e2a-...&acct=..."],
+["Attachments", "None"],
+["Mail gateway verdict", "Delivered — no detections"]
+]
+},
+{
+"name": "Mail Trace — h.brooks + acme-supply.com (last 7 days)",
+"type": "table",
+"guide": "Every email between h.brooks and Acme Supply in the last week. Look for anything that tells you whether this DocuSign was expected.",
+"cols": ["Time", "From", "To", "Subject"],
+"rows": [
+["2026-10-02 10:14", "billing@acme-supply.com", "h.brooks@cedarcreek-ind.com", "Invoice 55120 - September"],
+["2026-10-02 10:31", "h.brooks@cedarcreek-ind.com", "billing@acme-supply.com", "RE: Invoice 55120 - September"],
+["2026-10-06 15:47", "billing@acme-supply.com", "h.brooks@cedarcreek-ind.com", "Heads up - we moved offices, new W-9 coming via DocuSign this week"],
+["2026-10-06 16:02", "h.brooks@cedarcreek-ind.com", "billing@acme-supply.com", "RE: Heads up - thanks, will watch for it"],
+["2026-10-08 08:58", "dse_na3@docusign.net", "h.brooks@cedarcreek-ind.com", "Please DocuSign: Acme Supply - 2026 Form W-9 (updated address)"]
+]
+},
+{
+"name": "Link / Sandbox Check",
+"type": "kv",
+"guide": "Results from opening the \"Review Document\" link in a safe sandbox, plus a check against the vendor master file (the list of approved suppliers kept by Accounts Payable).",
+"rows": [
+["Link domain", "na3.docusign.net — official DocuSign domain (registered 2003), clean reputation"],
+["Page shown", "Real DocuSign signing page, no extra login box asking for a Microsoft password"],
+["Document", "IRS Form W-9 for Acme Supply LLC — new street address in Peoria, IL"],
+["EIN on the form", "Matches the EIN in our vendor master file"],
+["Bank / payment details", "None — a W-9 is a tax form and has no bank account information"],
+["Other recipients at Cedar Creek", "None — only h.brooks received it"],
+["Acme Supply phone in vendor master", "(309) 555-0172"]
+]
+}
+],
+"TCK-1007": [
+{
+"name": "Chrome Site Settings — Notifications (CS-11, g.lindqvist)",
+"type": "table",
+"guide": "Websites that are allowed to show desktop notifications on this PC. A site you allow can push pop-ups to the corner of the screen at any time, even when its tab is closed, as long as Chrome is running in the background.",
+"cols": ["Site", "Notification setting", "Allowed on"],
+"rows": [
+["https://outlook.office.com", "Allow", "2026-03-02 08:20"],
+["https://teams.microsoft.com", "Allow", "2026-03-02 08:24"],
+["https://www.google.com", "Ask (default)", "—"],
+["https://robot-check-7713.click", "Allow", "2026-10-08 12:42"]
+]
+},
+{
+"name": "Browser History — CS-11",
+"type": "table",
+"guide": "Recent browsing on g.lindqvist's PC. Find the moment things changed.",
+"cols": ["Time", "URL", "Page title / note"],
+"rows": [
+["2026-10-08 12:39", "https://www.google.com/search?q=easy+chicken+enchilada+recipe", "Google Search"],
+["2026-10-08 12:40", "https://www.familyrecipe-hub.net/enchiladas", "Easy Chicken Enchiladas"],
+["2026-10-08 12:41", "https://robot-check-7713.click/?s=7713&r=frh", "\"Click Allow to confirm you are not a robot\""],
+["2026-10-08 12:42", "(browser prompt)", "robot-check-7713.click wants to: Show notifications — user clicked ALLOW"],
+["2026-10-08 12:42", "https://www.familyrecipe-hub.net/enchiladas", "Easy Chicken Enchiladas (redirected back)"],
+["2026-10-09 08:16", "(notification)", "WARNING: Your PC is infected with 5 viruses! Call 1-888-555-0143"],
+["2026-10-09 08:17", "https://pc-support-alert.click/ms/", "\"Microsoft Defender - Critical Alert\" (fake page with the phone number)"],
+["2026-10-09 09:02", "(notification)", "Your subscription has EXPIRED. Your files are at risk."],
+["2026-10-09 10:48", "(notification)", "WARNING: Your PC is infected with 5 viruses! Call 1-888-555-0143"]
+]
+},
+{
+"name": "EDR / Antivirus — CS-11",
+"type": "kv",
+"guide": "What the endpoint security tool sees on the PC itself, plus a DNS check for other computers that visited the same site.",
+"rows": [
+["Full scan (10-09 11:30)", "Clean — no malware found"],
+["New programs installed (last 14 days)", "None"],
+["Browser extensions", "Adobe Acrobat, Microsoft Single Sign On (both company-approved)"],
+["Process showing the pop-ups", "chrome.exe (Chrome's own notification system) — not a separate program"],
+["Phone number 1-888-555-0143", "Listed on several scam-report sites as a fake \"Microsoft Support\" line"],
+["Other hosts that looked up robot-check-7713.click", "CS-04 (a.mendes) on 2026-10-08 12:55"]
+]
+}
+],
+"TCK-4005": [
+{
+"name": "OneDrive Audit Log — \"Line 4 Retrofit - Supplier Pack\" folder",
+"type": "table",
+"guide": "Every action on the shared folder since the link was created. With an \"Anyone with the link\" link the person opening the files does not sign in, so the log can only say Anonymous. The Source IP is your only clue to WHO opened each file — look each one up in the IP Lookup tab.",
+"cols": ["Time", "Activity", "User", "Source IP", "Item"],
+"rows": [
+["2026-09-30 15:12:04", "AnonymousLinkCreated (view only, no expiry)", "s.whitfield@cedarcreek-ind.com", "10.20.31.22", "/Line 4 Retrofit - Supplier Pack"],
+["2026-09-30 16:05:18", "FileDownloaded", "Anonymous", "198.51.100.24", "L4-Conveyor-Assembly.dwg"],
+["2026-09-30 16:05:51", "FileDownloaded", "Anonymous", "198.51.100.24", "L4-Pricing-Sheet-CONFIDENTIAL.xlsx"],
+["2026-09-30 16:06:30", "FileDownloaded", "Anonymous", "198.51.100.24", "L4-Drive-Frame.dwg"],
+["2026-10-01 09:22:10", "FileAccessed", "Anonymous", "198.51.100.24", "L4-Drive-Frame.dwg"],
+["2026-10-02 13:47:33", "FileDownloaded", "Anonymous", "198.51.100.31", "L4-Conveyor-Assembly.dwg"],
+["2026-10-03 11:02:45", "FileModified", "s.whitfield@cedarcreek-ind.com", "10.20.31.22", "L4-Install-Schedule.pdf"],
+["2026-10-04 22:14:09", "FolderViewed", "Anonymous", "203.0.113.77", "/Line 4 Retrofit - Supplier Pack"],
+["2026-10-04 22:15:02", "FileDownloaded", "Anonymous", "203.0.113.77", "L4-Pricing-Sheet-CONFIDENTIAL.xlsx"],
+["2026-10-04 22:15:30", "FileDownloaded", "Anonymous", "203.0.113.77", "L4-Conveyor-Assembly.dwg"],
+["2026-10-04 22:15:58", "FileDownloaded", "Anonymous", "203.0.113.77", "L4-Drive-Frame.dwg"],
+["2026-10-06 11:30:12", "FileAccessed", "Anonymous", "198.51.100.24", "L4-Drive-Frame.dwg"]
+]
+},
+{
+"name": "Email Trace — \"Line 4 retrofit\" thread",
+"type": "table",
+"guide": "Every message in the email thread where the link was sent. Watch the To and Cc columns — who ended up with the link?",
+"cols": ["Time", "From", "To", "Cc", "Subject / note"],
+"rows": [
+["2026-09-30 15:14:02", "s.whitfield@cedarcreek-ind.com", "j.price@brightline-tooling.com", "", "Line 4 retrofit - drawings + pricing (contains the Anyone link)"],
+["2026-10-02 13:40:10", "j.price@brightline-tooling.com", "s.whitfield@cedarcreek-ind.com", "", "RE: Line 4 retrofit - got them, sharing with our shop lead"],
+["2026-10-04 21:52:37", "j.price@brightline-tooling.com", "s.whitfield@cedarcreek-ind.com", "d.moreno@ridgeway-fab.com", "RE: Line 4 retrofit - looping in Ridgeway, they may quote the frame for us (full thread incl. link below)"],
+["2026-10-05 08:03:15", "s.whitfield@cedarcreek-ind.com", "j.price@brightline-tooling.com", "d.moreno@ridgeway-fab.com", "RE: Line 4 retrofit - sounds good, thanks"]
+]
+},
+{
+"name": "IP Lookup / Threat Intel",
+"type": "kv",
+"guide": "Who owns each IP address that opened the files, and whether any of them is known to be malicious.",
+"rows": [
+["10.20.31.22", "Internal — ENG-04, s.whitfield's workstation"],
+["198.51.100.24", "Brightline Tooling LLC (main office) — approved supplier, NDA on file through 2027"],
+["198.51.100.31", "Brightline Tooling LLC (second shop) — approved supplier"],
+["203.0.113.77", "Ridgeway Fabrication Inc., Dayton OH (business ISP) — NOT an approved Cedar Creek vendor, NO NDA on file"],
+["Purchasing note on Ridgeway", "Ridgeway also builds conveyor equipment for two of Cedar Creek's direct competitors"],
+["Threat intel (all IPs)", "None of these IPs is on any blocklist; no Tor or anonymous VPN"]
+]
+},
+{
+"name": "Folder Contents + Sharing Policy",
+"type": "table",
+"guide": "What is in the folder and how it is labeled, plus the company rules that apply. The last row explains how this link was even possible.",
+"cols": ["Item", "Label / setting", "Detail"],
+"rows": [
+["L4-Conveyor-Assembly.dwg", "Confidential", "18.2 MB — full assembly drawing of our custom conveyor design"],
+["L4-Drive-Frame.dwg", "Internal", "9.7 MB — frame drawing"],
+["L4-Pricing-Sheet-CONFIDENTIAL.xlsx", "Confidential", "0.4 MB — negotiated unit pricing and our margin per part"],
+["L4-Install-Schedule.pdf", "Internal", "1.1 MB — installation dates"],
+["Policy DS-04", "Data Sharing", "Confidential files may only be shared externally with NAMED guest accounts at vendors with a signed NDA. \"Anyone\" links are not allowed for Confidential data."],
+["Engineering site setting", "Anyone links: ENABLED", "Turned on 2026-08-12 for a trade-show demo (CHG-0844, \"revert after show\"); never turned back off"]
+]
+}
+],
+"TCK-4006": [
+{
+"name": "Entra ID Sign-in Log — m.alvarez (interactive)",
+"type": "table",
+"guide": "Sign-ins where the USER typed credentials or approved MFA. Note which application each sign-in was for. Everything here comes from the office network, so the sign-ins themselves do not look risky. Apps that act for the user in the background do NOT show up here — check the app activity tab.",
+"cols": ["Time", "Application", "IP", "Location", "Result", "MFA"],
+"rows": [
+["2026-10-06 08:02:11", "Microsoft Outlook", "10.20.40.15", "Cedar Creek HQ", "Success", "Satisfied"],
+["2026-10-06 11:47:03", "PDF Convert Online (third-party)", "10.20.40.15", "Cedar Creek HQ", "Success", "Satisfied"],
+["2026-10-07 08:05:40", "Microsoft Outlook", "10.20.40.15", "Cedar Creek HQ", "Success", "Satisfied"],
+["2026-10-07 16:25:19", "Microsoft Outlook", "10.20.40.15", "Cedar Creek HQ", "Success (new password)", "Satisfied"],
+["2026-10-08 07:51:58", "PDF Convert Online (third-party)", "10.20.40.15", "Cedar Creek HQ", "Success — no consent prompt (already approved)", "Satisfied"],
+["2026-10-08 08:01:30", "Microsoft Outlook", "10.20.40.15", "Cedar Creek HQ", "Success", "Satisfied"]
+]
+},
+{
+"name": "Entra ID Audit Log — apps & account changes",
+"type": "table",
+"guide": "Changes to the account and to which apps are allowed to access company data. A \"consent\" means a user gave an app permission to act as them. Read the permissions carefully.",
+"cols": ["Time", "Activity", "Initiated by", "Target", "Detail"],
+"rows": [
+["2026-10-02 14:31:10", "Consent to application", "c.patel@cedarcreek-ind.com", "PDF Convert Online", "Same permissions as below"],
+["2026-10-06 11:47:20", "Consent to application", "m.alvarez@cedarcreek-ind.com", "PDF Convert Online", "Mail.ReadWrite, Mail.Send, MailboxSettings.ReadWrite, offline_access, User.Read"],
+["2026-10-07 16:10:05", "Reset user password", "k.okafor (help desk)", "m.alvarez", "Password reset"],
+["2026-10-07 16:10:30", "Revoke sign-in sessions", "k.okafor (help desk)", "m.alvarez", "All refresh tokens revoked"],
+["2026-10-08 07:51:58", "(no audit event)", "—", "—", "App consent is still in place, so no new consent was needed when the user opened the app again"]
+]
+},
+{
+"name": "Mailbox Activity — by app \"PDF Convert Online\"",
+"type": "table",
+"guide": "What the app did inside m.alvarez's mailbox using the permissions it was granted. The source IP is the app's own server, not the user's PC.",
+"cols": ["Time", "Operation", "Source IP", "Detail"],
+"rows": [
+["2026-10-06 11:48:12", "MailItemsAccessed", "203.0.113.140 (cloud hosting)", "1,240 messages read (bulk sync)"],
+["2026-10-06 15:20:44", "Send", "203.0.113.140", "To accounts@brightline-tooling.com — \"RE: Invoice 88213 - please confirm updated remittance details\""],
+["2026-10-07 09:15:02", "Send", "203.0.113.140", "To billing@acme-supply.com — \"RE: PO 4471 - our bank details have changed\""],
+["2026-10-07 16:10:30", "(token revoked)", "—", "App activity stops"],
+["2026-10-08 07:52:20", "MailItemsAccessed", "203.0.113.140", "New token issued after the user opened the app again; 212 messages read"],
+["2026-10-08 08:03:41", "New-InboxRule", "203.0.113.140", "Rule \"..\": From contains brightline OR acme-supply OR remit -> move to RSS Feeds, mark as read"],
+["2026-10-08 08:05-13:40", "MailItemsAccessed", "203.0.113.140", "Ongoing reads every few minutes"]
+]
+},
+{
+"name": "Enterprise App Details — \"PDF Convert Online\"",
+"type": "kv",
+"guide": "Information about the third-party app from the company's Entra ID (Azure AD) tenant.",
+"rows": [
+["Publisher", "Not verified"],
+["App created", "2026-09-28, in an outside (non-Microsoft) tenant"],
+["Reply URL", "https://pdfconvert-online.app/auth/callback"],
+["Users who granted consent", "c.patel (10-02), m.alvarez (10-06)"],
+["Permissions granted", "Mail.ReadWrite, Mail.Send, MailboxSettings.ReadWrite, offline_access, User.Read"],
+["Tenant setting \"Users can consent to apps\"", "Allowed for apps from ANY publisher"],
+["How the user found it", "m.alvarez: \"I searched for a free way to merge two PDFs and it asked me to sign in with my work account.\""]
+]
+}
+],
+"TCK-4007": [
+{
+"name": "Firewall — Nightly Outbound Summary, SHARE-01",
+"type": "table",
+"guide": "Large outbound transfers from SHARE-01 for the last six nights. Compare the nights BEFORE the alerts started with the nights after. What changed, and what stayed the same?",
+"cols": ["Night of", "Destination IP", "Port", "Data out", "Start - end", "Firewall rule"],
+"rows": [
+["2026-10-03", "203.0.113.10", "443", "41.2 GB", "01:00 - 03:24", "ALLOW Backup-Offsite (no alert)"],
+["2026-10-04", "203.0.113.10", "443", "39.8 GB", "01:00 - 03:19", "ALLOW Backup-Offsite (no alert)"],
+["2026-10-05", "203.0.113.10", "443", "40.5 GB", "01:00 - 03:21", "ALLOW Backup-Offsite (no alert)"],
+["2026-10-06", "198.51.100.200", "443", "42.6 GB", "01:00 - 03:29", "ALLOW default-outbound — ALERT: large transfer to new destination"],
+["2026-10-07", "198.51.100.200", "443", "38.9 GB", "01:00 - 03:14", "ALLOW default-outbound — ALERT"],
+["2026-10-08", "198.51.100.200", "443", "43.7 GB", "01:00 - 03:27", "ALLOW default-outbound — ALERT"]
+]
+},
+{
+"name": "EDR — SHARE-01",
+"type": "table",
+"guide": "Which process on SHARE-01 is making the transfer, and anything else unusual on the server. After the August incidents, look especially for archiving or upload tools (7z, rclone, WinSCP) and new accounts.",
+"cols": ["Time", "Process / Account", "Detail"],
+"rows": [
+["2026-10-05 22:00:14", "k.okafor (RDP from IT-ADMIN-01)", "Interactive logon — IT staff"],
+["2026-10-05 22:04:51", "VaultLineSetup-8.4.exe", "Upgrade of VaultLine Backup Agent 8.3 -> 8.4. Signed: VaultLine Backup Inc. (valid)"],
+["2026-10-05 22:09:30", "VaultLineAgent.exe", "Config change: ingest endpoint ingest1.vaultline-backup.com -> ingest2.vaultline-backup.com"],
+["2026-10-08 01:00:02", "VaultLineAgent.exe (svc-vaultline)", "Scheduled job \"Nightly-Offsite\" started"],
+["2026-10-08 01:00:05", "VaultLineAgent.exe", "TLS connect 198.51.100.200:443, server name ingest2.vaultline-backup.com"],
+["2026-10-08 03:27:40", "VaultLineAgent.exe", "Job \"Nightly-Offsite\" completed — 43.7 GB, 0 errors"],
+["2026-10-06 to 10-08", "(hunt)", "No 7z, rclone, WinSCP or new scheduled tasks; no new accounts; no other host talks to 198.51.100.200"]
+]
+},
+{
+"name": "Change Management — CHG-0931",
+"type": "kv",
+"guide": "The IT change record that covers work on SHARE-01's backup software. Read the task list closely.",
+"rows": [
+["Change", "CHG-0931 — Upgrade VaultLine agent to 8.4 and move to the new regional ingest endpoint"],
+["Requested by", "k.okafor (IT)"],
+["Approved", "2026-10-01 by IT Manager"],
+["Implemented", "2026-10-05 22:00-22:15"],
+["Reason", "Vendor notice 09-24: ingest1 (203.0.113.10) retires 10-10; customers must move to ingest2.vaultline-backup.com"],
+["Task 1 — upgrade agent", "Done 10-05"],
+["Task 2 — add new ingest IP to firewall rule Backup-Offsite", "OPEN — not done"],
+["Task 3 — notify SOC of new backup destination", "OPEN — not done"]
+]
+},
+{
+"name": "DNS / IP Reputation — 198.51.100.200",
+"type": "kv",
+"guide": "Independent checks on the destination. Do not rely only on the change record — confirm the IP really belongs to the vendor.",
+"rows": [
+["Reverse DNS", "ingest2.vaultline-backup.com"],
+["Forward DNS for ingest2.vaultline-backup.com", "198.51.100.200"],
+["IP owner (ASN)", "VaultLine Backup Inc."],
+["Domain age", "vaultline-backup.com registered 2017"],
+["TLS certificate", "*.vaultline-backup.com, issued by DigiCert, valid until 2027-03"],
+["Vendor's published IP list (status page)", "Includes 198.51.100.200 as ingest2 (US-Central)"],
+["Threat intel", "Not on any blocklist"]
+]
+}
+],
+"TCK-4008": [
+{
+"name": "NAC / DHCP — Plant network",
+"type": "table",
+"guide": "When the unknown device joined the network and where it is plugged in. The first half of a MAC address (the OUI) identifies the manufacturer. The switch port tells you where the cable physically goes.",
+"cols": ["Time", "Event", "MAC", "IP", "Hostname", "Switch / port"],
+"rows": [
+["2026-10-02 07:14:22", "New device — not in inventory (NAC mode: MONITOR, so allowed)", "b8:27:eb:4c:91:2e", "10.50.8.77", "line3-mon", "PLANT-SW2 Gi1/0/17"],
+["2026-10-02 07:14:22", "OUI lookup", "b8:27:eb", "", "", "Raspberry Pi Foundation"],
+["2026-10-03 07:14:30", "DHCP renew", "b8:27:eb:4c:91:2e", "10.50.8.77", "line3-mon", "PLANT-SW2 Gi1/0/17"],
+["2026-10-09 07:14:41", "DHCP renew", "b8:27:eb:4c:91:2e", "10.50.8.77", "line3-mon", "PLANT-SW2 Gi1/0/17"],
+["(switch config)", "Port description", "", "", "", "Gi1/0/17 = \"LINE 3 HMI CABINET\""]
+]
+},
+{
+"name": "Firewall — traffic from 10.50.8.77",
+"type": "table",
+"guide": "What the device talks to. Port 502 is Modbus/TCP, the protocol used to read and write values on PLCs (the computers that run the production machines). Modbus function code 03 = read values; 06 = WRITE a value.",
+"cols": ["Time", "Destination", "Port", "Service / name", "Detail"],
+"rows": [
+["2026-10-02 07:15:03", "3.134.x.x (cloud)", "443", "tunnel.us.ngrok.com", "Persistent TLS session, reconnects within seconds if dropped"],
+["2026-10-02 07:15:10", "10.50.8.10 (PLC-L3)", "502", "Modbus/TCP", "Function 03 (read) every 5 s — line speed, part count, fault codes"],
+["2026-10-05 to 10-12", "deb.debian.org / archive.raspberrypi.org", "80", "OS updates", "Normal package updates"],
+["2026-10-11 14:22:07", "10.50.8.10 (PLC-L3)", "502", "Modbus/TCP", "Function 06 (WRITE) register 40110 = 0"],
+["2026-10-12 08:00", "(summary)", "", "", "No traffic to any other internal network; no scanning"]
+]
+},
+{
+"name": "Device Inspection — line3-mon (checked with Plant Maintenance present)",
+"type": "kv",
+"guide": "What IT found when it located the device and looked at it with the plant staff. Think about what someone on the internet could do with it.",
+"rows": [
+["Found", "Raspberry Pi taped inside the Line 3 HMI cabinet, plugged into the cabinet switch"],
+["Owner", "b.kowalski (Plant Maintenance Engineer) — \"I set it up so I can see if Line 3 is down when I'm on call, instead of driving in.\""],
+["Software", "Node-RED dashboard on port 1880 showing Line 3 speed, counts and faults; ngrok agent (free account)"],
+["What ngrok does here", "Publishes the dashboard at a public web address: https://line3-ck7713.ngrok-free.app — NO login or password"],
+["Dashboard buttons", "\"Reset shift counter\" -> writes register 40110 = 0 on PLC-L3"],
+["Register 40110", "Shift part counter (used for production reports; does not move machinery)"],
+["ngrok access log", "47 visits from 9 IPs. 6 IPs = b.kowalski's home ISP and phone carrier. 3 IPs = unknown, incl. one internet-scanning service that crawls ngrok addresses"],
+["Who pressed \"Reset\" on 10-11 14:22", "Request came from b.kowalski's phone (14:30 shift change)"],
+["Other findings", "SSH enabled, user \"pi\" with a weak password; packages only from official repos; no signs of malware"]
+]
+},
+{
+"name": "Plant Network Policy",
+"type": "kv",
+"guide": "The rules for the plant (OT) network and how things are currently set up.",
+"rows": [
+["Policy NET-07", "No device may be connected to the Plant network without an OT change request approved by Plant Engineering and IT"],
+["Policy NET-09", "Remote access to plant systems only through the OT jump host with MFA — no direct internet access to or from Plant devices"],
+["NAC on plant switches", "Set to MONITOR-ONLY during the 2025 Line 2 upgrade; never switched back to ENFORCE"],
+["Outbound firewall rule for Plant network", "Allows HTTPS (443) to anywhere — added for vendor updates"],
+["Approved on-call option", "Production dashboards are available on the OT historian through the jump host (read-only)"]
+]
 }
 ]
 };
