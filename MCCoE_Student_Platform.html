@@ -9002,6 +9002,24 @@ function tkTypeBadge(type) {
 
 let _tkAssignments = {};   // ticketId -> {studentName: true, ...} (older data: a single name string)
 let _tkProgress    = {};   // ticketId -> {status, priority, notes:[{text,ts}]}
+let _tkGrades      = {};   // ticketId -> {score, max, rubric[], feedback, gradedAt} (set by instructor in the Tracker)
+const TK_RUBRIC_LABELS = ['Priority & triage', 'Investigation & evidence', 'Disposition', 'Root cause', 'Write-up & recommendations'];
+function tkGradeColor(g) { const pct = g.score / (g.max || 25); return pct >= 0.9 ? '#00e676' : pct >= 0.7 ? '#ffd700' : '#ff6060'; }
+function tkGradeBoxHtml(ticketId) {
+  const g = _tkGrades[ticketId];
+  if (!g) return '';
+  const c = tkGradeColor(g);
+  const rub = Array.isArray(g.rubric) ? g.rubric.map((v, i) =>
+    `<div style="display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:.9rem;color:#e2f4e6;"><span>${TK_RUBRIC_LABELS[i] || ''}</span><strong>${v} / 5</strong></div>`).join('') : '';
+  return `<div style="margin-top:20px;background:rgba(255,215,0,0.05);border:1px solid rgba(255,215,0,0.35);border-radius:8px;padding:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+      <div style="font-size:.88rem;font-weight:700;color:#ffd700;letter-spacing:1px;text-transform:uppercase;">&#9998; Instructor Grade</div>
+      <div style="font-size:1.4rem;font-weight:800;color:${c};">${g.score} / ${g.max || 25}</div>
+    </div>
+    ${rub}
+    ${g.feedback ? `<div style="margin-top:12px;"><div style="font-size:.85rem;font-weight:700;color:#d2e4da;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Feedback</div><div style="font-size:.95rem;color:#e2f4e6;white-space:pre-wrap;">${tkLogEsc(g.feedback)}</div></div>` : ''}
+  </div>`;
+}
 let _tkStudentName = '';
 
 function openTicketBoard() {
@@ -9023,6 +9041,9 @@ function loadTicketData() {
   const name = _tkStudentName;
   return firebase.database().ref('mccoe_tickets/assignments').once('value').then(snap => {
     _tkAssignments = snap.val() || {};
+    return firebase.database().ref('mccoe_tickets/grades/' + name).once('value');
+  }).then(snap => {
+    _tkGrades = snap.val() || {};
     return firebase.database().ref('mccoe_tickets/work/' + name).once('value');
   }).then(snap => {
     const raw = snap.val() || {};
@@ -9074,6 +9095,7 @@ function renderDashTickets() {
           <div style="font-size:11px;font-weight:700;color:#999;letter-spacing:.5px;">${t.id} · ${t.tier} · ${t.type}</div>
           <div style="font-size:13px;font-weight:700;color:#222;line-height:1.3;">${t.title}</div>
         </div>
+        ${_tkGrades[t.id] ? `<span style="font-size:11px;font-weight:800;color:#222;background:#fff4cc;border:1px solid #d9b84a;border-radius:10px;padding:2px 9px;white-space:nowrap;">✎ ${_tkGrades[t.id].score} / ${_tkGrades[t.id].max || 25}</span>` : ''}
         <span style="font-size:11px;font-weight:700;color:${c};border:1px solid ${c};border-radius:10px;padding:2px 9px;white-space:nowrap;">${st}</span>
       </div>`;
     };
@@ -9137,6 +9159,7 @@ function renderTicketBoard() {
           <span style="font-size:.85rem;padding:3px 10px;border-radius:12px;${tkStatusStyle(status)}">${status}</span>
             ${prog.resolution ? '<span style="font-size:.76rem;padding:1px 6px;border-radius:8px;background:rgba(0,180,255,0.1);color:#00b4ff;border:1px solid rgba(0,180,255,0.3);margin-top:3px;display:block;">&#128274; locked</span>' : ''}
           <span style="font-size:.9rem;${tkPriorityStyle(priority)}">${priority}</span>
+          ${_tkGrades[t.id] ? `<span style="font-size:.85rem;font-weight:800;padding:2px 9px;border-radius:10px;border:1px solid ${tkGradeColor(_tkGrades[t.id])};color:${tkGradeColor(_tkGrades[t.id])};">&#9998; ${_tkGrades[t.id].score} / ${_tkGrades[t.id].max || 25}</span>` : ''}
         </div>
       </div>
     </div>`;
@@ -9183,6 +9206,7 @@ function openTicketDetail(ticketId) {
 
     <div style="padding:20px 24px;">
       ${tkIsLocked(t.id) ? `<div style="padding:10px 14px;background:rgba(0,180,255,0.07);border:1px solid rgba(0,180,255,0.3);border-radius:8px;margin-bottom:14px;display:flex;align-items:center;gap:10px;"><span style="font-size:1.1rem;">&#128274;</span><div><div style="font-size:.92rem;font-weight:700;color:#00b4ff;">Ticket Resolved — Read Only</div><div style="font-size:.85rem;color:#d2e4da;margin-top:2px;">${prog.disposition || ''}</div></div></div>` : ''}
+      ${tkGradeBoxHtml(t.id).replace('margin-top:20px;', 'margin-bottom:14px;')}
       <div style="font-size:.85rem;color:#d2e4da;margin-bottom:14px;">&#9200; Open for: <strong style="color:#ffd700;">${tkAge(t.created)}</strong></div>
       <div style="font-size:.88rem;font-weight:700;color:#d2e4da;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Reporter</div>
       <div style="font-size:.88rem;color:#e2f4e6;margin-bottom:18px;">${t.reporter}</div>

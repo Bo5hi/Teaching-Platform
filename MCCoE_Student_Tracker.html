@@ -7660,6 +7660,105 @@ let _tkStudentNames = [];
 let _tkAllWork = {};      // studentName -> {ticketId -> {status,priority,notes}}
 let _tkTabCurrent = 'assign';
 const TK_SLA_HOURS = { P1: 4, P2: 8, P3: 24, P4: 72 };
+
+// ── Ticket grading: 25 points per ticket, 5-part rubric (5 pts each) ──
+// Stored at mccoe_tickets/grades/<studentName>/<ticketId> = {score, max, rubric[], feedback, gradedBy, gradedAt}
+const TK_MAX_POINTS = 25;
+const TK_RUBRIC = [
+  ['Priority & triage',          'Picked the right priority and could explain why'],
+  ['Investigation & evidence',   'Used the logs; work notes show times, hosts, IPs, accounts'],
+  ['Disposition',                'Reached the correct disposition (true/false positive, etc.)'],
+  ['Root cause',                 'Identified what actually happened and why'],
+  ['Write-up & recommendations', 'Clear summary, sensible containment / next steps']
+];
+let _tkGrades = {};       // studentName -> {ticketId -> grade}
+function tkJsq(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function tkGradeOf(studentName, ticketId) { return (_tkGrades[studentName] || {})[ticketId] || null; }
+function tkIsTurnedIn(prog) { return !!prog && (prog.status === 'Resolved' || prog.status === 'Closed'); }
+// Student closed the ticket again after it was graded (e.g. reopened and resubmitted)
+function tkResubmitted(prog, grade) {
+  return !!(grade && prog && prog.resolvedAt && grade.gradedAt && new Date(prog.resolvedAt) > new Date(grade.gradedAt));
+}
+function tkGradeColor(score) {
+  const pct = score / TK_MAX_POINTS;
+  return pct >= 0.9 ? '#00c864' : pct >= 0.7 ? '#ffd700' : '#ff6060';
+}
+function tkGradeHtml(studentName, ticketId) {
+  const prog  = (_tkAllWork[studentName] || {})[ticketId] || {};
+  const g     = tkGradeOf(studentName, ticketId);
+  const rub   = (g && Array.isArray(g.rubric)) ? g.rubric : [];
+  const inp   = 'width:58px;padding:5px 6px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:.9rem;text-align:center;';
+  const rows  = TK_RUBRIC.map((r, i) =>
+    '<tr><td style="padding:5px 8px 5px 0;"><div style="font-size:.85rem;font-weight:700;color:var(--text);">' + r[0] + '</div>'
+    + '<div style="font-size:.74rem;color:var(--muted);">' + r[1] + '</div></td>'
+    + '<td style="padding:5px 0;white-space:nowrap;text-align:right;"><input id="tkg-r' + i + '" type="number" min="0" max="5" step="0.5" value="' + (rub[i] != null ? rub[i] : '') + '" oninput="tkGradeTotal()" style="' + inp + '"> <span style="color:var(--muted);font-size:.8rem;">/ 5</span></td></tr>'
+  ).join('');
+  const status = !tkIsTurnedIn(prog)
+    ? '<div style="font-size:.78rem;color:#ffd700;margin-bottom:8px;">&#9888; Not turned in yet &mdash; the student hasn&rsquo;t closed this ticket. You can still grade it.</div>'
+    : tkResubmitted(prog, g)
+      ? '<div style="font-size:.78rem;color:#ff8c00;margin-bottom:8px;">&#8635; Resubmitted after you graded it &mdash; review and save again.</div>'
+      : '';
+  const n = tkJsq(studentName), id = tkJsq(ticketId);
+  return '<div id="tkg-panel" style="margin-top:16px;padding:14px 16px;background:rgba(255,215,0,0.04);border:1px solid rgba(255,215,0,0.35);border-radius:8px;">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">'
+    + '<div style="font-size:.78rem;font-weight:800;color:#ffd700;letter-spacing:1.5px;text-transform:uppercase;">&#9998; Grade &mdash; ' + TK_MAX_POINTS + ' points</div>'
+    + (g ? '<div style="font-size:.74rem;color:var(--muted);">Last graded ' + new Date(g.gradedAt).toLocaleString() + (g.gradedBy ? ' by ' + tkKeyEsc(g.gradedBy) : '') + '</div>' : '')
+    + '</div>' + status
+    + '<table style="width:100%;border-collapse:collapse;">' + rows + '</table>'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0;padding-top:8px;border-top:1px solid var(--border);">'
+    + '<button onclick="tkGradeFill(5)" style="background:none;border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:4px;cursor:pointer;font-size:.74rem;">Full marks</button>'
+    + '<div style="font-size:1.1rem;font-weight:800;color:var(--text);">Total: <span id="tkg-total">&mdash;</span> / ' + TK_MAX_POINTS + '</div></div>'
+    + '<div style="font-size:.74rem;color:var(--muted);margin-bottom:4px;">Feedback for the student (they will see this)</div>'
+    + '<textarea id="tkg-fb" rows="4" style="width:100%;padding:8px 10px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.88rem;font-family:inherit;resize:vertical;">' + tkKeyEsc(g && g.feedback || '') + '</textarea>'
+    + '<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;">'
+    + '<button onclick="tkSaveGrade(\'' + n + '\',\'' + id + '\')" style="background:rgba(0,200,100,0.15);border:1px solid rgba(0,200,100,0.5);color:#00c864;padding:7px 18px;border-radius:6px;cursor:pointer;font-weight:800;font-size:.85rem;">&#10003; Save Grade</button>'
+    + (g ? '<button onclick="tkClearGrade(\'' + n + '\',\'' + id + '\')" style="background:none;border:1px solid rgba(255,96,96,0.4);color:#ff6060;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:.78rem;">Remove grade</button>' : '')
+    + '<span id="tkg-msg" style="font-size:.8rem;"></span></div>'
+    + '</div>';
+}
+function tkGradeVals() {
+  return TK_RUBRIC.map((r, i) => {
+    const v = (document.getElementById('tkg-r' + i) || {}).value;
+    return v === '' || v == null ? null : Number(v);
+  });
+}
+function tkGradeTotal() {
+  const vals = tkGradeVals(), el = document.getElementById('tkg-total');
+  if (!el) return;
+  if (vals.every(v => v == null)) { el.textContent = '\u2014'; el.style.color = ''; return; }
+  const tot = vals.reduce((a, v) => a + (v || 0), 0);
+  el.textContent = tot; el.style.color = tkGradeColor(tot);
+}
+function tkGradeFill(v) { TK_RUBRIC.forEach((r, i) => { const el = document.getElementById('tkg-r' + i); if (el) el.value = v; }); tkGradeTotal(); }
+function tkSaveGrade(studentName, ticketId) {
+  const vals = tkGradeVals(), msg = document.getElementById('tkg-msg');
+  const bad = vals.some(v => v == null || isNaN(v) || v < 0 || v > 5);
+  if (bad) { msg.style.color = '#ff6060'; msg.textContent = 'Enter a score from 0 to 5 in every rubric row.'; return; }
+  const grade = {
+    score: vals.reduce((a, v) => a + v, 0), max: TK_MAX_POINTS, rubric: vals,
+    feedback: (document.getElementById('tkg-fb').value || '').trim(),
+    gradedBy: sessionStorage.getItem('mccoe_admin_name') || 'Instructor',
+    gradedAt: new Date().toISOString()
+  };
+  if (!_tkGrades[studentName]) _tkGrades[studentName] = {};
+  _tkGrades[studentName][ticketId] = grade;
+  const done = () => {
+    msg.style.color = '#00c864'; msg.textContent = '\u2713 Saved \u2014 ' + grade.score + ' / ' + TK_MAX_POINTS;
+    if (_tkTabCurrent === 'progress') renderTkProgress();
+  };
+  if (firebase && firebase.database) {
+    firebase.database().ref('mccoe_tickets/grades/' + studentName + '/' + ticketId).set(grade)
+      .then(done).catch(e => { msg.style.color = '#ff6060'; msg.textContent = 'Save failed: ' + e.message; });
+  } else done();
+}
+function tkClearGrade(studentName, ticketId) {
+  if (!confirm('Remove the grade for ' + ticketId + ' (' + studentName + ')?')) return;
+  if (_tkGrades[studentName]) delete _tkGrades[studentName][ticketId];
+  if (firebase && firebase.database) firebase.database().ref('mccoe_tickets/grades/' + studentName + '/' + ticketId).remove();
+  const panel = document.getElementById('tkg-panel');
+  if (panel) { panel.outerHTML = tkGradeHtml(studentName, ticketId); tkGradeTotal(); }
+  if (_tkTabCurrent === 'progress') renderTkProgress();
+}
 // Students assigned to a ticket (a ticket can go to several students)
 function tkAssignees(ticketId) {
   const a = _tkAssign[ticketId];
@@ -8387,8 +8486,10 @@ function loadTicketManager() {
     firebase.database().ref('mccoe_tickets/assignments').once('value'),
     firebase.database().ref('mccoe_tickets/assignments_meta').once('value'),
     firebase.database().ref('mccoe_tickets/work').once('value'),
-    getStudentNames()
-  ]).then(([assignSnap, metaSnap, workSnap, names]) => {
+    getStudentNames(),
+    firebase.database().ref('mccoe_tickets/grades').once('value')
+  ]).then(([assignSnap, metaSnap, workSnap, names, gradeSnap]) => {
+    _tkGrades       = gradeSnap.val()  || {};
     _tkAssign       = assignSnap.val() || {};
     _tkAssignMeta   = metaSnap.val()   || {};
     _tkAllWork      = workSnap.val()   || {};
@@ -8519,6 +8620,19 @@ function renderTkProgress() {
     });
   });
 
+  // Turned-in tickets with no grade yet (or resubmitted since grading)
+  let toGrade = 0;
+  Object.entries(assignedStudents).forEach(([sname, tids]) => tids.forEach(tid => {
+    const prog = (_tkAllWork[sname] || {})[tid], g = tkGradeOf(sname, tid);
+    if (tkIsTurnedIn(prog) && (!g || tkResubmitted(prog, g))) toGrade++;
+  }));
+  const gradeBanner = toGrade > 0
+    ? `<div style="margin-bottom:16px;padding:10px 16px;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.4);border-radius:8px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:1.2rem;">&#9998;</span>
+        <span style="color:#ffd700;font-weight:700;font-size:.88rem;">${toGrade} turned-in ticket${toGrade!==1?'s':''} waiting to be graded &mdash; click <em>Grade</em> on a row</span>
+       </div>`
+    : '';
+
   const breachBanner = totalBreached > 0
     ? `<div style="margin-bottom:16px;padding:10px 16px;background:rgba(255,60,60,0.08);border:1px solid rgba(255,60,60,0.4);border-radius:8px;display:flex;align-items:center;gap:10px;">
         <span style="font-size:1.2rem;">🚨</span>
@@ -8526,7 +8640,7 @@ function renderTkProgress() {
        </div>`
     : '';
 
-  let html = breachBanner;
+  let html = gradeBanner + breachBanner;
   Object.entries(assignedStudents).forEach(([sname, tids]) => {
     const work = _tkAllWork[sname] || {};
     let noteRows = '';
@@ -8538,6 +8652,12 @@ function renderTkProgress() {
       const priority = prog.priority || t.pri;
       const notes = Array.isArray(prog.notes) ? prog.notes : [];
       const slaBadge = tkSlaBadge(tid, priority, prog, sname);
+      const g = tkGradeOf(sname, tid);
+      const gradeCell = g
+        ? `<button onclick="tkViewNotes('${tkJsq(sname)}','${tid}')" title="${tkResubmitted(prog, g) ? 'Resubmitted after grading' : 'Edit grade'}" style="background:none;border:1px solid ${tkGradeColor(g.score)};color:${tkGradeColor(g.score)};padding:2px 9px;border-radius:10px;cursor:pointer;font-size:.76rem;font-weight:800;">${g.score} / ${TK_MAX_POINTS}${tkResubmitted(prog, g) ? ' &#8635;' : ''}</button>`
+        : tkIsTurnedIn(prog)
+          ? `<button onclick="tkViewNotes('${tkJsq(sname)}','${tid}')" style="background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.5);color:#ffd700;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:.74rem;font-weight:800;">&#9998; Grade</button>`
+          : '<span style="color:var(--muted);font-size:.75rem;">&mdash;</span>';
       noteRows += `<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
         <td style="padding:7px 10px;font-family:monospace;font-size:.78rem;color:var(--cyan);">${tid}</td>
         <td style="padding:7px 10px;font-size:.8rem;color:var(--text);max-width:220px;">${t.title}</td>
@@ -8551,10 +8671,13 @@ function renderTkProgress() {
             ${notes.length ? '&#128172; ' + notes.length + ' note' + (notes.length!==1?'s':'') : 'View'}
           </button>
         </td>
+        <td style="padding:7px 10px;">${gradeCell}</td>
       </tr>`;
     });
 
     const done     = tids.filter(tid => { const s = (work)[tid]; return s && (s.status==='Resolved'||s.status==='Closed'); }).length;
+    const graded   = tids.filter(tid => tkGradeOf(sname, tid));
+    const points   = graded.reduce((a, tid) => a + (tkGradeOf(sname, tid).score || 0), 0);
     const inprog   = tids.filter(tid => { const s = (work)[tid]; return s && s.status==='In Progress'; }).length;
     const breached = tids.filter(tid => {
       const t = TRACKER_TICKET_BANK.find(x => x.id === tid);
@@ -8573,6 +8696,7 @@ function renderTkProgress() {
           <span style="color:#ffd700;">${inprog} in progress</span>
           ${breached > 0 ? `<span style="color:#ff6060;font-weight:700;">&#128680; ${breached} SLA breach${breached!==1?'es':''}</span>` : ''}
           <span style="color:var(--muted);">${tids.length} total</span>
+          ${graded.length ? `<span style="color:${tkGradeColor(points / graded.length)};font-weight:800;">&#9998; ${points} / ${graded.length * TK_MAX_POINTS} pts (${graded.length} graded)</span>` : ''}
         </div>
       </div>
       <table style="width:100%;border-collapse:collapse;">
@@ -8583,6 +8707,7 @@ function renderTkProgress() {
           <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--muted);">Priority</th>
           <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--muted);">SLA</th>
           <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--muted);">Notes</th>
+          <th style="padding:6px 10px;text-align:left;font-size:.7rem;color:var(--muted);">Grade</th>
         </tr></thead>
         <tbody>${noteRows}</tbody>
       </table>
@@ -8633,17 +8758,20 @@ function tkViewNotes(studentName, ticketId) {
     + '<div style="flex:1 1 400px;min-width:0;"><div style="font-size:.72rem;font-weight:800;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">Student Work</div>'
     + (noteHtml || '<div style="color:var(--muted);font-style:italic;margin-bottom:10px;">No work notes yet.</div>')
     + resHtml
+    + tkGradeHtml(studentName, ticketId)
     + '</div><div style="flex:1 1 400px;min-width:0;">' + tkKeyHtml(ticketId) + '</div></div>'
     + '</div>';
   document.body.appendChild(overlay);
+  tkGradeTotal();
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
 }
 
 function resetTicketProgress() {
-  if (!confirm('Reset ALL student ticket progress (status, priority, work notes)?\n\nAssignments will be kept. This cannot be undone.')) return;
-  _tkAllWork = {};
+  if (!confirm('Reset ALL student ticket progress (status, priority, work notes) AND all ticket grades?\n\nAssignments will be kept. This cannot be undone.')) return;
+  _tkAllWork = {}; _tkGrades = {};
   if (firebase && firebase.database) {
-    firebase.database().ref('mccoe_tickets/work').remove().then(() => {
+    Promise.all([firebase.database().ref('mccoe_tickets/work').remove(),
+                 firebase.database().ref('mccoe_tickets/grades').remove()]).then(() => {
       alert('Ticket progress reset. Assignments are unchanged.');
       renderTkProgress();
     });
@@ -8679,7 +8807,8 @@ function tkExportCSV() {
   var hdrs = ['Ticket ID','Title','Tier','Type','Default Priority','Assigned To',
               'Status','Priority','Disposition','Notes Count',
               'Summary','Root Cause','Recommendation',
-              'Assigned At','SLA Hours','Elapsed Hours','SLA Status','Resolved At'];
+              'Assigned At','SLA Hours','Elapsed Hours','SLA Status','Resolved At',
+              'Score','Max Points'].concat(TK_RUBRIC.map(function(r){ return r[0]; })).concat(['Feedback','Graded At','Graded By']);
   var rows  = [hdrs.map(function(h){ return DQ+h+DQ; }).join(',')];
   var tkPairs = [];   // one CSV row per ticket per assigned student
   TRACKER_TICKET_BANK.forEach(function(t) {
@@ -8710,6 +8839,10 @@ function tkExportCSV() {
       slaHrs, elapsed, slaSt,
       sw.resolvedAt ? new Date(sw.resolvedAt).toLocaleString() : ''
     ];
+    var gr = asgn ? tkGradeOf(asgn, t.id) : null;
+    row = row.concat([gr ? gr.score : '', gr ? TK_MAX_POINTS : ''])
+      .concat(TK_RUBRIC.map(function(r, i){ return gr && gr.rubric && gr.rubric[i] != null ? gr.rubric[i] : ''; }))
+      .concat([gr ? clean(gr.feedback) : '', gr ? new Date(gr.gradedAt).toLocaleString() : '', gr ? (gr.gradedBy || '') : '']);
     rows.push(row.map(function(v){ return DQ + String(v).split(DQ).join(DQ+DQ) + DQ; }).join(','));
   });
   var csv  = rows.join(CRLF);
