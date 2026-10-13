@@ -7698,8 +7698,20 @@ const TK_RUBRIC = [
   ['Write-up & recommendations', 'Clear summary, sensible containment / next steps']
 ];
 let _tkGrades = {};       // studentName -> {ticketId -> grade}
+// Draft grades written by Claude (Claude Code run + upload_ticket_drafts.ps1), never shown to students:
+// mccoe_tickets/drafts/<studentName>/<ticketId> = {rubric[], score, max, feedback, why, draftedBy, draftedAt}
+let _tkDrafts = {};
 function tkJsq(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
 function tkGradeOf(studentName, ticketId) { return (_tkGrades[studentName] || {})[ticketId] || null; }
+// A draft is used only if it is newer than the saved grade and the student's latest turn-in
+function tkDraftOf(studentName, ticketId) {
+  const d = (_tkDrafts[studentName] || {})[ticketId];
+  if (!d || !Array.isArray(d.rubric)) return null;
+  const g = tkGradeOf(studentName, ticketId), prog = (_tkAllWork[studentName] || {})[ticketId] || {};
+  if (g && g.gradedAt && new Date(g.gradedAt) >= new Date(d.draftedAt)) return null;
+  if (prog.resolvedAt && new Date(prog.resolvedAt) > new Date(d.draftedAt)) return null;
+  return d;
+}
 function tkIsTurnedIn(prog) { return !!prog && (prog.status === 'Resolved' || prog.status === 'Closed'); }
 // Student closed the ticket again after it was graded (e.g. reopened and resubmitted)
 function tkResubmitted(prog, grade) {
@@ -7712,7 +7724,16 @@ function tkGradeColor(score) {
 function tkGradeHtml(studentName, ticketId) {
   const prog  = (_tkAllWork[studentName] || {})[ticketId] || {};
   const g     = tkGradeOf(studentName, ticketId);
-  const rub   = (g && Array.isArray(g.rubric)) ? g.rubric : [];
+  const d     = tkDraftOf(studentName, ticketId);
+  const rub   = d ? d.rubric : (g && Array.isArray(g.rubric)) ? g.rubric : [];
+  const fbTxt = d ? (d.feedback || '') : (g && g.feedback || '');
+  const draftNote = d
+    ? '<div style="margin-bottom:10px;padding:9px 11px;background:rgba(0,245,255,0.06);border:1px solid rgba(0,245,255,0.35);border-radius:6px;font-size:.78rem;color:var(--text);">'
+      + '<strong style="color:var(--cyan);">&#129302; Draft from ' + tkKeyEsc(d.draftedBy || 'Claude') + ' &mdash; not saved.</strong> Scores and feedback below are pre-filled. Change anything you disagree with, then click Save Grade. The student sees nothing until you save.'
+      + (g ? ' <span style="color:#ff8c00;">(Replaces your earlier grade of ' + g.score + ' when you save.)</span>' : '')
+      + (d.why ? '<div style="margin-top:6px;white-space:pre-line;"><span style="font-size:.68rem;color:var(--muted);">WHY (instructor only)</span><br>' + tkKeyEsc(d.why) + '</div>' : '')
+      + '</div>'
+    : '';
   const inp   = 'width:58px;padding:5px 6px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:.9rem;text-align:center;';
   const rows  = TK_RUBRIC.map((r, i) =>
     '<tr><td style="padding:5px 8px 5px 0;"><div style="font-size:.85rem;font-weight:700;color:var(--text);">' + r[0] + '</div>'
@@ -7729,7 +7750,7 @@ function tkGradeHtml(studentName, ticketId) {
     + '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">'
     + '<div style="font-size:.78rem;font-weight:800;color:#ffd700;letter-spacing:1.5px;text-transform:uppercase;">&#9998; Grade &mdash; ' + TK_MAX_POINTS + ' points</div>'
     + (g ? '<div style="font-size:.74rem;color:var(--muted);">Last graded ' + new Date(g.gradedAt).toLocaleString() + (g.gradedBy ? ' by ' + tkKeyEsc(g.gradedBy) : '') + '</div>' : '')
-    + '</div>' + status
+    + '</div>' + status + draftNote
     + '<table style="width:100%;border-collapse:collapse;">' + rows + '</table>'
     + '<div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0;padding-top:8px;border-top:1px solid var(--border);">'
     + '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">'
@@ -7739,7 +7760,7 @@ function tkGradeHtml(studentName, ticketId) {
     + '<div style="font-size:1.1rem;font-weight:800;color:var(--text);">Total: <span id="tkg-total">&mdash;</span> / ' + TK_MAX_POINTS + '</div></div>'
     + '<div id="tkg-ai-msg" style="font-size:.78rem;margin-bottom:8px;"></div>'
     + '<div style="font-size:.74rem;color:var(--muted);margin-bottom:4px;">Feedback for the student (they will see this)</div>'
-    + '<textarea id="tkg-fb" rows="4" style="width:100%;padding:8px 10px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.88rem;font-family:inherit;resize:vertical;">' + tkKeyEsc(g && g.feedback || '') + '</textarea>'
+    + '<textarea id="tkg-fb" rows="4" style="width:100%;padding:8px 10px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.88rem;font-family:inherit;resize:vertical;">' + tkKeyEsc(fbTxt) + '</textarea>'
     + '<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;">'
     + '<button onclick="tkSaveGrade(\'' + n + '\',\'' + id + '\')" style="background:rgba(0,200,100,0.15);border:1px solid rgba(0,200,100,0.5);color:#00c864;padding:7px 18px;border-radius:6px;cursor:pointer;font-weight:800;font-size:.85rem;">&#10003; Save Grade</button>'
     + (g ? '<button onclick="tkClearGrade(\'' + n + '\',\'' + id + '\')" style="background:none;border:1px solid rgba(255,96,96,0.4);color:#ff6060;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:.78rem;">Remove grade</button>' : '')
@@ -7898,6 +7919,11 @@ function tkSaveGrade(studentName, ticketId) {
   if (!_tkGrades[studentName]) _tkGrades[studentName] = {};
   _tkGrades[studentName][ticketId] = grade;
   const done = () => {
+    // The draft has been reviewed and saved - drop it so it never re-fills the form
+    if (_tkDrafts[studentName] && _tkDrafts[studentName][ticketId]) {
+      delete _tkDrafts[studentName][ticketId];
+      if (firebase && firebase.database) firebase.database().ref('mccoe_tickets/drafts/' + studentName + '/' + ticketId).remove();
+    }
     msg.style.color = '#00c864'; msg.textContent = '\u2713 Saved \u2014 ' + grade.score + ' / ' + TK_MAX_POINTS;
     if (_tkTabCurrent === 'progress') renderTkProgress();
   };
@@ -8642,9 +8668,11 @@ function loadTicketManager() {
     firebase.database().ref('mccoe_tickets/assignments_meta').once('value'),
     firebase.database().ref('mccoe_tickets/work').once('value'),
     getStudentNames(),
-    firebase.database().ref('mccoe_tickets/grades').once('value')
-  ]).then(([assignSnap, metaSnap, workSnap, names, gradeSnap]) => {
+    firebase.database().ref('mccoe_tickets/grades').once('value'),
+    firebase.database().ref('mccoe_tickets/drafts').once('value')
+  ]).then(([assignSnap, metaSnap, workSnap, names, gradeSnap, draftSnap]) => {
     _tkGrades       = gradeSnap.val()  || {};
+    _tkDrafts       = draftSnap.val()  || {};
     _tkAssign       = assignSnap.val() || {};
     _tkAssignMeta   = metaSnap.val()   || {};
     _tkAllWork      = workSnap.val()   || {};
@@ -8776,15 +8804,15 @@ function renderTkProgress() {
   });
 
   // Turned-in tickets with no grade yet (or resubmitted since grading)
-  let toGrade = 0;
+  let toGrade = 0, withDraft = 0;
   Object.entries(assignedStudents).forEach(([sname, tids]) => tids.forEach(tid => {
     const prog = (_tkAllWork[sname] || {})[tid], g = tkGradeOf(sname, tid);
-    if (tkIsTurnedIn(prog) && (!g || tkResubmitted(prog, g))) toGrade++;
+    if (tkIsTurnedIn(prog) && (!g || tkResubmitted(prog, g))) { toGrade++; if (tkDraftOf(sname, tid)) withDraft++; }
   }));
   const gradeBanner = toGrade > 0
     ? `<div style="margin-bottom:16px;padding:10px 16px;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.4);border-radius:8px;display:flex;align-items:center;gap:10px;">
         <span style="font-size:1.2rem;">&#9998;</span>
-        <span style="color:#ffd700;font-weight:700;font-size:.88rem;">${toGrade} turned-in ticket${toGrade!==1?'s':''} waiting to be graded &mdash; click <em>Grade</em> on a row</span>
+        <span style="color:#ffd700;font-weight:700;font-size:.88rem;">${toGrade} turned-in ticket${toGrade!==1?'s':''} waiting to be graded &mdash; click <em>Grade</em> on a row${withDraft ? ` <span style="color:var(--cyan);">(${withDraft} ha${withDraft!==1?'ve':'s'} a draft ready to review)</span>` : ''}</span>
        </div>`
     : '';
 
@@ -8808,7 +8836,9 @@ function renderTkProgress() {
       const notes = Array.isArray(prog.notes) ? prog.notes : [];
       const slaBadge = tkSlaBadge(tid, priority, prog, sname);
       const g = tkGradeOf(sname, tid);
-      const gradeCell = g
+      const gradeCell = tkDraftOf(sname, tid)
+        ? `<button onclick="tkViewNotes('${tkJsq(sname)}','${tid}')" title="A draft grade is ready - open to review and save" style="background:rgba(0,245,255,0.1);border:1px solid rgba(0,245,255,0.5);color:var(--cyan);padding:3px 10px;border-radius:4px;cursor:pointer;font-size:.74rem;font-weight:800;">&#129302; Review draft</button>`
+        : g
         ? `<button onclick="tkViewNotes('${tkJsq(sname)}','${tid}')" title="${tkResubmitted(prog, g) ? 'Resubmitted after grading' : 'Edit grade'}" style="background:none;border:1px solid ${tkGradeColor(g.score)};color:${tkGradeColor(g.score)};padding:2px 9px;border-radius:10px;cursor:pointer;font-size:.76rem;font-weight:800;">${g.score} / ${TK_MAX_POINTS}${tkResubmitted(prog, g) ? ' &#8635;' : ''}</button>`
         : tkIsTurnedIn(prog)
           ? `<button onclick="tkViewNotes('${tkJsq(sname)}','${tid}')" style="background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.5);color:#ffd700;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:.74rem;font-weight:800;">&#9998; Grade</button>`
