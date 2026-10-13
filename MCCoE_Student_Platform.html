@@ -9407,12 +9407,15 @@ function submitResolve(ticketId, isHard) {
   const resolvedAt  = new Date().toISOString();
   const name = _tkStudentName;
 
-  if (!_tkProgress[ticketId]) _tkProgress[ticketId] = { status:'New', priority:'P3', notes:[] };
-  Object.assign(_tkProgress[ticketId], { status:finalStatus, disposition:disp, resolution, resolvedAt });
+  const tkDef = TICKET_BANK.find(x => x.id === ticketId) || {};
+  const priSel = document.getElementById('tk-priority-sel');
+  const priority = (priSel && priSel.value) || (_tkProgress[ticketId] || {}).priority || tkDef.defaultPriority || 'P3';
+  if (!_tkProgress[ticketId]) _tkProgress[ticketId] = { status:'New', priority, notes:[] };
+  Object.assign(_tkProgress[ticketId], { status:finalStatus, priority, disposition:disp, resolution, resolvedAt });
 
   if (_fbDb) {
     firebase.database().ref('mccoe_tickets/work/' + name + '/' + ticketId).update(
-      { status:finalStatus, disposition:disp, resolution, resolvedAt }
+      { status:finalStatus, priority, disposition:disp, resolution, resolvedAt }
     );
   }
   document.getElementById('tk-resolve-modal').remove();
