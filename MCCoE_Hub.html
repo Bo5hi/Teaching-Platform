@@ -1073,7 +1073,11 @@ var HUB_TICKET_TITLES = {
   'TCK-1004':'New hire software install', 'TCK-1005':'Repeated MFA prompts', 'TCK-2001':'Impossible travel alert',
   'TCK-2002':'EDR alert on FINANCE-07', 'TCK-2003':'Finance folder access request', 'TCK-2004':'Plant office cannot reach web app',
   'TCK-2005':'DLP / USB copy alert', 'TCK-3001':'Possible ransomware on SHARE-01', 'TCK-3002':'Password spray against VPN',
-  'TCK-3003':'BEC wire-transfer request', 'TCK-3004':'Lateral movement by service account', 'TCK-3005':'Data exfiltration to cloud storage'
+  'TCK-3003':'BEC wire-transfer request', 'TCK-3004':'Lateral movement by service account', 'TCK-3005':'Data exfiltration to cloud storage',
+  'TCK-4001':"WMI persistence / fileless",
+  'TCK-4002':"Supply-chain update compromise",
+  'TCK-4003':"Kerberoasting / AD creds",
+  'TCK-4004':"DNS tunneling / covert exfil"
 };
 var _twTickets = [];   // [{id, status}]
 function loadHubTickets(name) {

