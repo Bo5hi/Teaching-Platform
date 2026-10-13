@@ -1655,7 +1655,7 @@ select option { background:var(--surface); color:var(--text); }
   <!-- Assign Panel -->
   <div id="tk-panel-assign">
     <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px;">
-      Select a student from the dropdown for each ticket. Changes save to Firebase immediately. Click a ticket to see its answer key and remediation steps.
+      Use “+ Add student” to assign a ticket to one or more students (or all of them). Changes save to Firebase immediately. Click a ticket to see its answer key and remediation steps.
       Tier: <span style="color:#00e676;">&#9650; Easy</span>&nbsp;
       <span style="color:#ffd700;">&#9670; Moderate</span>&nbsp;
       <span style="color:#ff6060;">&#9733; Hard</span>
@@ -7433,30 +7433,41 @@ function tkViewKey(ticketId) {
   document.body.appendChild(overlay);
 }
 
-let _tkAssign = {};       // ticketId -> assigneeName (from Firebase)
-let _tkAssignMeta = {};   // ticketId -> {assignedAt: epoch ms}
+let _tkAssign = {};       // ticketId -> {studentName: true, ...} (older data: a single name string)
+let _tkAssignMeta = {};   // ticketId -> {by: {studentName: assignedAt ms}} (older data: {assignedAt})
 let _tkStudentNames = [];
 let _tkAllWork = {};      // studentName -> {ticketId -> {status,priority,notes}}
 let _tkTabCurrent = 'assign';
 const TK_SLA_HOURS = { P1: 4, P2: 8, P3: 24, P4: 72 };
-function tkSlaInfo(ticketId, pri, prog) {
-  const meta = _tkAssignMeta[ticketId];
-  if (!meta || !meta.assignedAt) return null;
+// Students assigned to a ticket (a ticket can go to several students)
+function tkAssignees(ticketId) {
+  const a = _tkAssign[ticketId];
+  if (!a) return [];
+  if (typeof a === 'string') return [a];
+  return Object.keys(a).filter(k => a[k]);
+}
+function tkAssignedAt(ticketId, studentName) {
+  const m = _tkAssignMeta[ticketId] || {};
+  return (m.by && m.by[studentName]) || m.assignedAt || null;
+}
+function tkSlaInfo(ticketId, pri, prog, studentName) {
+  const assignedAt = tkAssignedAt(ticketId, studentName);
+  if (!assignedAt) return null;
   const slaH   = TK_SLA_HOURS[pri] || 24;
-  const elapsed = (Date.now() - meta.assignedAt) / 3600000;
+  const elapsed = (Date.now() - assignedAt) / 3600000;
   const pct     = elapsed / slaH;
   const resolved = prog && (prog.status === 'Resolved' || prog.status === 'Closed');
   let resolvedH = null;
-  if (resolved && prog.resolvedAt) resolvedH = (prog.resolvedAt - meta.assignedAt) / 3600000;
-  return { slaH, elapsed, pct, resolved, resolvedH, assignedAt: meta.assignedAt };
+  if (resolved && prog.resolvedAt) resolvedH = (new Date(prog.resolvedAt).getTime() - assignedAt) / 3600000;
+  return { slaH, elapsed, pct, resolved, resolvedH, assignedAt };
 }
 function tkFmtHours(h) {
   if (h < 1)   return Math.round(h * 60) + 'm';
   if (h < 24)  return h.toFixed(1) + 'h';
   return (h / 24).toFixed(1) + 'd';
 }
-function tkSlaBadge(ticketId, pri, prog) {
-  const info = tkSlaInfo(ticketId, pri, prog);
+function tkSlaBadge(ticketId, pri, prog, studentName) {
+  const info = tkSlaInfo(ticketId, pri, prog, studentName);
   if (!info) return '<span style="color:var(--muted);font-size:.72rem;">Not assigned</span>';
   if (info.resolved) {
     const met = info.resolvedH !== null && info.resolvedH <= info.slaH;
@@ -8168,7 +8179,7 @@ function loadTicketManager() {
 
 function renderTkAssignTable() {
   const wrap = document.getElementById('tk-assign-table-wrap');
-  const sList = (window._tkStudentNames && _tkStudentNames.length) ? _tkStudentNames : (students || []).map(s => s.name).sort();
+  const sList = tkStudentList();
   const tierIcon = { Easy:'<span style="color:#00e676;">&#9650;</span>', Moderate:'<span style="color:#ffd700;">&#9670;</span>', Hard:'<span style="color:#ff6060;">&#9733;</span>' };
   const typeStyle = { Security:'color:#00b4ff;', IT:'color:#a78bfa;' };
 
@@ -8180,21 +8191,29 @@ function renderTkAssignTable() {
       'The ticket table is shown below so you can preview it.</div>'
     : '';
 
+  const attr = s => String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
   let rows = TRACKER_TICKET_BANK.map(t => {
-    const assigned = _tkAssign[t.id] || '';
-    const opts = ['-- Unassigned --', ...sList].map(n =>
-      `<option value="${n === '-- Unassigned --' ? '' : n}" ${assigned === (n === '-- Unassigned --' ? '' : n) ? 'selected' : ''}>${n}</option>`
+    const assigned = tkAssignees(t.id);
+    const chips = assigned.map(n =>
+      `<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 4px 2px 9px;border-radius:12px;background:rgba(0,245,255,0.08);border:1px solid var(--border);font-size:.74rem;color:var(--text);white-space:nowrap;">${attr(n)}<button data-name="${attr(n)}" onclick="tkRemoveAssignee('${t.id}', this.dataset.name)" title="Unassign" style="background:none;border:none;color:#ff6060;cursor:pointer;font-size:.85rem;line-height:1;padding:0 3px;">&times;</button></span>`
     ).join('');
+    const unassigned = sList.filter(n => !assigned.includes(n));
+    const opts = '<option value="">+ Add student…</option>'
+      + (unassigned.length > 1 ? '<option value="__all__">+ All students</option>' : '')
+      + unassigned.map(n => `<option value="${attr(n)}">${attr(n)}</option>`).join('');
     return `<tr>
       <td style="font-family:monospace;font-size:.8rem;color:var(--cyan);white-space:nowrap;cursor:pointer;text-decoration:underline dotted;" onclick="tkViewKey('${t.id}')" title="View answer key">${t.id}</td>
       <td style="font-size:.75rem;">${tierIcon[t.tier] || ''}</td>
       <td style="font-size:.78rem;${typeStyle[t.type]||''}">${t.type}</td>
       <td style="font-size:.82rem;color:var(--text);cursor:pointer;" onclick="tkViewKey('${t.id}')" title="View answer key">${t.title} <span style="font-size:.7rem;color:var(--yellow);white-space:nowrap;">&#128273; Key</span></td>
       <td>
-        <select onchange="tkSaveAssignment('${t.id}', this.value)"
-          style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:5px;font-size:.78rem;min-width:140px;">
-          ${opts}
-        </select>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;">
+          ${chips}
+          ${unassigned.length ? `<select onchange="tkAddAssignee('${t.id}', this.value)"
+            style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:5px;font-size:.76rem;">
+            ${opts}
+          </select>` : ''}
+        </div>
       </td>
     </tr>`;
   }).join('');
@@ -8214,31 +8233,47 @@ function renderTkAssignTable() {
     </table>`;
 }
 
-function tkSaveAssignment(ticketId, studentName) {
-  const wasAssigned = !!_tkAssign[ticketId];
-  const nowAssigned = !!studentName;
-  _tkAssign[ticketId] = studentName;
+// Save the full list of students on a ticket. Each student keeps their own
+// assigned time (SLA clock); newly added students start their clock now.
+function tkSetAssignees(ticketId, names) {
+  names = [...new Set(names.filter(Boolean))];
+  const bad = names.find(n => /[.#$\[\]\/]/.test(n));
+  if (bad) { alert('Cannot assign "' + bad + '": the name contains a character Firebase does not allow (. # $ [ ] /).'); return; }
+  const prev = tkAssignees(ticketId);
+  const now = Date.now();
+  const list = {}, by = {};
+  names.forEach(n => { list[n] = true; by[n] = (prev.includes(n) && tkAssignedAt(ticketId, n)) || now; });
+  if (names.length) { _tkAssign[ticketId] = list; _tkAssignMeta[ticketId] = { by }; }
+  else { delete _tkAssign[ticketId]; delete _tkAssignMeta[ticketId]; }
   if (firebase && firebase.database) {
-    firebase.database().ref('mccoe_tickets/assignments/' + ticketId).set(studentName || null);
-    if (nowAssigned && !wasAssigned) {
-      const ts = Date.now();
-      _tkAssignMeta[ticketId] = { assignedAt: ts };
-      firebase.database().ref('mccoe_tickets/assignments_meta/' + ticketId).set({ assignedAt: ts });
-    } else if (!nowAssigned) {
-      delete _tkAssignMeta[ticketId];
-      firebase.database().ref('mccoe_tickets/assignments_meta/' + ticketId).remove();
-    }
+    firebase.database().ref('mccoe_tickets/assignments/' + ticketId).set(names.length ? list : null);
+    firebase.database().ref('mccoe_tickets/assignments_meta/' + ticketId).set(names.length ? { by } : null);
   }
+  renderTkAssignTable();
+  if (_tkTabCurrent === 'progress') renderTkProgress();
+}
+function tkStudentList() {
+  return (_tkStudentNames && _tkStudentNames.length) ? _tkStudentNames : (students || []).map(s => s.name).sort();
+}
+function tkAddAssignee(ticketId, studentName) {
+  if (!studentName) return;
+  const sList = tkStudentList();
+  const add = studentName === '__all__' ? sList : [studentName];
+  tkSetAssignees(ticketId, tkAssignees(ticketId).concat(add));
+}
+function tkRemoveAssignee(ticketId, studentName) {
+  tkSetAssignees(ticketId, tkAssignees(ticketId).filter(n => n !== studentName));
 }
 
 function renderTkProgress() {
   const wrap = document.getElementById('tk-progress-wrap');
   // Build per-student summary
   const assignedStudents = {};
-  Object.entries(_tkAssign).forEach(([tid, sname]) => {
-    if (!sname) return;
-    if (!assignedStudents[sname]) assignedStudents[sname] = [];
-    assignedStudents[sname].push(tid);
+  TRACKER_TICKET_BANK.forEach(t => {
+    tkAssignees(t.id).forEach(sname => {
+      if (!assignedStudents[sname]) assignedStudents[sname] = [];
+      assignedStudents[sname].push(t.id);
+    });
   });
 
   if (!Object.keys(assignedStudents).length) {
@@ -8257,7 +8292,7 @@ function renderTkProgress() {
       const prog = (_tkAllWork[sname] || {})[tid] || {};
       const resolved = prog.status === 'Resolved' || prog.status === 'Closed';
       if (!resolved) {
-        const info = tkSlaInfo(tid, prog.priority || t.pri, prog);
+        const info = tkSlaInfo(tid, prog.priority || t.pri, prog, sname);
         if (info && info.pct >= 1) totalBreached++;
       }
     });
@@ -8281,7 +8316,7 @@ function renderTkProgress() {
       const status = prog.status || 'New';
       const priority = prog.priority || t.pri;
       const notes = Array.isArray(prog.notes) ? prog.notes : [];
-      const slaBadge = tkSlaBadge(tid, priority, prog);
+      const slaBadge = tkSlaBadge(tid, priority, prog, sname);
       noteRows += `<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
         <td style="padding:7px 10px;font-family:monospace;font-size:.78rem;color:var(--cyan);">${tid}</td>
         <td style="padding:7px 10px;font-size:.8rem;color:var(--text);max-width:220px;">${t.title}</td>
@@ -8305,7 +8340,7 @@ function renderTkProgress() {
       if (!t) return false;
       const prog = (work)[tid] || {};
       if (prog.status === 'Resolved' || prog.status === 'Closed') return false;
-      const info = tkSlaInfo(tid, prog.priority || t.pri, prog);
+      const info = tkSlaInfo(tid, prog.priority || t.pri, prog, sname);
       return info && info.pct >= 1;
     }).length;
 
@@ -8425,8 +8460,13 @@ function tkExportCSV() {
               'Summary','Root Cause','Recommendation',
               'Assigned At','SLA Hours','Elapsed Hours','SLA Status','Resolved At'];
   var rows  = [hdrs.map(function(h){ return DQ+h+DQ; }).join(',')];
+  var tkPairs = [];   // one CSV row per ticket per assigned student
   TRACKER_TICKET_BANK.forEach(function(t) {
-    var asgn = _tkAssign[t.id] || '';
+    var l = tkAssignees(t.id);
+    (l.length ? l : ['']).forEach(function(n) { tkPairs.push([t, n]); });
+  });
+  tkPairs.forEach(function(pair) {
+    var t = pair[0], asgn = pair[1];
     var sw   = asgn ? ((_tkAllWork[asgn] || {})[t.id] || {}) : {};
     var nts  = Array.isArray(sw.notes) ? sw.notes : [];
     var res  = sw.resolution || {};
@@ -8434,7 +8474,7 @@ function tkExportCSV() {
       var t2 = String(s || '');
       t2 = t2.split(CR).join(' '); t2 = t2.split(LF).join(' '); return t2;
     };
-    var slaInf  = tkSlaInfo(t.id, sw.priority || t.pri, sw);
+    var slaInf  = tkSlaInfo(t.id, sw.priority || t.pri, sw, asgn);
     var slaHrs  = slaInf ? TK_SLA_HOURS[sw.priority || t.pri] || '' : '';
     var elapsed = slaInf ? slaInf.elapsed.toFixed(2) : '';
     var slaSt   = slaInf ? (slaInf.resolved ? 'Resolved' : slaInf.pct >= 1 ? 'BREACHED' : slaInf.pct >= 0.9 ? 'At Risk' : 'On Track') : 'Not Assigned';

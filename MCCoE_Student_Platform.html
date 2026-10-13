@@ -7521,6 +7521,7 @@ let _fbDb = null;
 let _registryCache = JSON.parse(localStorage.getItem('mccoe_student_registry') || '[]');
 let _hubSSODone = false;
 let _ssoTargetWeek = null;
+let _ssoTargetTicket = null;
 
 // ── Hours auto-tracking ──────────────────────────────────────────────────────
 let _hoursTrackingId  = null;
@@ -7654,6 +7655,7 @@ window._dismissIdleWarning = _dismissIdleWarning;
             state.student = { name: _match.name, cohort: _match.cohort || '', tempId: _hubId, assignedId: _match.assignedId || null };
             const _wkParam = parseInt(_p.get('week'));
             if (_wkParam >= 1 && _wkParam <= 12) _ssoTargetWeek = _wkParam;
+            if (_p.get('ticket')) _ssoTargetTicket = _p.get('ticket');
             enterApp();
             startHoursTracking(_hubId);
             _resetIdleTimer();
@@ -8181,6 +8183,9 @@ function renderStudentDashboard() {
       </div>
     </div>
 
+    <!-- MY SOC TICKETS (filled by renderDashTickets) -->
+    <div id="dash-tickets-wrap" style="margin-bottom:18px"></div>
+
     ${renderGamePanel()}
 
     <!-- JOB READINESS + CERTIFICATE -->
@@ -8255,6 +8260,7 @@ function renderStudentDashboard() {
     </div>
 
   `;
+  renderDashTickets();
 }
 function updateOverallProgress() {
   const total = WEEKS.length;
@@ -10593,7 +10599,7 @@ function tkTypeBadge(type) {
     : '<span style="font-size:.68rem;padding:2px 7px;border-radius:10px;background:#1a1a2e;color:#a78bfa;border:1px solid #4c3d8a;">IT</span>';
 }
 
-let _tkAssignments = {};   // ticketId -> assigneeName
+let _tkAssignments = {};   // ticketId -> {studentName: true, ...} (older data: a single name string)
 let _tkProgress    = {};   // ticketId -> {status, priority, notes:[{text,ts}]}
 let _tkStudentName = '';
 
@@ -10607,14 +10613,14 @@ function closeTicketBoard() {
   document.getElementById('ticket-board-modal').style.display = 'none';
   document.getElementById('ticket-detail-modal').style.display = 'none';
   document.body.style.overflow = '';
+  if (document.getElementById('dash-tickets-wrap')) renderDashTickets();
 }
 
-function loadTicketBoard() {
-  const wrap = document.getElementById('ticket-list-wrap');
-  wrap.innerHTML = '<div style="color:#88aa99;text-align:center;padding:40px;">Loading tickets...</div>';
-  if (!_fbDb) { renderTicketBoard(); return; }
+// Fetch ticket assignments + this student's ticket work from Firebase
+function loadTicketData() {
+  if (!_fbDb) return Promise.resolve();
   const name = _tkStudentName;
-  firebase.database().ref('mccoe_tickets/assignments').once('value').then(snap => {
+  return firebase.database().ref('mccoe_tickets/assignments').once('value').then(snap => {
     _tkAssignments = snap.val() || {};
     return firebase.database().ref('mccoe_tickets/work/' + name).once('value');
   }).then(snap => {
@@ -10624,15 +10630,70 @@ function loadTicketBoard() {
       _tkProgress[id] = raw[id];
       if (!Array.isArray(_tkProgress[id].notes)) _tkProgress[id].notes = [];
     });
-    renderTicketBoard();
-  }).catch(e => { console.error(e); renderTicketBoard(); });
+  }).catch(e => console.error(e));
+}
+
+function loadTicketBoard() {
+  const wrap = document.getElementById('ticket-list-wrap');
+  wrap.innerHTML = '<div style="color:#88aa99;text-align:center;padding:40px;">Loading tickets...</div>';
+  return loadTicketData().then(renderTicketBoard);
+}
+
+// A ticket can be assigned to several students
+function tkMyTickets() {
+  const me = (_tkStudentName || '').toLowerCase();
+  return TICKET_BANK.filter(t => {
+    const a = _tkAssignments[t.id];
+    if (!a) return false;
+    const names = typeof a === 'string' ? [a] : Object.keys(a).filter(k => a[k]);
+    return names.some(n => n.toLowerCase() === me);
+  });
+}
+
+// "My SOC Tickets" panel on the student dashboard
+function renderDashTickets() {
+  const wrap = document.getElementById('dash-tickets-wrap');
+  if (!wrap || !state.student) return;
+  _tkStudentName = state.student.name;
+  loadTicketData().then(() => {
+    const wrap = document.getElementById('dash-tickets-wrap');
+    if (!wrap) return;
+    const mine = tkMyTickets();
+    if (!mine.length) { wrap.innerHTML = ''; return; }
+    const isDone = t => { const st = (_tkProgress[t.id] || {}).status; return st === 'Resolved' || st === 'Closed'; };
+    const open = mine.filter(t => !isDone(t)), done = mine.filter(isDone);
+    const stCol = { 'New':'#888', 'In Progress':'#0a8f4f', 'Pending':'#b8860b', 'Resolved':'#1877c9', 'Closed':'#555' };
+    const row = t => {
+      const st = (_tkProgress[t.id] || {}).status || 'New';
+      const c = stCol[st] || '#888';
+      return `<div onclick="openTicketFromDash('${t.id}')" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;background:#fff;${isDone(t)?'opacity:.6;':''}"
+        onmouseover="this.style.borderColor='var(--red)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="font-size:16px;">${isDone(t) ? '✅' : '🎫'}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:11px;font-weight:700;color:#999;letter-spacing:.5px;">${t.id} · ${t.tier} · ${t.type}</div>
+          <div style="font-size:13px;font-weight:700;color:#222;line-height:1.3;">${t.title}</div>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:${c};border:1px solid ${c};border-radius:10px;padding:2px 9px;white-space:nowrap;">${st}</span>
+      </div>`;
+    };
+    wrap.innerHTML = `<div style="background:#fff;border-radius:12px;padding:22px 26px;border:1px solid var(--border);box-shadow:0 2px 6px rgba(0,0,0,.05);">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--bg);">
+        <div style="font-size:14px;font-weight:700;color:var(--dark);">🎫 My SOC Tickets <span style="font-size:12px;font-weight:600;color:#888;margin-left:6px;">${open.length} open · ${done.length} resolved</span></div>
+        <button onclick="openTicketBoard()" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-weight:700;font-size:12px;cursor:pointer;">Open Ticket Board</button>
+      </div>
+      ${open.map(row).join('')}${done.map(row).join('')}
+    </div>`;
+    // Arrived from a Hub checklist ticket link
+    if (_ssoTargetTicket) { const id = _ssoTargetTicket; _ssoTargetTicket = null; openTicketFromDash(id); }
+  });
+}
+function openTicketFromDash(ticketId) {
+  openTicketBoard();
+  if (TICKET_BANK.some(t => t.id === ticketId)) openTicketDetail(ticketId);
 }
 
 function renderTicketBoard() {
-  const myTickets = TICKET_BANK.filter(t => {
-    const a = _tkAssignments[t.id];
-    return a && a.toLowerCase() === _tkStudentName.toLowerCase();
-  });
+  const myTickets = tkMyTickets();
 
   // Update card description
   const desc = document.getElementById('ticket-card-desc');

@@ -1063,6 +1063,50 @@ function hubLoginSuccess(name, id, doLog) {
   document.getElementById('hub-login-overlay').style.display = 'none';
   renderThisWeekPanel(name, id);
   loadChecklistFromFirebase(id);
+  loadHubTickets(name);
+}
+
+// ── SOC tickets assigned to this student (shown at the top of the checklist) ──
+var HUB_TICKET_TITLES = {
+  'TCK-1001':'Password reset request', 'TCK-1002':'Suspicious email reported', 'TCK-1003':'VPN will not connect from home',
+  'TCK-1004':'New hire software install', 'TCK-1005':'Repeated MFA prompts', 'TCK-2001':'Impossible travel alert',
+  'TCK-2002':'EDR alert on FINANCE-07', 'TCK-2003':'Finance folder access request', 'TCK-2004':'Plant office cannot reach web app',
+  'TCK-2005':'DLP / USB copy alert', 'TCK-3001':'Possible ransomware on SHARE-01', 'TCK-3002':'Password spray against VPN',
+  'TCK-3003':'BEC wire-transfer request', 'TCK-3004':'Lateral movement by service account', 'TCK-3005':'Data exfiltration to cloud storage'
+};
+var _twTickets = [];   // [{id, status}]
+function loadHubTickets(name) {
+  if (!_hubDb || !name) return;
+  var me = name.toLowerCase();
+  Promise.all([
+    _hubDb.ref('mccoe_tickets/assignments').once('value'),
+    _hubDb.ref('mccoe_tickets/work/' + name).once('value')
+  ]).then(function(r) {
+    var asg = r[0].val() || {}, work = r[1].val() || {};
+    _twTickets = Object.keys(asg).sort().filter(function(tid) {
+      var a = asg[tid];
+      var names = typeof a === 'string' ? [a] : Object.keys(a || {}).filter(function(k) { return a[k]; });
+      return names.some(function(n) { return n.toLowerCase() === me; });
+    }).map(function(tid) { return { id: tid, status: (work[tid] || {}).status || 'New' }; });
+    var sel = document.getElementById('tw-week-select');
+    if (sel) _renderWeekTasks(parseInt(sel.value));
+  }).catch(function(e) { console.warn('Tickets unavailable:', e); });
+}
+function _ticketGroupHtml(p) {
+  if (!_twTickets.length) return '';
+  var open = _twTickets.filter(function(t) { return t.status !== 'Resolved' && t.status !== 'Closed'; }).length;
+  var items = _twTickets.map(function(t) {
+    var done = t.status === 'Resolved' || t.status === 'Closed';
+    var doneStyle = done ? 'text-decoration:line-through;opacity:0.45;' : '';
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">' +
+      '<input type="checkbox" disabled ' + (done ? 'checked' : '') + ' title="Checks off when you resolve or close the ticket" style="flex-shrink:0;width:15px;height:15px;accent-color:#00e676;">' +
+      '<a href="MCCoE_Student_Platform.html' + p + '&ticket=' + t.id + '" style="flex:1;display:flex;justify-content:space-between;gap:8px;padding:7px 11px;border-radius:6px;font-size:12px;color:rgba(255,255,255,0.85);text-decoration:none;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);' + doneStyle + '">' +
+      '<span>🎫 ' + t.id + ' — ' + (HUB_TICKET_TITLES[t.id] || '') + '</span><span style="color:#00e676;white-space:nowrap;">' + t.status + '</span></a>' +
+      '</div>';
+  }).join('');
+  return '<div style="background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.3);border-radius:10px;padding:14px 16px;">' +
+    '<div style="font-family:\'Orbitron\',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;color:#00e676;margin-bottom:10px;">🎫 SOC TICKETS — ' + open + ' OPEN</div>' +
+    items + '</div>';
 }
 
 function loadChecklistFromFirebase(studentId) {
@@ -1286,7 +1330,7 @@ function _renderWeekTasks(wk) {
       '<div style="font-family:\'Orbitron\',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;color:' + g.color + ';margin-bottom:10px;">' + g.icon + ' ' + g.label + '</div>' +
       items + '</div>';
   }).join('');
-  document.getElementById('tw-groups').innerHTML = html;
+  document.getElementById('tw-groups').innerHTML = _ticketGroupHtml(p) + html;
 }
 function twCheckChange(el) {
   var key = el.dataset.ck;
