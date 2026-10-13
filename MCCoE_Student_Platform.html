@@ -21,10 +21,6 @@
   --glow-red:  0 0 8px #EE2207, 0 0 24px rgba(238,34,7,0.3);
 }
 #ticket-board-modal, #ticket-detail-modal, #tk-resolve-modal { font-weight:600; }
-#ticket-detail-modal input, #ticket-detail-modal select, #ticket-detail-modal textarea,
-#tk-resolve-modal select, #tk-resolve-modal textarea { color:#000 !important; background:#fff !important; border-color:#9cc7b0 !important; opacity:1 !important; }
-#ticket-detail-modal option, #tk-resolve-modal option { color:#000; background:#fff; }
-#ticket-detail-modal ::placeholder, #tk-resolve-modal ::placeholder { color:#555 !important; opacity:1; }
 body { font-family: 'Rajdhani', 'Segoe UI', sans-serif; font-size: 15px; font-weight: 500; background: var(--bg); color: var(--text); }
 
 /* ── LOGIN ── */
@@ -4697,27 +4693,27 @@ function loadDueDates() {
 <div id="ticket-board-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9500;overflow-y:auto;font-family:'Rajdhani',sans-serif;">
   <div style="max-width:960px;margin:24px auto;padding:0 16px 40px;">
     <!-- Header -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:#ffffff;border:1px solid #9cc7b0;border-radius:12px 12px 0 0;margin-bottom:0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:#0a1a10;border:1px solid #00664a;border-radius:12px 12px 0 0;margin-bottom:0;">
       <div>
-        <div style="font-size:1.3rem;font-weight:800;color:#000;letter-spacing:1px;">&#127915; SOC TICKET BOARD</div>
-        <div style="font-size:.92rem;color:#000;margin-top:2px;">Cedar Creek Industries &mdash; Incident Triage Exercise</div>
+        <div style="font-size:1.3rem;font-weight:800;color:#00e676;letter-spacing:1px;">&#127915; SOC TICKET BOARD</div>
+        <div style="font-size:.92rem;color:#d2e4da;margin-top:2px;">Cedar Creek Industries &mdash; Incident Triage Exercise</div>
       </div>
-      <button onclick="closeTicketBoard()" style="background:rgba(255,45,94,0.15);border:1px solid rgba(255,45,94,0.4);color:#b00000;padding:7px 16px;border-radius:6px;cursor:pointer;font-weight:700;font-size:.95rem;">&#10005; Close</button>
+      <button onclick="closeTicketBoard()" style="background:rgba(255,45,94,0.15);border:1px solid rgba(255,45,94,0.4);color:#ff2d5e;padding:7px 16px;border-radius:6px;cursor:pointer;font-weight:700;font-size:.95rem;">&#10005; Close</button>
     </div>
 
     <!-- Status legend -->
-    <div style="display:flex;gap:8px;flex-wrap:wrap;padding:12px 24px;background:#f3f6f4;border-left:1px solid #9cc7b0;border-right:1px solid #9cc7b0;">
-      <span style="font-size:.85rem;padding:3px 10px;border-radius:12px;background:#ececf6;color:#000;border:1px solid #cccccc;">&#9679; New</span>
-      <span style="font-size:.85rem;padding:3px 10px;border-radius:12px;background:#e3f5e8;color:#000;border:1px solid #9cc7b0;">&#8857; In Progress</span>
-      <span style="font-size:.85rem;padding:3px 10px;border-radius:12px;background:#fff4cc;color:#000;border:1px solid #d9b84a;">&#9700; Pending</span>
-      <span style="font-size:.85rem;padding:3px 10px;border-radius:12px;background:#e3f0fa;color:#000;border:1px solid #8cc3e6;">&#10003; Resolved</span>
-      <span style="font-size:.85rem;padding:3px 10px;border-radius:12px;background:#eeeeee;color:#000;border:1px solid #cccccc;">&#10007; Closed</span>
-      <span style="margin-left:auto;font-size:.85rem;color:#000;">P1=Critical &nbsp; P2=High &nbsp; P3=Medium &nbsp; P4=Low</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;padding:12px 24px;background:#0d1f14;border-left:1px solid #00664a;border-right:1px solid #00664a;">
+      <span style="font-size:.85rem;padding:3px 10px;border-radius:12px;background:#1a1a2e;color:#dcdcf0;border:1px solid #333;">&#9679; New</span>
+      <span style="font-size:.85rem;padding:3px 10px;border-radius:12px;background:#1a2e1a;color:#00e676;border:1px solid #00664a;">&#8857; In Progress</span>
+      <span style="font-size:.85rem;padding:3px 10px;border-radius:12px;background:#2e2a10;color:#ffd700;border:1px solid #665200;">&#9700; Pending</span>
+      <span style="font-size:.85rem;padding:3px 10px;border-radius:12px;background:#10202e;color:#00b4ff;border:1px solid #005580;">&#10003; Resolved</span>
+      <span style="font-size:.85rem;padding:3px 10px;border-radius:12px;background:#1a1a1a;color:#b8b8b8;border:1px solid #333;">&#10007; Closed</span>
+      <span style="margin-left:auto;font-size:.85rem;color:#d2e4da;">P1=Critical &nbsp; P2=High &nbsp; P3=Medium &nbsp; P4=Low</span>
     </div>
 
     <!-- Ticket list -->
-    <div id="ticket-list-wrap" style="background:#ffffff;border:1px solid #9cc7b0;border-top:none;border-radius:0 0 12px 12px;padding:20px;min-height:200px;">
-      <div style="color:#000;text-align:center;padding:40px;">Loading tickets...</div>
+    <div id="ticket-list-wrap" style="background:#0a1a10;border:1px solid #00664a;border-top:none;border-radius:0 0 12px 12px;padding:20px;min-height:200px;">
+      <div style="color:#d2e4da;text-align:center;padding:40px;">Loading tickets...</div>
     </div>
   </div>
 </div>
@@ -4725,7 +4721,7 @@ function loadDueDates() {
 <!-- ═══════════════════════════════════════════════════════════ SOC TICKET DETAIL MODAL -->
 <div id="ticket-detail-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:9600;overflow-y:auto;font-family:'Rajdhani',sans-serif;">
   <div style="max-width:960px;margin:40px auto;padding:0 16px 60px;">
-    <div id="ticket-detail-inner" style="background:#ffffff;border:1px solid #9cc7b0;border-radius:12px;overflow:hidden;"></div>
+    <div id="ticket-detail-inner" style="background:#0a1a10;border:1px solid #00664a;border-radius:12px;overflow:hidden;"></div>
   </div>
 </div>
 
@@ -8927,42 +8923,42 @@ function tkLogsHtml(ticketId) {
   const srcs = TICKET_LOGS[ticketId] || [];
   if (!srcs.length) return '';
   const tabs = srcs.map((s, i) =>
-    `<button class="tk-log-tab" onclick="tkShowLog('${ticketId}',${i})" style="background:#f6f8f7;border:1px solid #c9d9cf;color:#000;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:700;font-family:'Rajdhani',sans-serif;">${tkLogEsc(s.name)}</button>`).join('');
-  return `<div style="font-size:.88rem;font-weight:700;color:#000;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">&#128269; Evidence / Logs</div>
-    <div style="font-size:.9rem;color:#000;margin-bottom:10px;">Investigate before you act. Open each log source, read the guide, and use the filter to search. Put what you find (times, hosts, IPs, accounts) in your work notes.</div>
+    `<button class="tk-log-tab" onclick="tkShowLog('${ticketId}',${i})" style="background:#0a1a0a;border:1px solid #1a4a2a;color:#d2e4da;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:700;font-family:'Rajdhani',sans-serif;">${tkLogEsc(s.name)}</button>`).join('');
+  return `<div style="font-size:.88rem;font-weight:700;color:#d2e4da;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">&#128269; Evidence / Logs</div>
+    <div style="font-size:.9rem;color:#d2e4da;margin-bottom:10px;">Investigate before you act. Open each log source, read the guide, and use the filter to search. Put what you find (times, hosts, IPs, accounts) in your work notes.</div>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">${tabs}</div>
-    <div id="tk-log-panel" style="background:#ffffff;border:1px solid #c9d9cf;border-radius:8px;padding:12px;margin-bottom:20px;"></div>`;
+    <div id="tk-log-panel" style="background:#071a0a;border:1px solid #1a4a2a;border-radius:8px;padding:12px;margin-bottom:20px;"></div>`;
 }
 function tkShowLog(ticketId, idx) {
   const s = (TICKET_LOGS[ticketId] || [])[idx];
   const panel = document.getElementById('tk-log-panel');
   if (!s || !panel) return;
   document.querySelectorAll('.tk-log-tab').forEach((b, i) => {
-    b.style.background = i === idx ? '#d4efdf' : '#f6f8f7';
-    b.style.color = i === idx ? '#000' : '#000';
-    b.style.borderColor = i === idx ? '#2e8b57' : '#c9d9cf';
+    b.style.background = i === idx ? '#003322' : '#0a1a0a';
+    b.style.color = i === idx ? '#00e676' : '#d2e4da';
+    b.style.borderColor = i === idx ? '#00664a' : '#1a4a2a';
   });
   const mono = "font-family:'Share Tech Mono',Consolas,monospace;font-size:12px;";
   let body = '';
   if (s.type === 'text') {
-    body = `<pre style="${mono}color:#000;background:#f6f8f7;border:1px solid #d5e2da;border-radius:6px;padding:12px;margin:0;white-space:pre;overflow:auto;max-height:440px;">${tkLogEsc(s.text)}</pre>`;
+    body = `<pre style="${mono}color:#e2f4e6;background:#030d05;border:1px solid #143a20;border-radius:6px;padding:12px;margin:0;white-space:pre;overflow:auto;max-height:440px;">${tkLogEsc(s.text)}</pre>`;
   } else {
     const cols = s.type === 'kv' ? ['Field', 'Value'] : s.cols;
-    const th = cols.map(c => `<th style="position:sticky;top:0;background:#e3f5e8;color:#000;text-align:left;padding:6px 10px;white-space:nowrap;border-bottom:1px solid #c9d9cf;">${tkLogEsc(c)}</th>`).join('');
-    const rows = s.rows.map(r => '<tr class="tk-log-row" style="border-bottom:1px solid #e2ebe5;">'
-      + r.map((v, j) => `<td style="padding:5px 10px;color:#000;${s.type === 'kv' && j === 0 ? 'font-weight:700;' : ''}vertical-align:top;${j === 0 || s.type !== 'kv' ? 'white-space:nowrap;' : ''}">${tkLogEsc(v)}</td>`).join('')
+    const th = cols.map(c => `<th style="position:sticky;top:0;background:#0d2a16;color:#00e676;text-align:left;padding:6px 10px;white-space:nowrap;border-bottom:1px solid #1a4a2a;">${tkLogEsc(c)}</th>`).join('');
+    const rows = s.rows.map(r => '<tr class="tk-log-row" style="border-bottom:1px solid rgba(26,74,42,.5);">'
+      + r.map((v, j) => `<td style="padding:5px 10px;color:${s.type === 'kv' && j === 0 ? '#d2e4da' : '#c0e8c8'};vertical-align:top;${j === 0 || s.type !== 'kv' ? 'white-space:nowrap;' : ''}">${tkLogEsc(v)}</td>`).join('')
       + '</tr>').join('');
     body = `<div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
         <input type="text" placeholder="Filter rows (user, host, IP, event ID...)" oninput="tkFilterLog(this.value)"
-          style="flex:1;min-width:200px;padding:7px 10px;background:#f6f8f7;border:1px solid #c9d9cf;color:#000;border-radius:6px;font-size:.95rem;">
-        <span id="tk-log-count" style="font-size:.88rem;color:#000;">${s.rows.length} rows</span>
+          style="flex:1;min-width:200px;padding:7px 10px;background:#030d05;border:1px solid #1a4a2a;color:#e2f4e6;border-radius:6px;font-size:.95rem;">
+        <span id="tk-log-count" style="font-size:.88rem;color:#d2e4da;">${s.rows.length} rows</span>
       </div>
-      <div style="overflow:auto;max-height:440px;border:1px solid #d5e2da;border-radius:6px;background:#f6f8f7;">
+      <div style="overflow:auto;max-height:440px;border:1px solid #143a20;border-radius:6px;background:#030d05;">
         <table style="width:100%;border-collapse:collapse;${mono}"><thead><tr>${th}</tr></thead><tbody>${rows}</tbody></table>
       </div>`;
   }
-  panel.innerHTML = `<details open style="margin-bottom:10px;"><summary style="cursor:pointer;font-size:.9rem;font-weight:700;color:#000;">How to read this log</summary>
-      <div style="font-size:.84rem;color:#000;line-height:1.55;margin-top:6px;">${tkLogEsc(s.guide)}</div></details>` + body;
+  panel.innerHTML = `<details open style="margin-bottom:10px;"><summary style="cursor:pointer;font-size:.9rem;font-weight:700;color:#ffd700;">How to read this log</summary>
+      <div style="font-size:.84rem;color:#e2f4e6;line-height:1.55;margin-top:6px;">${tkLogEsc(s.guide)}</div></details>` + body;
 }
 function tkFilterLog(q) {
   q = q.trim().toLowerCase();
@@ -8975,32 +8971,32 @@ function tkFilterLog(q) {
 
 function tkStatusStyle(st) {
   const m = {
-    'New':         'background:#ececf6;color:#000;border:1px solid #cccccc;',
-    'In Progress': 'background:#e3f5e8;color:#000;border:1px solid #9cc7b0;',
-    'Pending':     'background:#fff4cc;color:#000;border:1px solid #d9b84a;',
-    'Resolved':    'background:#e3f0fa;color:#000;border:1px solid #8cc3e6;',
-    'Closed':      'background:#eeeeee;color:#000;border:1px solid #cccccc;',
+    'New':         'background:#1a1a2e;color:#dcdcf0;border:1px solid #333;',
+    'In Progress': 'background:#0d2e0d;color:#00e676;border:1px solid #00664a;',
+    'Pending':     'background:#2e2700;color:#ffd700;border:1px solid #665200;',
+    'Resolved':    'background:#0d1e2e;color:#00b4ff;border:1px solid #005580;',
+    'Closed':      'background:#1a1a1a;color:#b8b8b8;border:1px solid #333;',
   };
   return m[st] || m['New'];
 }
 function tkPriorityStyle(p) {
   const m = {
-    'P1':'color:#b00000;font-weight:800;',
-    'P2':'color:#000;font-weight:700;',
-    'P3':'color:#000;font-weight:700;',
-    'P4':'color:#000;font-weight:600;',
+    'P1':'color:#ff2d5e;font-weight:800;',
+    'P2':'color:#ff8c00;font-weight:700;',
+    'P3':'color:#ffd700;font-weight:700;',
+    'P4':'color:#00b4ff;font-weight:600;',
   };
   return m[p] || '';
 }
 function tkTierBadge(tier) {
-  if (tier==='Easy')     return '<span style="font-size:.78rem;padding:2px 7px;border-radius:10px;background:#e3f5e8;color:#000;border:1px solid #9cc7b0;">Easy</span>';
-  if (tier==='Moderate') return '<span style="font-size:.78rem;padding:2px 7px;border-radius:10px;background:#fff4cc;color:#000;border:1px solid #d9b84a;">Moderate</span>';
-  return '<span style="font-size:.78rem;padding:2px 7px;border-radius:10px;background:#fde6e6;color:#b00000;border:1px solid #e3a0a0;">Hard</span>';
+  if (tier==='Easy')     return '<span style="font-size:.78rem;padding:2px 7px;border-radius:10px;background:#0d2e0d;color:#00e676;border:1px solid #00664a;">Easy</span>';
+  if (tier==='Moderate') return '<span style="font-size:.78rem;padding:2px 7px;border-radius:10px;background:#2e2700;color:#ffd700;border:1px solid #665200;">Moderate</span>';
+  return '<span style="font-size:.78rem;padding:2px 7px;border-radius:10px;background:#2e0d0d;color:#ff6060;border:1px solid #662020;">Hard</span>';
 }
 function tkTypeBadge(type) {
   return type==='Security'
-    ? '<span style="font-size:.78rem;padding:2px 7px;border-radius:10px;background:#e3f0fa;color:#000;border:1px solid #8cc3e6;">Security</span>'
-    : '<span style="font-size:.78rem;padding:2px 7px;border-radius:10px;background:#ececf6;color:#000;border:1px solid #b7aae6;">IT</span>';
+    ? '<span style="font-size:.78rem;padding:2px 7px;border-radius:10px;background:#0d1a2e;color:#00b4ff;border:1px solid #005580;">Security</span>'
+    : '<span style="font-size:.78rem;padding:2px 7px;border-radius:10px;background:#1a1a2e;color:#a78bfa;border:1px solid #4c3d8a;">IT</span>';
 }
 
 let _tkAssignments = {};   // ticketId -> {studentName: true, ...} (older data: a single name string)
@@ -9039,7 +9035,7 @@ function loadTicketData() {
 
 function loadTicketBoard() {
   const wrap = document.getElementById('ticket-list-wrap');
-  wrap.innerHTML = '<div style="color:#000;text-align:center;padding:40px;">Loading tickets...</div>';
+  wrap.innerHTML = '<div style="color:#d2e4da;text-align:center;padding:40px;">Loading tickets...</div>';
   return loadTicketData().then(renderTicketBoard);
 }
 
@@ -9106,13 +9102,13 @@ function renderTicketBoard() {
   const wrap = document.getElementById('ticket-list-wrap');
   if (!myTickets.length) {
     var assignedTo = Object.entries(_tkAssignments).map(function(e){return e[0]+':'+e[1];}).join(', ') || 'none loaded';
-    wrap.innerHTML = '<div style="color:#000;text-align:center;padding:40px;line-height:2;">'
+    wrap.innerHTML = '<div style="color:#d2e4da;text-align:center;padding:40px;line-height:2;">'
       + '<div style="font-size:2rem;margin-bottom:12px;">&#127915;</div>'
-      + '<div style="font-size:1rem;font-weight:700;color:#000;">No tickets assigned yet</div>'
+      + '<div style="font-size:1rem;font-weight:700;color:#00e676;">No tickets assigned yet</div>'
       + '<div style="font-size:.95rem;margin-top:8px;">Your instructor will assign tickets to you. Check back soon.</div>'
-      + '<div style="font-size:.85rem;margin-top:16px;color:#000;padding:8px 16px;background:#f3f3f3;border-radius:6px;display:inline-block;text-align:left;">'
-      + 'Logged in as: <strong style="color:#000;">' + _tkStudentName + '</strong><br>'
-      + 'Assignments loaded: <strong style="color:#000;">' + assignedTo + '</strong>'
+      + '<div style="font-size:.85rem;margin-top:16px;color:#b4c4bc;padding:8px 16px;background:rgba(0,0,0,0.3);border-radius:6px;display:inline-block;text-align:left;">'
+      + 'Logged in as: <strong style="color:#00f5ff;">' + _tkStudentName + '</strong><br>'
+      + 'Assignments loaded: <strong style="color:#ffd700;">' + assignedTo + '</strong>'
       + '</div>'
       + '</div>';
     return;
@@ -9124,21 +9120,21 @@ function renderTicketBoard() {
     const status = prog.status || 'New';
     const priority = prog.priority || t.defaultPriority;
     const noteCount = (prog.notes || []).length;
-    rows += `<div onclick="openTicketDetail('${t.id}')" style="background:#f3f6f4;border:1px solid #c9d9cf;border-radius:8px;padding:14px 18px;margin-bottom:10px;cursor:pointer;transition:all .2s;"
-      onmouseover="this.style.borderColor='#2e8b57'" onmouseout="this.style.borderColor='#c9d9cf'">
+    rows += `<div onclick="openTicketDetail('${t.id}')" style="background:#0d1f14;border:1px solid #1a4a2a;border-radius:8px;padding:14px 18px;margin-bottom:10px;cursor:pointer;transition:all .2s;"
+      onmouseover="this.style.borderColor='#00e676'" onmouseout="this.style.borderColor='#1a4a2a'">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
         <div style="flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
-            <span style="font-size:.85rem;font-family:'Share Tech Mono',monospace;color:#000;">${t.id}</span>
+            <span style="font-size:.85rem;font-family:'Share Tech Mono',monospace;color:#00e676;">${t.id}</span>
             ${tkTypeBadge(t.type)} ${tkTierBadge(t.tier)}
           </div>
-          <div style="font-size:.95rem;font-weight:700;color:#000;margin-bottom:4px;">${t.title}</div>
-          <div style="font-size:.88rem;color:#000;">Reporter: ${t.reporter}</div>
-          ${noteCount ? `<div style="font-size:.85rem;color:#000;margin-top:4px;">&#128172; ${noteCount} work note${noteCount!==1?'s':''}</div>` : ''}
+          <div style="font-size:.95rem;font-weight:700;color:#d0f0d8;margin-bottom:4px;">${t.title}</div>
+          <div style="font-size:.88rem;color:#d2e4da;">Reporter: ${t.reporter}</div>
+          ${noteCount ? `<div style="font-size:.85rem;color:#00e676;margin-top:4px;">&#128172; ${noteCount} work note${noteCount!==1?'s':''}</div>` : ''}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;">
           <span style="font-size:.85rem;padding:3px 10px;border-radius:12px;${tkStatusStyle(status)}">${status}</span>
-            ${prog.resolution ? '<span style="font-size:.76rem;padding:1px 6px;border-radius:8px;background:rgba(0,180,255,0.1);color:#000;border:1px solid rgba(0,180,255,0.3);margin-top:3px;display:block;">&#128274; locked</span>' : ''}
+            ${prog.resolution ? '<span style="font-size:.76rem;padding:1px 6px;border-radius:8px;background:rgba(0,180,255,0.1);color:#00b4ff;border:1px solid rgba(0,180,255,0.3);margin-top:3px;display:block;">&#128274; locked</span>' : ''}
           <span style="font-size:.9rem;${tkPriorityStyle(priority)}">${priority}</span>
         </div>
       </div>
@@ -9160,71 +9156,71 @@ function openTicketDetail(ticketId) {
   const prioOpts = ['P1','P2','P3','P4'].map(p =>
     `<option value="${p}" ${p===priority?'selected':''}>${p} ${p==='P1'?'(Critical)':p==='P2'?'(High)':p==='P3'?'(Medium)':'(Low)'}</option>`).join('');
 
-  const tagHtml = t.tags.map(g => `<span style="font-size:.82rem;padding:2px 8px;border-radius:10px;background:#eef3f0;color:#000;border:1px solid #c9d9cf;">${g}</span>`).join(' ');
+  const tagHtml = t.tags.map(g => `<span style="font-size:.82rem;padding:2px 8px;border-radius:10px;background:#0a2a0a;color:#d2e4da;border:1px solid #1a4a2a;">${g}</span>`).join(' ');
 
   const notesHtml = notes.length ? notes.map(n =>
-    `<div style="border-left:3px solid #2e8b57;padding:8px 12px;background:#f6f8f7;border-radius:0 6px 6px 0;margin-bottom:8px;">
-      <div style="font-size:.82rem;color:#000;margin-bottom:4px;">${n.ts}</div>
-      <div style="font-size:.95rem;color:#000;white-space:pre-wrap;">${n.text.replace(/</g,'&lt;')}</div>
-    </div>`).join('') : '<div style="color:#000;font-size:.92rem;font-style:italic;">No work notes yet. Add your analysis below.</div>';
+    `<div style="border-left:3px solid #00e676;padding:8px 12px;background:#0a1a0a;border-radius:0 6px 6px 0;margin-bottom:8px;">
+      <div style="font-size:.82rem;color:#d2e4da;margin-bottom:4px;">${n.ts}</div>
+      <div style="font-size:.95rem;color:#e2f4e6;white-space:pre-wrap;">${n.text.replace(/</g,'&lt;')}</div>
+    </div>`).join('') : '<div style="color:#d2e4da;font-size:.92rem;font-style:italic;">No work notes yet. Add your analysis below.</div>';
 
   const inner = `
-    <div style="padding:20px 24px;border-bottom:1px solid #c9d9cf;background:#ffffff;">
+    <div style="padding:20px 24px;border-bottom:1px solid #1a4a2a;background:#071a0a;">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
         <div>
-          <div style="font-size:.9rem;font-family:'Share Tech Mono',monospace;color:#000;margin-bottom:4px;">${t.id} &mdash; ${t.type} Ticket</div>
-          <div style="font-size:1.05rem;font-weight:800;color:#000;">${t.title}</div>
+          <div style="font-size:.9rem;font-family:'Share Tech Mono',monospace;color:#00e676;margin-bottom:4px;">${t.id} &mdash; ${t.type} Ticket</div>
+          <div style="font-size:1.05rem;font-weight:800;color:#d0f0d8;">${t.title}</div>
         </div>
-        <button onclick="closeTicketDetail()" style="background:rgba(255,45,94,0.15);border:1px solid rgba(255,45,94,0.4);color:#b00000;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:700;">&#10005; Back</button>
+        <button onclick="closeTicketDetail()" style="background:rgba(255,45,94,0.15);border:1px solid rgba(255,45,94,0.4);color:#ff2d5e;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:700;">&#10005; Back</button>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
         ${tkTypeBadge(t.type)} ${tkTierBadge(t.tier)}
-        <span style="font-size:.82rem;padding:2px 8px;border-radius:10px;background:#e3f0fa;color:#000;border:1px solid #b9d3e3;">Created: ${t.created}</span>
+        <span style="font-size:.82rem;padding:2px 8px;border-radius:10px;background:#0a1a2a;color:#cfe0ec;border:1px solid #1a3a4a;">Created: ${t.created}</span>
         ${tagHtml}
       </div>
     </div>
 
     <div style="padding:20px 24px;">
-      ${tkIsLocked(t.id) ? `<div style="padding:10px 14px;background:rgba(0,180,255,0.07);border:1px solid rgba(0,180,255,0.3);border-radius:8px;margin-bottom:14px;display:flex;align-items:center;gap:10px;"><span style="font-size:1.1rem;">&#128274;</span><div><div style="font-size:.92rem;font-weight:700;color:#000;">Ticket Resolved — Read Only</div><div style="font-size:.85rem;color:#000;margin-top:2px;">${prog.disposition || ''}</div></div></div>` : ''}
-      <div style="font-size:.85rem;color:#000;margin-bottom:14px;">&#9200; Open for: <strong style="color:#000;">${tkAge(t.created)}</strong></div>
-      <div style="font-size:.88rem;font-weight:700;color:#000;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Reporter</div>
-      <div style="font-size:.88rem;color:#000;margin-bottom:18px;">${t.reporter}</div>
+      ${tkIsLocked(t.id) ? `<div style="padding:10px 14px;background:rgba(0,180,255,0.07);border:1px solid rgba(0,180,255,0.3);border-radius:8px;margin-bottom:14px;display:flex;align-items:center;gap:10px;"><span style="font-size:1.1rem;">&#128274;</span><div><div style="font-size:.92rem;font-weight:700;color:#00b4ff;">Ticket Resolved — Read Only</div><div style="font-size:.85rem;color:#d2e4da;margin-top:2px;">${prog.disposition || ''}</div></div></div>` : ''}
+      <div style="font-size:.85rem;color:#d2e4da;margin-bottom:14px;">&#9200; Open for: <strong style="color:#ffd700;">${tkAge(t.created)}</strong></div>
+      <div style="font-size:.88rem;font-weight:700;color:#d2e4da;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Reporter</div>
+      <div style="font-size:.88rem;color:#e2f4e6;margin-bottom:18px;">${t.reporter}</div>
 
-      <div style="font-size:.88rem;font-weight:700;color:#000;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Description</div>
-      <div style="font-size:.9rem;color:#000;line-height:1.7;background:#ffffff;border:1px solid #c9d9cf;border-radius:8px;padding:14px;margin-bottom:20px;white-space:pre-line;">${t.desc}</div>
+      <div style="font-size:.88rem;font-weight:700;color:#d2e4da;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Description</div>
+      <div style="font-size:.9rem;color:#d0e8d8;line-height:1.7;background:#071a0a;border:1px solid #1a4a2a;border-radius:8px;padding:14px;margin-bottom:20px;white-space:pre-line;">${t.desc}</div>
 
       ${tkLogsHtml(t.id)}
 
       <!-- Status + Priority controls -->
       <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px;">
         <div style="flex:1;min-width:140px;">
-          <div style="font-size:.88rem;font-weight:700;color:#000;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Status</div>
+          <div style="font-size:.88rem;font-weight:700;color:#d2e4da;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Status</div>
           <select id="tk-status-sel" onchange="tkCheckStatusChange('${t.id}', this.value)"
-            style="width:100%;padding:8px 12px;background:#f6f8f7;border:1px solid #9cc7b0;color:#000;border-radius:6px;font-size:.88rem;cursor:pointer;">
+            style="width:100%;padding:8px 12px;background:#0a1a0a;border:1px solid #00664a;color:#00e676;border-radius:6px;font-size:.88rem;cursor:pointer;">
             ${statusOpts}
           </select>
         </div>
         <div style="flex:1;min-width:140px;">
-          <div style="font-size:.88rem;font-weight:700;color:#000;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Priority</div>
+          <div style="font-size:.88rem;font-weight:700;color:#d2e4da;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Priority</div>
           <select id="tk-priority-sel" onchange="saveTicketField('${t.id}','priority',this.value)"
-            style="width:100%;padding:8px 12px;background:#f6f8f7;border:1px solid #9cc7b0;color:#000;border-radius:6px;font-size:.88rem;cursor:pointer;">
+            style="width:100%;padding:8px 12px;background:#0a1a0a;border:1px solid #00664a;color:#ffd700;border-radius:6px;font-size:.88rem;cursor:pointer;">
             ${prioOpts}
           </select>
         </div>
       </div>
 
       <!-- Work notes -->
-      <div style="font-size:.88rem;font-weight:700;color:#000;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Work Notes</div>
+      <div style="font-size:.88rem;font-weight:700;color:#d2e4da;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Work Notes</div>
       <div id="tk-notes-list" style="margin-bottom:14px;">${notesHtml}</div>
 
       <textarea id="tk-note-input" placeholder="Add your analysis, investigation steps, or findings here..." rows="14"
-        style="width:100%;padding:10px 14px;background:#ffffff;border:1px solid #c9d9cf;color:#000;border-radius:8px;font-size:.88rem;font-family:'Rajdhani',sans-serif;resize:vertical;margin-bottom:10px;"></textarea>
+        style="width:100%;padding:10px 14px;background:#071a0a;border:1px solid #1a4a2a;color:#e2f4e6;border-radius:8px;font-size:.88rem;font-family:'Rajdhani',sans-serif;resize:vertical;margin-bottom:10px;"></textarea>
       <button onclick="addTicketNote('${t.id}')"
-        style="background:#d4efdf;color:#000;border:1px solid #9cc7b0;padding:9px 22px;border-radius:6px;cursor:pointer;font-weight:700;font-size:.88rem;font-family:'Rajdhani',sans-serif;">
+        style="background:#003322;color:#00e676;border:1px solid #00664a;padding:9px 22px;border-radius:6px;cursor:pointer;font-weight:700;font-size:.88rem;font-family:'Rajdhani',sans-serif;">
         ${tkIsLocked(t.id) ? '&#128274; Locked' : '&#10133; Add Note'}
       </button>
-      <span id="tk-note-saved" style="display:none;font-size:.9rem;color:#000;margin-left:12px;">Saved!</span>
-      ${(tkIsLocked(t.id) && prog.resolution) ? `<div style="margin-top:20px;background:rgba(0,180,255,0.05);border:1px solid rgba(0,180,255,0.25);border-radius:8px;padding:16px;"><div style="font-size:.88rem;font-weight:700;color:#000;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Resolution Details</div>${prog.resolution.summary ? '<div style=\'margin-bottom:10px;\'><div style=\'font-size:.82rem;color:#000;margin-bottom:4px;\'>SUMMARY</div><div style=\'font-size:.95rem;color:#000;white-space:pre-line;\'>' + prog.resolution.summary.replace(/</g,'&lt;') + '</div></div>' : ''}${prog.resolution.actions ? '<div style=\'margin-bottom:10px;\'><div style=\'font-size:.82rem;color:#000;margin-bottom:4px;\'>ACTIONS TAKEN</div><div style=\'font-size:.95rem;color:#000;white-space:pre-line;\'>' + prog.resolution.actions.replace(/</g,'&lt;') + '</div></div>' : ''}${prog.resolution.rootCause ? '<div style=\'margin-bottom:10px;\'><div style=\'font-size:.82rem;color:#000;margin-bottom:4px;\'>ROOT CAUSE</div><div style=\'font-size:.95rem;color:#000;white-space:pre-line;\'>' + prog.resolution.rootCause.replace(/</g,'&lt;') + '</div></div>' : ''}${prog.resolution.recommendation ? '<div><div style=\'font-size:.82rem;color:#000;margin-bottom:4px;\'>RECOMMENDATION</div><div style=\'font-size:.95rem;color:#000;white-space:pre-line;\'>' + prog.resolution.recommendation.replace(/</g,'&lt;') + '</div></div>' : ''}</div>` : ''}
+      <span id="tk-note-saved" style="display:none;font-size:.9rem;color:#00e676;margin-left:12px;">Saved!</span>
+      ${(tkIsLocked(t.id) && prog.resolution) ? `<div style="margin-top:20px;background:rgba(0,180,255,0.05);border:1px solid rgba(0,180,255,0.25);border-radius:8px;padding:16px;"><div style="font-size:.88rem;font-weight:700;color:#00b4ff;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Resolution Details</div>${prog.resolution.summary ? '<div style=\'margin-bottom:10px;\'><div style=\'font-size:.82rem;color:#d2e4da;margin-bottom:4px;\'>SUMMARY</div><div style=\'font-size:.95rem;color:#e2f4e6;white-space:pre-line;\'>' + prog.resolution.summary.replace(/</g,'&lt;') + '</div></div>' : ''}${prog.resolution.actions ? '<div style=\'margin-bottom:10px;\'><div style=\'font-size:.82rem;color:#d2e4da;margin-bottom:4px;\'>ACTIONS TAKEN</div><div style=\'font-size:.95rem;color:#e2f4e6;white-space:pre-line;\'>' + prog.resolution.actions.replace(/</g,'&lt;') + '</div></div>' : ''}${prog.resolution.rootCause ? '<div style=\'margin-bottom:10px;\'><div style=\'font-size:.82rem;color:#d2e4da;margin-bottom:4px;\'>ROOT CAUSE</div><div style=\'font-size:.95rem;color:#e2f4e6;white-space:pre-line;\'>' + prog.resolution.rootCause.replace(/</g,'&lt;') + '</div></div>' : ''}${prog.resolution.recommendation ? '<div><div style=\'font-size:.82rem;color:#d2e4da;margin-bottom:4px;\'>RECOMMENDATION</div><div style=\'font-size:.95rem;color:#e2f4e6;white-space:pre-line;\'>' + prog.resolution.recommendation.replace(/</g,'&lt;') + '</div></div>' : ''}</div>` : ''}
     </div>
   `;
 
@@ -9272,9 +9268,9 @@ function addTicketNote(ticketId) {
   // Re-render notes list
   const notes = _tkProgress[ticketId].notes;
   document.getElementById('tk-notes-list').innerHTML = notes.map(n =>
-    `<div style="border-left:3px solid #2e8b57;padding:8px 12px;background:#f6f8f7;border-radius:0 6px 6px 0;margin-bottom:8px;">
-      <div style="font-size:.82rem;color:#000;margin-bottom:4px;">${n.ts}</div>
-      <div style="font-size:.95rem;color:#000;white-space:pre-wrap;">${n.text.replace(/</g,'&lt;')}</div>
+    `<div style="border-left:3px solid #00e676;padding:8px 12px;background:#0a1a0a;border-radius:0 6px 6px 0;margin-bottom:8px;">
+      <div style="font-size:.82rem;color:#d2e4da;margin-bottom:4px;">${n.ts}</div>
+      <div style="font-size:.95rem;color:#e2f4e6;white-space:pre-wrap;">${n.text.replace(/</g,'&lt;')}</div>
     </div>`).join('');
   const saved = document.getElementById('tk-note-saved');
   saved.style.display = 'inline';
@@ -9324,39 +9320,39 @@ function openResolveModal(ticketId) {
 
   const adaptiveFields = isHard
     ? '<div style="margin-bottom:14px;">'
-      + '<label style="font-size:.88rem;color:#000;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Actions Taken <span style="color:#b00000;">*</span></label>'
-      + '<textarea id="tk-resolve-actions" rows="10" placeholder="What specific steps did you take to investigate, contain, or remediate?" style="width:100%;padding:10px;background:#ffffff;border:1px solid #c9d9cf;color:#000;border-radius:6px;font-size:.95rem;font-family:\'Rajdhani\',sans-serif;resize:vertical;"></textarea>'
+      + '<label style="font-size:.88rem;color:#d2e4da;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Actions Taken <span style="color:#ff6060;">*</span></label>'
+      + '<textarea id="tk-resolve-actions" rows="10" placeholder="What specific steps did you take to investigate, contain, or remediate?" style="width:100%;padding:10px;background:#071a0a;border:1px solid #1a4a2a;color:#e2f4e6;border-radius:6px;font-size:.95rem;font-family:\'Rajdhani\',sans-serif;resize:vertical;"></textarea>'
       + '</div><div style="margin-bottom:14px;">'
-      + '<label style="font-size:.88rem;color:#000;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Root Cause <span style="color:#b00000;">*</span></label>'
-      + '<textarea id="tk-resolve-rootcause" rows="10" placeholder="What was the underlying cause of this incident or alert?" style="width:100%;padding:10px;background:#ffffff;border:1px solid #c9d9cf;color:#000;border-radius:6px;font-size:.95rem;font-family:\'Rajdhani\',sans-serif;resize:vertical;"></textarea>'
+      + '<label style="font-size:.88rem;color:#d2e4da;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Root Cause <span style="color:#ff6060;">*</span></label>'
+      + '<textarea id="tk-resolve-rootcause" rows="10" placeholder="What was the underlying cause of this incident or alert?" style="width:100%;padding:10px;background:#071a0a;border:1px solid #1a4a2a;color:#e2f4e6;border-radius:6px;font-size:.95rem;font-family:\'Rajdhani\',sans-serif;resize:vertical;"></textarea>'
       + '</div><div style="margin-bottom:14px;">'
-      + '<label style="font-size:.88rem;color:#000;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Recommendation <span style="color:#b00000;">*</span></label>'
-      + '<textarea id="tk-resolve-rec" rows="10" placeholder="What should be done to prevent recurrence or improve defenses?" style="width:100%;padding:10px;background:#ffffff;border:1px solid #c9d9cf;color:#000;border-radius:6px;font-size:.95rem;font-family:\'Rajdhani\',sans-serif;resize:vertical;"></textarea>'
+      + '<label style="font-size:.88rem;color:#d2e4da;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Recommendation <span style="color:#ff6060;">*</span></label>'
+      + '<textarea id="tk-resolve-rec" rows="10" placeholder="What should be done to prevent recurrence or improve defenses?" style="width:100%;padding:10px;background:#071a0a;border:1px solid #1a4a2a;color:#e2f4e6;border-radius:6px;font-size:.95rem;font-family:\'Rajdhani\',sans-serif;resize:vertical;"></textarea>'
       + '</div>'
     : '<div style="margin-bottom:14px;">'
-      + '<label style="font-size:.88rem;color:#000;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Summary <span style="color:#b00000;">*</span></label>'
-      + '<textarea id="tk-resolve-summary" rows="14" placeholder="Summarize what you investigated, what you found, and what action you took to close this ticket." style="width:100%;padding:10px;background:#ffffff;border:1px solid #c9d9cf;color:#000;border-radius:6px;font-size:.95rem;font-family:\'Rajdhani\',sans-serif;resize:vertical;"></textarea>'
+      + '<label style="font-size:.88rem;color:#d2e4da;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Summary <span style="color:#ff6060;">*</span></label>'
+      + '<textarea id="tk-resolve-summary" rows="14" placeholder="Summarize what you investigated, what you found, and what action you took to close this ticket." style="width:100%;padding:10px;background:#071a0a;border:1px solid #1a4a2a;color:#e2f4e6;border-radius:6px;font-size:.95rem;font-family:\'Rajdhani\',sans-serif;resize:vertical;"></textarea>'
       + '</div>';
 
   const overlay = document.createElement('div');
   overlay.id = 'tk-resolve-modal';
   overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.93);z-index:9700;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px;font-family:\'Rajdhani\',sans-serif;';
   overlay.innerHTML =
-    '<div style="background:#ffffff;border:1px solid #9cc7b0;border-radius:12px;max-width:860px;width:100%;padding:24px;">'
+    '<div style="background:#0a1a10;border:1px solid #00664a;border-radius:12px;max-width:860px;width:100%;padding:24px;">'
     + '<div style="margin-bottom:20px;">'
-    + '<div style="font-size:.9rem;font-family:\'Share Tech Mono\',monospace;color:#000;margin-bottom:4px;">' + t.id + ' — Close Ticket</div>'
-    + '<div style="font-size:1rem;font-weight:800;color:#000;">' + t.title + '</div>'
-    + '<div style="font-size:.88rem;color:#000;margin-top:6px;padding:6px 10px;background:rgba(255,210,0,0.07);border:1px solid rgba(255,210,0,0.25);border-radius:6px;">'
-    + '⚠ Submitting this form <strong style="color:#000;">locks the ticket</strong>. Your instructor can reopen it if needed.</div></div>'
+    + '<div style="font-size:.9rem;font-family:\'Share Tech Mono\',monospace;color:#00e676;margin-bottom:4px;">' + t.id + ' — Close Ticket</div>'
+    + '<div style="font-size:1rem;font-weight:800;color:#d0f0d8;">' + t.title + '</div>'
+    + '<div style="font-size:.88rem;color:#d2e4da;margin-top:6px;padding:6px 10px;background:rgba(255,210,0,0.07);border:1px solid rgba(255,210,0,0.25);border-radius:6px;">'
+    + '⚠ Submitting this form <strong style="color:#ffd700;">locks the ticket</strong>. Your instructor can reopen it if needed.</div></div>'
     + '<div style="margin-bottom:14px;">'
-    + '<label style="font-size:.88rem;color:#000;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Disposition <span style="color:#b00000;">*</span></label>'
-    + '<select id="tk-resolve-disp" style="width:100%;padding:9px 12px;background:#f6f8f7;border:1px solid #9cc7b0;color:#000;border-radius:6px;font-size:.88rem;cursor:pointer;">'
+    + '<label style="font-size:.88rem;color:#d2e4da;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Disposition <span style="color:#ff6060;">*</span></label>'
+    + '<select id="tk-resolve-disp" style="width:100%;padding:9px 12px;background:#0a1a0a;border:1px solid #00664a;color:#00e676;border-radius:6px;font-size:.88rem;cursor:pointer;">'
     + '<option value="">-- Select disposition --</option>' + dispOpts + '</select></div>'
     + adaptiveFields
-    + '<div id="tk-resolve-error" style="display:none;color:#b00000;font-size:.92rem;margin-bottom:12px;padding:8px 12px;background:rgba(255,96,96,0.08);border:1px solid rgba(255,96,96,0.3);border-radius:6px;"></div>'
+    + '<div id="tk-resolve-error" style="display:none;color:#ff6060;font-size:.92rem;margin-bottom:12px;padding:8px 12px;background:rgba(255,96,96,0.08);border:1px solid rgba(255,96,96,0.3);border-radius:6px;"></div>'
     + '<div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;">'
-    + '<button onclick="submitResolve(\'' + ticketId + '\',' + isHard + ')" style="flex:1;min-width:160px;background:#d4efdf;color:#000;border:1px solid #9cc7b0;padding:10px 20px;border-radius:6px;cursor:pointer;font-weight:800;font-size:.92rem;font-family:\'Rajdhani\',sans-serif;">✓ Submit &amp; Close Ticket</button>'
-    + '<button onclick="document.getElementById(\'tk-resolve-modal\').remove()" style="background:rgba(255,45,94,0.15);border:1px solid rgba(255,45,94,0.4);color:#b00000;padding:10px 18px;border-radius:6px;cursor:pointer;font-weight:700;font-family:\'Rajdhani\',sans-serif;">Cancel</button>'
+    + '<button onclick="submitResolve(\'' + ticketId + '\',' + isHard + ')" style="flex:1;min-width:160px;background:#003322;color:#00e676;border:1px solid #00664a;padding:10px 20px;border-radius:6px;cursor:pointer;font-weight:800;font-size:.92rem;font-family:\'Rajdhani\',sans-serif;">✓ Submit &amp; Close Ticket</button>'
+    + '<button onclick="document.getElementById(\'tk-resolve-modal\').remove()" style="background:rgba(255,45,94,0.15);border:1px solid rgba(255,45,94,0.4);color:#ff2d5e;padding:10px 18px;border-radius:6px;cursor:pointer;font-weight:700;font-family:\'Rajdhani\',sans-serif;">Cancel</button>'
     + '</div></div>';
   document.body.appendChild(overlay);
 }
