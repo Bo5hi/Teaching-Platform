@@ -1655,7 +1655,7 @@ select option { background:var(--surface); color:var(--text); }
   <!-- Assign Panel -->
   <div id="tk-panel-assign">
     <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px;">
-      Select a student from the dropdown for each ticket. Changes save to Firebase immediately.
+      Select a student from the dropdown for each ticket. Changes save to Firebase immediately. Click a ticket to see its answer key and remediation steps.
       Tier: <span style="color:#00e676;">&#9650; Easy</span>&nbsp;
       <span style="color:#ffd700;">&#9670; Moderate</span>&nbsp;
       <span style="color:#ff6060;">&#9733; Hard</span>
@@ -7019,6 +7019,420 @@ const TRACKER_TICKET_BANK = [
     tags:'exfiltration, data-loss, incident' },
 ];
 
+// ════════════════════════════════════════════════════════════════ SOC TICKET ANSWER KEYS
+// Instructor-only. Expected priority, disposition, root cause and remediation steps
+// (grouped by phase, in the order a real analyst would work them) for each ticket.
+const IT_DISP_NOTE = 'This is a service request, not a security event, so none of the security dispositions fit exactly. Accept "False Positive — Expected Behavior" or "Closed — No Action Required" as long as the summary clearly says what was done.';
+const TICKET_KEYS = {
+  'TCK-1001': {
+    priority:'P4', priorityWhy:'One user, no security impact. P3 is defensible because payroll is due this morning.',
+    disposition:'Service request — resolved', dispNote:IT_DISP_NOTE,
+    rootCause:'The user forgot the password they changed Friday. Repeated wrong guesses tripped the account lockout policy, which is the policy working as designed. The same user (d.reyes) shows up on TCK-2002 later, so it is worth noting the lockout source.',
+    phases:[
+      ['Triage', [
+        'Recognize this as a single-user service request with a business deadline (payroll) and set priority.',
+      ]],
+      ['Verify', [
+        'Verify the caller\'s identity BEFORE touching the account: call back the number on file or use the help-desk verification questions. An employee ID in an email is not proof of identity; password-reset requests are a classic social-engineering path.',
+        'In Active Directory confirm the account is locked and check the lockout source (which host the bad attempts came from) and the bad-password count.',
+        'The failed attempts should come only from the user\'s own workstation. If they come from other hosts or outside IPs, stop and re-open this as a security ticket.',
+      ]],
+      ['Fix', [
+        'Unlock the account and set a temporary password with "user must change password at next logon".',
+        'Stay on the phone while the user logs in and confirm they can reach the payroll application.',
+      ]],
+      ['Close', [
+        'Document how identity was verified, the lockout source, what was changed, and the time access was restored.',
+        'Give the user passphrase / password-manager guidance so it does not happen again.',
+      ]],
+    ],
+    lookFor:['Verified identity before resetting', 'Checked where the failed logins came from', 'Temporary password + forced change', 'Documented the verification method'],
+  },
+  'TCK-1002': {
+    priority:'P3', priorityWhy:'Confirmed phishing, but the reporter did not click. Raise to P2 if anyone else clicked or entered credentials.',
+    disposition:'True Positive — Malicious Activity Confirmed',
+    rootCause:'Credential-harvesting phish sent from a look-alike domain (cedercreek-secure.com, "ceder" vs "cedar") pretending to be IT Support, linking to a fake mailbox login page.',
+    phases:[
+      ['Analyze', [
+        'Do not click the link. Pull the full email headers: From vs. Reply-To vs. Return-Path, sending IP, SPF / DKIM / DMARC results.',
+        'Check the URL safely (urlscan.io / VirusTotal / a sandbox) and confirm it is a credential-harvesting page.',
+      ]],
+      ['Scope', [
+        'Run a message trace / mailbox search for the same sender, domain and subject to find every recipient.',
+        'Check proxy and DNS logs for anyone who visited mailbox-verify.cedercreek-secure.com.',
+      ]],
+      ['Contain', [
+        'Purge the message from all mailboxes.',
+        'Block the sender domain at the email gateway and the URL/domain at the web proxy / DNS filter.',
+        'For anyone who clicked AND entered credentials: reset password, revoke sessions, review their sign-ins for suspicious activity (this raises the ticket priority).',
+      ]],
+      ['Communicate & close', [
+        'Thank the reporter (reinforces good behavior). Send a short staff awareness notice if many people received it.',
+        'Document IOCs: sender address, domain, URL, sending IP, subject line.',
+      ]],
+    ],
+    lookFor:['Header analysis (spotted the look-alike domain)', 'Scoped other recipients and clicks', 'Purge + block', 'Listed IOCs'],
+  },
+  'TCK-1003': {
+    priority:'P3', priorityWhy:'One user blocked from work with a deadline at 11:00, no security indicator yet.',
+    disposition:'Service request — resolved', dispNote:IT_DISP_NOTE,
+    rootCause:'A VPN-side credential problem, not the user\'s AD password (webmail works). Most likely causes: expired VPN client certificate, stale saved credentials in the VPN client, MFA registration issue, or the account dropped from the VPN access group. The VPN/RADIUS log failure reason tells you which.',
+    phases:[
+      ['Gather info', [
+        'Ask for the exact error (screenshot), time of the attempt, VPN client version, and whether an MFA prompt appears.',
+      ]],
+      ['Investigate', [
+        'Check VPN / RADIUS logs for the username and read the failure reason (bad password, certificate, group membership, MFA timeout).',
+        'In AD confirm the account is not locked, the password has not expired, and the user is still in the VPN access group.',
+        'If the VPN uses certificates, check the client certificate expiry date.',
+        'If the logs show failed attempts from IPs other than the user\'s home IP, treat it as a security ticket.',
+      ]],
+      ['Fix', [
+        'Apply the fix that matches the log reason: clear saved credentials and re-enter, renew the certificate, restore group membership, or re-register MFA.',
+        'Workaround for the 11:00 call if needed: files through webmail / OneDrive / Teams.',
+        'Confirm the VPN connects AND the shared drive opens.',
+      ]],
+      ['Close', [
+        'Document the root cause from the logs, not a guess.',
+      ]],
+    ],
+    lookFor:['Used the webmail clue to rule out the AD password', 'Checked VPN logs for the failure reason', 'Offered a workaround for the deadline', 'Confirmed the fix with the user'],
+  },
+  'TCK-1004': {
+    priority:'P4', priorityWhy:'Planned work with days of lead time.',
+    disposition:'Service request — resolved', dispNote:IT_DISP_NOTE,
+    rootCause:'Standard onboarding request. The real work is getting the correct approvals and granting least-privilege access.',
+    phases:[
+      ['Verify', [
+        'Confirm the new hire is real: the HR request matches the HR system record, start date and manager (Tom Becker).',
+        'Get written approval from the manager for Engineering share access. HR can request it, but the manager / data owner approves access.',
+        'Confirm an AutoCAD license is available and the software is approved.',
+      ]],
+      ['Provision', [
+        'Create / verify the AD account and add it to role-based groups (Engineering). Do not copy another user\'s permissions wholesale.',
+        'Add VPN group membership and plan MFA enrollment for day one.',
+        'Install AutoCAD and the VPN client from approved sources; patch the laptop.',
+      ]],
+      ['Close', [
+        'Verify group membership / access works; hand over credentials securely on day one (not in email).',
+        'Reply to HR with status before Friday EOD and attach the approvals to the ticket.',
+      ]],
+    ],
+    lookFor:['Got manager approval for drive access', 'Least privilege / role-based groups', 'Secure credential handoff', 'Communicated the timeline to HR'],
+  },
+  'TCK-1005': {
+    priority:'P3', priorityWhy:'No confirmed compromise yet. Raise to P2 immediately if the user approved a prompt or the source host is not theirs.',
+    disposition:'False Positive — Tuning Required if traced to the user\'s own device; otherwise Escalated to Tier II / IR Team',
+    rootCause:'Key insight: MFA push prompts only fire AFTER a correct password, so something had l.osei\'s valid password. Because the IPs are internal, it is either one of the user\'s own devices using an old saved password (phone mail app, second PC, mapped drive, scheduled task) or an internal host an attacker is using for MFA fatigue.',
+    phases:[
+      ['Immediate', [
+        'Tell the user to DENY any prompts they did not start and report them.',
+      ]],
+      ['Investigate', [
+        'Pull the sign-in logs: exact source IPs, application / protocol, and which attempts reached the MFA step.',
+        'Map the source IPs to hostnames (DHCP / DNS logs). Is it the user\'s own workstation, phone, or someone else\'s machine?',
+        'Check whether any MFA prompt was approved and what was accessed afterward.',
+      ]],
+      ['Decide', [
+        'User\'s own device with old saved credentials: update / clear the stored credentials, close as false positive.',
+        'Host that is not the user\'s: treat as a compromised credential. Reset password, revoke sessions, re-register MFA, escalate, and investigate that host.',
+      ]],
+      ['Close', [
+        'Recommend MFA number matching to stop push-fatigue attacks. Document the source-host mapping.',
+      ]],
+    ],
+    lookFor:['Understood that MFA push = password was correct', 'Mapped IPs to hosts', 'Told the user to deny prompts', 'Clear decision path (own device vs. escalate)'],
+  },
+  'TCK-2001': {
+    priority:'P2', priorityWhy:'Likely account compromise. Raise to P1 if sensitive data was accessed or the mailbox was used to send phishing.',
+    disposition:'True Positive — Malicious Activity Confirmed (once the user confirms they are not travelling / using a VPN)',
+    rootCause:'r.castillo\'s credentials were compromised (likely phishing). The attacker logged in from Bucharest over legacy IMAP, which often bypasses or weakens MFA, and could pull the mailbox.',
+    phases:[
+      ['Verify', [
+        'Call the user at their desk (out of band, not email): confirm they are in St. Louis, not travelling, and not using a personal VPN that exits in Romania.',
+        'Review the foreign sign-in: IP reputation, user agent / mail client, MFA method used.',
+      ]],
+      ['Contain', [
+        'Reset the password and revoke all sessions / refresh tokens.',
+        'Review MFA methods for any newly registered device and remove it.',
+        'Block legacy authentication (IMAP / POP) for the user, and recommend it tenant-wide through Conditional Access.',
+        'Block the attacker IP and check whether it signed in to any other accounts.',
+      ]],
+      ['Investigate', [
+        'Check the mailbox for inbox / forwarding rules, mail sent by the attacker, OAuth app consents, and what was downloaded over IMAP.',
+        'Find the phishing email that likely stole the credentials and check who else received it.',
+      ]],
+      ['Communicate & close', [
+        'Notify the security lead and the user\'s manager. If sensitive data was in the mailbox, escalate to IR / legal.',
+        'Document the timeline. Recommend: disable legacy auth org-wide, location-based Conditional Access, MFA number matching.',
+      ]],
+    ],
+    lookFor:['Verified with the user out of band', 'Revoked sessions (not just a password reset)', 'Flagged legacy IMAP as the weakness', 'Checked mailbox rules / forwarding'],
+  },
+  'TCK-2002': {
+    priority:'P2', priorityWhy:'Malware executed on a Finance host. Quarantine does not prove it is clean.',
+    disposition:'True Positive — Malicious Activity Confirmed',
+    rootCause:'The user opened a malicious double-extension attachment (invoice_aug.pdf.exe) from a phishing email. The dropper tried to launch encoded PowerShell. Instructor note: FINANCE-07 is where the ransomware in TCK-3001 starts, so strong students question whether "quarantined" really means contained.',
+    phases:[
+      ['Investigate', [
+        'Do not trust "quarantined" alone. Review the EDR process tree: did the file execute, did it spawn child processes, create persistence (Run keys, scheduled tasks, services), or make network connections?',
+        'Decode the Base64 PowerShell command to see what it was trying to do (download URL / C2 address).',
+        'Get the file hash; check threat intel (VirusTotal) and search all endpoints for the hash and filename.',
+      ]],
+      ['Contain', [
+        'Network-isolate FINANCE-07 through EDR while investigating (Finance hosts are high value).',
+        'Find the email: purge it from all mailboxes, block the sender, domain and any C2 indicators.',
+        'Reset d.reyes\'s password as a precaution and review her recent sign-ins. Check whether the TCK-1001 lockout attempts came from her own host.',
+      ]],
+      ['Eradicate / recover', [
+        'Any sign of execution or persistence: escalate to IR and reimage the host. No execution confirmed: full scan, then release from isolation.',
+      ]],
+      ['Close', [
+        'Document IOCs (hash, filename, sender, decoded command / URL). Coach the user on double-extension attachments.',
+      ]],
+    ],
+    lookFor:['Questioned whether quarantine = contained', 'Decoded the PowerShell', 'Hunted the hash across all endpoints', 'Considered the link to TCK-1001'],
+  },
+  'TCK-2003': {
+    priority:'P3', priorityWhy:'Routine access request. The user\'s urgency does not change the process.',
+    disposition:'Service request — resolved once approvals are on file', dispNote:IT_DISP_NOTE,
+    rootCause:'A legitimate business need, but "my manager said it\'s fine" is not approval. Finance data needs the Finance data owner\'s approval, not just a Marketing manager\'s.',
+    phases:[
+      ['Verify', [
+        'Do not grant access on the user\'s word. Urgency is a common pressure tactic; the process still applies.',
+        'Identify the data owner for \\\\fileserver\\Finance\\Budgets (Finance director / CFO).',
+        'Get written approval in the ticket from Kevin\'s manager AND the Finance data owner.',
+        'Ask whether Finance can provide just the numbers needed (a report / extract) instead of folder access.',
+      ]],
+      ['Grant (if approved)', [
+        'Read-only, scoped to only the folder needed, granted through a group (not a one-off ACL).',
+        'Make it time-bound: set an expiry after the report deadline.',
+        'Verify read-only works and he cannot see other Finance folders.',
+      ]],
+      ['Close', [
+        'Notify the user, set a reminder to remove access, attach the approvals to the ticket.',
+      ]],
+    ],
+    lookFor:['Did not grant on the user\'s say-so', 'Got data owner approval', 'Least privilege + read-only', 'Time-limited access'],
+  },
+  'TCK-2004': {
+    priority:'P2', priorityWhy:'Several users at one site cannot reach a business app.',
+    disposition:'Service request — resolved', dispNote:IT_DISP_NOTE,
+    rootCause:'Same DNS servers and HQ works, so DNS is unlikely. Most likely the Plant traffic leaves through a different path: a firewall / proxy rule for the Plant subnet, or the vendor only allowlists the HQ public IP. The Plant\'s public egress IP is the key thing to check.',
+    phases:[
+      ['Scope', [
+        'Confirm which users / subnets are affected, when it started, and any recent changes (firewall, proxy, ISP, vendor).',
+      ]],
+      ['Troubleshoot (bottom up)', [
+        'From a Plant PC and an HQ PC: nslookup portal.acme-supply.com and compare. Same answer rules out DNS.',
+        'Test the path: tracert, and Test-NetConnection portal.acme-supply.com -Port 443 (or curl). Where does it stop?',
+        'Check firewall / proxy logs for Plant subnet traffic to that destination (denies, category blocks).',
+        'Compare the public egress IPs of Plant vs. HQ; ask the vendor if they allowlist by IP. Check the vendor status page.',
+      ]],
+      ['Fix', [
+        'Apply the fix through change control (firewall / proxy rule) or have the vendor allowlist the Plant IP.',
+        'Confirm with all four users.',
+      ]],
+      ['Close', [
+        'Document the root cause and the change made.',
+      ]],
+    ],
+    lookFor:['Logical elimination (DNS ruled out by evidence)', 'Compared the working site to the failing one', 'Checked firewall / proxy logs', 'Considered the vendor-side allowlist'],
+  },
+  'TCK-2005': {
+    priority:'P2', priorityWhy:'Confidential data left on removable media. Intent unknown.',
+    disposition:'True Positive — Policy Violation (unless an approval is found)',
+    rootCause:'Bulk copy of Confidential CAD files to a USB drive without the required approval. Intent is not yet known. Instructor note: the same host shows up again in TCK-3005 (exfiltration).',
+    phases:[
+      ['Investigate (stay neutral)', [
+        'Stick to facts and do not accuse. Check first for an existing approval or exception (manager approval, customer delivery, change ticket).',
+        'Review the DLP details: file list and classification, USB device ID / serial, whether the device is company-issued and encrypted.',
+        'Look for context: role, recent unusual activity, other alerts on ENG-14, and HR flags (e.g., notice of resignation) through the proper channel.',
+      ]],
+      ['Contain', [
+        'Contact the manager (and HR per policy) before the user if there are insider-risk indicators, so you do not tip them off.',
+        'Block removable storage on ENG-14 pending review; preserve DLP logs.',
+      ]],
+      ['Resolve', [
+        'Legitimate: get approval documented, make sure the data is on an encrypted company device, coach on the policy.',
+        'No business reason: escalate to IR / HR / legal and recover the USB device if possible.',
+      ]],
+    ],
+    lookFor:['Neutral, non-accusatory approach', 'Checked for an approval before acting', 'Looped in manager / HR appropriately', 'Preserved evidence'],
+  },
+  'TCK-3001': {
+    priority:'P1', priorityWhy:'Active ransomware encrypting a production file server. Spreading right now.',
+    disposition:'Escalated to Tier II / IR Team (True Positive — Malicious Activity Confirmed)',
+    rootCause:'Ransomware launched from a session on FINANCE-07 (most likely the TCK-2002 dropper was not fully contained) and is encrypting files over SMB on SHARE-01.',
+    phases:[
+      ['Declare', [
+        'Declare an incident and notify the IR lead / manager immediately.',
+      ]],
+      ['Contain (minutes matter)', [
+        'Network-isolate FINANCE-07 through EDR. Do NOT power it off; memory holds evidence and possibly keys.',
+        'Disable the user account / session the encryption is running under.',
+        'Stop the spread to SHARE-01: take it off the network or stop the shares; consider blocking SMB between segments.',
+        'Do not delete the ransom note, do not contact the attackers, do not pay.',
+      ]],
+      ['Scope & preserve', [
+        'Find every folder / host with .ckl0ck files or the ransom note; hunt the process / hash across all endpoints with EDR.',
+        'Preserve evidence: memory image of FINANCE-07, EDR telemetry, logs, the ransom note, a sample encrypted file.',
+        'Verify backups are intact and offline / immutable. Attackers go after backups (see svc-backup in TCK-3002).',
+      ]],
+      ['Eradicate & recover', [
+        'Find the initial access (TCK-2002 attachment), remove persistence, reimage FINANCE-07, reset any credentials used on it.',
+        'Restore from clean backups, verify integrity, and monitor closely.',
+      ]],
+      ['Notify & learn', [
+        'Notify leadership, legal and the cyber-insurance carrier; consider law enforcement (FBI IC3).',
+        'Check whether data was stolen before encryption (double extortion), which can trigger breach notification.',
+        'Hold a lessons-learned review.',
+      ]],
+    ],
+    lookFor:['Containment first, isolate without powering off', 'Linked it to TCK-2002', 'Verified backups before relying on them', 'Correct notification path (leadership, legal, insurance)'],
+  },
+  'TCK-3002': {
+    priority:'P1', priorityWhy:'Two accounts successfully compromised, one of them a privileged service account.',
+    disposition:'True Positive — Malicious Activity Confirmed (escalate to IR)',
+    rootCause:'Weak / common passwords on VPN accounts without MFA enforcement. Service accounts like svc-backup are often exempt from MFA and should never have VPN access in the first place.',
+    phases:[
+      ['Contain', [
+        'Disable svc-backup and j.owens (or reset their passwords) and terminate their active VPN sessions.',
+        'Decision point: disabling svc-backup may break backups. Coordinate with the backup team, but a compromised account is the bigger risk.',
+        'Block the 62 source IPs (and geo-block countries with no business need). Note that attackers rotate IPs, so this only buys time.',
+      ]],
+      ['Investigate', [
+        'For both accounts: what VPN IP they were assigned and what they touched after login (firewall, AD, EDR logs).',
+        'Confirm with j.owens out of band that the login was not them.',
+        'Blast radius: list every targeted username, any lockouts, any other successes; force resets for targeted accounts with weak passwords.',
+      ]],
+      ['Harden', [
+        'Remove VPN rights from service accounts.',
+        'Enforce MFA on the VPN for every account; smart lockout; banned-password list.',
+      ]],
+      ['Escalate', [
+        'svc-backup is used for lateral movement in TCK-3004, so this goes to IR as part of one intrusion.',
+      ]],
+    ],
+    lookFor:['Disabled the two successful accounts first', 'Questioned why a service account had VPN access', 'Assessed blast radius across all targeted users', 'Recommended MFA on VPN'],
+  },
+  'TCK-3003': {
+    priority:'P1', priorityWhy:'$48,750 at risk and possible executive mailbox compromise.',
+    disposition:'True Positive — Malicious Activity Confirmed',
+    rootCause:'Business Email Compromise using a look-alike domain (cedarcreek-lnd.com) to impersonate the CFO. The attacker knew a real internal project name, so either the CFO\'s mailbox (or someone close to it) is compromised or the information was gathered from public sources.',
+    phases:[
+      ['Stop the money', [
+        'Tell AP: do NOT send the wire and do NOT reply to the email.',
+        'Verify out of band: call the CFO on the number from the company directory, not from the email.',
+      ]],
+      ['Preserve & analyze', [
+        'Preserve the original email with full headers (attach it to the ticket; do not delete it).',
+        'Analyze headers: From vs. Reply-To, sending IP, SPF / DKIM / DMARC. Did it come from outside or from the CFO\'s real mailbox?',
+        'Check the CFO\'s real mailbox: sign-in logs, inbox / forwarding / auto-delete rules, sent items, MFA changes.',
+      ]],
+      ['Contain', [
+        'Search all mailboxes for the lnd domain and purge; block the domain at the email gateway; report it for takedown.',
+        'If any earlier payments went to the new bank account, contact the bank immediately to attempt a recall.',
+      ]],
+      ['Notify & prevent', [
+        'Notify the CFO, Finance leadership and legal; report to FBI IC3.',
+        'Recommend: call-back verification for any new or changed bank details, external-email banner, look-alike domain monitoring, DMARC enforcement.',
+      ]],
+    ],
+    lookFor:['Stopped the wire first', 'Out-of-band verification', 'Investigated the real CFO mailbox', 'Recommended payment-verification process'],
+  },
+  'TCK-3004': {
+    priority:'P1', priorityWhy:'Active hands-on-keyboard attacker moving between hosts and dumping credentials.',
+    disposition:'Escalated to Tier II / IR Team (True Positive — Malicious Activity Confirmed)',
+    rootCause:'svc-backup was compromised in the password spray (TCK-3002). The attacker is using it with PsExec and WMI to move laterally and dump credentials.',
+    phases:[
+      ['Escalate & contain', [
+        'Escalate to IR: this is an active intrusion.',
+        'Disable svc-backup and kill its sessions (if not already done for TCK-3002).',
+        'Network-isolate the affected hosts through EDR. Do NOT reboot or power off.',
+      ]],
+      ['Scope', [
+        'Hunt beyond the 9 flagged hosts: PSEXESVC service installs (event 7045), WMI activity, network logons (4624 type 3) by svc-backup across ALL hosts.',
+      ]],
+      ['Preserve before reboot', [
+        'Memory images (especially the host where credential dumping is "unclear"), EDR timelines, Windows event logs (4624, 4688, 7045), prefetch.',
+      ]],
+      ['Credentials', [
+        'Assume every credential on the "unclear" host was stolen. Identify everyone who logged on there (especially admins) and reset them; reset krbtgt twice if a domain admin was exposed.',
+        'Look for persistence: new accounts, scheduled tasks, services.',
+      ]],
+      ['Recover & harden', [
+        'Rebuild compromised hosts; rotate credentials.',
+        'Lock down service accounts: deny interactive / remote logon, least privilege, use gMSAs.',
+      ]],
+    ],
+    lookFor:['Connected it to TCK-3002', 'Collected evidence before reboot', 'Assumed credentials were stolen', 'Scoped beyond the flagged hosts'],
+  },
+  'TCK-3005': {
+    priority:'P1', priorityWhy:'Likely data loss of Confidential engineering data. Legal notification may be required.',
+    disposition:'True Positive — Malicious Activity Confirmed (escalate to IR)',
+    rootCause:'Data staged into encrypted archives and uploaded to cloud storage. The analyst must decide whether it is part of the broader intrusion (TCK-3002 / 3004, timing fits right after the 03:05–03:38 lateral movement) or an insider event tied to the earlier USB alert (TCK-2005). The account and process running the upload answer that.',
+    phases:[
+      ['Contain', [
+        'Block the destination at the proxy / firewall and network-isolate ENG-14 through EDR.',
+      ]],
+      ['Investigate', [
+        'Who / what ran the upload at 03:50: t.becker interactively, or a remote svc-backup session? Check the EDR process tree and logon events.',
+        'Correlate with TCK-3004: was ENG-14 one of the hosts touched by the lateral movement?',
+        'Identify what was archived: source file paths, archive creation events, staging folders. Confidential CAD?',
+        'Hunt for the same destination / large uploads from other hosts.',
+      ]],
+      ['Preserve', [
+        'Proxy logs, EDR telemetry, a memory image, and the archives if still on disk.',
+      ]],
+      ['Notify', [
+        'Notify the IR lead, leadership and legal. Legal decides on breach-notification obligations (customer contracts, state breach laws if personal data is involved).',
+        'If an insider is suspected, do not contact the user until HR and legal agree on the approach.',
+      ]],
+    ],
+    lookFor:['Contained (block + isolate)', 'Determined intrusion vs. insider using evidence', 'Identified what data left', 'Brought in legal for notification decisions'],
+  },
+};
+
+function tkKeyEsc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+// Answer-key panel for one ticket (used in the ticket popup and next to student work)
+function tkKeyHtml(ticketId) {
+  const k = TICKET_KEYS[ticketId];
+  if (!k) return '<div style="color:var(--muted);font-style:italic;">No answer key for this ticket.</div>';
+  const lbl = t => '<div style="font-size:.68rem;font-weight:700;color:#ffd700;letter-spacing:1px;text-transform:uppercase;margin:12px 0 4px;">' + t + '</div>';
+  let n = 0;
+  const steps = k.phases.map(([phase, list]) =>
+    '<div style="margin-top:8px;"><div style="font-size:.78rem;font-weight:700;color:var(--cyan);margin-bottom:4px;">' + tkKeyEsc(phase) + '</div>'
+    + list.map(s => '<div style="display:flex;gap:8px;font-size:.84rem;color:var(--text);line-height:1.5;margin-bottom:5px;"><span style="color:var(--yellow);font-weight:700;min-width:20px;">' + (++n) + '.</span><span>' + tkKeyEsc(s) + '</span></div>').join('')
+    + '</div>').join('');
+  return '<div style="background:rgba(255,215,0,0.04);border:1px solid rgba(255,215,0,0.3);border-radius:8px;padding:14px 16px;">'
+    + '<div style="font-size:.72rem;font-weight:800;color:#ffd700;letter-spacing:1.5px;text-transform:uppercase;">&#128273; Answer Key — Instructor Only</div>'
+    + lbl('Expected priority') + '<div style="font-size:.85rem;color:var(--text);"><strong style="color:#ff8c00;">' + k.priority + '</strong> — ' + tkKeyEsc(k.priorityWhy) + '</div>'
+    + lbl('Expected disposition') + '<div style="font-size:.85rem;color:var(--text);">' + tkKeyEsc(k.disposition) + '</div>'
+    + (k.dispNote ? '<div style="font-size:.76rem;color:#8aa0b8;font-style:italic;margin-top:3px;">' + tkKeyEsc(k.dispNote) + '</div>' : '')
+    + lbl('Root cause') + '<div style="font-size:.85rem;color:var(--text);line-height:1.55;">' + tkKeyEsc(k.rootCause) + '</div>'
+    + lbl('Remediation steps') + steps
+    + lbl('What to look for when grading') + '<div style="font-size:.84rem;color:var(--text);line-height:1.6;">' + k.lookFor.map(x => '&#10003; ' + tkKeyEsc(x)).join('<br>') + '</div>'
+    + '</div>';
+}
+
+// Popup: click a ticket in the Assign Tickets table
+function tkViewKey(ticketId) {
+  const t = TRACKER_TICKET_BANK.find(x => x.id === ticketId);
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:9900;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px;';
+  overlay.onclick = e => { if (e.target === overlay) overlay.remove(); };
+  overlay.innerHTML =
+    '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;max-width:820px;width:100%;padding:24px;">'
+    + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:10px;">'
+    + '<div><div style="font-size:.8rem;font-family:monospace;color:var(--cyan);">' + ticketId + (t ? ' &mdash; ' + t.tier + ' · ' + t.type : '') + '</div>'
+    + '<div style="font-size:.95rem;font-weight:700;color:var(--text);margin-top:4px;">' + (t ? t.title : '') + '</div></div>'
+    + '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:rgba(255,45,94,0.15);border:1px solid rgba(255,45,94,0.4);color:#ff2d5e;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:700;">&#10005;</button>'
+    + '</div>' + tkKeyHtml(ticketId) + '</div>';
+  document.body.appendChild(overlay);
+}
+
 let _tkAssign = {};       // ticketId -> assigneeName (from Firebase)
 let _tkAssignMeta = {};   // ticketId -> {assignedAt: epoch ms}
 let _tkStudentNames = [];
@@ -7772,10 +8186,10 @@ function renderTkAssignTable() {
       `<option value="${n === '-- Unassigned --' ? '' : n}" ${assigned === (n === '-- Unassigned --' ? '' : n) ? 'selected' : ''}>${n}</option>`
     ).join('');
     return `<tr>
-      <td style="font-family:monospace;font-size:.8rem;color:var(--cyan);white-space:nowrap;">${t.id}</td>
+      <td style="font-family:monospace;font-size:.8rem;color:var(--cyan);white-space:nowrap;cursor:pointer;text-decoration:underline dotted;" onclick="tkViewKey('${t.id}')" title="View answer key">${t.id}</td>
       <td style="font-size:.75rem;">${tierIcon[t.tier] || ''}</td>
       <td style="font-size:.78rem;${typeStyle[t.type]||''}">${t.type}</td>
-      <td style="font-size:.82rem;color:var(--text);">${t.title}</td>
+      <td style="font-size:.82rem;color:var(--text);cursor:pointer;" onclick="tkViewKey('${t.id}')" title="View answer key">${t.title} <span style="font-size:.7rem;color:var(--yellow);white-space:nowrap;">&#128273; Key</span></td>
       <td>
         <select onchange="tkSaveAssignment('${t.id}', this.value)"
           style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:5px;font-size:.78rem;min-width:140px;">
@@ -7949,7 +8363,7 @@ function tkViewNotes(studentName, ticketId) {
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:9900;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px;';
   overlay.innerHTML =
-    '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;max-width:640px;width:100%;padding:24px;">'
+    '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;max-width:1180px;width:100%;padding:24px;">'
     + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:10px;flex-wrap:wrap;">'
     + '<div><div style="font-size:.8rem;font-family:monospace;color:var(--cyan);">' + ticketId + ' &mdash; ' + studentName + '</div>'
     + '<div style="font-size:.92rem;font-weight:700;color:var(--text);margin-top:4px;">' + (t ? t.title : '') + '</div>'
@@ -7959,8 +8373,11 @@ function tkViewNotes(studentName, ticketId) {
     + (isResolved ? '<button onclick="tkAdminReopen(\'' + studentName + '\',\'' + ticketId + '\');this.closest(\'div[style*=fixed]\').remove()" style="background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.4);color:#ff8c00;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:.78rem;">&#8635; Reopen</button>' : '')
     + '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:rgba(255,45,94,0.15);border:1px solid rgba(255,45,94,0.4);color:#ff2d5e;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:700;">&#10005;</button>'
     + '</div></div>'
+    + '<div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start;">'
+    + '<div style="flex:1 1 400px;min-width:0;"><div style="font-size:.72rem;font-weight:800;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">Student Work</div>'
     + (noteHtml || '<div style="color:var(--muted);font-style:italic;margin-bottom:10px;">No work notes yet.</div>')
     + resHtml
+    + '</div><div style="flex:1 1 400px;min-width:0;">' + tkKeyHtml(ticketId) + '</div></div>'
     + '</div>';
   document.body.appendChild(overlay);
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
