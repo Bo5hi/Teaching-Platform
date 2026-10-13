@@ -12,6 +12,8 @@
 <link rel="icon" type="image/png" href="assets/mccoe-logo.png">
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="weeks-data.js?v=20261013"></script>
+<script src="week-tasks.js?v=20261013"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -599,6 +601,9 @@ select option { background:var(--surface); color:var(--text); }
   <div class="nav-section">Overview</div>
   <button class="nav-btn active" onclick="showView('dashboard',this)">
     <span class="nav-icon">📊</span> Dashboard
+  </button>
+  <button class="nav-btn" onclick="showView('weekly',this)">
+    <span class="nav-icon">📚</span> Weekly Lessons
   </button>
   <div class="nav-section">Management</div>
   <button class="nav-btn" id="nav-pending" onclick="showView('pending',this)">
@@ -1565,6 +1570,19 @@ select option { background:var(--surface); color:var(--text); }
 </div>
 
 <!-- ═══ CONTENT MANAGER ═══ -->
+<!-- ═══ WEEKLY LESSONS ═══ -->
+<div id="view-weekly" class="view">
+  <div class="page-header">
+    <div><h2>📚 Weekly Lessons</h2><p>What students learn each week — and how the class is doing on it</p></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <select id="wk-select" onchange="renderWeeklyView(parseInt(this.value))"
+        style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:.85rem;"></select>
+      <button class="btn btn-outline" onclick="loadWeeklyProgress()">↻ Refresh</button>
+    </div>
+  </div>
+  <div id="wk-body"></div>
+</div>
+
 <div id="view-content" class="view">
   <div class="page-header">
     <div>
@@ -2470,6 +2488,7 @@ function showView(name, btn) {
   document.getElementById('view-'+name).classList.add('active');
   if(btn) btn.classList.add('active');
   if(name==='dashboard')    renderDashboard();
+  if(name==='weekly')       initWeeklyView();
   if(name==='pending')      loadPendingApprovals();
   if(name==='students')     renderStudents();
   if(name==='attendance')   renderAttendance();
@@ -6596,6 +6615,191 @@ function approveSubmission(pendingIdx) {
   renderSubmissionsView();
   renderDashboard();
   updateSubBadge();
+}
+
+// ════════════════════════════════════════════
+//  WEEKLY LESSONS (content from weeks-data.js / week-tasks.js; read-only)
+// ════════════════════════════════════════════
+const WK_PROGRAM_START = new Date('2026-08-31T00:00:00');
+let _wkCur = null, _wkProg = null, _wkChecks = null;
+function wkEsc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function wkCurrentWeek() {
+  const days = Math.floor((Date.now() - WK_PROGRAM_START) / 86400000);
+  return Math.min(12, Math.max(1, Math.floor(days / 7) + 1));
+}
+function wkStudents() {
+  return (students || []).filter(s => s.portalTempId).slice().sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+}
+function wkStudentWeek(s, n) {
+  const p = ((_wkProg || {})[s.portalTempId] || {}).progress || {};
+  return p[n] || p[String(n)] || {};
+}
+function wkCheckDone(s, n, idx) {
+  return ((_wkChecks || {})[s.portalTempId] || {})['mccoe_chk_' + s.portalTempId + '_w' + n + '_i' + idx] === '1';
+}
+function initWeeklyView() {
+  const sel = document.getElementById('wk-select');
+  const cur = wkCurrentWeek();
+  if (_wkCur === null) _wkCur = cur;
+  sel.innerHTML = WEEKS.map(w => `<option value="${w.num}" style="color:#111;background:#f0f0f0;">Week ${w.num} — ${wkEsc(w.title)}${w.num === cur ? '  ◄ Current' : ''}</option>`).join('');
+  sel.value = _wkCur;
+  renderWeeklyView(_wkCur);
+  loadWeeklyProgress();
+}
+function loadWeeklyProgress() {
+  if (!_fbDb) return;
+  Promise.all([_fbDb.ref('mccoe_progress').once('value'), _fbDb.ref('mccoe_checklists').once('value')]).then(([p, c]) => {
+    _wkProg = p.val() || {}; _wkChecks = c.val() || {};
+    renderWeeklyView(_wkCur);
+  }).catch(e => console.warn('Weekly progress unavailable:', e));
+}
+function wkCard(title, body, open, extra) {
+  return `<details ${open ? 'open' : ''} style="background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:14px;">
+    <summary style="cursor:pointer;padding:14px 18px;font-weight:700;color:var(--cyan);font-size:.95rem;letter-spacing:.5px;">${title}${extra ? ' <span style="font-size:.75rem;color:var(--muted);font-weight:600;margin-left:6px;">' + extra + '</span>' : ''}</summary>
+    <div style="padding:0 18px 16px;">${body}</div></details>`;
+}
+function wkCount(done, total) {
+  const pct = total ? done / total : 0;
+  const col = !total ? 'var(--muted)' : pct >= .8 ? '#00c864' : pct >= .5 ? '#ffd700' : '#ff6060';
+  return `<span style="font-size:.72rem;font-weight:700;color:${col};border:1px solid ${col};border-radius:10px;padding:1px 8px;white-space:nowrap;">${done}/${total}</span>`;
+}
+function wkQuizHtml(quiz) {
+  const L = 'ABCDEFGH';
+  return quiz.map((q, i) => `<div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+      <div style="font-size:.86rem;color:var(--text);font-weight:600;margin-bottom:6px;">${i + 1}. ${wkEsc(q.q)}</div>
+      ${(q.opts || []).map((o, j) => `<div style="font-size:.82rem;padding:2px 0 2px 14px;${j === q.ans ? 'color:#00c864;font-weight:700;' : 'color:#8aa0b8;'}">${L[j]}. ${wkEsc(o)}${j === q.ans ? ' ✓' : ''}</div>`).join('')}
+      ${q.exp ? `<div style="font-size:.78rem;color:#8aa0b8;font-style:italic;margin:4px 0 0 14px;">${wkEsc(q.exp)}</div>` : ''}
+    </div>`).join('');
+}
+function wkObjectValue(v) {
+  if (Array.isArray(v)) return '<ul style="margin:4px 0 0 18px;padding:0;">' + v.map(x => '<li style="margin-bottom:3px;">' + (typeof x === 'object' ? wkEsc(Object.values(x).join(' — ')) : wkEsc(x)) + '</li>').join('') + '</ul>';
+  if (v && typeof v === 'object') return wkEsc(Object.values(v).join(' — '));
+  return wkEsc(v);
+}
+function wkFieldsHtml(obj) {
+  return Object.keys(obj).map(k => `<div style="margin-bottom:8px;"><div style="font-size:.68rem;font-weight:700;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;">${wkEsc(k.replace(/([A-Z])/g, ' $1'))}</div>
+    <div style="font-size:.84rem;color:var(--text);line-height:1.55;">${wkObjectValue(obj[k])}</div></div>`).join('');
+}
+function renderWeeklyView(n) {
+  _wkCur = n;
+  const w = WEEKS.find(x => x.num === n);
+  const wrap = document.getElementById('wk-body');
+  if (!w || !wrap) return;
+  const roster = wkStudents();
+  const haveData = _wkProg !== null;
+  const start = new Date(WK_PROGRAM_START.getTime() + (n - 1) * 7 * 86400000);
+  const end = new Date(start.getTime() + 3 * 86400000);
+  const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const tasks = (WEEK_TASKS[n] || { groups: [] }).groups;
+  const allItems = [];
+  tasks.forEach(g => g.items.forEach(it => allItems.push(it)));
+
+  // Header
+  let html = `<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:14px;">
+    <div style="font-size:.72rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Week ${n} · ${fmt(start)}–${fmt(end)}${n === wkCurrentWeek() ? ' · <span style="color:#00c864;">current week</span>' : ''}</div>
+    <div style="font-size:1.25rem;font-weight:800;color:var(--white);margin:4px 0 8px;">${wkEsc(w.title)}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:.75rem;">
+      ${w.nist ? `<span class="tag" style="padding:2px 10px;border:1px solid var(--border);border-radius:10px;color:var(--cyan);">NIST: ${wkEsc(w.nist)}</span>` : ''}
+      ${w.level ? `<span style="padding:2px 10px;border:1px solid var(--border);border-radius:10px;color:var(--text);">${wkEsc(w.level)}</span>` : ''}
+      ${w.hours ? `<span style="padding:2px 10px;border:1px solid var(--border);border-radius:10px;color:var(--text);">⏱ ${wkEsc(w.hours)}</span>` : ''}
+    </div>
+    ${w.topics ? `<div style="font-size:.84rem;color:#8aa0b8;margin-top:10px;"><strong style="color:var(--text);">Topics:</strong> ${wkEsc(w.topics)}</div>` : ''}
+    ${w.overview ? `<div style="font-size:.85rem;color:var(--text);line-height:1.6;margin-top:10px;">${wkEsc(w.overview)}</div>` : ''}
+    ${w.capability ? `<div style="font-size:.82rem;color:#8aa0b8;margin-top:6px;"><strong style="color:var(--text);">Capability built:</strong> ${wkEsc(w.capability)}</div>` : ''}
+  </div>`;
+
+  // Class progress
+  let prog;
+  if (!roster.length) prog = '<div style="color:var(--muted);font-size:.85rem;">No students linked to portal accounts yet.</div>';
+  else if (!haveData) prog = '<div style="color:var(--muted);font-size:.85rem;">Loading class progress…</div>';
+  else {
+    const nObj = w.objectives.length, nLabs = (w.labs || []).length;
+    let taken = 0, sum = 0, subm = 0;
+    const behind = [];
+    const rows = roster.map(s => {
+      const p = wkStudentWeek(s, n);
+      const hasQuiz = p.quizScore !== null && p.quizScore !== undefined && p.quizScore !== '';
+      const qp = hasQuiz ? Math.round(p.quizScore / (p.quizTotal || 10) * 100) : null;
+      if (hasQuiz) { taken++; sum += qp; }
+      if (p.submitted) subm++;
+      const chk = allItems.filter((_, i) => wkCheckDone(s, n, i)).length;
+      const objD = (p.objectivesChecked || []).length, labD = (p.labsChecked || []).length;
+      if (!hasQuiz && !objD && !labD && !chk) behind.push(s.name);
+      return `<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+        <td style="padding:7px 10px;color:var(--text);font-size:.84rem;">${wkEsc(s.name)}</td>
+        <td style="padding:7px 10px;">${wkCount(objD, nObj)}</td>
+        <td style="padding:7px 10px;font-size:.82rem;font-weight:700;color:${qp === null ? 'var(--muted)' : qp >= 70 ? '#00c864' : '#ff6060'};">${qp === null ? '—' : qp + '% (' + p.quizScore + '/' + (p.quizTotal || 10) + ')'}</td>
+        <td style="padding:7px 10px;">${wkCount(labD, nLabs)}</td>
+        <td style="padding:7px 10px;">${wkCount(chk, allItems.length)}</td>
+        <td style="padding:7px 10px;font-size:.82rem;color:${p.submitted ? '#00c864' : 'var(--muted)'};">${p.submitted ? '✓ Submitted' : '—'}</td>
+      </tr>`;
+    }).join('');
+    const th = t => `<th style="padding:7px 10px;text-align:left;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">${t}</th>`;
+    prog = `<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.82rem;color:var(--text);margin-bottom:10px;">
+        <span>Quiz taken: <strong>${taken}/${roster.length}</strong></span>
+        <span>Average quiz: <strong>${taken ? Math.round(sum / taken) + '%' : '—'}</strong></span>
+        <span>Week submitted: <strong>${subm}/${roster.length}</strong></span>
+        ${behind.length ? `<span style="color:#ff6060;">Not started: <strong>${behind.map(wkEsc).join(', ')}</strong></span>` : ''}
+      </div>
+      <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="border-bottom:1px solid var(--border);">${th('Student')}${th('Objectives')}${th('Quiz')}${th('Labs')}${th('Hub checklist')}${th('Week')}</tr></thead>
+        <tbody>${rows}</tbody></table></div>`;
+  }
+  html += wkCard('📈 Class Progress', prog, true);
+
+  // Learning objectives (+ explanation per objective for Weeks 1–8)
+  const det = w.objectiveDetails || [];
+  const objHtml = w.objectives.map((o, i) => {
+    const d = det[i];
+    const cnt = haveData && roster.length ? wkCount(roster.filter(s => (wkStudentWeek(s, n).objectivesChecked || []).includes(i)).length, roster.length) : '';
+    const head = `<span style="color:var(--yellow);font-weight:800;margin-right:6px;">${i + 1}.</span>${wkEsc(o)} ${cnt}`;
+    if (!d) return `<div style="font-size:.88rem;color:var(--text);padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">${head}</div>`;
+    return `<details style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+      <summary style="cursor:pointer;font-size:.88rem;color:var(--text);">${head}</summary>
+      <div style="padding:8px 0 4px 22px;font-size:.84rem;color:var(--text);line-height:1.6;">
+        ${d.explanation ? `<div style="margin-bottom:8px;">${wkEsc(d.explanation)}</div>` : ''}
+        ${(d.keyPoints || []).length ? '<div style="font-size:.68rem;font-weight:700;color:var(--yellow);letter-spacing:1px;">KEY POINTS</div><ul style="margin:4px 0 8px 18px;padding:0;">' + d.keyPoints.map(k => '<li style="margin-bottom:3px;">' + wkEsc(k) + '</li>').join('') + '</ul>' : ''}
+        ${d.example ? `<div style="font-size:.68rem;font-weight:700;color:var(--yellow);letter-spacing:1px;">REAL-WORLD EXAMPLE</div><div style="margin:4px 0 8px;">${wkEsc(d.example)}</div>` : ''}
+        ${d.quizHint ? `<div style="font-size:.68rem;font-weight:700;color:var(--yellow);letter-spacing:1px;">QUIZ TIE-IN</div><div style="margin-top:4px;color:#8aa0b8;">${wkEsc(d.quizHint)}</div>` : ''}
+      </div></details>`;
+  }).join('');
+  html += wkCard('🎯 Learning Objectives', (det.length ? '<div style="font-size:.78rem;color:var(--muted);margin-bottom:6px;">Click an objective to see the explanation students read. Badge = students who checked it off.</div>' : (haveData && roster.length ? '<div style="font-size:.78rem;color:var(--muted);margin-bottom:6px;">Badge = students who checked it off.</div>' : '')) + objHtml, true, w.objectives.length + ' objectives');
+
+  // Lessons (Weeks 9–12)
+  if ((w.lessons || []).length) {
+    html += wkCard('📖 Lessons', w.lessons.map(l => `<details style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+      <summary style="cursor:pointer;font-size:.88rem;color:var(--text);font-weight:600;">${wkEsc(l.title)}</summary>
+      <div style="padding:8px 0 4px 14px;font-size:.84rem;color:var(--text);line-height:1.6;">${(Array.isArray(l.body) ? l.body : [l.body]).map(p => '<p style="margin:0 0 8px;">' + wkEsc(p) + '</p>').join('')}</div></details>`).join(''), true, w.lessons.length + ' lessons');
+  }
+
+  // Hub checklist
+  if (tasks.length) {
+    let idx = 0;
+    const tl = tasks.map(g => `<div style="margin-bottom:10px;"><div style="font-size:.72rem;font-weight:700;color:${g.color || 'var(--cyan)'};letter-spacing:1px;margin-bottom:4px;">${g.icon || ''} ${wkEsc(g.label)}</div>`
+      + g.items.map(it => { const i = idx++; const c = haveData && roster.length ? wkCount(roster.filter(s => wkCheckDone(s, n, i)).length, roster.length) : '';
+          return `<div style="display:flex;justify-content:space-between;gap:10px;font-size:.84rem;color:var(--text);padding:4px 0 4px 10px;">${wkEsc(it.t)} ${c}</div>`; }).join('') + '</div>').join('');
+    html += wkCard("✅ This Week's Checklist (Hub)", tl, true, allItems.length + ' items');
+  }
+
+  // Labs, lab info, deliverable
+  let labs = (w.labs || []).map((l, i) => `<div style="display:flex;gap:8px;font-size:.85rem;color:var(--text);line-height:1.55;padding:5px 0;"><span style="color:var(--yellow);font-weight:700;min-width:20px;">${i + 1}.</span><span>${wkEsc(l)}</span></div>`).join('');
+  if (w.labInfo) labs += '<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">' + wkFieldsHtml(w.labInfo) + '</div>';
+  if (w.deliverable) labs += '<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);"><div style="font-size:.78rem;font-weight:800;color:var(--cyan);margin-bottom:6px;">📦 DELIVERABLE</div>' + wkFieldsHtml(w.deliverable) + '</div>';
+  if (labs) html += wkCard('🔬 Labs' + (w.deliverable ? ' & Deliverable' : ''), labs, false, (w.labs || []).length + ' labs');
+
+  // Quiz with answers (+ Week 11 practice sets)
+  if ((w.quiz || []).length) html += wkCard('📝 Quiz — Answer Key', wkQuizHtml(w.quiz), false, w.quiz.length + ' questions');
+  (w.practiceSets || []).forEach(ps => { if ((ps.quiz || []).length) html += wkCard('📝 ' + wkEsc(ps.label) + ' — Answer Key', wkQuizHtml(ps.quiz), false, ps.quiz.length + ' questions'); });
+
+  // Concepts + resources
+  if ((w.concepts || []).length) html += wkCard('🔑 Key Concepts', '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">'
+    + w.concepts.map(c => `<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px 10px;font-size:.84rem;color:var(--cyan);font-weight:700;vertical-align:top;white-space:nowrap;">${wkEsc(c[0])}</td><td style="padding:6px 10px;font-size:.84rem;color:var(--text);">${wkEsc(c[1])}</td><td style="padding:6px 10px;font-size:.8rem;color:#8aa0b8;font-family:monospace;">${wkEsc(c[2] || '')}</td></tr>`).join('')
+    + '</table></div>', false, w.concepts.length + ' terms');
+  if ((w.resources || []).length) html += wkCard('🔗 Resources', w.resources.map(r => `<div style="padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:.84rem;color:var(--text);">
+      ${r[4] ? `<a href="${wkEsc(r[4])}" target="_blank" rel="noopener" style="color:var(--cyan);font-weight:700;">${wkEsc(r[0])}</a>` : `<strong>${wkEsc(r[0])}</strong>`}
+      <span style="color:var(--muted);font-size:.76rem;"> · ${wkEsc(r[1])} · ${wkEsc(r[3] || '')}</span><div style="color:#8aa0b8;font-size:.8rem;margin-top:2px;">${wkEsc(r[2])}</div></div>`).join(''), false, w.resources.length + ' resources');
+
+  wrap.innerHTML = html;
 }
 
 // ════════════════════════════════════════════
