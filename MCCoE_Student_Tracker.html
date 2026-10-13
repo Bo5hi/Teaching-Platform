@@ -8731,6 +8731,16 @@ function tkPriorityLine(work, ticketId) {
   return '<div style="font-size:.78rem;color:var(--muted);margin-top:2px;">Priority: <strong style="color:#ffd700;">' + sp.label + '</strong>' + match + '</div>';
 }
 
+function tkDispositionLine(work, ticketId) {
+  if (!work.disposition) return work.resolution ? '<div style="font-size:.78rem;color:var(--muted);margin-top:2px;">Disposition: <strong style="color:#ff8c00;">not recorded</strong></div>' : '';
+  const exp = (TICKET_KEYS[ticketId] || {}).disposition || '';
+  const match = !exp ? ''
+    : exp.indexOf(work.disposition) >= 0 ? ' <span style="color:#00c864;">&#10003; matches key</span>'
+    : /^Service request/.test(exp) ? ' <span style="color:var(--muted);">(service request &mdash; see key note)</span>'
+    : ' <span style="color:#ff8c00;">&ne; key says ' + tkKeyEsc(exp) + '</span>';
+  return '<div style="font-size:.78rem;color:var(--muted);margin-top:2px;">Disposition: <strong style="color:#ffd700;">' + tkKeyEsc(work.disposition) + '</strong>' + match + '</div>';
+}
+
 function tkViewNotes(studentName, ticketId) {
   const work  = (_tkAllWork[studentName] || {})[ticketId] || {};
   const notes = Array.isArray(work.notes) ? work.notes : [];
@@ -8748,7 +8758,8 @@ function tkViewNotes(studentName, ticketId) {
   if (work.resolution) {
     const r = work.resolution;
     resHtml = '<div style="margin-top:16px;padding:14px;background:rgba(0,180,100,0.05);border:1px solid rgba(0,180,100,0.25);border-radius:8px;">'
-      + '<div style="font-size:.72rem;font-weight:700;color:#00c864;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">&#10003; Resolution — ' + (work.disposition||'') + '</div>'
+      + '<div style="font-size:.72rem;font-weight:700;color:#00c864;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">&#10003; Resolution</div>'
+      + '<div style="margin-bottom:8px;"><div style="font-size:.68rem;color:var(--muted);">DISPOSITION</div><div style="font-size:.85rem;color:var(--text);font-weight:700;">' + tkKeyEsc(work.disposition || 'Not recorded') + '</div></div>'
       + '<div style="margin-bottom:8px;"><div style="font-size:.68rem;color:var(--muted);">PRIORITY</div><div style="font-size:.85rem;color:var(--text);">' + tkStudentPriority(work, ticketId).label + '</div></div>'
       + (r.summary ? '<div style="margin-bottom:8px;"><div style="font-size:.68rem;color:var(--muted);">SUMMARY</div><div style="font-size:.85rem;color:var(--text);white-space:pre-line;">' + r.summary.replace(/</g,'&lt;') + '</div></div>' : '')
       + (r.actions ? '<div style="margin-bottom:8px;"><div style="font-size:.68rem;color:var(--muted);">ACTIONS TAKEN</div><div style="font-size:.85rem;color:var(--text);white-space:pre-line;">' + r.actions.replace(/</g,'&lt;') + '</div></div>' : '')
@@ -8766,6 +8777,7 @@ function tkViewNotes(studentName, ticketId) {
     + '<div style="font-size:.92rem;font-weight:700;color:var(--text);margin-top:4px;">' + (t ? t.title : '') + '</div>'
     + (work.status ? '<div style="font-size:.78rem;color:var(--muted);margin-top:4px;">Status: <strong style="color:' + (work.status==='Resolved'||work.status==='Closed' ? '#00c864' : 'var(--cyan)') + ';">' + work.status + '</strong></div>' : '')
     + tkPriorityLine(work, ticketId)
+    + tkDispositionLine(work, ticketId)
     + '</div>'
     + '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'
     + (isResolved ? '<button onclick="tkAdminReopen(\'' + studentName + '\',\'' + ticketId + '\');this.closest(\'div[style*=fixed]\').remove()" style="background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.4);color:#ff8c00;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:.78rem;">&#8635; Reopen</button>' : '')
