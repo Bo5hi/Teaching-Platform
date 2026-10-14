@@ -1712,7 +1712,9 @@ function saveState() {
     ? 'mccoe_student_state_' + state.student.tempId
     : 'mccoe_student_state';
   localStorage.setItem(key, JSON.stringify(state));
-  if (_fbDb && state.student.tempId) {
+  // Nothing goes to Firebase until this session has loaded the cloud copy (enterApp) - a save
+  // before that would push this device's stale or blank weeks over the student's real work.
+  if (_fbDb && state.student.tempId && _progressSynced) {
     // Use update() with per-week paths so devices never overwrite each other's weeks
     const updates = {
       student:     state.student,
@@ -1720,9 +1722,23 @@ function saveState() {
       game:        state.game       || {},
       lastUpdated: new Date().toISOString()
     };
-    Object.keys(state.progress).forEach(wk => { updates['progress/' + wk] = state.progress[wk]; });
+    Object.keys(state.progress).forEach(wk => {
+      const p = state.progress[wk];
+      if (_weekHasWork(p)) _weeksInCloud.add(String(wk));
+      else if (!_weeksInCloud.has(String(wk))) return;
+      updates['progress/' + wk] = p;
+    });
     _fbDb.ref('mccoe_progress/' + state.student.tempId).update(updates);
   }
+}
+var _progressSynced = false;
+var _weeksInCloud = new Set();
+function _weekHasWork(p) {
+  if (!p) return false;
+  return (p.quizScore !== null && p.quizScore !== undefined) ||
+    (Array.isArray(p.labsChecked) && p.labsChecked.length > 0) ||
+    (Array.isArray(p.objectivesChecked) && p.objectivesChecked.length > 0) ||
+    String(p.reflection || '').trim() !== '' || p.submitted === true || String(p.notes || '').trim() !== '';
 }
 function getWeekProgress(num) {
   if (!state.progress[num]) state.progress[num] = { quizScore:null, quizTotal:null, labsChecked:[], objectivesChecked:[], reflection:'', submitted:false };
@@ -2271,10 +2287,12 @@ function enterApp() {
   document.getElementById('hdr-name').textContent = state.student.name;
   try { localStorage.setItem('hub_id', state.student.tempId); localStorage.setItem('hub_name', state.student.name); } catch(e) {}
   document.getElementById('hdr-cohort').textContent = state.student.cohort;
+  _progressSynced = false;
+  _weeksInCloud = new Set();
   buildNav();
   updateOverallProgress();
   initLibraryFromFirebase();
-  updateStreak();
+  if (!_fbDb || !state.student.tempId) updateStreak();
   setTimeout(() => { loadJobReadiness(); loadDueDates(); loadAcronymScores(); }, 400);
 
   if (_fbDb && state.student.tempId) {
@@ -2297,10 +2315,13 @@ function enterApp() {
         const fbWk = fbProgress[wk];
         if (!fbWk) return;
         merged[wk] = fbWk;
+        if (_weekHasWork(fbWk)) _weeksInCloud.add(String(wk));
       });
       state.progress = merged;
       if (fb && fb.softSkills) state.softSkills = Object.assign({}, state.softSkills, fb.softSkills);
-      if (fb && fb.game && fb.game.xp > (state.game.xp || 0)) state.game = fb.game;
+      if (fb && fb.game && (fb.game.xp || 0) >= (state.game.xp || 0)) state.game = fb.game;
+      _progressSynced = true;
+      updateStreak();
       saveState();
       buildNav();
       updateOverallProgress();
