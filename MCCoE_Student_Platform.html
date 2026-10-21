@@ -10292,11 +10292,7 @@ function openTicketDetail(ticketId) {
 
   const tagHtml = t.tags.map(g => `<span style="font-size:.82rem;padding:2px 8px;border-radius:10px;background:#0a2a0a;color:#d2e4da;border:1px solid #1a4a2a;">${g}</span>`).join(' ');
 
-  const notesHtml = notes.length ? notes.map(n =>
-    `<div style="border-left:3px solid #00e676;padding:8px 12px;background:#0a1a0a;border-radius:0 6px 6px 0;margin-bottom:8px;">
-      <div style="font-size:.82rem;color:#d2e4da;margin-bottom:4px;">${n.ts}</div>
-      <div style="font-size:.95rem;color:#e2f4e6;white-space:pre-wrap;">${n.text.replace(/</g,'&lt;')}</div>
-    </div>`).join('') : '<div style="color:#d2e4da;font-size:.92rem;font-style:italic;">No work notes yet. Add your analysis below.</div>';
+  const notesHtml = tkNotesHtml(t.id);
 
   const inner = `
     <div style="padding:20px 24px;border-bottom:1px solid #1a4a2a;background:#071a0a;">
@@ -10401,16 +10397,38 @@ function addTicketNote(ticketId) {
   }
 
   input.value = '';
-  // Re-render notes list
-  const notes = _tkProgress[ticketId].notes;
-  document.getElementById('tk-notes-list').innerHTML = notes.map(n =>
-    `<div style="border-left:3px solid #00e676;padding:8px 12px;background:#0a1a0a;border-radius:0 6px 6px 0;margin-bottom:8px;">
-      <div style="font-size:.82rem;color:#d2e4da;margin-bottom:4px;">${n.ts}</div>
-      <div style="font-size:.95rem;color:#e2f4e6;white-space:pre-wrap;">${n.text.replace(/</g,'&lt;')}</div>
-    </div>`).join('');
+  document.getElementById('tk-notes-list').innerHTML = tkNotesHtml(ticketId);
   const saved = document.getElementById('tk-note-saved');
   saved.style.display = 'inline';
   setTimeout(() => { saved.style.display = 'none'; }, 2000);
+}
+
+// Work notes list; each note gets a delete button while the ticket is still open
+function tkNotesHtml(ticketId) {
+  const notes = (_tkProgress[ticketId] || {}).notes || [];
+  if (!notes.length) return '<div style="color:#d2e4da;font-size:.92rem;font-style:italic;">No work notes yet. Add your analysis below.</div>';
+  const canDelete = !tkIsLocked(ticketId);
+  return notes.map((n, i) =>
+    `<div style="border-left:3px solid #00e676;padding:8px 12px;background:#0a1a0a;border-radius:0 6px 6px 0;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px;">
+        <div style="font-size:.82rem;color:#d2e4da;">${n.ts}</div>
+        ${canDelete ? `<button onclick="deleteTicketNote('${ticketId}', ${i})" title="Delete this note"
+          style="background:rgba(255,45,94,0.12);border:1px solid rgba(255,45,94,0.4);color:#ff6b8a;padding:2px 10px;border-radius:5px;cursor:pointer;font-size:.8rem;font-weight:700;font-family:'Rajdhani',sans-serif;">&#128465; Delete</button>` : ''}
+      </div>
+      <div style="font-size:.95rem;color:#e2f4e6;white-space:pre-wrap;">${String(n.text || '').replace(/</g,'&lt;')}</div>
+    </div>`).join('');
+}
+
+function deleteTicketNote(ticketId, idx) {
+  if (tkIsLocked(ticketId)) return;
+  const notes = (_tkProgress[ticketId] || {}).notes;
+  if (!Array.isArray(notes) || !notes[idx]) return;
+  if (!confirm('Delete this note? This cannot be undone.')) return;
+  notes.splice(idx, 1);
+  if (_fbDb) {
+    firebase.database().ref('mccoe_tickets/work/' + _tkStudentName + '/' + ticketId + '/notes').set(notes);
+  }
+  document.getElementById('tk-notes-list').innerHTML = tkNotesHtml(ticketId);
 }
 
 // ── RESOLVE SYSTEM ───────────────────────────────────────────────────────────
