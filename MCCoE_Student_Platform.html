@@ -10412,18 +10412,28 @@ function tkNotesHtml(ticketId) {
     `<div style="border-left:3px solid #00e676;padding:8px 12px;background:#0a1a0a;border-radius:0 6px 6px 0;margin-bottom:8px;">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px;">
         <div style="font-size:.82rem;color:#d2e4da;">${n.ts}</div>
-        ${canDelete ? `<button onclick="deleteTicketNote('${ticketId}', ${i})" title="Delete this note"
-          style="background:rgba(255,45,94,0.12);border:1px solid rgba(255,45,94,0.4);color:#ff6b8a;padding:2px 10px;border-radius:5px;cursor:pointer;font-size:.8rem;font-weight:700;font-family:'Rajdhani',sans-serif;">&#128465; Delete</button>` : ''}
+        ${canDelete ? `<span id="tk-note-del-${i}"><button onclick="tkAskDeleteNote('${ticketId}', ${i})" title="Delete this note"
+          style="background:rgba(255,45,94,0.12);border:1px solid rgba(255,45,94,0.4);color:#ff6b8a;padding:2px 10px;border-radius:5px;cursor:pointer;font-size:.8rem;font-weight:700;font-family:'Rajdhani',sans-serif;">&#128465; Delete</button></span>` : ''}
       </div>
       <div style="font-size:.95rem;color:#e2f4e6;white-space:pre-wrap;">${String(n.text || '').replace(/</g,'&lt;')}</div>
     </div>`).join('');
+}
+
+// In-page Yes/No instead of confirm(): a browser that has blocked the page's
+// pop-ups answers confirm() with "No" silently, so the button seemed dead
+function tkAskDeleteNote(ticketId, idx) {
+  const slot = document.getElementById('tk-note-del-' + idx);
+  if (!slot) return;
+  const btn = "padding:2px 10px;border-radius:5px;cursor:pointer;font-size:.8rem;font-weight:700;font-family:'Rajdhani',sans-serif;";
+  slot.innerHTML = `<span style="font-size:.82rem;color:#ff6b8a;margin-right:6px;">Delete this note? This cannot be undone.</span>
+    <button onclick="deleteTicketNote('${ticketId}', ${idx})" style="${btn}background:#ff2d5e;border:1px solid #ff2d5e;color:#fff;">Yes, delete</button>
+    <button onclick="document.getElementById('tk-notes-list').innerHTML = tkNotesHtml('${ticketId}')" style="${btn}background:transparent;border:1px solid #1a4a2a;color:#d2e4da;margin-left:4px;">Cancel</button>`;
 }
 
 function deleteTicketNote(ticketId, idx) {
   if (tkIsLocked(ticketId)) return;
   const notes = (_tkProgress[ticketId] || {}).notes;
   if (!Array.isArray(notes) || !notes[idx]) return;
-  if (!confirm('Delete this note? This cannot be undone.')) return;
   notes.splice(idx, 1);
   if (_fbDb) {
     firebase.database().ref('mccoe_tickets/work/' + _tkStudentName + '/' + ticketId + '/notes').set(notes);
