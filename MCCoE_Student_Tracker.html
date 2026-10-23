@@ -584,7 +584,6 @@ select option { background:var(--surface); color:var(--text); }
     </div>
   </div>
   <div class="header-right">
-    <button class="btn btn-outline" onclick="openCohortManager()" style="font-size:.75rem;padding:5px 12px;">Cohorts</button>
     <button class="btn btn-red" onclick="openAddStudent()" style="display:flex;align-items:center;gap:6px;font-size:.82rem;">
       <span style="font-size:1.1rem;line-height:1;">+</span> Add Student
     </button>
@@ -2009,13 +2008,13 @@ let starValues = { rating:0, confidence:0, instruction:0 };
 //  COHORTS
 // ════════════════════════════════════════════
 const DEFAULT_COHORT_ID = 'fall-2026';
+// The cohort list lives here only (Joey decided 2026-10-23: no in-page editor, no Firebase copy).
+// New class: add a line (id, name, start date) and set status 'active' on the one the Tracker should open on.
 const COHORT_SEED = {
   'fall-2026':   { id:'fall-2026',   name:'Fall 2026',   startDate:'2026-08-31', inviteCode:'MCCoE2026', status:'active' },
   'winter-2027': { id:'winter-2027', name:'Winter 2027', startDate:'2027-01-11', inviteCode:'MCCoE2027', status:'upcoming' }
 };
-let cohorts = (function() {
-  try { return JSON.parse(localStorage.getItem('mccoe_cohorts_cache')) || COHORT_SEED; } catch(e) { return COHORT_SEED; }
-})();
+const cohorts = COHORT_SEED;
 let _currentView = 'dashboard';
 
 function cohortList() {
@@ -2088,102 +2087,6 @@ function switchViewCohort(id) {
   showView(_currentView, document.querySelector('.nav-btn.active'));
 }
 
-function startCohortListener() {
-  if (!_fbDb) return;
-  _fbDb.ref('mccoe_cohorts').on('value', snap => {
-    const val = snap.val();
-    if (!val) { _fbDb.ref('mccoe_cohorts').set(COHORT_SEED); return; }
-    const before = viewCohortId();
-    cohorts = val;
-    localStorage.setItem('mccoe_cohorts_cache', JSON.stringify(cohorts));
-    renderCohortSwitch();
-    if (viewCohortId() !== before) switchViewCohort(viewCohortId());
-  }, err => console.warn('Firebase cohorts error:', err));
-}
-
-function _cohortSlug(name) {
-  return (name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-}
-function openCohortManager() {
-  const inp = 'padding:7px 10px;background:#080f1e;border:1.5px solid #1e3358;border-radius:7px;color:#e2e8f0;font-size:.82rem;outline:none;width:100%;';
-  const th = 'text-align:left;padding:8px 10px;color:#7a8ba8;border-bottom:1px solid #1e3358;font-size:.75rem;';
-  const counts = {};
-  students.forEach(s => { if (s && s.id) { const c = studentCohortId(s); counts[c] = (counts[c] || 0) + 1; } });
-  const rows = cohortList().map(c => `
-    <tr style="border-bottom:1px solid #1e3358;">
-      <td style="padding:8px 10px;"><input id="co-name-${c.id}" value="${c.name || ''}" style="${inp}"></td>
-      <td style="padding:8px 10px;"><input id="co-start-${c.id}" type="date" value="${c.startDate || ''}" style="${inp}"></td>
-      <td style="padding:8px 10px;">
-        <select id="co-status-${c.id}" style="${inp}">
-          ${['upcoming','active','archived'].map(st => `<option value="${st}" ${c.status === st ? 'selected' : ''}>${st[0].toUpperCase() + st.slice(1)}</option>`).join('')}
-        </select>
-      </td>
-      <td style="padding:8px 10px;color:#e2e8f0;text-align:center;">${counts[c.id] || 0}</td>
-      <td style="padding:8px 10px;text-align:right;"><button class="btn btn-outline" style="font-size:.75rem;padding:5px 12px;" onclick="saveCohort('${c.id}')">Save</button></td>
-    </tr>`).join('');
-  document.getElementById('detailBody').innerHTML = `
-    <div style="background:#0d1a2e;border-radius:12px;padding:24px 28px;">
-      <h2 style="color:var(--red);font-size:1.1rem;margin-bottom:4px;">Cohorts</h2>
-      <p style="color:#7a8ba8;font-size:.8rem;margin-bottom:16px;line-height:1.5;">
-        Each cohort gets a button at the top of the Tracker. The <b>active</b> cohort is the one the Tracker opens on.
-        You choose a student's cohort when you approve them (Pending Approvals) or in their Edit form. Archived students can still sign in.
-      </p>
-      <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
-        <thead><tr><th style="${th}">Name</th><th style="${th}">Start Date</th><th style="${th}">Status</th><th style="${th}text-align:center;">Students</th><th style="${th}"></th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-      <div style="margin-top:20px;padding-top:20px;border-top:1px solid #1e3358;">
-        <div style="font-size:.8rem;font-weight:700;color:#7a8ba8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Add Cohort</div>
-        <div style="display:grid;grid-template-columns:1.4fr 1fr auto;gap:10px;align-items:end;">
-          <div><label style="font-size:.75rem;color:#7a8ba8;display:block;margin-bottom:4px;">Name</label><input id="co-new-name" placeholder="e.g. Summer 2027" style="${inp}"></div>
-          <div><label style="font-size:.75rem;color:#7a8ba8;display:block;margin-bottom:4px;">Start Date</label><input id="co-new-start" type="date" style="${inp}"></div>
-          <button onclick="addCohort()" style="padding:8px 18px;background:var(--red);color:#fff;border:none;border-radius:7px;font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add</button>
-        </div>
-      </div>
-      <div id="co-msg" style="display:none;margin-top:12px;font-size:.8rem;font-weight:600;"></div>
-    </div>`;
-  openModal('detailModal');
-}
-function _cohortMsg(text, ok) {
-  const el = document.getElementById('co-msg');
-  if (!el) return;
-  el.style.display = 'block';
-  el.style.color = ok ? '#00ff41' : '#ff6b6b';
-  el.textContent = text;
-}
-function saveCohort(id) {
-  if (!_fbDb) { _cohortMsg('Not connected to the database.', false); return; }
-  const name = document.getElementById('co-name-' + id).value.trim();
-  const startDate = document.getElementById('co-start-' + id).value;
-  const status = document.getElementById('co-status-' + id).value;
-  if (!name || !startDate) { _cohortMsg('Name and start date are both required.', false); return; }
-  const updates = {};
-  updates[id] = Object.assign({}, cohorts[id], { id, name, startDate, status });
-  if (status === 'active') {
-    const others = cohortList().filter(c => c.id !== id && c.status === 'active');
-    if (others.length && !confirm('Make ' + name + ' the active cohort? ' + others.map(c => c.name).join(', ') + ' will be archived.')) return;
-    others.forEach(c => { updates[c.id + '/status'] = 'archived'; });
-  }
-  _fbDb.ref('mccoe_cohorts').update(updates, err => {
-    if (err) { _cohortMsg('Could not save: ' + err.message, false); return; }
-    if (status === 'active') localStorage.removeItem('mccoe_view_cohort');
-    openCohortManager();
-    _cohortMsg(name + ' saved.', true);
-  });
-}
-function addCohort() {
-  if (!_fbDb) { _cohortMsg('Not connected to the database.', false); return; }
-  const name = document.getElementById('co-new-name').value.trim();
-  const startDate = document.getElementById('co-new-start').value;
-  if (!name || !startDate) { _cohortMsg('Name and start date are both required.', false); return; }
-  const id = _cohortSlug(name);
-  if (!id || id === ALL_COHORTS || cohorts[id]) { _cohortMsg('A cohort with that name already exists.', false); return; }
-  _fbDb.ref('mccoe_cohorts/' + id).set({ id, name, startDate, status:'upcoming', createdAt: new Date().toISOString() }, err => {
-    if (err) { _cohortMsg('Could not save: ' + err.message, false); return; }
-    openCohortManager();
-    _cohortMsg(name + ' added as Upcoming.', true);
-  });
-}
 function setStudentCohort(s, cohortId) {
   const co = cohorts[cohortId];
   if (!s || !co) return;
@@ -7098,8 +7001,7 @@ function checkAdminLogin() {
     const badge = document.getElementById('admin-name-badge');
     if (badge) badge.textContent = 'Logged in: ' + match.name;
     renderCohortSwitch();
-    startCohortListener();
-    renderDashboard();
+      renderDashboard();
     startFirebaseRegistryListener();
     startLoginListener();
     startSyncPoller();
@@ -7395,7 +7297,6 @@ function deleteCustomContent(type, key) {
 if (sessionStorage.getItem('mccoe_admin_auth') === '1') {
   gate.style.display = 'none';
   renderCohortSwitch();
-  startCohortListener();
   renderDashboard();
 } else {
   gate.style.display = 'flex';

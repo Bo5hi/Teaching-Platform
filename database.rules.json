@@ -7,7 +7,6 @@
     "mccoe_blueteam":          { ".read": true, ".write": true },
     "mccoe_checkins":          { ".read": true, ".write": true },
     "mccoe_checklists":        { ".read": true, ".write": true },
-    "mccoe_cohorts":           { ".read": true, ".write": true },
     "mccoe_content":           { ".read": true, ".write": true },
     "mccoe_ctf":               { ".read": true, ".write": true },
     "mccoe_drafts":            { ".read": true, ".write": true },
