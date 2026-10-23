@@ -595,19 +595,10 @@ hr { border-color: rgba(0,245,255,0.12) !important; }
 
     <!-- New Student panel -->
     <div id="panel-register">
-      <input type="text" id="inp-name" placeholder="Full Name" autocomplete="name">
-      <select id="inp-cohort">
-        <option value="">Select Cohort</option>
-        <option value="Cohort 1 — Fall 2026">Cohort 1 — Fall 2026</option>
-        <option value="Cohort 2 — Spring 2027">Cohort 2 — Spring 2027</option>
-        <option value="Cohort 3 — Fall 2027">Cohort 3 — Fall 2027</option>
-      </select>
-      <input type="password" id="inp-pass"  placeholder="Create a Password">
-      <input type="password" id="inp-pass2" placeholder="Confirm Password">
-      <div style="background:#fff8e1;border:1px solid #f5a623;border-radius:6px;padding:10px 12px;font-size:12px;color:#7a5c00;margin-bottom:14px;text-align:left;">
-        🪪 Your Student ID will be assigned by your instructor after registration.
+      <div style="font-size:14px;color:#555;margin-bottom:16px;text-align:left;line-height:1.5;">
+        New students register on the MCCoE Hub with the invite code from your instructor. Once your instructor approves your account, sign in on the Hub.
       </div>
-      <button class="btn-primary" onclick="doRegister()">Create My Profile &amp; Enter</button>
+      <button class="btn-primary" onclick="location.href='MCCoE_Hub.html'">Go to the Hub to Register</button>
     </div>
 
     <!-- Returning Student panel -->
@@ -1657,10 +1648,14 @@ function renderLeaderboard() {
     document.getElementById('leaderboard-body').innerHTML = '<div style="color:#999;text-align:center;padding:40px;">Firebase not connected — leaderboard unavailable.</div>';
     return;
   }
-  _fbDb.ref('mccoe_xp').orderByChild('xp').limitToLast(20).once('value', snap => {
-    const rows = [];
-    snap.forEach(child => { rows.push(child.val()); });
-    rows.sort((a,b) => b.xp - a.xp);
+  const reg = getRegistry();
+  const cohortOf = id => ((reg.find(e => e && e.tempId === id) || {}).cohortId) || 'fall-2026';
+  const myCohort = cohortOf(state.student.tempId);
+  _fbDb.ref('mccoe_xp').once('value', snap => {
+    let rows = [];
+    snap.forEach(child => { if (cohortOf(child.key) === myCohort) rows.push(child.val()); });
+    rows.sort((a,b) => (b.xp || 0) - (a.xp || 0));
+    rows = rows.slice(0, 20);
     if (rows.length === 0) {
       document.getElementById('leaderboard-body').innerHTML = '<div style="color:#999;text-align:center;padding:40px;">No entries yet — complete quizzes to appear here!</div>';
       return;
@@ -2247,38 +2242,6 @@ function _nextStudentId() {
     }
   });
   return 'MCCoE-' + String(max + 1).padStart(3, '0');
-}
-
-function doRegister() {
-  try {
-  const name   = document.getElementById('inp-name').value.trim();
-  const cohort = document.getElementById('inp-cohort').value;
-  const pass   = document.getElementById('inp-pass').value;
-  const pass2  = document.getElementById('inp-pass2').value;
-  if (!name)          { alert('Please enter your full name.'); return; }
-  if (!cohort)        { alert('Please select your cohort.'); return; }
-  if (!pass)          { alert('Please create a password.'); return; }
-  if (pass !== pass2) { alert('Passwords do not match. Please try again.'); return; }
-
-  const reg = getRegistry();
-  if (reg.find(r => r.name.toLowerCase() === name.toLowerCase() && r.cohort === cohort)) {
-    alert('That name is already registered in that cohort. Please use the Returning Student tab.');
-    showLoginTab('returning');
-    return;
-  }
-
-  const tempId = 'PENDING_' + Date.now();
-  const hash = _hashSync(pass);
-  const assignedId = _nextStudentId();
-  const entry = { tempId, name, cohort, password: hash, registeredAt: new Date().toISOString(), addedToRoster: false, assignedId };
-  _registryCache.push(entry);
-  saveRegistry(_registryCache);
-  _fbWriteEntry(entry);
-  state.student = { name, cohort, tempId, assignedId };
-  state.progress = {};
-  saveState();
-  showWelcomeModal(name, assignedId);
-  } catch(err) { alert('Register error: ' + err.message); }
 }
 
 function enterApp() {

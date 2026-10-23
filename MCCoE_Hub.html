@@ -806,15 +806,7 @@ footer strong {
         <input id="hub-reg-name" type="text" placeholder="First and last name..." autocomplete="name" spellcheck="false"
           style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(238,34,7,0.35);border-radius:6px;padding:12px 16px;color:#fff;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:500;outline:none;transition:border-color .2s;"
           onfocus="this.style.borderColor='rgba(238,34,7,0.8)'" onblur="this.style.borderColor='rgba(238,34,7,0.35)'"
-          onkeydown="if(event.key==='Enter')document.getElementById('hub-reg-cohort').focus()">
-      </div>
-      <div style="margin-bottom:12px;text-align:left;">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(0,245,255,0.55);letter-spacing:2px;margin-bottom:8px;">COHORT</div>
-        <select id="hub-reg-cohort" style="width:100%;background:#0d0d1f;border:1px solid rgba(238,34,7,0.35);border-radius:6px;padding:12px 16px;color:#fff;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:500;outline:none;">
-          <option value="MCCoE 2026 — Cohort 1">MCCoE 2026 — Cohort 1</option>
-          <option value="MCCoE 2026 — Cohort 2">MCCoE 2026 — Cohort 2</option>
-          <option value="MCCoE 2027 — Cohort 1">MCCoE 2027 — Cohort 1</option>
-        </select>
+          onkeydown="if(event.key==='Enter')document.getElementById('hub-reg-pass').focus()">
       </div>
       <div style="margin-bottom:12px;text-align:left;">
         <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(0,245,255,0.55);letter-spacing:2px;margin-bottom:8px;">CREATE PASSWORD</div>
@@ -869,6 +861,39 @@ firebase.initializeApp({
   appId:"1:149977326145:web:ca5913d5ab73c08a6a1cc0"
 });
 const _hubDb = firebase.database();
+
+// ── Cohorts ──
+var DEFAULT_COHORT_ID = 'fall-2026';
+var _hubCohorts = {
+  'fall-2026':   { id: 'fall-2026',   name: 'Fall 2026',   startDate: '2026-08-31', inviteCode: 'MCCoE2026', status: 'active' },
+  'winter-2027': { id: 'winter-2027', name: 'Winter 2027', startDate: '2027-01-11', inviteCode: 'MCCoE2027', status: 'upcoming' }
+};
+_hubDb.ref('mccoe_cohorts').once('value', function(snap) {
+  if (snap.val()) _hubCohorts = snap.val();
+});
+function hubCohortByCode(code) {
+  var c = (code || '').trim().toLowerCase();
+  if (!c) return null;
+  var hit = null;
+  Object.keys(_hubCohorts).forEach(function(k) {
+    var co = _hubCohorts[k];
+    if (co && co.status !== 'archived' && (co.inviteCode || '').toLowerCase() === c) hit = { id: co.id || k, name: co.name || k };
+  });
+  return hit;
+}
+function hubApplyCohort(id) {
+  _hubDb.ref('mccoe_registry/' + id + '/cohortId').once('value', function(snap) {
+    var cid = snap.val() || DEFAULT_COHORT_ID;
+    _hubDb.ref('mccoe_cohorts/' + cid).once('value', function(cs) {
+      var co = cs.val() || _hubCohorts[cid];
+      if (!co || !co.startDate) return;
+      var start = new Date(co.startDate + 'T00:00:00');
+      if (start.getTime() === PROGRAM_START.getTime()) return;
+      PROGRAM_START = start;
+      if (_twName) renderThisWeekPanel(_twName, _twId);
+    });
+  });
+}
 
 // ── Password check (matches Student Platform hashing) ──
 function _hubHashSync(str) {
@@ -970,22 +995,21 @@ function _hubForcePasswordChange(key, tempPass, done) {
 // ── Hub Register ──
 function doHubRegister() {
   var name    = (document.getElementById('hub-reg-name').value || '').trim();
-  var cohort  = document.getElementById('hub-reg-cohort').value;
-  var pass    = document.getElementById('hub-reg-pass').value;
+  var pass   = document.getElementById('hub-reg-pass').value;
   var confirm = document.getElementById('hub-reg-confirm').value;
   var msgEl   = document.getElementById('hub-reg-msg');
 
   function regMsg(text, color) { msgEl.textContent = text; msgEl.style.color = color || '#e8e8e8'; }
 
   var code    = (document.getElementById('hub-reg-code').value || '').trim();
-  var VALID_CODES = ['MCCoE2026', 'MCCOE2026'];
+  var cohort  = hubCohortByCode(code);
 
   if (!name)    { regMsg('Please enter your full name.', '#ff6b6b'); return; }
   if (name.split(' ').filter(Boolean).length < 2) { regMsg('Please enter your first AND last name.', '#ff6b6b'); return; }
   if (!pass)    { regMsg('Please create a password.', '#ff6b6b'); return; }
   if (pass.length < 4) { regMsg('Password must be at least 4 characters.', '#ff6b6b'); return; }
   if (pass !== confirm) { regMsg('Passwords do not match.', '#ff6b6b'); return; }
-  if (!code || !VALID_CODES.includes(code)) {
+  if (!code || !cohort) {
     regMsg('Invalid invite code. Ask your instructor for the correct code.', '#ff6b6b');
     document.getElementById('hub-reg-code').focus();
     return;
@@ -1015,7 +1039,7 @@ function doHubRegister() {
     var tempId     = 'PENDING_' + Date.now();
     var hash       = _hubHashSync(pass);
     var assignedId = 'MCCoE-' + String(maxNum + 1).padStart(3, '0');
-    var entry      = { tempId: tempId, name: name, cohort: cohort, password: hash, registeredAt: new Date().toISOString(), addedToRoster: false, assignedId: assignedId, status: 'pending' };
+    var entry      = { tempId: tempId, name: name, cohort: cohort.name, cohortId: cohort.id, password: hash, registeredAt: new Date().toISOString(), addedToRoster: false, assignedId: assignedId, status: 'pending' };
     _hubDb.ref('mccoe_registry/' + tempId).set(entry, function(err) {
       document.getElementById('hub-reg-btn').disabled = false;
       if (err) { regMsg('Error saving account. Please try again.', '#ff6b6b'); return; }
@@ -1063,6 +1087,7 @@ function hubLoginSuccess(name, id, doLog) {
 
   document.getElementById('hub-login-overlay').style.display = 'none';
   renderThisWeekPanel(name, id);
+  hubApplyCohort(id);
   loadChecklistFromFirebase(id);
   loadHubTickets(name);
 }
@@ -1148,7 +1173,7 @@ function hubLogout() {
 
 // ── Restore session on load ──
 // ── This Week Checklist ──
-var PROGRAM_START = new Date('2026-08-31');
+var PROGRAM_START = new Date('2026-08-31T00:00:00');
 function getCurrentWeek() {
   var days = Math.floor((new Date() - PROGRAM_START) / (1000*60*60*24));
   return Math.min(12, Math.max(1, Math.floor(days/7) + 1));

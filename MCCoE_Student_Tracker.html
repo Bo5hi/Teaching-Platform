@@ -578,6 +578,8 @@ select option { background:var(--surface); color:var(--text); }
     </div>
   </div>
   <div class="header-right">
+    <select id="cohortSwitch" onchange="switchViewCohort(this.value)" title="Which cohort the Tracker shows" style="background:#080f1e;border:1.5px solid #1e3358;border-radius:7px;color:#e2e8f0;font-size:.82rem;padding:6px 10px;outline:none;"></select>
+    <button class="btn btn-outline" onclick="openCohortManager()" style="font-size:.75rem;padding:5px 12px;">Cohorts</button>
     <button class="btn btn-red" onclick="openAddStudent()" style="display:flex;align-items:center;gap:6px;font-size:.82rem;">
       <span style="font-size:1.1rem;line-height:1;">+</span> Add Student
     </button>
@@ -1707,7 +1709,7 @@ select option { background:var(--surface); color:var(--text); }
       <div class="form-grid">
         <div class="form-group"><label>Full Name *</label><input id="f-name" placeholder="First Last"></div>
         <div class="form-group"><label>Start Date *</label><input type="date" id="f-start"></div>
-        <div class="form-group"><label>Cohort</label><input id="f-cohort" placeholder="e.g. Cohort 2026-A"></div>
+        <div class="form-group"><label>Cohort</label><select id="f-cohort"></select></div>
         <div class="form-group"><label>Current Phase</label>
           <select id="f-phase">
             <option value="1">Phase 1 — Core Foundations</option>
@@ -1998,6 +2000,193 @@ let editingId = null;
 let starValues = { rating:0, confidence:0, instruction:0 };
 
 // ════════════════════════════════════════════
+//  COHORTS
+// ════════════════════════════════════════════
+const DEFAULT_COHORT_ID = 'fall-2026';
+const COHORT_SEED = {
+  'fall-2026':   { id:'fall-2026',   name:'Fall 2026',   startDate:'2026-08-31', inviteCode:'MCCoE2026', status:'active' },
+  'winter-2027': { id:'winter-2027', name:'Winter 2027', startDate:'2027-01-11', inviteCode:'MCCoE2027', status:'upcoming' }
+};
+let cohorts = (function() {
+  try { return JSON.parse(localStorage.getItem('mccoe_cohorts_cache')) || COHORT_SEED; } catch(e) { return COHORT_SEED; }
+})();
+let _currentView = 'dashboard';
+
+function cohortList() {
+  return Object.values(cohorts).filter(c => c && c.id).sort((a, b) => (a.startDate || '').localeCompare(b.startDate || ''));
+}
+function activeCohortId() {
+  const a = cohortList().find(c => c.status === 'active');
+  return a ? a.id : DEFAULT_COHORT_ID;
+}
+function viewCohortId() {
+  const v = localStorage.getItem('mccoe_view_cohort');
+  return v && cohorts[v] ? v : activeCohortId();
+}
+function viewCohort() { return cohorts[viewCohortId()] || COHORT_SEED[DEFAULT_COHORT_ID]; }
+function viewCohortStart() { return new Date((viewCohort().startDate || '2026-08-31') + 'T00:00:00'); }
+function regCohortId(entry) { return (entry && entry.cohortId) || DEFAULT_COHORT_ID; }
+let _regCohortCache = { raw: null, map: {} };
+function regCohortOfTempId(tempId) {
+  const raw = localStorage.getItem('mccoe_student_registry') || '[]';
+  if (raw !== _regCohortCache.raw) {
+    const map = {};
+    try { JSON.parse(raw).forEach(e => { if (e && e.tempId) map[e.tempId] = regCohortId(e); }); } catch(e) {}
+    _regCohortCache = { raw, map };
+  }
+  return _regCohortCache.map[tempId] || null;
+}
+function studentCohortId(s) {
+  if (!s) return DEFAULT_COHORT_ID;
+  return s.cohortId || (s.portalTempId && regCohortOfTempId(s.portalTempId)) || DEFAULT_COHORT_ID;
+}
+function inViewCohort(s) { return studentCohortId(s) === viewCohortId(); }
+function roster() { return students.filter(s => s && s.id && inViewCohort(s)); }
+function rosterNameSet() { return new Set(roster().map(s => (s.name || '').toLowerCase())); }
+function nameInView(name) { return rosterNameSet().has((name || '').toLowerCase()); }
+function keyInView(key, val) {
+  const s = students.find(x => x && x.portalTempId && (x.portalTempId === key || x.portalTempId.replace(/[.#$[\]]/g, '_') === key));
+  if (s) return inViewCohort(s);
+  const nm = val && (val.name || val.studentName);
+  if (nm) {
+    const byName = students.find(x => x && (x.name || '').toLowerCase() === String(nm).toLowerCase());
+    if (byName) return inViewCohort(byName);
+  }
+  return (regCohortOfTempId(key) || DEFAULT_COHORT_ID) === viewCohortId();
+}
+function tempIdInView(tempId) { return keyInView(tempId, null); }
+
+function renderCohortSwitch() {
+  const sel = document.getElementById('cohortSwitch');
+  if (!sel) return;
+  const cur = viewCohortId();
+  sel.innerHTML = cohortList().map(c =>
+    `<option value="${c.id}" ${c.id === cur ? 'selected' : ''}>${c.name}${c.status === 'active' ? ' (active)' : c.status === 'archived' ? ' (archived)' : c.status === 'upcoming' ? ' (upcoming)' : ''}</option>`
+  ).join('');
+}
+function switchViewCohort(id) {
+  localStorage.setItem('mccoe_view_cohort', id);
+  _wkCur = null;
+  renderCohortSwitch();
+  renderDashboard();
+  showView(_currentView, document.querySelector('.nav-btn.active'));
+}
+
+function startCohortListener() {
+  if (!_fbDb) return;
+  _fbDb.ref('mccoe_cohorts').on('value', snap => {
+    const val = snap.val();
+    if (!val) { _fbDb.ref('mccoe_cohorts').set(COHORT_SEED); return; }
+    const before = viewCohortId();
+    cohorts = val;
+    localStorage.setItem('mccoe_cohorts_cache', JSON.stringify(cohorts));
+    renderCohortSwitch();
+    if (viewCohortId() !== before) switchViewCohort(viewCohortId());
+  }, err => console.warn('Firebase cohorts error:', err));
+}
+
+function _cohortSlug(name) {
+  return (name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+function openCohortManager() {
+  const inp = 'padding:7px 10px;background:#080f1e;border:1.5px solid #1e3358;border-radius:7px;color:#e2e8f0;font-size:.82rem;outline:none;width:100%;';
+  const th = 'text-align:left;padding:8px 10px;color:#7a8ba8;border-bottom:1px solid #1e3358;font-size:.75rem;';
+  const counts = {};
+  students.forEach(s => { if (s && s.id) { const c = studentCohortId(s); counts[c] = (counts[c] || 0) + 1; } });
+  const rows = cohortList().map(c => `
+    <tr style="border-bottom:1px solid #1e3358;">
+      <td style="padding:8px 10px;"><input id="co-name-${c.id}" value="${c.name || ''}" style="${inp}"></td>
+      <td style="padding:8px 10px;"><input id="co-start-${c.id}" type="date" value="${c.startDate || ''}" style="${inp}"></td>
+      <td style="padding:8px 10px;"><input id="co-code-${c.id}" value="${c.inviteCode || ''}" style="${inp}font-family:monospace;"></td>
+      <td style="padding:8px 10px;">
+        <select id="co-status-${c.id}" style="${inp}">
+          ${['upcoming','active','archived'].map(st => `<option value="${st}" ${c.status === st ? 'selected' : ''}>${st[0].toUpperCase() + st.slice(1)}</option>`).join('')}
+        </select>
+      </td>
+      <td style="padding:8px 10px;color:#e2e8f0;text-align:center;">${counts[c.id] || 0}</td>
+      <td style="padding:8px 10px;text-align:right;"><button class="btn btn-outline" style="font-size:.75rem;padding:5px 12px;" onclick="saveCohort('${c.id}')">Save</button></td>
+    </tr>`).join('');
+  document.getElementById('detailBody').innerHTML = `
+    <div style="background:#0d1a2e;border-radius:12px;padding:24px 28px;">
+      <h2 style="color:var(--red);font-size:1.1rem;margin-bottom:4px;">Cohorts</h2>
+      <p style="color:#7a8ba8;font-size:.8rem;margin-bottom:16px;line-height:1.5;">
+        One cohort is <b>active</b> at a time; the Tracker opens on it. New students join the cohort whose invite code they enter on the Hub (Active or Upcoming cohorts only).
+        The start date sets each student's "This Week" on the Hub. Archived students can still sign in.
+      </p>
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+        <thead><tr><th style="${th}">Name</th><th style="${th}">Start Date</th><th style="${th}">Invite Code</th><th style="${th}">Status</th><th style="${th}text-align:center;">Students</th><th style="${th}"></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div style="margin-top:20px;padding-top:20px;border-top:1px solid #1e3358;">
+        <div style="font-size:.8rem;font-weight:700;color:#7a8ba8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Add Cohort</div>
+        <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:10px;align-items:end;">
+          <div><label style="font-size:.75rem;color:#7a8ba8;display:block;margin-bottom:4px;">Name</label><input id="co-new-name" placeholder="e.g. Summer 2027" style="${inp}"></div>
+          <div><label style="font-size:.75rem;color:#7a8ba8;display:block;margin-bottom:4px;">Start Date</label><input id="co-new-start" type="date" style="${inp}"></div>
+          <div><label style="font-size:.75rem;color:#7a8ba8;display:block;margin-bottom:4px;">Invite Code</label><input id="co-new-code" placeholder="e.g. MCCoE2027B" style="${inp}font-family:monospace;"></div>
+          <button onclick="addCohort()" style="padding:8px 18px;background:var(--red);color:#fff;border:none;border-radius:7px;font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add</button>
+        </div>
+      </div>
+      <div id="co-msg" style="display:none;margin-top:12px;font-size:.8rem;font-weight:600;"></div>
+    </div>`;
+  openModal('detailModal');
+}
+function _cohortMsg(text, ok) {
+  const el = document.getElementById('co-msg');
+  if (!el) return;
+  el.style.display = 'block';
+  el.style.color = ok ? '#00ff41' : '#ff6b6b';
+  el.textContent = text;
+}
+function _codeTaken(code, exceptId) {
+  const c = (code || '').toLowerCase();
+  return cohortList().some(x => x.id !== exceptId && (x.inviteCode || '').toLowerCase() === c);
+}
+function saveCohort(id) {
+  if (!_fbDb) { _cohortMsg('Not connected to the database.', false); return; }
+  const name = document.getElementById('co-name-' + id).value.trim();
+  const startDate = document.getElementById('co-start-' + id).value;
+  const inviteCode = document.getElementById('co-code-' + id).value.trim();
+  const status = document.getElementById('co-status-' + id).value;
+  if (!name || !startDate || !inviteCode) { _cohortMsg('Name, start date and invite code are all required.', false); return; }
+  if (_codeTaken(inviteCode, id)) { _cohortMsg('Another cohort already uses that invite code.', false); return; }
+  const updates = {};
+  updates[id] = Object.assign({}, cohorts[id], { id, name, startDate, inviteCode, status });
+  if (status === 'active') {
+    const others = cohortList().filter(c => c.id !== id && c.status === 'active');
+    if (others.length && !confirm('Make ' + name + ' the active cohort? ' + others.map(c => c.name).join(', ') + ' will be archived.')) return;
+    others.forEach(c => { updates[c.id + '/status'] = 'archived'; });
+  }
+  _fbDb.ref('mccoe_cohorts').update(updates, err => {
+    if (err) { _cohortMsg('Could not save: ' + err.message, false); return; }
+    if (status === 'active') localStorage.removeItem('mccoe_view_cohort');
+    openCohortManager();
+    _cohortMsg(name + ' saved.', true);
+  });
+}
+function addCohort() {
+  if (!_fbDb) { _cohortMsg('Not connected to the database.', false); return; }
+  const name = document.getElementById('co-new-name').value.trim();
+  const startDate = document.getElementById('co-new-start').value;
+  const inviteCode = document.getElementById('co-new-code').value.trim();
+  if (!name || !startDate || !inviteCode) { _cohortMsg('Name, start date and invite code are all required.', false); return; }
+  const id = _cohortSlug(name);
+  if (!id || cohorts[id]) { _cohortMsg('A cohort with that name already exists.', false); return; }
+  if (_codeTaken(inviteCode, null)) { _cohortMsg('Another cohort already uses that invite code.', false); return; }
+  _fbDb.ref('mccoe_cohorts/' + id).set({ id, name, startDate, inviteCode, status:'upcoming', createdAt: new Date().toISOString() }, err => {
+    if (err) { _cohortMsg('Could not save: ' + err.message, false); return; }
+    openCohortManager();
+    _cohortMsg(name + ' added as Upcoming.', true);
+  });
+}
+function setStudentCohort(s, cohortId) {
+  const co = cohorts[cohortId];
+  if (!s || !co) return;
+  s.cohortId = co.id;
+  s.cohort = co.name;
+  if (_fbDb && s.portalTempId) _fbDb.ref('mccoe_registry/' + s.portalTempId).update({ cohortId: co.id, cohort: co.name });
+}
+
+// ════════════════════════════════════════════
 //  REGISTRY SYNC — pulls from Firebase (cross-device)
 // ════════════════════════════════════════════
 function _nextAutoId() {
@@ -2054,7 +2243,8 @@ function _addRegistryEntry(entry) {
     portalTempId: entry.tempId,
     studentId: assignedId,
     name: entry.name,
-    cohort: entry.cohort,
+    cohortId: regCohortId(entry),
+    cohort: (cohorts[regCohortId(entry)] || {}).name || entry.cohort,
     startDate: new Date().toISOString().split('T')[0],
     phase: 1, hours: 0, socHours: 0,
     certs: { aplus:'not_started', netplus:'not_started', secplus:'not_started' },
@@ -2483,6 +2673,7 @@ function assignStudentId(rosterStudentId, portalTempId) {
 //  NAVIGATION
 // ════════════════════════════════════════════
 function showView(name, btn) {
+  _currentView = name;
   if (name !== 'dashboard') stopRadar();
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -2575,11 +2766,13 @@ function loadPendingApprovals() {
     pending.forEach(function(p) {
       var d = p.data;
       var regDate = d.registeredAt ? new Date(d.registeredAt).toLocaleDateString() : '—';
-      var isDup = students.some(function(s) { return s.name && d.name && s.name.toLowerCase() === d.name.toLowerCase(); });
-      var dupWarning = isDup ? '<div style="margin-top:4px;font-size:.7rem;color:var(--yellow);font-weight:700;">⚠ Name already exists — this may be a re-registration. Approving will merge with existing account.</div>' : '';
+      var dupOf = students.find(function(s) { return s.name && d.name && s.name.toLowerCase() === d.name.toLowerCase(); });
+      var isDup = !!dupOf;
+      var dupCohort = dupOf ? ((cohorts[studentCohortId(dupOf)] || {}).name || '') : '';
+      var dupWarning = isDup ? '<div style="margin-top:4px;font-size:.7rem;color:var(--yellow);font-weight:700;">⚠ Name already exists' + (dupCohort ? ' (' + dupCohort + ')' : '') + ' — this may be a re-registration. Approving will merge with the existing account and its work. If this is a different person, reject and have them register with a middle initial.</div>' : '';
       html += '<tr style="' + (isDup ? 'background:rgba(245,166,35,.06);' : '') + '">' +
         '<td><strong>' + (d.name || '—') + '</strong>' + dupWarning + '</td>' +
-        '<td>' + (d.cohort || '—') + '</td>' +
+        '<td>' + ((cohorts[regCohortId(d)] || {}).name || d.cohort || '—') + '</td>' +
         '<td><span style="font-family:monospace;background:rgba(0,245,255,0.08);padding:2px 8px;border-radius:4px;">' + (d.assignedId || '—') + '</span></td>' +
         '<td>' + regDate + '</td>' +
         '<td style="text-align:center;">' +
@@ -2682,6 +2875,7 @@ function showInterviewTranscript(tempId, ivId) {
 }
 
 function loadAcademyGrades() {
+  const students = roster();
   var wrap = document.getElementById('academy-grades-wrap');
   if (!wrap) return;
   if (!_fbDb) { wrap.innerHTML = '<div style="color:var(--red);padding:20px;">Firebase not connected.</div>'; return; }
@@ -2783,7 +2977,7 @@ function loadAcademyScores() {
 
   _fbDb.ref('mccoe_academy').orderByChild('totalScore').once('value', snap => {
     const rows = [];
-    snap.forEach(child => { rows.push(child.val()); });
+    snap.forEach(child => { if (keyInView(child.key, child.val())) rows.push(child.val()); });
     rows.sort((a,b) => (b.totalScore||0) - (a.totalScore||0));
 
     if (!rows.length) {
@@ -3000,7 +3194,7 @@ function loadRubricGrades() {
   _fbDb.ref('mccoe_rubric').once('value', snap => {
     const data = snap.val();
     if (!data) { wrap.innerHTML = '<div style="color:var(--muted);font-size:.85rem;">No grades saved yet.</div>'; return; }
-    const grades = Object.entries(data).map(([k,v]) => ({...v, fbKey:k})).sort((a,b) => b.gradedAt.localeCompare(a.gradedAt));
+    const grades = Object.entries(data).filter(([k,v]) => keyInView(k, { name: v && v.student })).map(([k,v]) => ({...v, fbKey:k})).sort((a,b) => b.gradedAt.localeCompare(a.gradedAt));
     wrap.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:.82rem;">
       <tr style="background:var(--navy);color:#fff;">
         <th style="padding:8px 12px;text-align:left;">Student</th>
@@ -3029,6 +3223,7 @@ function printRubricGrade() { window.print(); }
 //  ACRONYM DRILL SCORES
 // ════════════════════════════════════════════
 function loadAcronymScores() {
+  const students = roster();
   const wrap = document.getElementById('acronym-table-wrap');
   const kpis = document.getElementById('acronym-kpis');
   if (!wrap) return;
@@ -3137,7 +3332,7 @@ function loadPentestScores() {
 
   _fbDb.ref('mccoe_pentest').once('value', snap => {
     const rows = [];
-    snap.forEach(child => { rows.push(child.val()); });
+    snap.forEach(child => { if (keyInView(child.key, child.val())) rows.push(child.val()); });
     rows.sort((a, b) => (b.phasesCompleted || 0) - (a.phasesCompleted || 0));
 
     if (!rows.length) {
@@ -3214,7 +3409,7 @@ function loadBlueTeamScores() {
   if (!_fbDb) { wrap.innerHTML = '<div style="color:rgba(200,216,232,0.4);font-size:.85rem;padding:20px 0;">Firebase not connected.</div>'; return; }
   _fbDb.ref('mccoe_blueteam').once('value', snap => {
     const rows = [];
-    snap.forEach(child => { rows.push(child.val()); });
+    snap.forEach(child => { if (keyInView(child.key, child.val())) rows.push(child.val()); });
     rows.sort((a, b) => (b.phasesCompleted||0) - (a.phasesCompleted||0));
     if (!rows.length) { wrap.innerHTML = '<div style="color:rgba(200,216,232,0.4);font-size:.85rem;padding:20px 0;">No Blue Team activity yet.</div>'; kpis.innerHTML=''; return; }
     const phaseNames = ['Log Analysis','Threat Detect','Packet Analysis','IR Playbook','Defense Report'];
@@ -3256,6 +3451,7 @@ function loadBlueTeamScores() {
 //  HTB SCORES
 // ════════════════════════════════════════════
 function loadHTBScores() {
+  const students = roster();
   const wrap = document.getElementById('htb-table-wrap');
   const kpis = document.getElementById('htb-kpis');
   if (!wrap) return;
@@ -3340,6 +3536,7 @@ function renderHTBTable(rows, wrap, kpis) {
 }
 
 function openHTBEntry(studentId) {
+  const students = roster();
   // Populate student dropdown
   const sel = document.getElementById('htbStudentSelect');
   sel.innerHTML = students.map(s=>`<option value="${s.id}" ${s.id===studentId?'selected':''}>${s.name}</option>`).join('');
@@ -3396,7 +3593,7 @@ function loadCTFScores() {
   if (!_fbDb) { wrap.innerHTML = '<div style="color:rgba(200,216,232,0.4);font-size:.85rem;padding:20px 0;">Firebase not connected.</div>'; return; }
   _fbDb.ref('mccoe_ctf').once('value', snap => {
     const rows = [];
-    snap.forEach(child => { rows.push(child.val()); });
+    snap.forEach(child => { if (keyInView(child.key, child.val())) rows.push(child.val()); });
     rows.sort((a,b)=>(b.points||0)-(a.points||0));
     if (!rows.length) { wrap.innerHTML = '<div style="color:rgba(200,216,232,0.4);font-size:.85rem;padding:20px 0;">No CTF activity yet. Students launch from their dashboard.</div>'; kpis.innerHTML=''; return; }
     const totalPts = rows.reduce((a,r)=>a+(r.points||0),0);
@@ -3619,6 +3816,7 @@ function phaseLabel(p)   { return ['','Phase 1','Phase 2','Phase 3','Phase 4'][p
 
 // ── ONLINE NOW ──────────────────────────────────────────────────────────────
 function renderOnlineNow() {
+  const students = roster();
   const chips = document.getElementById('onlineChips');
   if (!chips) return;
 
@@ -3671,6 +3869,11 @@ function renderDashboard() {
   students = students.filter(s => s && s.id);
   const newStudents = syncRegistry();
   if (newStudents) { renderStudents(); }
+  _renderDashboardBody();
+}
+
+function _renderDashboardBody() {
+  const students = roster();
   // KPIs — only count active cohort members (cohortActive !== false)
   const activeStudents = students.filter(s => s.cohortActive !== false);
   const inactiveCount = students.length - activeStudents.length;
@@ -3717,6 +3920,7 @@ function renderDashboard() {
   // New student registrations alert
   const reg = getRegistry();
   const recentReg = reg.filter(r => {
+    if (regCohortId(r) !== viewCohortId()) return false;
     const minsAgo = (Date.now() - new Date(r.registeredAt).getTime()) / 60000;
     return minsAgo < 1440; // registered in last 24 hrs
   });
@@ -3823,6 +4027,7 @@ function stopRadar() {
 }
 
 function renderLoginMap() {
+  const students = roster();
   const panel = document.getElementById('dpanel-map');
   if (!panel) return;
   stopRadar();
@@ -4026,6 +4231,7 @@ function renderLoginMap() {
 }
 
 function renderSOCFeed() {
+  const students = roster();
   const panel=document.getElementById('dpanel-feed');
   if(!panel) return;
 
@@ -4139,6 +4345,7 @@ function _stat(label, value, color) {
 }
 
 function _buildKpiData(type) {
+  const students = roster();
   const today = new Date().toISOString().split('T')[0];
   switch(type) {
 
@@ -4291,6 +4498,7 @@ function _buildKpiData(type) {
 
 // ════════════════════════════════════════════
 function renderStudents() {
+  const students = roster();
   document.getElementById('studentsTable').innerHTML = students.map(s=>{
     const inactive = s.cohortActive === false;
     return `
@@ -4962,6 +5170,7 @@ function printDashboard() {
 }
 
 function exportCSV() {
+  const students = roster();
   document.getElementById('exportMenu').style.display = 'none';
   const headers = ['Student ID','Name','Cohort','Start Date','Phase','Training Hours','SOC Hours','Attendance %','Avg Score','A+','Network+','Security+','Employer','Mentor','Placement'];
   const rows = students.map(s => [
@@ -4993,7 +5202,8 @@ function exportCSV() {
 function openAddStudent() {
   editingId = null;
   document.getElementById('modalTitle').textContent = 'Add New Student';
-  ['name','cohort','employer','mentor','notes'].forEach(f=>document.getElementById('f-'+f).value='');
+  ['name','employer','mentor','notes'].forEach(f=>document.getElementById('f-'+f).value='');
+  _fillCohortSelect(viewCohortId());
   document.getElementById('f-start').value = new Date().toISOString().split('T')[0];
   document.getElementById('f-hours').value = 0;
   document.getElementById('f-sochours').value = 0;
@@ -5009,7 +5219,7 @@ function openEditStudent(id) {
   editingId = id;
   document.getElementById('modalTitle').textContent = 'Edit — '+s.name;
   document.getElementById('f-name').value      = s.name;
-  document.getElementById('f-cohort').value    = s.cohort;
+  _fillCohortSelect(studentCohortId(s));
   document.getElementById('f-start').value     = s.startDate;
   document.getElementById('f-phase').value     = s.phase;
   document.getElementById('f-hours').value     = s.hours;
@@ -5024,12 +5234,18 @@ function openEditStudent(id) {
   openModal('studentModal');
 }
 
+function _fillCohortSelect(selectedId) {
+  document.getElementById('f-cohort').innerHTML = cohortList().map(c =>
+    `<option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}>${c.name}</option>`).join('');
+}
+
 function saveStudent() {
   const name = document.getElementById('f-name').value.trim();
   if(!name) { alert('Student name is required.'); return; }
+  const cohortId = document.getElementById('f-cohort').value || viewCohortId();
   const data = {
     id: editingId || ('s'+Date.now()),
-    name, cohort:document.getElementById('f-cohort').value,
+    name, cohortId, cohort:(cohorts[cohortId] || {}).name || '',
     startDate:document.getElementById('f-start').value,
     phase:+document.getElementById('f-phase').value,
     hours:+document.getElementById('f-hours').value,
@@ -5043,7 +5259,12 @@ function saveStudent() {
     scores:     editingId ? students.find(x=>x.id===editingId).scores     : [],
     surveys:    editingId ? students.find(x=>x.id===editingId).surveys    : []
   };
-  if(editingId) { const i=students.findIndex(x=>x.id===editingId); students[i]=data; }
+  if(editingId) {
+    const i=students.findIndex(x=>x.id===editingId);
+    const movedCohort = studentCohortId(students[i]) !== cohortId;
+    students[i] = Object.assign({}, students[i], data);
+    if (movedCohort) setStudentCohort(students[i], cohortId);
+  }
   else students.push(data);
   saveData();
   closeModal('studentModal');
@@ -5092,6 +5313,7 @@ function toggleCohortActive(id) {
 //  ATTENDANCE
 // ════════════════════════════════════════════
 function renderAttendance() {
+  const students = roster();
   let date = document.getElementById('attendDate').value;
   if(!date) {
     date = new Date().toISOString().split('T')[0];
@@ -5159,6 +5381,7 @@ let _allCheckins = [];
 let _allFeedback = [];
 
 function renderSurveyView() {
+  const students = roster();
   // Admin survey tab setup
   const sel = document.getElementById('surveyStudent');
   if (sel) sel.innerHTML = students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
@@ -5170,6 +5393,7 @@ function renderSurveyView() {
 }
 
 function showSurveyTab(tab) {
+  const students = roster();
   ['checkins','feedback','admin'].forEach(t => {
     const panel = document.getElementById('svpanel-' + t);
     const btn   = document.getElementById('svtab-'   + t);
@@ -5187,6 +5411,7 @@ function showSurveyTab(tab) {
 }
 
 function loadAllSurveyData() {
+  const students = roster();
   var statusEl = document.getElementById('sv-load-status');
   if (statusEl) { statusEl.textContent = '⏳ Loading from Firebase...'; statusEl.style.color = 'var(--muted)'; }
   if (!_fbDb) {
@@ -5204,6 +5429,7 @@ function loadAllSurveyData() {
     Object.entries(raw).forEach(([tempId, weeks]) => {
       if (!weeks || typeof weeks !== 'object') return;
       const stu = byTempId[tempId];
+      if (!stu) return;
       Object.entries(weeks).forEach(([weekKey, entry]) => {
         if (!entry || typeof entry !== 'object') return;
         _allCheckins.push({
@@ -5246,6 +5472,7 @@ function loadAllSurveyData() {
     Object.entries(raw).forEach(([tempId, entries]) => {
       if (!entries || typeof entries !== 'object') return;
       const stu = byTempId[tempId];
+      if (!stu) return;
       Object.values(entries).forEach(entry => {
         if (!entry || typeof entry !== 'object') return;
         _allFeedback.push({
@@ -5413,6 +5640,7 @@ function submitSurvey() {
 }
 
 function renderSurveyHistory() {
+  const students = roster();
   const allSurveys = [];
   students.forEach(s=>s.surveys.forEach(sv=>allSurveys.push({...sv, studentName:s.name})));
   allSurveys.sort((a,b)=>b.date.localeCompare(a.date));
@@ -5439,6 +5667,7 @@ function renderSurveyHistory() {
 //  EMPLOYER PROFILE
 // ════════════════════════════════════════════
 function renderEmployerSelect() {
+  const students = roster();
   const sel = document.getElementById('employerStudentSelect');
   sel.innerHTML = students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
   renderEmployerView();
@@ -5985,11 +6214,12 @@ function renderSubmissionsView() {
     // Match tempId to student name using students array
     const rows = [];
     Object.keys(all).forEach(tempId => {
+      if (!tempIdInView(tempId)) return;
       const stu = students.find(s => s.portalTempId === tempId) ||
                   { name: all[tempId].week1?.studentName || all[tempId].week2?.studentName || tempId, studentId: '—' };
       rows.push({ tempId, name: stu.name, studentId: stu.studentId || '—', weeks: all[tempId] });
     });
-    students.forEach(s => {
+    roster().forEach(s => {
       if (!s.portalTempId) return;
       if (rows.some(r => r.tempId === s.portalTempId)) return;
       rows.push({ tempId: s.portalTempId, name: s.name, studentId: s.studentId || '—', weeks: {} });
@@ -6621,15 +6851,14 @@ function approveSubmission(pendingIdx) {
 // ════════════════════════════════════════════
 //  WEEKLY LESSONS (content from weeks-data.js / week-tasks.js; read-only)
 // ════════════════════════════════════════════
-const WK_PROGRAM_START = new Date('2026-08-31T00:00:00');
 let _wkCur = null, _wkProg = null, _wkChecks = null;
 function wkEsc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function wkCurrentWeek() {
-  const days = Math.floor((Date.now() - WK_PROGRAM_START) / 86400000);
+  const days = Math.floor((Date.now() - viewCohortStart()) / 86400000);
   return Math.min(12, Math.max(1, Math.floor(days / 7) + 1));
 }
 function wkStudents() {
-  return (students || []).filter(s => s.portalTempId).slice().sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  return roster().filter(s => s.portalTempId).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 }
 function wkStudentWeek(s, n) {
   const p = ((_wkProg || {})[s.portalTempId] || {}).progress || {};
@@ -6688,7 +6917,7 @@ function renderWeeklyView(n) {
   if (!w || !wrap) return;
   const roster = wkStudents();
   const haveData = _wkProg !== null;
-  const start = new Date(WK_PROGRAM_START.getTime() + (n - 1) * 7 * 86400000);
+  const start = new Date(viewCohortStart().getTime() + (n - 1) * 7 * 86400000);
   const end = new Date(start.getTime() + 3 * 86400000);
   const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   const tasks = (WEEK_TASKS[n] || { groups: [] }).groups;
@@ -6857,6 +7086,8 @@ function checkAdminLogin() {
     appEl.style.display = '';
     const badge = document.getElementById('admin-name-badge');
     if (badge) badge.textContent = 'Logged in: ' + match.name;
+    renderCohortSwitch();
+    startCohortListener();
     renderDashboard();
     startFirebaseRegistryListener();
     startLoginListener();
@@ -7152,6 +7383,8 @@ function deleteCustomContent(type, key) {
 
 if (sessionStorage.getItem('mccoe_admin_auth') === '1') {
   gate.style.display = 'none';
+  renderCohortSwitch();
+  startCohortListener();
   renderDashboard();
 } else {
   gate.style.display = 'flex';
@@ -8121,6 +8354,7 @@ function loadMITRESubmissions() {
     // Collect latest submission per student
     const rows = [];
     keys.forEach(key => {
+      if (!tempIdInView(key)) return;
       const dates = Object.keys(all[key]).filter(k => k !== 'grade').sort().reverse();
       if (!dates.length) return;
       const latest = all[key][dates[0]];
@@ -8390,6 +8624,7 @@ function loadNISTSubmissions() {
 
     const rows = [];
     keys.forEach(key => {
+      if (!tempIdInView(key)) return;
       const dates = Object.keys(all[key]).filter(k => k !== 'grade').sort().reverse();
       if (!dates.length) return;
       const latest = all[key][dates[0]];
@@ -8754,13 +8989,14 @@ function loadTicketManager() {
 
   // Build student list: prefer local students array, fall back to Firebase registry
   function getStudentNames() {
-    if (students && students.length > 0) {
-      return Promise.resolve(students.map(s => s.name).sort());
+    const r = roster();
+    if (r.length > 0) {
+      return Promise.resolve(r.map(s => s.name).sort());
     }
     if (!firebase || !firebase.database) return Promise.resolve([]);
     return firebase.database().ref('mccoe_registry').once('value').then(snap => {
       const data = snap.val() || {};
-      return Object.values(data).map(e => e.name).filter(Boolean).sort();
+      return Object.values(data).filter(e => regCohortId(e) === viewCohortId()).map(e => e.name).filter(Boolean).sort();
     }).catch(() => Promise.resolve([]));
   }
 
@@ -8804,7 +9040,7 @@ function renderTkAssignTable() {
 
   const attr = s => String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
   let rows = TRACKER_TICKET_BANK.map(t => {
-    const assigned = tkAssignees(t.id);
+    const assigned = tkAssignees(t.id).filter(nameInView);
     const chips = assigned.map(n =>
       `<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 4px 2px 9px;border-radius:12px;background:rgba(0,245,255,0.08);border:1px solid var(--border);font-size:.74rem;color:var(--text);white-space:nowrap;">${attr(n)}<button data-name="${attr(n)}" onclick="tkRemoveAssignee('${t.id}', this.dataset.name)" title="Unassign" style="background:none;border:none;color:#ff6060;cursor:pointer;font-size:.85rem;line-height:1;padding:0 3px;">&times;</button></span>`
     ).join('');
@@ -8864,7 +9100,7 @@ function tkSetAssignees(ticketId, names) {
   if (_tkTabCurrent === 'progress') renderTkProgress();
 }
 function tkStudentList() {
-  return (_tkStudentNames && _tkStudentNames.length) ? _tkStudentNames : (students || []).map(s => s.name).sort();
+  return (_tkStudentNames && _tkStudentNames.length) ? _tkStudentNames : roster().map(s => s.name).sort();
 }
 function tkAddAssignee(ticketId, studentName) {
   if (!studentName) return;
@@ -8881,7 +9117,7 @@ function renderTkProgress() {
   // Build per-student summary
   const assignedStudents = {};
   TRACKER_TICKET_BANK.forEach(t => {
-    tkAssignees(t.id).forEach(sname => {
+    tkAssignees(t.id).filter(nameInView).forEach(sname => {
       if (!assignedStudents[sname]) assignedStudents[sname] = [];
       assignedStudents[sname].push(t.id);
     });
@@ -9138,7 +9374,7 @@ function tkExportCSV() {
   var rows  = [hdrs.map(function(h){ return DQ+h+DQ; }).join(',')];
   var tkPairs = [];   // one CSV row per ticket per assigned student
   TRACKER_TICKET_BANK.forEach(function(t) {
-    var l = tkAssignees(t.id);
+    var l = tkAssignees(t.id).filter(nameInView);
     (l.length ? l : ['']).forEach(function(n) { tkPairs.push([t, n]); });
   });
   tkPairs.forEach(function(pair) {
@@ -9245,8 +9481,9 @@ const EXPORT_WEEK_TASKS = {
   ]}
 };
 function exportWeeklyReport() {
+  const students = roster();
   const EXCLUDED = ['Joey Harbour', 'Carlos Resto'];
-  const COHORT_START = new Date('2026-08-31T00:00:00');
+  const COHORT_START = viewCohortStart();
 
   const today = new Date();
   const msPerWeek = 7 * 24 * 60 * 60 * 1000;
