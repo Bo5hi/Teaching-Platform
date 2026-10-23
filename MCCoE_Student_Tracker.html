@@ -92,6 +92,12 @@ header::after {
   letter-spacing:2.5px; text-transform:uppercase;
 }
 .header-right { display:flex; align-items:center; gap:16px; position:relative; z-index:1; }
+.cohort-bar { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 28px; background:#080f1e; border-bottom:1px solid #1e3358; }
+.cohort-bar .cb-label { font-size:.72rem; color:#7a8ba8; font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin-right:4px; }
+.cohort-btn { background:transparent; border:1.5px solid #1e3358; border-radius:7px; color:#a8b5cc; font-size:.82rem; font-weight:600; padding:6px 14px; cursor:pointer; }
+.cohort-btn:hover { border-color:var(--red); color:#e2e8f0; }
+.cohort-btn.on { background:var(--red); border-color:var(--red); color:#fff; }
+.cohort-btn .cb-n { opacity:.75; font-weight:500; margin-left:4px; }
 .live-badge {
   background:rgba(255,45,94,0.15); color:var(--red);
   border:1px solid rgba(255,45,94,0.4);
@@ -578,7 +584,6 @@ select option { background:var(--surface); color:var(--text); }
     </div>
   </div>
   <div class="header-right">
-    <select id="cohortSwitch" onchange="switchViewCohort(this.value)" title="Which cohort the Tracker shows" style="background:#080f1e;border:1.5px solid #1e3358;border-radius:7px;color:#e2e8f0;font-size:.82rem;padding:6px 10px;outline:none;"></select>
     <button class="btn btn-outline" onclick="openCohortManager()" style="font-size:.75rem;padding:5px 12px;">Cohorts</button>
     <button class="btn btn-red" onclick="openAddStudent()" style="display:flex;align-items:center;gap:6px;font-size:.82rem;">
       <span style="font-size:1.1rem;line-height:1;">+</span> Add Student
@@ -596,6 +601,7 @@ select option { background:var(--surface); color:var(--text); }
     <button class="btn btn-outline" onclick="adminLogout()" title="Sign out of the instructor Tracker" style="font-size:.75rem;padding:5px 12px;">⏻ Sign Out</button>
   </div>
 </header>
+<div class="cohort-bar" id="cohortSwitch" title="Which cohort the Tracker shows"></div>
 
 <div class="app">
 <!-- SIDEBAR -->
@@ -2019,11 +2025,16 @@ function activeCohortId() {
   const a = cohortList().find(c => c.status === 'active');
   return a ? a.id : DEFAULT_COHORT_ID;
 }
+const ALL_COHORTS = 'all';
 function viewCohortId() {
   const v = localStorage.getItem('mccoe_view_cohort');
-  return v && cohorts[v] ? v : activeCohortId();
+  return v && (v === ALL_COHORTS || cohorts[v]) ? v : activeCohortId();
 }
-function viewCohort() { return cohorts[viewCohortId()] || COHORT_SEED[DEFAULT_COHORT_ID]; }
+function viewingAll() { return viewCohortId() === ALL_COHORTS; }
+function cohortMatches(cid) { return viewingAll() || cid === viewCohortId(); }
+// Cohort a new student lands in by default (the one on screen, or the active one under "All")
+function defaultCohortId() { return viewingAll() ? activeCohortId() : viewCohortId(); }
+function viewCohort() { return cohorts[defaultCohortId()] || COHORT_SEED[DEFAULT_COHORT_ID]; }
 function viewCohortStart() { return new Date((viewCohort().startDate || '2026-08-31') + 'T00:00:00'); }
 function regCohortId(entry) { return (entry && entry.cohortId) || DEFAULT_COHORT_ID; }
 let _regCohortCache = { raw: null, map: {} };
@@ -2040,7 +2051,7 @@ function studentCohortId(s) {
   if (!s) return DEFAULT_COHORT_ID;
   return s.cohortId || (s.portalTempId && regCohortOfTempId(s.portalTempId)) || DEFAULT_COHORT_ID;
 }
-function inViewCohort(s) { return studentCohortId(s) === viewCohortId(); }
+function inViewCohort(s) { return cohortMatches(studentCohortId(s)); }
 function roster() { return students.filter(s => s && s.id && inViewCohort(s)); }
 function rosterNameSet() { return new Set(roster().map(s => (s.name || '').toLowerCase())); }
 function nameInView(name) { return rosterNameSet().has((name || '').toLowerCase()); }
@@ -2052,17 +2063,22 @@ function keyInView(key, val) {
     const byName = students.find(x => x && (x.name || '').toLowerCase() === String(nm).toLowerCase());
     if (byName) return inViewCohort(byName);
   }
-  return (regCohortOfTempId(key) || DEFAULT_COHORT_ID) === viewCohortId();
+  return cohortMatches(regCohortOfTempId(key) || DEFAULT_COHORT_ID);
 }
 function tempIdInView(tempId) { return keyInView(tempId, null); }
 
 function renderCohortSwitch() {
-  const sel = document.getElementById('cohortSwitch');
-  if (!sel) return;
+  const bar = document.getElementById('cohortSwitch');
+  if (!bar) return;
   const cur = viewCohortId();
-  sel.innerHTML = cohortList().map(c =>
-    `<option value="${c.id}" ${c.id === cur ? 'selected' : ''}>${c.name}${c.status === 'active' ? ' (active)' : c.status === 'archived' ? ' (archived)' : c.status === 'upcoming' ? ' (upcoming)' : ''}</option>`
-  ).join('');
+  const counts = {};
+  let total = 0;
+  students.forEach(s => { if (s && s.id) { const c = studentCohortId(s); counts[c] = (counts[c] || 0) + 1; total++; } });
+  const btn = (id, label, n) =>
+    `<button class="cohort-btn${id === cur ? ' on' : ''}" onclick="switchViewCohort('${id}')">${label}<span class="cb-n">(${n})</span></button>`;
+  bar.innerHTML = '<span class="cb-label">Cohort</span>' +
+    cohortList().map(c => btn(c.id, c.name + (c.status === 'archived' ? ' · archived' : ''), counts[c.id] || 0)).join('') +
+    btn(ALL_COHORTS, 'All', total);
 }
 function switchViewCohort(id) {
   localStorage.setItem('mccoe_view_cohort', id);
@@ -2097,7 +2113,6 @@ function openCohortManager() {
     <tr style="border-bottom:1px solid #1e3358;">
       <td style="padding:8px 10px;"><input id="co-name-${c.id}" value="${c.name || ''}" style="${inp}"></td>
       <td style="padding:8px 10px;"><input id="co-start-${c.id}" type="date" value="${c.startDate || ''}" style="${inp}"></td>
-      <td style="padding:8px 10px;"><input id="co-code-${c.id}" value="${c.inviteCode || ''}" style="${inp}font-family:monospace;"></td>
       <td style="padding:8px 10px;">
         <select id="co-status-${c.id}" style="${inp}">
           ${['upcoming','active','archived'].map(st => `<option value="${st}" ${c.status === st ? 'selected' : ''}>${st[0].toUpperCase() + st.slice(1)}</option>`).join('')}
@@ -2110,19 +2125,18 @@ function openCohortManager() {
     <div style="background:#0d1a2e;border-radius:12px;padding:24px 28px;">
       <h2 style="color:var(--red);font-size:1.1rem;margin-bottom:4px;">Cohorts</h2>
       <p style="color:#7a8ba8;font-size:.8rem;margin-bottom:16px;line-height:1.5;">
-        One cohort is <b>active</b> at a time; the Tracker opens on it. New students join the cohort whose invite code they enter on the Hub (Active or Upcoming cohorts only).
-        The start date sets each student's "This Week" on the Hub. Archived students can still sign in.
+        Each cohort gets a button at the top of the Tracker. The <b>active</b> cohort is the one the Tracker opens on.
+        You choose a student's cohort when you approve them (Pending Approvals) or in their Edit form. Archived students can still sign in.
       </p>
       <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
-        <thead><tr><th style="${th}">Name</th><th style="${th}">Start Date</th><th style="${th}">Invite Code</th><th style="${th}">Status</th><th style="${th}text-align:center;">Students</th><th style="${th}"></th></tr></thead>
+        <thead><tr><th style="${th}">Name</th><th style="${th}">Start Date</th><th style="${th}">Status</th><th style="${th}text-align:center;">Students</th><th style="${th}"></th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
       <div style="margin-top:20px;padding-top:20px;border-top:1px solid #1e3358;">
         <div style="font-size:.8rem;font-weight:700;color:#7a8ba8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Add Cohort</div>
-        <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:10px;align-items:end;">
+        <div style="display:grid;grid-template-columns:1.4fr 1fr auto;gap:10px;align-items:end;">
           <div><label style="font-size:.75rem;color:#7a8ba8;display:block;margin-bottom:4px;">Name</label><input id="co-new-name" placeholder="e.g. Summer 2027" style="${inp}"></div>
           <div><label style="font-size:.75rem;color:#7a8ba8;display:block;margin-bottom:4px;">Start Date</label><input id="co-new-start" type="date" style="${inp}"></div>
-          <div><label style="font-size:.75rem;color:#7a8ba8;display:block;margin-bottom:4px;">Invite Code</label><input id="co-new-code" placeholder="e.g. MCCoE2027B" style="${inp}font-family:monospace;"></div>
           <button onclick="addCohort()" style="padding:8px 18px;background:var(--red);color:#fff;border:none;border-radius:7px;font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add</button>
         </div>
       </div>
@@ -2137,20 +2151,14 @@ function _cohortMsg(text, ok) {
   el.style.color = ok ? '#00ff41' : '#ff6b6b';
   el.textContent = text;
 }
-function _codeTaken(code, exceptId) {
-  const c = (code || '').toLowerCase();
-  return cohortList().some(x => x.id !== exceptId && (x.inviteCode || '').toLowerCase() === c);
-}
 function saveCohort(id) {
   if (!_fbDb) { _cohortMsg('Not connected to the database.', false); return; }
   const name = document.getElementById('co-name-' + id).value.trim();
   const startDate = document.getElementById('co-start-' + id).value;
-  const inviteCode = document.getElementById('co-code-' + id).value.trim();
   const status = document.getElementById('co-status-' + id).value;
-  if (!name || !startDate || !inviteCode) { _cohortMsg('Name, start date and invite code are all required.', false); return; }
-  if (_codeTaken(inviteCode, id)) { _cohortMsg('Another cohort already uses that invite code.', false); return; }
+  if (!name || !startDate) { _cohortMsg('Name and start date are both required.', false); return; }
   const updates = {};
-  updates[id] = Object.assign({}, cohorts[id], { id, name, startDate, inviteCode, status });
+  updates[id] = Object.assign({}, cohorts[id], { id, name, startDate, status });
   if (status === 'active') {
     const others = cohortList().filter(c => c.id !== id && c.status === 'active');
     if (others.length && !confirm('Make ' + name + ' the active cohort? ' + others.map(c => c.name).join(', ') + ' will be archived.')) return;
@@ -2167,12 +2175,10 @@ function addCohort() {
   if (!_fbDb) { _cohortMsg('Not connected to the database.', false); return; }
   const name = document.getElementById('co-new-name').value.trim();
   const startDate = document.getElementById('co-new-start').value;
-  const inviteCode = document.getElementById('co-new-code').value.trim();
-  if (!name || !startDate || !inviteCode) { _cohortMsg('Name, start date and invite code are all required.', false); return; }
+  if (!name || !startDate) { _cohortMsg('Name and start date are both required.', false); return; }
   const id = _cohortSlug(name);
-  if (!id || cohorts[id]) { _cohortMsg('A cohort with that name already exists.', false); return; }
-  if (_codeTaken(inviteCode, null)) { _cohortMsg('Another cohort already uses that invite code.', false); return; }
-  _fbDb.ref('mccoe_cohorts/' + id).set({ id, name, startDate, inviteCode, status:'upcoming', createdAt: new Date().toISOString() }, err => {
+  if (!id || id === ALL_COHORTS || cohorts[id]) { _cohortMsg('A cohort with that name already exists.', false); return; }
+  _fbDb.ref('mccoe_cohorts/' + id).set({ id, name, startDate, status:'upcoming', createdAt: new Date().toISOString() }, err => {
     if (err) { _cohortMsg('Could not save: ' + err.message, false); return; }
     openCohortManager();
     _cohortMsg(name + ' added as Upcoming.', true);
@@ -2772,7 +2778,9 @@ function loadPendingApprovals() {
       var dupWarning = isDup ? '<div style="margin-top:4px;font-size:.7rem;color:var(--yellow);font-weight:700;">⚠ Name already exists' + (dupCohort ? ' (' + dupCohort + ')' : '') + ' — this may be a re-registration. Approving will merge with the existing account and its work. If this is a different person, reject and have them register with a middle initial.</div>' : '';
       html += '<tr style="' + (isDup ? 'background:rgba(245,166,35,.06);' : '') + '">' +
         '<td><strong>' + (d.name || '—') + '</strong>' + dupWarning + '</td>' +
-        '<td>' + ((cohorts[regCohortId(d)] || {}).name || d.cohort || '—') + '</td>' +
+        '<td><select id="appr-co-' + p.key + '" style="background:#080f1e;border:1.5px solid #1e3358;border-radius:7px;color:#e2e8f0;font-size:.8rem;padding:5px 8px;">' +
+          cohortList().map(function(c) { return '<option value="' + c.id + '"' + (c.id === (d.cohortId || defaultCohortId()) ? ' selected' : '') + '>' + c.name + '</option>'; }).join('') +
+        '</select></td>' +
         '<td><span style="font-family:monospace;background:rgba(0,245,255,0.08);padding:2px 8px;border-radius:4px;">' + (d.assignedId || '—') + '</span></td>' +
         '<td>' + regDate + '</td>' +
         '<td style="text-align:center;">' +
@@ -2791,8 +2799,10 @@ function loadPendingApprovals() {
 
 function approvePending(key, name) {
   if (!_fbDb) return;
-  if (!confirm('Approve ' + name + '? They will be able to sign in immediately.')) return;
-  _fbDb.ref('mccoe_registry/' + key + '/status').set('approved', function(err) {
+  const sel = document.getElementById('appr-co-' + key);
+  const co = cohorts[(sel && sel.value) || defaultCohortId()] || viewCohort();
+  if (!confirm('Approve ' + name + ' into ' + co.name + '? They will be able to sign in immediately.')) return;
+  _fbDb.ref('mccoe_registry/' + key).update({ status: 'approved', cohortId: co.id, cohort: co.name }, function(err) {
     if (err) { alert('Error approving student. Please try again.'); return; }
     loadPendingApprovals();
   });
@@ -3866,6 +3876,7 @@ function renderOnlineNow() {
 }
 
 function renderDashboard() {
+  renderCohortSwitch();
   students = students.filter(s => s && s.id);
   const newStudents = syncRegistry();
   if (newStudents) { renderStudents(); }
@@ -3920,7 +3931,7 @@ function _renderDashboardBody() {
   // New student registrations alert
   const reg = getRegistry();
   const recentReg = reg.filter(r => {
-    if (regCohortId(r) !== viewCohortId()) return false;
+    if (!cohortMatches(regCohortId(r))) return false;
     const minsAgo = (Date.now() - new Date(r.registeredAt).getTime()) / 60000;
     return minsAgo < 1440; // registered in last 24 hrs
   });
@@ -5203,7 +5214,7 @@ function openAddStudent() {
   editingId = null;
   document.getElementById('modalTitle').textContent = 'Add New Student';
   ['name','employer','mentor','notes'].forEach(f=>document.getElementById('f-'+f).value='');
-  _fillCohortSelect(viewCohortId());
+  _fillCohortSelect(defaultCohortId());
   document.getElementById('f-start').value = new Date().toISOString().split('T')[0];
   document.getElementById('f-hours').value = 0;
   document.getElementById('f-sochours').value = 0;
@@ -5242,7 +5253,7 @@ function _fillCohortSelect(selectedId) {
 function saveStudent() {
   const name = document.getElementById('f-name').value.trim();
   if(!name) { alert('Student name is required.'); return; }
-  const cohortId = document.getElementById('f-cohort').value || viewCohortId();
+  const cohortId = document.getElementById('f-cohort').value || defaultCohortId();
   const data = {
     id: editingId || ('s'+Date.now()),
     name, cohortId, cohort:(cohorts[cohortId] || {}).name || '',
@@ -8996,7 +9007,7 @@ function loadTicketManager() {
     if (!firebase || !firebase.database) return Promise.resolve([]);
     return firebase.database().ref('mccoe_registry').once('value').then(snap => {
       const data = snap.val() || {};
-      return Object.values(data).filter(e => regCohortId(e) === viewCohortId()).map(e => e.name).filter(Boolean).sort();
+      return Object.values(data).filter(e => cohortMatches(regCohortId(e))).map(e => e.name).filter(Boolean).sort();
     }).catch(() => Promise.resolve([]));
   }
 
