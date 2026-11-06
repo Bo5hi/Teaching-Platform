@@ -2543,6 +2543,30 @@ function renderWeek(num) {
   const p = getWeekProgress(num);
   const content = document.getElementById('main-content');
 
+  if (num === 11 || num === 12) {
+    const launch = (file, eyebrow, title, desc, facts, btn) => `
+      <div class="card" style="border:2px solid var(--red);display:flex;flex-direction:column;gap:14px;padding:28px;margin:0;">
+        <div style="font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);">${eyebrow}</div>
+        <h2 style="margin:0;font-size:24px;line-height:1.2;">${title}</h2>
+        <p style="margin:0;font-size:14px;line-height:1.7;opacity:.85;">${desc}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">${facts.map(f => `<span style="font-size:12px;font-weight:700;padding:5px 10px;border-radius:14px;border:1px solid var(--border);">${f}</span>`).join('')}</div>
+        <button onclick="openPlatformTool('${file}')" style="margin-top:auto;align-self:flex-start;padding:12px 22px;font-size:15px;font-weight:800;background:var(--red);color:#fff;border:none;border-radius:8px;cursor:pointer;">${btn}</button>
+      </div>`;
+    content.innerHTML = `
+      <div class="week-header">
+        <div class="week-header-left">
+          <h1>Week ${w.num}: ${w.title}</h1>
+          <p>${w.num === 11 ? 'Take the mock exam to find your weak spots, then work through the PBQ labs.' : 'Retake the mock exam until you score 80% or higher, and finish every PBQ lab at 100%.'}</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+        ${launch('SecPlus_Mock_Exam.html', 'CompTIA Security+ SY0-801', 'Security+ Mock Exam', 'A full-length timed practice exam. Review every question you miss and download your personal PDF report.', ['86 questions', '90 minutes', '80% to pass'], '⏱️ Open Mock Exam')}
+        ${launch('SecPlus_PBQ_Labs.html', 'Performance-based questions', 'Security+ PBQ Labs', 'Ten hands-on simulated labs, auto-graded, that mirror the performance-based questions on the real exam.', ['10 labs', 'Auto-graded', 'Retake anytime'], '🧪 Open PBQ Labs')}
+      </div>
+      <p style="margin-top:18px;font-size:13px;opacity:.6;">Both open in a new tab. Your scores go to your instructor automatically.</p>`;
+    return;
+  }
+
   const conceptHeaders = ['Concept / Topic', 'Description / Definition', 'Examples / Controls'];
 
   content.innerHTML = `
@@ -2563,9 +2587,7 @@ function renderWeek(num) {
       <button class="tab" data-tab="quiz" onclick="switchTab('quiz')">📝 Quiz</button>
       <button class="tab" data-tab="lab" onclick="switchTab('lab')">🔬 Lab</button>
       <button class="tab" data-tab="acronym" onclick="switchTab('acronym')" id="tab-btn-acronym" style="${(state.acronymScores && state.acronymScores[w.num]) ? 'border-bottom:3px solid var(--green);' : ''}">🔤 Acronyms</button>
-      <button class="tab" data-tab="submit" onclick="switchTab('submit')">📤 Submit</button>
-      ${(w.num === 11 || w.num === 12) ? `<button class="tab" onclick="openMockExam()" title="Opens the Security+ Mock Exam in a new tab" style="color:var(--red);font-weight:800;">⏱️ Mock Exam</button>` : ''}
-    </div>
+      <button class="tab" data-tab="submit" onclick="switchTab('submit')">📤 Submit</button>    </div>
 
     <!-- CONTENT TAB -->
     <div class="tab-panel active" id="tab-content">
@@ -2938,10 +2960,11 @@ function loadInstructorGrade(weekNum) {
 // ══════════════════════════════════════════════
 // TABS
 // ══════════════════════════════════════════════
-function openMockExam() {
+function openMockExam() { openPlatformTool('SecPlus_Mock_Exam.html'); }
+function openPlatformTool(file) {
   let nm = (state.student && state.student.name) || '', sid = (state.student && state.student.tempId) || '';
   try { nm = nm || localStorage.getItem('hub_name') || ''; sid = sid || localStorage.getItem('hub_id') || ''; } catch (e) {}
-  const url = 'SecPlus_Mock_Exam.html' + (nm || sid ? '?name=' + encodeURIComponent(nm) + '&id=' + encodeURIComponent(sid) : '');
+  const url = file + (nm || sid ? '?name=' + encodeURIComponent(nm) + '&id=' + encodeURIComponent(sid) : '');
   const win = window.open(url, '_blank');
   if (win) { try { win.opener = null; } catch (e) {} } else location.href = url;
 }

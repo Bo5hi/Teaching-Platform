@@ -107,6 +107,7 @@ Admin users: jharbour, cdaniels
 - After submit: review with correct answers + explanations, "lessons to review", personal PDF report via jsPDF (cdnjs 2.5.1), logo `assets/mccoe-wordmark.png`
 - Writes `mccoe_mock/{id}` = {name, id, lastActivity, attemptCount, best, last, lastPassed, lastMissed[], attempts/{push}: {pct, points, correct, partial, incorrect, unanswered, passed, secs, timedOut, at, missed[]}}
 - Linked from Hub week 11 + 12 checklists (week-tasks.js); Tracker view `view-mock` / `loadMockScores()` (attempt history per student, not-taken list, most-missed questions)
+- Weeks 11–12 contain ONLY the mock exam + PBQ labs (Joey's decision 2026-11-06): Student Platform `renderWeek(11|12)` returns early with two launch cards (`openPlatformTool(file)` opens in a new tab with name/id); Hub checklist weeks 11–12 = mock exam group + all 10 PBQ labs (`newTab:true` on `p:'tool'` items opens a new tab)
 
 ### Other HTML files
 - MCCoE_CTF.html — CTF challenges
