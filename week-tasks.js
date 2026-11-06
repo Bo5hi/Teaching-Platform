@@ -132,7 +132,10 @@ var WEEK_TASKS = {
       {t:'🧪 PBQ Lab 2: Verify a Download with an MD5 Hash',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=2'},
       {t:'🧪 PBQ Lab 3: Identify Social Engineering in an Inbox',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=3'},
       {t:'🧪 PBQ Lab 5: Detect ARP Poisoning with Wireshark',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=5'},
-      {t:'🧪 PBQ Lab 6: Run a Vulnerability Scan',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=6'}]}
+      {t:'🧪 PBQ Lab 6: Run a Vulnerability Scan',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=6'}]},
+    {icon:'⏱️',label:'Security+ Mock Exam',color:'#4dabf7',items:[
+      {t:'⏱️ Take the Security+ Mock Exam (86 questions, 90 min) as a baseline',p:'tool',url:'SecPlus_Mock_Exam.html'},
+      {t:'📄 Download your PDF report and study every missed question',p:'tool',url:'SecPlus_Mock_Exam.html'}]}
   ]},
   12:{title:'Security+ Mock Exam',groups:[
     {icon:'🎓',label:'Pillar 1 — Student Platform',color:'#ee2207',items:[
@@ -146,6 +149,9 @@ var WEEK_TASKS = {
       {t:'🧪 PBQ Lab 8: Secure pfSense Default Settings',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=8'},
       {t:'🧪 PBQ Lab 9: Manage Certificates on a CA',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=9'},
       {t:'🧪 PBQ Lab 10: Configure an OpenVPN Remote Access Server',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=10'},
-      {t:'🎯 Retake any PBQ lab below 100% — reach an 80%+ set score',p:'tool',url:'SecPlus_PBQ_Labs.html'}]}
+      {t:'🎯 Retake any PBQ lab below 100% — reach an 80%+ set score',p:'tool',url:'SecPlus_PBQ_Labs.html'}]},
+    {icon:'⏱️',label:'Security+ Mock Exam',color:'#4dabf7',items:[
+      {t:'⏱️ Retake the Security+ Mock Exam and score 80% or higher',p:'tool',url:'SecPlus_Mock_Exam.html'},
+      {t:'📄 Download your final PDF report and review every missed question',p:'tool',url:'SecPlus_Mock_Exam.html'}]}
   ]}
 };

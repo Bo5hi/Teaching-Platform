@@ -101,6 +101,13 @@ Admin users: jharbour, cdaniels
 - Reads Hub SSO `?name=&id=`; on Score Lab writes `mccoe_pbq/{id}` = {name, id, lastActivity, labs/{labId}: {best, last, attempts, secs, at, missed[]}}
 - Hub card `card-pbq`; Tracker view `view-pbq` / `loadPBQScores()` (set score = avg of best per lab over 10)
 
+### SecPlus_Mock_Exam.html — Security+ Mock Exam
+- 86 questions = CertMaster A.2.2 practice exam Q5–Q90 verbatim (Q1–Q3 PBQs dropped as broken in CertMaster; Q4 dropped, its explanation doesn't match its options). Data in `secplus-mock-data.js` (`window.MOCK_EXAM`, types single/multi/match, `n` = original CertMaster number)
+- 90-min timer with auto-submit, questions + options shuffled per attempt, unlimited retakes, partial credit for multi/match, 80% pass; in-progress attempt persists in localStorage (`mccoe_mock_run_{id}`)
+- After submit: review with correct answers + explanations, "lessons to review", personal PDF report via jsPDF (cdnjs 2.5.1), logo `assets/mccoe-wordmark.png`
+- Writes `mccoe_mock/{id}` = {name, id, lastActivity, attemptCount, best, last, lastPassed, lastMissed[], attempts/{push}: {pct, points, correct, partial, incorrect, unanswered, passed, secs, timedOut, at, missed[]}}
+- Linked from Hub week 11 + 12 checklists (week-tasks.js); Tracker view `view-mock` / `loadMockScores()` (attempt history per student, not-taken list, most-missed questions)
+
 ### Other HTML files
 - MCCoE_CTF.html — CTF challenges
 - MCCoE_Scoreboard.html — Live leaderboard
@@ -145,6 +152,7 @@ Admin users: jharbour, cdaniels
 | mccoe_tracker_students | Tracker-side student data |
 | mccoe_mitre | MITRE ATT&CK mapping worksheet submissions |
 | mccoe_pbq | Security+ PBQ lab best scores per student |
+| mccoe_mock | Security+ mock exam attempts, best/last score per student |
 
 ---
 

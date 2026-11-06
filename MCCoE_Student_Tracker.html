@@ -663,6 +663,9 @@ select option { background:var(--surface); color:var(--text); }
   <button class="nav-btn" onclick="showView('pbq',this)">
     <span class="nav-icon">🧪</span> Security+ PBQ Labs
   </button>
+  <button class="nav-btn" onclick="showView('mock',this)">
+    <span class="nav-icon">⏱️</span> Security+ Mock Exam
+  </button>
   <button class="nav-btn" onclick="showView('ctf',this)">
     <span class="nav-icon">🚩</span> CTF Scores
   </button>
@@ -1285,6 +1288,21 @@ select option { background:var(--surface); color:var(--text); }
   </div>
   <div id="pbq-kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px;"></div>
   <div id="pbq-table-wrap"></div>
+</div>
+
+<!-- ═══ SECURITY+ MOCK EXAM ═══ -->
+<div id="view-mock" class="view">
+  <div class="page-header">
+    <div>
+      <h2>⏱️ Security+ Mock Exam</h2>
+      <p>86-question timed mock exam (80% to pass). Click a student to see every attempt. Most-missed questions are based on each student's latest attempt.</p>
+    </div>
+    <button class="btn btn-outline" onclick="loadMockScores()">↻ Refresh</button>
+  </div>
+  <div id="mock-kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px;"></div>
+  <div id="mock-table-wrap"></div>
+  <div id="mock-notyet" style="margin-top:22px;"></div>
+  <div id="mock-missed" style="margin-top:26px;"></div>
 </div>
 
 <!-- ═══ CTF SCORES ═══ -->
@@ -2620,6 +2638,7 @@ function showView(name, btn) {
   if(name==='htb')          loadHTBScores();
   if(name==='blueteam')     loadBlueTeamScores();
   if(name==='pbq')          loadPBQScores();
+  if(name==='mock')         loadMockScores();
   if(name==='ctf')          loadCTFScores();
   if(name==='tickets')      loadTicketManager();
   if(name==='mitre')        loadMITRESubmissions();
@@ -3419,6 +3438,142 @@ function loadPBQScores() {
       </table>
       </div>
       <div style="margin-top:10px;font-size:.72rem;color:rgba(200,216,232,0.45);">Set score = average of each lab's best score across all 10 labs (unattempted labs count as 0). ✓ = lab completed at 100%.</div>`;
+  });
+}
+
+// ════════════════════════════════════════════
+//  SECURITY+ MOCK EXAM SCORES
+// ════════════════════════════════════════════
+function mockQuestionBank(cb) {
+  if (window.MOCK_EXAM) return cb(window.MOCK_EXAM);
+  const s = document.createElement('script');
+  s.src = 'secplus-mock-data.js';
+  s.onload = () => cb(window.MOCK_EXAM || null);
+  s.onerror = () => cb(null);
+  document.head.appendChild(s);
+}
+function toggleMockRow(i) {
+  const r = document.getElementById('mock-detail-' + i);
+  if (r) r.style.display = r.style.display === 'none' ? '' : 'none';
+}
+function loadMockScores() {
+  const wrap = document.getElementById('mock-table-wrap');
+  const kpis = document.getElementById('mock-kpis');
+  const notyet = document.getElementById('mock-notyet');
+  const missedBox = document.getElementById('mock-missed');
+  const muted = 'color:rgba(200,216,232,0.4);font-size:.85rem;padding:20px 0;';
+  wrap.innerHTML = '<div style="' + muted + '">Loading...</div>';
+  notyet.innerHTML = ''; missedBox.innerHTML = '';
+  if (!_fbDb) { wrap.innerHTML = '<div style="' + muted + '">Firebase not connected.</div>'; return; }
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const pc = p => p >= 80 ? '#00ff41' : p >= 60 ? '#ffb020' : '#ff4d4d';
+  const fmtSecs = s => { s = s || 0; const m = Math.floor(s / 60); return m + 'm ' + String(s % 60).padStart(2, '0') + 's'; };
+  _fbDb.ref('mccoe_mock').once('value', snap => {
+    const rows = [];
+    snap.forEach(child => { const v = child.val(); if (v && v.attemptCount && keyInView(child.key, v)) rows.push(Object.assign({ _key: child.key }, v)); });
+    rows.sort((a, b) => (b.best || 0) - (a.best || 0));
+
+    const takenKeys = new Set(rows.map(r => r._key));
+    const takenNames = new Set(rows.map(r => (r.name || '').toLowerCase()));
+    const waiting = roster().filter(s => !(s.portalTempId && takenKeys.has(s.portalTempId.replace(/[.#$[\]]/g, '_'))) && !takenNames.has((s.name || '').toLowerCase()));
+    notyet.innerHTML = waiting.length
+      ? `<div style="font-size:.75rem;color:rgba(200,216,232,0.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Not taken yet (${waiting.length})</div><div style="display:flex;flex-wrap:wrap;gap:8px;">${waiting.map(s => `<span style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px 12px;font-size:.8rem;color:var(--text);">${esc(s.name)}</span>`).join('')}</div>`
+      : (rows.length ? '<div style="font-size:.8rem;color:#00ff41;">Every student in this cohort has taken the mock exam.</div>' : '');
+
+    if (!rows.length) {
+      wrap.innerHTML = '<div style="' + muted + '">No mock exam attempts yet. Students open the Security+ Mock Exam from their week 11 or 12 checklist on the Hub so their results save here.</div>';
+      kpis.innerHTML = '';
+      return;
+    }
+    const n = rows.length;
+    const avgBest = Math.round(rows.reduce((a, r) => a + (r.best || 0), 0) / n);
+    const avgLast = Math.round(rows.reduce((a, r) => a + (r.last || 0), 0) / n);
+    const passed = rows.filter(r => (r.best || 0) >= 80).length;
+    const totalAttempts = rows.reduce((a, r) => a + (r.attemptCount || 0), 0);
+    const lastAct = rows.reduce((a, r) => (r.lastActivity || '') > a ? r.lastActivity : a, '');
+    kpis.innerHTML = [
+      ['👥', n + (waiting.length ? ' / ' + (n + waiting.length) : ''), 'Students Taken'],
+      ['📊', avgBest + '%', 'Avg Best Score'],
+      ['🕑', avgLast + '%', 'Avg Latest Score'],
+      ['✅', passed + ' / ' + n, 'Passed (80%+)'],
+      ['🔁', totalAttempts, 'Total Attempts'],
+      ['📅', lastAct ? new Date(lastAct).toLocaleDateString() : '—', 'Last Activity'],
+    ].map(([icon, val, lbl]) => `
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;">
+        <div style="font-size:22px;margin-bottom:6px;">${icon}</div>
+        <div style="font-size:1.2rem;font-weight:900;color:var(--cyan);word-break:break-word;">${val}</div>
+        <div style="font-size:.7rem;color:rgba(200,216,232,0.5);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">${lbl}</div>
+      </div>`).join('');
+    const th = 'padding:10px 6px;font-size:.66rem;color:rgba(200,216,232,0.45);font-weight:700;text-transform:uppercase;letter-spacing:.4px;';
+    wrap.innerHTML = `
+      <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+        <thead><tr style="border-bottom:1px solid var(--border);">
+          <th style="text-align:left;${th}">#</th>
+          <th style="text-align:left;${th}">Student</th>
+          <th style="text-align:center;${th}">Best</th>
+          <th style="text-align:center;${th}">Latest</th>
+          <th style="text-align:center;${th}">Status</th>
+          <th style="text-align:center;${th}">Attempts</th>
+          <th style="text-align:center;${th}">Missed (latest)</th>
+          <th style="text-align:left;${th}">Last Taken</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map((r, i) => {
+            const best = r.best || 0, last = r.last || 0;
+            const atts = Object.values(r.attempts || {}).sort((a, b) => (b.at || '').localeCompare(a.at || ''));
+            const status = best >= 80 ? '<span style="color:#00ff41;font-weight:800;">PASSED</span>' : '<span style="color:#ff4d4d;font-weight:800;">NOT YET</span>';
+            const detail = atts.map(a => `<tr style="border-bottom:1px solid rgba(255,255,255,.04);">
+                <td style="padding:6px 8px;color:rgba(200,216,232,0.6);white-space:nowrap;">${a.at ? new Date(a.at).toLocaleString() : '—'}</td>
+                <td style="padding:6px 8px;font-weight:800;color:${pc(a.pct || 0)};">${a.pct || 0}%</td>
+                <td style="padding:6px 8px;color:var(--text);">${a.correct || 0} correct · ${a.partial || 0} partial · ${(a.incorrect || 0) + (a.unanswered || 0)} missed${a.unanswered ? ' (' + a.unanswered + ' blank)' : ''}</td>
+                <td style="padding:6px 8px;color:rgba(200,216,232,0.6);white-space:nowrap;">${fmtSecs(a.secs)}${a.timedOut ? ' · timed out' : ''}</td>
+                <td style="padding:6px 8px;color:rgba(200,216,232,0.5);font-size:.75rem;">${(a.missed || []).length ? 'Missed CertMaster Q#: ' + a.missed.join(', ') : ''}</td>
+              </tr>`).join('');
+            return `<tr style="border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;" onclick="toggleMockRow(${i})" title="Click to show every attempt">
+              <td style="padding:10px 6px;color:rgba(200,216,232,0.4);font-weight:700;">${i + 1}</td>
+              <td style="padding:10px 6px;font-weight:700;color:var(--text);white-space:nowrap;">${esc(r.name || '—')} <span style="color:rgba(200,216,232,0.35);font-weight:400;">▾</span></td>
+              <td style="padding:10px 6px;text-align:center;min-width:90px;">
+                <div style="font-weight:900;color:${pc(best)};font-size:.95rem;">${best}%</div>
+                <div style="height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:4px;"><div style="height:3px;background:${pc(best)};border-radius:2px;width:${Math.min(100, best)}%;"></div></div>
+              </td>
+              <td style="padding:10px 6px;text-align:center;font-weight:800;color:${pc(last)};">${last}%</td>
+              <td style="padding:10px 6px;text-align:center;">${status}</td>
+              <td style="padding:10px 6px;text-align:center;font-weight:800;color:var(--text);">${r.attemptCount || 0}</td>
+              <td style="padding:10px 6px;text-align:center;color:var(--text);">${(r.lastMissed || []).length}</td>
+              <td style="padding:10px 6px;color:rgba(200,216,232,0.5);white-space:nowrap;">${r.lastActivity ? new Date(r.lastActivity).toLocaleDateString() : '—'}</td>
+            </tr>
+            <tr id="mock-detail-${i}" style="display:none;"><td></td><td colspan="7" style="padding:4px 6px 14px;">
+              <table style="width:100%;border-collapse:collapse;font-size:.78rem;background:rgba(255,255,255,.02);border-radius:8px;">${detail || '<tr><td style="padding:8px;color:rgba(200,216,232,0.4);">No attempt details.</td></tr>'}</table>
+            </td></tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      </div>
+      <div style="margin-top:10px;font-size:.72rem;color:rgba(200,216,232,0.45);">Score = points earned / 86 (select-two and matching questions give partial credit). Passed = best score of 80% or higher.</div>`;
+
+    const counts = {};
+    rows.forEach(r => (r.lastMissed || []).forEach(q => { counts[q] = (counts[q] || 0) + 1; }));
+    const top = Object.keys(counts).map(q => [+q, counts[q]]).sort((a, b) => b[1] - a[1] || a[0] - b[0]).slice(0, 15);
+    if (!top.length) return;
+    mockQuestionBank(bank => {
+      const byN = {};
+      ((bank && bank.questions) || []).forEach(q => { byN[q.n] = q; });
+      const snip = q => { const t = (q && q.stem || []).join(' '); return t.length > 150 ? t.slice(0, 150) + '…' : t; };
+      missedBox.innerHTML = `
+        <div style="font-size:.75rem;color:rgba(200,216,232,0.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Most-missed questions (latest attempts)</div>
+        <table style="width:100%;border-collapse:collapse;font-size:.8rem;">
+          <thead><tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;${th}">CertMaster Q#</th><th style="text-align:center;${th}">Missed by</th><th style="text-align:left;${th}">Question</th><th style="text-align:left;${th}">Lesson</th>
+          </tr></thead>
+          <tbody>${top.map(([q, c]) => `<tr style="border-bottom:1px solid rgba(255,255,255,.04);">
+            <td style="padding:8px 6px;font-weight:800;color:var(--cyan);">${q}</td>
+            <td style="padding:8px 6px;text-align:center;font-weight:800;color:${c / n >= .5 ? '#ff4d4d' : '#ffb020'};">${c} / ${n}</td>
+            <td style="padding:8px 6px;color:var(--text);">${esc(snip(byN[q]))}</td>
+            <td style="padding:8px 6px;color:rgba(200,216,232,0.55);">${esc(((byN[q] && byN[q].related) || []).join('; '))}</td>
+          </tr>`).join('')}</tbody>
+        </table>`;
+    });
   });
 }
 
