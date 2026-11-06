@@ -82,7 +82,7 @@ Admin users: jharbour, cdaniels
 - Surveys (dual format: Daily Survey = rating/confidence/topic; Weekly Check-In = mood/learned/goal)
 - Employer Profile, Student Submissions (8 projects, grading)
 - Library, Course Documents, Academy Scores, Acronym Scores
-- Pentest Lab, HTB Scores, Blue Team Lab, CTF Scores
+- Pentest Lab, HTB Scores, Blue Team Lab, Security+ PBQ Labs, CTF Scores
 - SOC Tickets (SLA tracking P1=4h/P2=8h/P3=24h/P4=72h)
 - **🗺️ MITRE Mapping** — student MITRE ATT&CK worksheet submissions
 - Exec Summary Rubric (digital grader), Cheat Sheet, CTF Answer Key
@@ -94,6 +94,12 @@ Admin users: jharbour, cdaniels
 - Tab 4 is a submittable student worksheet — saves to Firebase mccoe_mitre
 - Hub button in header passes name/ID back to Hub
 - Linked from Hub Week 3 + Week 4 checklists
+
+### SecPlus_PBQ_Labs.html — Security+ PBQ Labs
+- 10 auto-graded simulated labs mirroring CertMaster A.2.1 (SQLi, MD5 hash, phishing inbox, switch port security, ARP/Wireshark, vuln scan, WPA2 WLAN, pfSense hardening, CA cert management, OpenVPN wizard)
+- Single self-contained file built from the lab engine (core + labs) plus a Hub/Firebase hook; hash match and ARP MACs randomize per launch
+- Reads Hub SSO `?name=&id=`; on Score Lab writes `mccoe_pbq/{id}` = {name, id, lastActivity, labs/{labId}: {best, last, attempts, secs, at, missed[]}}
+- Hub card `card-pbq`; Tracker view `view-pbq` / `loadPBQScores()` (set score = avg of best per lab over 10)
 
 ### Other HTML files
 - MCCoE_CTF.html — CTF challenges
@@ -138,6 +144,7 @@ Admin users: jharbour, cdaniels
 | mccoe_library | Resource library |
 | mccoe_tracker_students | Tracker-side student data |
 | mccoe_mitre | MITRE ATT&CK mapping worksheet submissions |
+| mccoe_pbq | Security+ PBQ lab best scores per student |
 
 ---
 

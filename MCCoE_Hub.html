@@ -676,6 +676,22 @@ footer strong {
       <div class="launch-btn" style="border-color:rgba(167,139,250,0.4);color:#a78bfa">📁 &nbsp; Build Portfolio</div>
     </a>
 
+    <!-- Security+ PBQ Labs -->
+    <a class="pillar-card" id="card-pbq" href="SecPlus_PBQ_Labs.html" style="border-color:rgba(255,77,109,0.3)">
+      <div class="pillar-num" style="color:rgba(255,77,109,0.8)">CERT PREP — SECURITY+ PBQs</div>
+      <span class="pillar-icon">🧪</span>
+      <div class="pillar-name">Security+ PBQ Labs</div>
+      <p class="pillar-desc">
+        Ten hands-on performance-based labs modeled on CertMaster: SQL injection, hashing, phishing, switch hardening, Wireshark, vulnerability scans, Wi-Fi, pfSense, certificates and VPN. Auto-graded with step-by-step lab reports.
+      </p>
+      <div class="pillar-tags">
+        <span class="tag" style="background:rgba(255,77,109,0.08);border-color:rgba(255,77,109,0.3);color:#ff4d6d">10 Labs</span>
+        <span class="tag" style="background:rgba(255,77,109,0.08);border-color:rgba(255,77,109,0.3);color:#ff4d6d">SY0-801</span>
+        <span class="tag" style="background:rgba(255,77,109,0.08);border-color:rgba(255,77,109,0.3);color:#ff4d6d">Auto-Graded</span>
+      </div>
+      <div class="launch-btn" style="border-color:rgba(255,77,109,0.45);color:#ff4d6d">🧪 &nbsp; Start PBQ Labs</div>
+    </a>
+
   </div>
 </div><!-- /triangle-wrapper -->
 
@@ -1048,6 +1064,8 @@ function hubLoginSuccess(name, id, doLog) {
   if (c5) c5.href = 'Pillar5_BlueTeam.html' + p;
   if (cc) cc.href = 'MCCoE_CTF.html' + p;
   if (cp) cp.href = 'MCCoE_Student_Platform.html' + p + '#portfolio';
+  var cq = document.getElementById('card-pbq');
+  if (cq) cq.href = 'SecPlus_PBQ_Labs.html' + p;
 
   var badge = document.getElementById('hub-student-badge');
   var logoutBtn = document.getElementById('hub-logout-btn');

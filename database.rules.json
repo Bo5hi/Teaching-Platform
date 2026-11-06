@@ -18,6 +18,7 @@
     "mccoe_logins":            { ".read": true, ".write": true },
     "mccoe_mitre":             { ".read": true, ".write": true },
     "mccoe_nist":              { ".read": true, ".write": true },
+    "mccoe_pbq":               { ".read": true, ".write": true },
     "mccoe_pentest":           { ".read": true, ".write": true },
     "mccoe_progress":          { ".read": true, ".write": true },
     "mccoe_registry":          { ".read": true, ".write": true },

@@ -660,6 +660,9 @@ select option { background:var(--surface); color:var(--text); }
   <button class="nav-btn" onclick="showView('blueteam',this)">
     <span class="nav-icon">🛡</span> Blue Team Lab
   </button>
+  <button class="nav-btn" onclick="showView('pbq',this)">
+    <span class="nav-icon">🧪</span> Security+ PBQ Labs
+  </button>
   <button class="nav-btn" onclick="showView('ctf',this)">
     <span class="nav-icon">🚩</span> CTF Scores
   </button>
@@ -1269,6 +1272,19 @@ select option { background:var(--surface); color:var(--text); }
   </div>
   <div id="blueteam-kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px;"></div>
   <div id="blueteam-table-wrap"></div>
+</div>
+
+<!-- ═══ SECURITY+ PBQ LABS ═══ -->
+<div id="view-pbq" class="view">
+  <div class="page-header">
+    <div>
+      <h2>🧪 Security+ PBQ Labs</h2>
+      <p>Best score per lab for each student. A lab counts as passed at 100%. Hover a score for attempts and missed tasks.</p>
+    </div>
+    <button class="btn btn-outline" onclick="loadPBQScores()">↻ Refresh</button>
+  </div>
+  <div id="pbq-kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px;"></div>
+  <div id="pbq-table-wrap"></div>
 </div>
 
 <!-- ═══ CTF SCORES ═══ -->
@@ -2603,6 +2619,7 @@ function showView(name, btn) {
   if(name==='pentest')      loadPentestScores();
   if(name==='htb')          loadHTBScores();
   if(name==='blueteam')     loadBlueTeamScores();
+  if(name==='pbq')          loadPBQScores();
   if(name==='ctf')          loadCTFScores();
   if(name==='tickets')      loadTicketManager();
   if(name==='mitre')        loadMITRESubmissions();
@@ -3309,6 +3326,99 @@ function loadPentestScores() {
         </tbody>
       </table>
       </div>`;
+  });
+}
+
+// ════════════════════════════════════════════
+//  SECURITY+ PBQ LAB SCORES
+// ════════════════════════════════════════════
+const PBQ_LABS = [
+  ['sqli','SQL Injection'],['hash','MD5 Hash'],['phish','Phishing'],['switch','Switch Ports'],['arp','ARP Poison'],
+  ['vuln','Vuln Scan'],['wlan','WPA2 WLAN'],['pfsense','pfSense'],['ca','Cert Authority'],['openvpn','OpenVPN']
+];
+function loadPBQScores() {
+  const wrap = document.getElementById('pbq-table-wrap');
+  const kpis = document.getElementById('pbq-kpis');
+  const muted = 'color:rgba(200,216,232,0.4);font-size:.85rem;padding:20px 0;';
+  wrap.innerHTML = '<div style="' + muted + '">Loading...</div>';
+  if (!_fbDb) { wrap.innerHTML = '<div style="' + muted + '">Firebase not connected.</div>'; return; }
+  _fbDb.ref('mccoe_pbq').once('value', snap => {
+    const rows = [];
+    snap.forEach(child => { if (keyInView(child.key, child.val())) rows.push(child.val()); });
+    rows.forEach(r => {
+      const labs = r.labs || {};
+      const scored = PBQ_LABS.filter(([k]) => labs[k]);
+      r._scored = scored.length;
+      r._passed = scored.filter(([k]) => (labs[k].best || 0) >= 100).length;
+      r._avg = scored.length ? Math.round(scored.reduce((a, [k]) => a + (labs[k].best || 0), 0) / scored.length) : 0;
+      r._set = Math.round(PBQ_LABS.reduce((a, [k]) => a + (labs[k] ? labs[k].best || 0 : 0), 0) / PBQ_LABS.length);
+    });
+    rows.sort((a, b) => (b._set - a._set) || (b._passed - a._passed));
+    if (!rows.length) {
+      wrap.innerHTML = '<div style="' + muted + '">No PBQ lab scores yet. Students open Security+ PBQ Labs from the Hub so their scores save here.</div>';
+      kpis.innerHTML = '';
+      return;
+    }
+    const n = rows.length;
+    const avgSet = Math.round(rows.reduce((a, r) => a + r._set, 0) / n);
+    const ready = rows.filter(r => r._set >= 80).length;
+    const lastAct = rows.reduce((a, r) => (r.lastActivity || '') > a ? r.lastActivity : a, '');
+    const hardest = PBQ_LABS.map(([k, t]) => {
+      const done = rows.filter(r => r.labs && r.labs[k]);
+      return [t, done.length ? done.reduce((a, r) => a + (r.labs[k].best || 0), 0) / done.length : 101];
+    }).sort((a, b) => a[1] - b[1])[0];
+    kpis.innerHTML = [
+      ['👥', n, 'Students Active'],
+      ['📊', avgSet + '%', 'Avg Set Score'],
+      ['✅', ready + ' / ' + n, 'At 80%+ Set Score'],
+      ['⚠️', hardest && hardest[1] <= 100 ? hardest[0] : '—', 'Lowest Avg Lab'],
+      ['🕒', lastAct ? new Date(lastAct).toLocaleDateString() : '—', 'Last Activity'],
+    ].map(([icon, val, lbl]) => `
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;">
+        <div style="font-size:22px;margin-bottom:6px;">${icon}</div>
+        <div style="font-size:1.2rem;font-weight:900;color:var(--cyan);word-break:break-word;">${val}</div>
+        <div style="font-size:.7rem;color:rgba(200,216,232,0.5);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">${lbl}</div>
+      </div>`).join('');
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const th = 'padding:10px 6px;font-size:.66rem;color:rgba(200,216,232,0.45);font-weight:700;text-transform:uppercase;letter-spacing:.4px;';
+    const cell = l => {
+      if (!l) return '<span style="color:rgba(200,216,232,0.2);">○</span>';
+      const b = l.best || 0, col = b >= 100 ? '#00ff41' : b >= 50 ? '#ffb020' : '#ff4d4d';
+      const tip = 'Best ' + b + '% · Last ' + (l.last || 0) + '% · ' + (l.attempts || 1) + ' attempt(s)' + (l.missed && l.missed.length ? ' · Missed: ' + l.missed.join('; ') : '');
+      return `<span title="${esc(tip)}" style="color:${col};font-weight:800;cursor:help;">${b >= 100 ? '✓' : b + '%'}</span>`;
+    };
+    wrap.innerHTML = `
+      <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+        <thead><tr style="border-bottom:1px solid var(--border);">
+          <th style="text-align:left;${th}">#</th>
+          <th style="text-align:left;${th}">Student</th>
+          <th style="text-align:center;${th}">Set Score</th>
+          <th style="text-align:center;${th}">Passed</th>
+          ${PBQ_LABS.map(([k, t], i) => `<th style="text-align:center;${th}" title="${t}">${String(i + 1).padStart(2, '0')}<br>${t}</th>`).join('')}
+          <th style="text-align:left;${th}">Last Active</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map((r, i) => {
+            const barW = Math.min(100, r._set);
+            const la = r.lastActivity ? new Date(r.lastActivity).toLocaleDateString() : '—';
+            const col = r._set >= 80 ? '#00ff41' : r._set >= 50 ? '#ffb020' : '#ff4d4d';
+            return `<tr style="border-bottom:1px solid rgba(255,255,255,.04);">
+              <td style="padding:10px 6px;color:rgba(200,216,232,0.4);font-weight:700;">${i + 1}</td>
+              <td style="padding:10px 6px;font-weight:700;color:var(--text);white-space:nowrap;">${esc(r.name || '—')}</td>
+              <td style="padding:10px 6px;text-align:center;min-width:90px;">
+                <div style="font-weight:900;color:${col};font-size:.95rem;">${r._set}%</div>
+                <div style="height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:4px;"><div style="height:3px;background:${col};border-radius:2px;width:${barW}%;"></div></div>
+              </td>
+              <td style="padding:10px 6px;text-align:center;font-weight:800;color:var(--text);">${r._passed}/10</td>
+              ${PBQ_LABS.map(([k]) => `<td style="padding:10px 6px;text-align:center;">${cell(r.labs && r.labs[k])}</td>`).join('')}
+              <td style="padding:10px 6px;color:rgba(200,216,232,0.5);white-space:nowrap;">${la}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      </div>
+      <div style="margin-top:10px;font-size:.72rem;color:rgba(200,216,232,0.45);">Set score = average of each lab's best score across all 10 labs (unattempted labs count as 0). ✓ = lab completed at 100%.</div>`;
   });
 }
 
