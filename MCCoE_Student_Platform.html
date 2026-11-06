@@ -2564,6 +2564,7 @@ function renderWeek(num) {
       <button class="tab" data-tab="lab" onclick="switchTab('lab')">🔬 Lab</button>
       <button class="tab" data-tab="acronym" onclick="switchTab('acronym')" id="tab-btn-acronym" style="${(state.acronymScores && state.acronymScores[w.num]) ? 'border-bottom:3px solid var(--green);' : ''}">🔤 Acronyms</button>
       <button class="tab" data-tab="submit" onclick="switchTab('submit')">📤 Submit</button>
+      ${(w.num === 11 || w.num === 12) ? `<button class="tab" onclick="openMockExam()" title="Opens the Security+ Mock Exam in a new tab" style="color:var(--red);font-weight:800;">⏱️ Mock Exam</button>` : ''}
     </div>
 
     <!-- CONTENT TAB -->
@@ -2937,6 +2938,14 @@ function loadInstructorGrade(weekNum) {
 // ══════════════════════════════════════════════
 // TABS
 // ══════════════════════════════════════════════
+function openMockExam() {
+  let nm = (state.student && state.student.name) || '', sid = (state.student && state.student.tempId) || '';
+  try { nm = nm || localStorage.getItem('hub_name') || ''; sid = sid || localStorage.getItem('hub_id') || ''; } catch (e) {}
+  const url = 'SecPlus_Mock_Exam.html' + (nm || sid ? '?name=' + encodeURIComponent(nm) + '&id=' + encodeURIComponent(sid) : '');
+  const win = window.open(url, '_blank');
+  if (win) { try { win.opener = null; } catch (e) {} } else location.href = url;
+}
+
 function switchTab(name) {
   document.querySelectorAll('.tab[data-tab]').forEach(t => {
     t.classList.toggle('active', t.dataset.tab === name);
