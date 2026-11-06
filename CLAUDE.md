@@ -99,6 +99,7 @@ Admin users: jharbour, cdaniels
 - 10 auto-graded simulated labs mirroring CertMaster A.2.1 (SQLi, MD5 hash, phishing inbox, switch port security, ARP/Wireshark, vuln scan, WPA2 WLAN, pfSense hardening, CA cert management, OpenVPN wizard)
 - Single self-contained file built from the lab engine (core + labs) plus a Hub/Firebase hook; hash match and ARP MACs randomize per launch
 - Reads Hub SSO `?name=&id=`; on Score Lab writes `mccoe_pbq/{id}` = {name, id, lastActivity, labs/{labId}: {best, last, attempts, secs, at, missed[]}}
+- The padlock brand bar (`.brandbar`, `assets/mccoe-logo.png`) and `#hubbar` exist only in the built file, not the source index.html; keep both when rebuilding
 - Hub card `card-pbq`; Tracker view `view-pbq` / `loadPBQScores()` (set score = avg of best per lab over 10)
 
 ### SecPlus_Mock_Exam.html — Security+ Mock Exam

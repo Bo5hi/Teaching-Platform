@@ -330,12 +330,18 @@ code { font-family: var(--font-mono); font-size: .9em; background: var(--accent-
 [hidden] { display: none !important; }
 html, body { margin: 0; }
 body { padding-block: 0; }
+.brandbar { background: var(--surface); border-bottom: 1px solid var(--line); margin: 0 calc(-1 * max(16px, env(safe-area-inset-right, 0px))) 0 calc(-1 * max(16px, env(safe-area-inset-left, 0px))); }
+.brandbar-in { max-width: 1320px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
+.brandbar img { display: block; width: 40px; height: 40px; }
+.brandbar span { font: 700 13px/1.2 var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+@media (max-width: 560px) { .brandbar img { width: 32px; height: 32px; } }
 #hubbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 16px; max-width: 1320px; margin: 0 auto; padding: 10px 14px; margin-top: 12px; background: var(--ok-soft); color: var(--ok); border-radius: 8px; font-size: 14px; }
 #hubbar.warn { background: var(--mid-soft); color: var(--mid); }
 #hubbar a { color: inherit; font-weight: 700; }</style>
 
 </head>
 <body>
+<header class="brandbar"><div class="brandbar-in"><img src="assets/mccoe-logo.png" alt="MCCoE: Missouri Cybersecurity Center of Excellence" width="500" height="500"><span>Security+ PBQ Labs</span></div></header>
 <div id="hubbar" role="status"></div>
 <div id="app"><div class="wrap"><p class="eyebrow">MCCoE · Security+ PBQ Labs</p><h1>Loading labs…</h1></div></div>
 <div class="drawer" id="drawer" hidden></div>
