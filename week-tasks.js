@@ -126,13 +126,26 @@ var WEEK_TASKS = {
       {t:'📖 Study Week 11 Content',p:'p1',w:11},{t:'📝 Domain Knowledge Check',p:'p1',w:11},
       {t:'🗓️ Daily Practice Tests (Mon–Fri)',p:'p1',w:11},{t:'🎯 Study plan for your 2 weakest domains',p:'p1',w:11}]},
     {icon:'💻',label:'Pillar 2 — CyberSec Academy',color:'#00e676',items:[
-      {t:'🎮 Quiz: Careers & Certs',p:'p2'},{t:'🃏 Complete All Flashcard Decks',p:'p2'}]}
+      {t:'🎮 Quiz: Careers & Certs',p:'p2'},{t:'🃏 Complete All Flashcard Decks',p:'p2'}]},
+    {icon:'🧪',label:'Security+ PBQ Labs',color:'#ff4d6d',items:[
+      {t:'🧪 PBQ Lab 1: SQL Injection',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=1'},
+      {t:'🧪 PBQ Lab 2: Verify a Download with an MD5 Hash',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=2'},
+      {t:'🧪 PBQ Lab 3: Identify Social Engineering in an Inbox',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=3'},
+      {t:'🧪 PBQ Lab 5: Detect ARP Poisoning with Wireshark',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=5'},
+      {t:'🧪 PBQ Lab 6: Run a Vulnerability Scan',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=6'}]}
   ]},
   12:{title:'Security+ Mock Exam',groups:[
     {icon:'🎓',label:'Pillar 1 — Student Platform',color:'#ee2207',items:[
       {t:'📖 Study Week 12 Content',p:'p1',w:12},{t:'⏱️ Full-Length Timed Mock Exam',p:'p1',w:12},
       {t:'🔬 Review every missed question',p:'p1',w:12}]},
     {icon:'🚩',label:'CTF — Capture The Flag',color:'#ffd700',items:[
-      {t:'🚩 Complete All 4 CTF Scenarios (12 Flags)',p:'ctf'}]}
+      {t:'🚩 Complete All 4 CTF Scenarios (12 Flags)',p:'ctf'}]},
+    {icon:'🧪',label:'Security+ PBQ Labs',color:'#ff4d6d',items:[
+      {t:'🧪 PBQ Lab 4: Harden Switch Ports with Port Security',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=4'},
+      {t:'🧪 PBQ Lab 7: Create a WPA2 Wireless Network',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=7'},
+      {t:'🧪 PBQ Lab 8: Secure pfSense Default Settings',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=8'},
+      {t:'🧪 PBQ Lab 9: Manage Certificates on a CA',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=9'},
+      {t:'🧪 PBQ Lab 10: Configure an OpenVPN Remote Access Server',p:'tool',url:'SecPlus_PBQ_Labs.html?lab=10'},
+      {t:'🎯 Retake any PBQ lab below 100% — reach an 80%+ set score',p:'tool',url:'SecPlus_PBQ_Labs.html'}]}
   ]}
 };

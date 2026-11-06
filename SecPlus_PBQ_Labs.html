@@ -2185,6 +2185,10 @@ body { padding-block: 0; }
     if (id) localStorage.setItem('hub_id', id);
   } catch (e) { /* storage unavailable */ }
   var key = id ? id.replace(/[.#$[\]]/g, '_') : null;
+  var startLab = q.get('lab');
+  if (startLab && /^\d{1,2}$/.test(startLab) && !location.hash) {
+    try { history.replaceState(null, '', location.pathname + location.search + '#lab-' + (+startLab)); } catch (e) { /* ignore */ }
+  }
   var db = null;
   try {
     if (window.firebase) {
