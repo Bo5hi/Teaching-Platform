@@ -17,7 +17,15 @@ A fully custom cybersecurity associate platform built in plain HTML/JS/CSS, host
 
 **Live URL:** https://bo5hi.github.io/Teaching-Platform/MCCoE_Hub.html
 **GitHub Repo:** https://github.com/Bo5hi/Teaching-Platform
-**Local folder:** C:\Users\JoeyHarbour\Projects\Teaching-Platform
+**Local folder:** `OneDrive - Missouri Cybersecurity Center of Excellence\Documents\GitHub\Teaching-Platform` (moved into OneDrive 2026-11-06 so Joey can work from home; the old C:\Users\JoeyHarbour\Projects copy was removed)
+
+### Working from home / another PC
+- Open this same OneDrive folder (wait for OneDrive to finish syncing first). Start Claude Code in this folder so it reads this file.
+- **Always pull before editing** (GitHub Desktop: Fetch/Pull, or `git pull`). GitHub is the source of truth; OneDrive only carries the files.
+- Edit on one PC at a time and push when done. Don't leave uncommitted work on one PC and edit the same files on the other, because OneDrive can create "-PCNAME" conflict copies.
+- Git on the work PC is a portable copy at `%LOCALAPPDATA%\mccoe-tools\git\cmd\git.exe` (not on PATH). At home, install GitHub Desktop or Git for Windows; sign in as Bo5hi to push.
+- If git reports "dubious ownership" for this folder: `git config --global --add safe.directory <this folder path with forward slashes>`
+- CertMaster recordings, the recorder tool and the A.2.2 mock exam answer key (`Session_2026-11-06_1107\A2.2_Mock_Exam_Answer_Key.md`) are in `OneDrive\Documents\Security+ CertMaster Package - Module 1\CertMaster Recorder`; the PBQ lab sources are in `...\PBQ Practice Labs - source`.
 
 The cohort runs 12 weeks, Mon–Thu, covering cybersecurity fundamentals through incident analysis and ethical hacking. Current cohort started Mon Aug 31, 2026 at 9AM.
 
@@ -232,7 +240,8 @@ Teacher Answer Key DOCX: kept outside this repo (covers all 8 projects)
 ## GIT WORKFLOW
 
 ```bash
-cd C:\Users\JoeyHarbour\Projects\Teaching-Platform
+cd "$env:USERPROFILE\OneDrive - Missouri Cybersecurity Center of Excellence\Documents\GitHub\Teaching-Platform"
+git pull
 git add <files>
 git commit -m "description"
 git push origin main
