@@ -57,9 +57,7 @@ a { color: var(--accent); }
 /* top bar */
 .top { position: sticky; top: 0; z-index: 10; background: var(--surface); border-bottom: 1px solid var(--line); }
 .top-in { max-width: 1040px; margin: 0 auto; padding: 10px 16px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center; }
-.top img { display: block; height: 36px; width: auto; background: #fff; border-radius: 5px; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .top img { padding: 3px 6px; } }
-:root[data-theme="dark"] .top img { padding: 3px 6px; }
+.top img { display: block; height: 40px; width: 40px; }
 .top-mid { text-align: center; min-width: 0; }
 .top-mid .lbl { font-size: 14px; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .prog { height: 5px; background: var(--line); border-radius: 3px; margin: 6px auto 0; max-width: 340px; overflow: hidden; }
@@ -68,7 +66,7 @@ a { color: var(--accent); }
 .top-right a { font-size: 14px; font-weight: 700; text-decoration: none; }
 .timer { font: 600 17px/1 var(--font-mono); font-variant-numeric: tabular-nums; padding: 8px 12px; border-radius: 6px; background: var(--bg); border: 1px solid var(--line); }
 .timer.low { color: var(--bad); border-color: var(--bad); background: var(--bad-soft); }
-@media (max-width: 560px) { .top img { height: 28px; } .top-in { gap: 10px; } .timer { font-size: 15px; padding: 6px 8px; } }
+@media (max-width: 560px) { .top img { height: 32px; width: 32px; } .top-in { gap: 10px; } .timer { font-size: 15px; padding: 6px 8px; } }
 
 main { max-width: 760px; margin: 0 auto; padding: 36px 16px 140px; }
 
@@ -198,7 +196,7 @@ table.mt td.bad { color: var(--bad); font-weight: 700; }
 
 <header class="top">
   <div class="top-in">
-    <img id="brand-logo" src="assets/mccoe-wordmark.png" alt="MCCoE: Missouri Cybersecurity Center of Excellence" width="548" height="160">
+    <img id="brand-logo" src="assets/mccoe-logo.png" alt="MCCoE: Missouri Cybersecurity Center of Excellence" width="500" height="500">
     <div class="top-mid" id="top-mid"></div>
     <div class="top-right" id="top-right"></div>
   </div>
@@ -675,7 +673,7 @@ table.mt td.bad { color: var(--bad); font-weight: 700; }
     }
     doc.setFillColor.apply(doc, CRIM); doc.rect(0, 0, W, 6, 'F');
     var logo = logoData();
-    if (logo) { try { doc.addImage(logo, 'PNG', M, y, 164, 48); y += 60; } catch (e) {} }
+    if (logo) { try { doc.addImage(logo, 'PNG', M, y, 48, 48); y += 60; } catch (e) {} }
     text('Security+ SY0-801 Mock Exam', { size: 18, bold: true, color: CRIM, after: 2 });
     text('Personal Score Report' + (onlyMissed ? ' (missed questions only)' : ''), { size: 12, color: MUT, after: 10 });
     text('Student: ' + (name || 'Not signed in') + (id ? '    ID: ' + id : ''), { size: 11, bold: true });

@@ -104,7 +104,7 @@ Admin users: jharbour, cdaniels
 ### SecPlus_Mock_Exam.html — Security+ Mock Exam
 - 86 questions = CertMaster A.2.2 practice exam Q5–Q90 verbatim (Q1–Q3 PBQs dropped as broken in CertMaster; Q4 dropped, its explanation doesn't match its options). Data in `secplus-mock-data.js` (`window.MOCK_EXAM`, types single/multi/match, `n` = original CertMaster number)
 - 90-min timer with auto-submit, questions + options shuffled per attempt, unlimited retakes, partial credit for multi/match, 80% pass; in-progress attempt persists in localStorage (`mccoe_mock_run_{id}`)
-- After submit: review with correct answers + explanations, "lessons to review", personal PDF report via jsPDF (cdnjs 2.5.1), logo `assets/mccoe-wordmark.png`
+- After submit: review with correct answers + explanations, "lessons to review", personal PDF report via jsPDF (cdnjs 2.5.1), padlock logo `assets/mccoe-logo.png` (Joey prefers it over `assets/mccoe-wordmark.png`)
 - Writes `mccoe_mock/{id}` = {name, id, lastActivity, attemptCount, best, last, lastPassed, lastMissed[], attempts/{push}: {pct, points, correct, partial, incorrect, unanswered, passed, secs, timedOut, at, missed[]}}
 - Linked from Hub week 11 + 12 checklists (week-tasks.js); Tracker view `view-mock` / `loadMockScores()` (attempt history per student, not-taken list, most-missed questions)
 - Weeks 11–12 contain ONLY the mock exam + PBQ labs (Joey's decision 2026-11-06): Student Platform `renderWeek(11|12)` returns early with two launch cards (`openPlatformTool(file)` opens in a new tab with name/id); Hub checklist weeks 11–12 = mock exam group + all 10 PBQ labs (`newTab:true` on `p:'tool'` items opens a new tab)
