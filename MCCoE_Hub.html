@@ -1211,7 +1211,7 @@ function _renderWeekTasks(wk) {
       else if (item.p === 'p4') { href = 'Pillar4_EthicalHacking.html' + p; }
       else if (item.p === 'p5') { href = 'Pillar5_BlueTeam.html' + p; }
       else if (item.p === 'ctf') { href = 'MCCoE_CTF.html' + p; }
-      else if (item.p === 'tool') { var sep = item.url.indexOf('?') >= 0 ? '&' : '?'; href = item.url + sep + 'name=' + encodeURIComponent(_twName) + '&id=' + encodeURIComponent(_twId); }
+      else if (item.p === 'tool') { var sep = item.url.indexOf('?') >= 0 ? '&' : '?'; href = item.url + sep + 'name=' + encodeURIComponent(_twName) + '&id=' + encodeURIComponent(_twId); if (item.newTab) tgt = 'target="_blank" rel="noopener"'; }
       else if (item.p === 'ext')  { href = item.url; tgt = 'target="_blank"'; }
       var ckKey = 'mccoe_chk_' + (_twId || 'guest') + '_w' + wk + '_i' + idx;
       var done = (_twChecksCache[ckKey] === '1') || (localStorage.getItem(ckKey) === '1');
