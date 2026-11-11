@@ -119,9 +119,7 @@ var WEEK_TASKS = {
       {t:'🔬 Complete Lab Activity',p:'p1',w:10}]},
     {icon:'📋',label:'Capstone — Northgate Supply Co.',color:'#a78bfa',items:[
       {t:'📄 Assessment report and executive summary',p:'p1',w:10},
-      {t:'🎤 Present findings to MCCoE staff at the outbrief',p:'p1',w:10},
-      {t:'📈 Risk Register + Heat Map (8–10 risks, in the workbook)',p:'p1',w:10},
-      {t:'🗓️ POA&M with 0–30 / 31–90 / 91–180 day roadmap',p:'p1',w:10}]}
+      {t:'🎤 Present findings to MCCoE staff at the outbrief',p:'p1',w:10}]}
   ]},
   11:{title:'Security+ Review',groups:[
     {icon:'⏱️',label:'Security+ Mock Exam',color:'#4dabf7',items:[
