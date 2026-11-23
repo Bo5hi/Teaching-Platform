@@ -62,7 +62,7 @@ figure.fig figcaption { font-size: .86rem; color: var(--muted); margin-top: 10px
       h += '<div class="terms">' + s.keyTerms.map(function (k) { return '<div class="term"><b>' + esc(k.term) + '</b>' + esc(k.definition) + '</div>'; }).join('') + '</div>';
     }
     if (s.callout) {
-      var label = { cedar: 'At Cedar Creek', exam: 'On the exam', tip: 'Tip' }[s.callout.kind] || 'Note';
+      var label = { cedar: 'At Cedar Creek', exam: 'On the exam', tip: 'Tip', real: 'Real world' }[s.callout.kind] || 'Note';
       h += '<div class="callout ' + esc(s.callout.kind || '') + '"><div class="ct">' + label + (s.callout.title ? ': ' + esc(s.callout.title) : '') + '</div>' + para(s.callout.text) + '</div>';
     }
     return h;

@@ -9,7 +9,7 @@ global.window = global;
 const repo = path.resolve(__dirname, '..', '..');
 const week = Number(process.argv[2] || 1);
 const load = f => { const p = path.join(repo, f); if (fs.existsSync(p)) require(p); };
-['course-data.js', 'course-projects.js', `course-w${week}-lessons.js`, `course-w${week}-labs.js`,
+['course-data.js', `docs/build/week${week}.js`, 'course-projects.js', `course-w${week}-lessons.js`, `course-w${week}-labs.js`,
  `course-w${week}-practice.js`, `course-w${week}-mock.js`].forEach(load);
 
 const RATE = {
@@ -84,16 +84,17 @@ function project(n) {
 
 function estimate(b) {
   const href = b.href || '';
-  if (b.type === 'lesson') return lesson(q(href).get('l'));
+  if ((b.type === 'lesson' || b.type === 'talk') && /^Lesson\.html/.test(href)) return lesson(q(href).get('l'));
   if (b.type === 'lab') return lab(q(href).get('l'));
   if (b.type === 'practice') return practice(q(href).get('p'));
   if (b.type === 'quiz') return quiz();
   if (b.type === 'project') return project(q(href).get('p'));
-  if (b.type === 'mock') return mock(/part 2/i.test(b.title) ? 2 : 1);
-  return null;   // check-ins etc. keep their set time
+  if (b.type === 'mock' && /Mock_Control_Audit/.test(href)) return mock(/part 2/i.test(b.title) ? 2 : 1);
+  return null;   // check-ins, tools, sources, other mocks: keep the set time (show the arithmetic in b.basis)
 }
 
-const W = COURSE.weeks.find(w => w.n === week || w.week === week || w.num === week) || COURSE.weeks[week - 1];
+// A week being built lives in docs/build/weekN.js (window.COURSE_STAGING[N]) until it is merged into course-data.js.
+const W = (window.COURSE_STAGING || {})[week] || COURSE.weeks.find(w => w.num === week);
 const r5 = m => Math.max(5, Math.round(m / 5) * 5);
 for (const [i, d] of (W.days || []).entries()) {
   let set = 0, est = 0;
@@ -103,7 +104,8 @@ for (const [i, d] of (W.days || []).entries()) {
     const m = e == null ? b.mins : r5(e);
     set += b.mins; est += m;
     const flag = e != null && Math.abs(m - b.mins) >= Math.max(10, b.mins * 0.2) ? '  <-- change' : '';
-    console.log(`  ${String(b.mins).padStart(3)} set | ${String(m).padStart(3)} est  ${b.id.padEnd(9)} ${b.title}${flag}`);
+    const how = e == null ? (b.basis ? `  [set: ${b.basis}]` : '  [set, no basis given]') : '';
+    console.log(`  ${String(b.mins).padStart(3)} set | ${String(m).padStart(3)} est  ${b.id.padEnd(9)} ${b.title}${flag}${how}`);
   }
   console.log(`  ${String(set).padStart(3)} set | ${String(est).padStart(3)} est  = ${(est / 60).toFixed(1)} hours estimated`);
 }

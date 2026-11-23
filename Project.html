@@ -69,6 +69,8 @@ details.rub summary { cursor: pointer; font-weight: 700; color: var(--text); }
         '<li><b>Answer each question</b> here. Tick the checklist under each one as you cover it.</li>' +
         '<li><b>Save a draft</b> any time. Submit when every answer is complete.</li></ol></div>' +
         '<div class="box"><h3>Project document</h3>' + (doc ? '<a class="btn primary" href="' + esc(doc) + '" target="_blank" rel="noopener">Open the PDF</a><div class="sub" style="font-size:.85rem;margin-top:8px">Opens in a new tab.</div>' : '<div class="sub">No document found.</div>') + '</div></div>' +
+      ((window.PROJECT_SOURCES || {})[n] ? '<div class="box" style="margin-bottom:16px"><h3>Real-world sources</h3><div class="sub" style="font-size:.9rem;margin-bottom:6px">The official reports behind this case. Use them as evidence in your answers.</div>' +
+        PROJECT_SOURCES[n].map(function (s) { return '<a class="anyl" href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.title) + ' &rarr;</a>'; }).join('') + '</div>' : '') +
       (R.length ? '<details class="rub"><summary>Grading rubric (' + P.max + ' points)</summary>' + R.map(function (r) { return '<div class="rrow"><div class="pts">' + r.pts + ' pts</div><div><b>' + esc(r.label) + '.</b> <span>' + esc(r.guide) + '</span></div></div>'; }).join('') + '</details>' : '') +
       '<form id="pf">' + P.fields.map(function (f, i) {
         var r = R[i];

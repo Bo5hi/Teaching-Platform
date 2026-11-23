@@ -465,6 +465,10 @@ function loadBlueTeam() {
   });
 }
 loadBlueTeam();
+(function () {
+  const ph = parseInt(_params.get('phase'), 10);
+  if (ph >= 0 && ph < panels.length) showPhase(ph);
+})();
 </script>
 </body>
 </html>

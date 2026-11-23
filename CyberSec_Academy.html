@@ -423,6 +423,12 @@ function endBoot() {
       document.querySelectorAll('.nb').forEach(function(b){ if (b.getAttribute('onclick') && b.getAttribute('onclick').indexOf("'cur'")!==-1) _curNavBtn=b; });
       showScr('cur', _curNavBtn);
     }
+    var _scr = (new URLSearchParams(window.location.search)).get('scr');
+    if (/^(quiz|soc|pw|ph|fc)$/.test(_scr || '')) {
+      var _b = null;
+      document.querySelectorAll('.nb').forEach(function(b){ if ((b.getAttribute('onclick') || '').indexOf("'" + _scr + "'") !== -1) _b = b; });
+      showScr(_scr, _b);
+    }
   })();
   initFC();
   loadCustomContent();

@@ -180,3 +180,25 @@ window.PROJECT_DOCS = {
   7: 'Project7_Equifax_Data_Breach_2017_Part1_Deep_Dive.pdf',
   8: 'Project8_Equifax_Data_Breach_2017_Part2_Executive_Summary.pdf'
 };
+
+// Real-world source documents per incident (links checked 2026-11-23).
+(function () {
+  var target = [
+    { title: 'Krebs on Security: Target Hackers Broke in Via HVAC Company (Feb 5, 2014)', url: 'https://krebsonsecurity.com/2014/02/target-hackers-broke-in-via-hvac-company/' }
+  ];
+  var colonial = [
+    { title: 'CISA/FBI Advisory AA21-131A: DarkSide Ransomware (official PDF)', url: 'https://www.cisa.gov/sites/default/files/publications/AA21-131A_Darkside_Ransomware.pdf' },
+    { title: 'Colonial Pipeline CEO Joseph Blount, Senate testimony, June 8, 2021 (PDF)', url: 'https://www.hsgac.senate.gov/wp-content/uploads/imo/media/doc/Testimony-Blount-2021-06-08.pdf' },
+    { title: 'CISA: The Attack on Colonial Pipeline, What We\'ve Learned Over the Past Two Years (May 2023)', url: 'https://www.cisa.gov/news-events/news/attack-colonial-pipeline-what-weve-learned-what-weve-done-over-past-two-years' }
+  ];
+  var solarwinds = [
+    { title: 'CISA Advisory AA20-352A: APT Compromise of Government Agencies, Critical Infrastructure, and Private Sector Organizations', url: 'https://www.cisa.gov/news-events/cybersecurity-advisories/aa20-352a' },
+    { title: 'CISA Emergency Directive 21-01: Mitigate SolarWinds Orion Code Compromise', url: 'https://www.cisa.gov/news-events/directives/ed-21-01-mitigate-solarwinds-orion-code-compromise-closed' }
+  ];
+  var equifax = [
+    { title: 'GAO-18-559: Actions Taken by Equifax and Federal Agencies in Response to the 2017 Breach', url: 'https://www.gao.gov/products/gao-18-559' },
+    { title: 'NVD: CVE-2017-5638, the Apache Struts flaw used in the breach', url: 'https://nvd.nist.gov/vuln/detail/CVE-2017-5638' },
+    { title: 'FTC: Equifax Data Breach Settlement', url: 'https://www.ftc.gov/enforcement/refunds/equifax-data-breach-settlement' }
+  ];
+  window.PROJECT_SOURCES = { 1: target, 2: target, 3: colonial, 4: colonial, 5: solarwinds, 6: solarwinds, 7: equifax, 8: equifax };
+})();

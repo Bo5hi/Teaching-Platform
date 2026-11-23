@@ -1286,6 +1286,11 @@ function loadProgress() {
 }
 
 loadProgress();
+(function () {
+  const ph = parseInt(_params.get('phase'), 10);
+  if (_params.get('setup') === '1') showSetup();
+  else if (ph >= 0 && ph < panels.length) showPhase(ph);
+})();
 </script>
 </body>
 </html>

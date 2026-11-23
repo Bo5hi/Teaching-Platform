@@ -91,7 +91,7 @@ aside.rail { display: grid; gap: 14px; }
 <script>
 (function () {
   var esc = CC.esc, link = CC.link;
-  var TYPE = { lesson: 'Lesson', practice: 'Practice', lab: 'Lab', mock: 'Mock project', project: 'Case study', quiz: 'Quiz', checkin: 'Check-in', pbq: 'PBQ Lab' };
+  var TYPE = { lesson: 'Lesson', practice: 'Practice', lab: 'Lab', mock: 'Mock project', project: 'Case study', quiz: 'Quiz', checkin: 'Check-in', pbq: 'PBQ Lab', read: 'Real-world source', tool: 'Tool', talk: 'Short talk' };
   var CHECK_SVG = '<svg viewBox="0 0 14 14" fill="none" stroke="#07070f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"/></svg>';
   var weeks = COURSE.weeks;
   var rec = {}, mockRecs = {}, projRecs = {};
@@ -174,14 +174,20 @@ aside.rail { display: grid; gap: 14px; }
     document.getElementById('dayH').textContent = d.name + ': ' + d.focus;
     document.getElementById('dayHint').textContent = 'About ' + hm(mins);
     document.getElementById('tasks').innerHTML = d.blocks.map(function (b) {
-      var done = isDone(b.id), ext = /^https?:/.test(b.href);
+      var done = isDone(b.id), ext = newTab(b);
       return '<li class="task ' + (done ? 'done ' : '') + (b.type === 'mock' ? 'mock' : '') + '">' +
         '<button class="check" data-id="' + b.id + '" aria-label="' + (done ? 'Mark not done: ' : 'Mark done: ') + esc(b.title) + '">' + CHECK_SVG + '</button>' +
         '<div style="min-width:0"><div class="tmeta"><span class="step"></span><span class="chip c-' + b.type + '">' + (TYPE[b.type] || b.type) + '</span><span class="mins">' + b.mins + ' min</span>' +
         (b.due ? '<span class="due">' + esc(b.due) + '</span>' : '') + extra(b) + '</div>' +
         '<div class="tt">' + esc(b.title) + '</div><div class="td">' + esc(b.desc || '') + '</div></div>' +
-        '<a class="btn" href="' + esc(link(b.href)) + '"' + (ext || b.type === 'checkin' ? ' target="_blank" rel="noopener"' : '') + '>Open</a></li>';
+        '<a class="btn" href="' + esc(link(b.href)) + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + '>Open</a></li>';
     }).join('');
+  }
+
+  // External sources and the older platform tools open in a new tab so This Week stays open.
+  function newTab(b) {
+    return /^https?:/.test(b.href) || /^(checkin|tool|read|pbq)$/.test(b.type) ||
+      /^(MCCoE_Student_Platform|CyberSec_Academy|Pillar\d|MITRE_Attack_Map|NIST_CSF_Map|SecPlus_|MCCoE_CTF|interview)/.test(b.href);
   }
 
   // The next unfinished step this week, in order, with one big Start button.
@@ -197,7 +203,7 @@ aside.rail { display: grid; gap: 14px; }
       box.innerHTML = '<div class="upnext done"><div><div class="un-k">Week ' + W.num + ' complete</div><div class="un-t">Every step is done. Nice work.</div><div class="un-d">Check your grades and instructor feedback in My Work.</div></div><a class="btn" href="' + esc(link('MCCoE_Home.html#work')) + '" data-tab-go="work">Open My Work</a></div>';
       return;
     }
-    var ext = next.type === 'checkin';
+    var ext = newTab(next);
     var left = W.days[dayIdx].blocks.filter(function (b) { return !isDone(b.id); }).reduce(function (a, b) { return a + (b.mins || 0); }, 0);
     box.innerHTML = '<div class="upnext"><div style="min-width:0"><div class="un-k">Up next &middot; ' + esc(W.days[dayIdx].name) + ', step ' + stepNo + '</div>' +
       '<div class="un-t">' + esc(next.title) + '</div><div class="un-d">' + esc(next.desc || '') + '</div>' +
