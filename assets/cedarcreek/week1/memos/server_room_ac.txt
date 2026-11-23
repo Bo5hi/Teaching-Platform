@@ -1,0 +1,20 @@
+From:     Dee Ortiz <d.ortiz@cedarcreek-ind.com>
+To:       Marcus Reyes <m.reyes@cedarcreek-ind.com>
+Date:     Wed, 28 Oct 2026 15:12
+Subject:  Server room AC again
+
+Marcus,
+
+The server room hit 86 F this afternoon. The temperature sensor sent its
+email alert at 2:40. The small AC unit cannot keep up when the sun is on
+that wall.
+
+Until facilities gets the new unit in, I have been propping the door open
+with a rubber wedge in the afternoons so the hallway air helps. It works,
+but the badge system complains about it (door held open alarms). Jordan
+says he can turn that alarm off if we want.
+
+Also: this month's backup tapes are on the shelf next to the rack again.
+I know we talked about taking them offsite. I just have not had time.
+
+- Dee

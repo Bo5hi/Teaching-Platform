@@ -1,0 +1,9 @@
+asset,what_it_is,location,owner,classification,notes
+DC01,domain controller / DNS,server room,Dee,,
+FS-HR01,HR file server,Server Rm,R. Medina,confidential,payroll exports here
+eng-fs01,engineering files (CAD),server room,Tom B?,,
+ENG-APP02,CAD license server,server room,Tom,,Win 2012 R2 - cant upgrade
+FW-CORE,firewall,server room,Marcus,,
+NVR-01,camera recorder - 16 cams,IT closet,Jordan,,
+BADGE-CTRL,badge system,IT closet,Jordan,,
+backup tapes,LTO weekly fulls,server room shelf,Dee,,should go offsite?

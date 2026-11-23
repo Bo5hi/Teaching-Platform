@@ -1,0 +1,24 @@
+From:     Marcus Reyes <m.reyes@cedarcreek-ind.com>
+To:       New security analyst
+Date:     Mon, 9 Nov 2026 07:45
+Subject:  Welcome to Cedar Creek
+
+Welcome aboard. I'm glad you're here.
+
+A little background. Cedar Creek has never had a security person. I have
+been here fourteen years, and my team (Dee, Jordan, and me) has always
+been busy just keeping things running. Security got whatever time was
+left over. Then in August someone almost talked Accounts Payable into
+wiring $48,750 to a fake vendor, and Greg decided it was time. That is
+where you come in.
+
+Today I want to walk the whole campus with you: the lobby, the office
+floor, the server room, the plant, and the dock. Bring a notebook. Write
+down every control you see and everything that bothers you. Nobody will
+be offended. That is the job.
+
+I copied some files off our shared drive for you: old policies, a few
+notes from the team, Dee's start on an asset list, and last week's badge
+log export. None of it is pretty. That is part of the point.
+
+- Marcus

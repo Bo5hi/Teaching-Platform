@@ -638,6 +638,9 @@ select option { background:var(--surface); color:var(--text); }
     <span class="nav-icon">📥</span> Student Submissions
     <span id="sub-badge" style="display:none;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:auto;"></span>
   </button>
+  <button class="nav-btn" onclick="showView('course',this)">
+    <span class="nav-icon">&#9638;</span> Course Week 1 (pilot)
+  </button>
   <div class="nav-section">Content</div>
   <button class="nav-btn" onclick="showView('library',this)">
     <span class="nav-icon">📚</span> Resource Library
@@ -1303,6 +1306,20 @@ select option { background:var(--surface); color:var(--text); }
   <div id="mock-table-wrap"></div>
   <div id="mock-notyet" style="margin-top:22px;"></div>
   <div id="mock-missed" style="margin-top:26px;"></div>
+</div>
+
+<!-- ═══ COURSE V2: WEEK 1 PILOT ═══ -->
+<div id="view-course" class="view">
+  <div class="page-header">
+    <div>
+      <h2>Course Week 1: Security Foundations (pilot)</h2>
+      <p>Progress on the new Week &gt; Day layout, lab answers, and Mock Control Audit grading. Click Review on a student to read their labs and grade their audit.</p>
+    </div>
+    <button class="btn btn-outline" onclick="loadCourseV2()">&#8635; Refresh</button>
+  </div>
+  <div id="cv-kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px;"></div>
+  <div id="cv-table-wrap"></div>
+  <div id="cv-notyet" style="margin-top:22px;"></div>
 </div>
 
 <!-- ═══ CTF SCORES ═══ -->
@@ -2639,6 +2656,7 @@ function showView(name, btn) {
   if(name==='blueteam')     loadBlueTeamScores();
   if(name==='pbq')          loadPBQScores();
   if(name==='mock')         loadMockScores();
+  if(name==='course')       loadCourseV2();
   if(name==='ctf')          loadCTFScores();
   if(name==='tickets')      loadTicketManager();
   if(name==='mitre')        loadMITRESubmissions();
@@ -3575,6 +3593,227 @@ function loadMockScores() {
         </table>`;
     });
   });
+}
+
+// ════════════════════════════════════════════
+//  COURSE V2: WEEK 1 PILOT (progress, lab answers, Mock Control Audit grading)
+//  Data: mccoe_course/{key}, mccoe_mockproj/{key}/w1. Shapes: docs/COURSE_V2.md
+// ════════════════════════════════════════════
+let _cvCourse = {}, _cvMock = {}, _cvLoaded = {};
+function cvRequire(src) {
+  if (_cvLoaded[src]) return _cvLoaded[src];
+  _cvLoaded[src] = new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = () => rej(new Error('Could not load ' + src));
+    document.head.appendChild(s);
+  });
+  return _cvLoaded[src];
+}
+const cvEsc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cvStrip = s => String(s == null ? '' : s).replace(/<[^>]+>/g, '');
+const cvPc = p => p >= 80 ? '#00ff41' : p >= 60 ? '#ffb020' : '#ff4d4d';
+function cvWeek1() { return (window.COURSE && COURSE.weeks || []).find(w => w.num === 1); }
+function cvBlocks() { const w = cvWeek1(); const out = []; (w && w.days || []).forEach(d => d.blocks.forEach(b => out.push(b))); return out; }
+function cvIds(type, param) { return cvBlocks().filter(b => b.type === type).map(b => b.href.split(param + '=')[1]); }
+
+function loadCourseV2() {
+  const wrap = document.getElementById('cv-table-wrap'), kpis = document.getElementById('cv-kpis'), notyet = document.getElementById('cv-notyet');
+  const muted = 'color:rgba(200,216,232,0.4);font-size:.85rem;padding:20px 0;';
+  wrap.innerHTML = '<div style="' + muted + '">Loading...</div>'; notyet.innerHTML = '';
+  if (!_fbDb) { wrap.innerHTML = '<div style="' + muted + '">Firebase not connected.</div>'; return; }
+  Promise.all(['course-data.js', 'course-w1-labs.js', 'course-w1-mock.js'].map(cvRequire))
+    .then(() => Promise.all([_fbDb.ref('mccoe_course').once('value'), _fbDb.ref('mccoe_mockproj').once('value')]))
+    .then(([cs, ms]) => {
+      _cvCourse = cs.val() || {}; _cvMock = ms.val() || {};
+      const keys = new Set(Object.keys(_cvCourse).concat(Object.keys(_cvMock).filter(k => _cvMock[k] && _cvMock[k].w1)));
+      const rows = [...keys].map(k => {
+        const c = _cvCourse[k] || {}, m = (_cvMock[k] || {}).w1 || null;
+        return { key: k, name: c.name || (m && m.name) || k, id: c.id || (m && m.id) || '', c, m };
+      }).filter(r => keyInView(r.key, r)).sort((a, b) => a.name.localeCompare(b.name));
+      const seen = new Set(rows.map(r => r.key)), seenNames = new Set(rows.map(r => r.name.toLowerCase()));
+      const waiting = roster().filter(s => !(s.portalTempId && seen.has(s.portalTempId.replace(/[.#$[\]]/g, '_'))) && !seenNames.has((s.name || '').toLowerCase()));
+      notyet.innerHTML = waiting.length ? `<div style="font-size:.75rem;color:rgba(200,216,232,0.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Not started yet (${waiting.length})</div><div style="display:flex;flex-wrap:wrap;gap:8px;">${waiting.map(s => `<span style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px 12px;font-size:.8rem;color:var(--text);">${cvEsc(s.name)}</span>`).join('')}</div>` : '';
+      if (!rows.length) { wrap.innerHTML = '<div style="' + muted + '">No Week 1 activity yet. Students open the new Week 1 from MCCoE_Home.html.</div>'; kpis.innerHTML = ''; return; }
+
+      const blocks = cvBlocks(), lessons = cvIds('lesson', 'l'), labs = cvIds('lab', 'l');
+      const submitted = rows.filter(r => r.m && r.m.status === 'submitted');
+      const toGrade = submitted.filter(r => !r.m.grade || (r.m.submittedAt || '') > (r.m.grade.gradedAt || '')).length;
+      const quizzed = rows.filter(r => r.c.quiz && r.c.quiz.w1);
+      kpis.innerHTML = [
+        [rows.length + (waiting.length ? ' / ' + (rows.length + waiting.length) : ''), 'Students started'],
+        [quizzed.length ? Math.round(quizzed.reduce((a, r) => a + r.c.quiz.w1.best, 0) / quizzed.length) + '%' : '—', 'Avg quiz (best)'],
+        [submitted.length, 'Audits submitted'],
+        [toGrade, 'Audits to grade'],
+      ].map(([v, l]) => `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;"><div style="font-size:1.2rem;font-weight:900;color:${l === 'Audits to grade' && v ? '#ffb020' : 'var(--cyan)'};">${v}</div><div style="font-size:.7rem;color:rgba(200,216,232,0.5);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">${l}</div></div>`).join('');
+
+      const th = 'padding:10px 6px;font-size:.66rem;color:rgba(200,216,232,0.45);font-weight:700;text-transform:uppercase;letter-spacing:.4px;';
+      wrap.innerHTML = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+        <thead><tr style="border-bottom:1px solid var(--border);">
+          <th style="text-align:left;${th}">Student</th><th style="${th}">Steps</th><th style="${th}">Checks</th><th style="${th}">Labs</th><th style="${th}">Sorter</th><th style="${th}">Quiz</th><th style="${th}">Mock audit</th><th style="text-align:left;${th}">Last activity</th><th style="${th}"></th>
+        </tr></thead><tbody>${rows.map(r => {
+          const c = r.c, done = blocks.filter(b => c.done && c.done[b.id]).length;
+          const ck = lessons.map(l => (c.checks || {})[l]).filter(Boolean);
+          const ckP = ck.length ? Math.round(ck.reduce((a, x) => a + x.score / x.total, 0) / ck.length * 100) : null;
+          const lb = labs.map(l => (c.labs || {})[l]).filter(x => x && x.status === 'submitted');
+          const auto = lb.reduce((a, x) => a + (x.auto || 0), 0), right = lb.reduce((a, x) => a + (x.correct || 0), 0);
+          const so = (c.practice || {}).controls, qz = (c.quiz || {}).w1, m = r.m;
+          const mTxt = !m ? '<span style="color:rgba(200,216,232,0.4)">—</span>'
+            : m.grade && (m.submittedAt || '') <= (m.grade.gradedAt || '') ? `<b style="color:${cvPc(m.grade.score / 25 * 100)}">${m.grade.score} / 25</b>`
+            : m.status === 'submitted' ? `<b style="color:#ffb020">${m.grade ? 'Resubmitted' : 'To grade'}</b>` : '<span style="color:rgba(200,216,232,0.6)">Draft</span>';
+          const td = 'padding:10px 6px;text-align:center;';
+          return `<tr style="border-bottom:1px solid rgba(255,255,255,.04);">
+            <td style="padding:10px 6px;font-weight:700;color:var(--text);white-space:nowrap;">${cvEsc(r.name)}</td>
+            <td style="${td}">${done} / ${blocks.length}</td>
+            <td style="${td}">${ckP == null ? '—' : `<span style="color:${cvPc(ckP)}">${ckP}%</span> <span style="color:rgba(200,216,232,0.4)">(${ck.length}/${lessons.length})</span>`}</td>
+            <td style="${td}">${lb.length} / ${labs.length}${auto ? ` <span style="color:rgba(200,216,232,0.45)">· ${right}/${auto} auto</span>` : ''}</td>
+            <td style="${td}">${so ? `<span style="color:${cvPc(so.best)}">${so.best}%</span>` : '—'}</td>
+            <td style="${td}">${qz ? `<b style="color:${cvPc(qz.best)}">${qz.best}%</b> <span style="color:rgba(200,216,232,0.4)">(${qz.attempts})</span>` : '—'}</td>
+            <td style="${td}">${mTxt}</td>
+            <td style="padding:10px 6px;color:rgba(200,216,232,0.5);white-space:nowrap;">${c.lastActivity || (m && m.savedAt) ? new Date(c.lastActivity || m.savedAt).toLocaleString() : '—'}</td>
+            <td style="${td}"><button class="btn btn-outline" style="padding:4px 12px;font-size:.75rem;" onclick="cvOpen('${cvEsc(r.key)}')">Review</button></td></tr>`;
+        }).join('')}</tbody></table></div>`;
+    }).catch(e => { wrap.innerHTML = '<div style="' + muted + '">' + cvEsc(e.message) + '</div>'; });
+}
+
+function cvLabRight(cp, v) {
+  if (!('answer' in cp) || v === null || v === undefined || v === '') return null;
+  if (cp.kind === 'choice') return +v === +cp.answer;
+  if (cp.kind === 'number') return Number(String(v).replace(/,/g, '')) === Number(cp.answer);
+  const want = Array.isArray(cp.answer) ? cp.answer : [cp.answer];
+  const got = String(v).trim().toLowerCase().replace(/\s+/g, ' ');
+  return want.some(a => String(a).trim().toLowerCase().replace(/\s+/g, ' ') === got);
+}
+
+// Match a student's row to answer-key items in the same area by keyword.
+// Returns matches best-first (most keywords hit); callers use only the first.
+function cvMatch(text, area, list) {
+  const t = String(text || '').toLowerCase();
+  return list.map(k => ({ k, n: (!area || !k.area || k.area === area) ? (k.kw || []).filter(w => t.indexOf(String(w).toLowerCase()) >= 0).length : 0 }))
+    .filter(x => x.n > 0).sort((a, b) => b.n - a.n).map(x => x.k);
+}
+
+function cvAuditCheck(m) {
+  const K = window.MOCK_AUDIT_W1 && MOCK_AUDIT_W1.key; const d = (m && m.data) || {};
+  if (!K) return null;
+  const keyControls = [], keyGaps = [];
+  Object.keys(K.areas).forEach(a => { (K.areas[a].controls || []).forEach(c => keyControls.push(Object.assign({ area: a }, c))); (K.areas[a].gaps || []).forEach(g => keyGaps.push(Object.assign({ area: a }, g))); });
+  (K.overall || []).forEach(g => keyGaps.push(Object.assign({ area: 'all' }, g)));
+  const assetNames = (K.assets || []).map(a => a.name.toLowerCase());
+  const assets = (d.assets || []).filter(a => a.name).map(a => {
+    const k = (K.assets || []).find(x => x.name.toLowerCase() === String(a.name).trim().toLowerCase());
+    return { a, k, clsOk: k ? k.cls === a.cls : null };
+  });
+  const controls = (d.controls || []).filter(c => c.control).map(c => {
+    const hits = cvMatch(c.control, c.area, keyControls);
+    const k = hits[0] || null;
+    const isGap = !k && cvMatch(c.control, c.area, keyGaps).length > 0;
+    const catOk = k ? k.cat.indexOf(c.cat) >= 0 : null;
+    const typeOk = k ? (k.type.indexOf(c.type) >= 0 || (!!c.type2 && k.type.indexOf(c.type2) >= 0)) : null;
+    return { c, k, isGap, catOk, typeOk };
+  });
+  const foundGaps = new Set();
+  const gaps = (d.gaps || []).filter(g => g.gap).map(g => {
+    const k = cvMatch(g.gap, g.area === 'all' ? null : g.area, keyGaps)[0] || null;
+    if (k) foundGaps.add(k.text);
+    return { g, k };
+  });
+  const missed = keyGaps.filter(k => !foundGaps.has(k.text) && k.sev);
+  const matchedControls = new Set(controls.filter(x => x.k).map(x => x.k.text)).size;
+  const classOk = controls.filter(x => x.k), classPct = classOk.length ? classOk.filter(x => x.catOk && x.typeOk).length / classOk.length : 0;
+  const highFound = keyGaps.filter(k => k.sev === 'High' && foundGaps.has(k.text)).length, highAll = keyGaps.filter(k => k.sev === 'High').length;
+  const words = String(d.summary || '').trim().split(/\s+/).filter(Boolean).length;
+  const suggest = [
+    Math.min(5, Math.round(assets.filter(x => x.k).length / 10 * 5 + assets.filter(x => !x.k).length / 10 * 2)),
+    Math.min(5, Math.round(matchedControls / 15 * 5)),
+    Math.round(classPct * 5),
+    Math.min(5, Math.round((foundGaps.size >= 5 ? 3 : foundGaps.size * 0.6) + (highAll ? highFound / highAll * 2 : 0))),
+    null
+  ];
+  return { assets, controls, gaps, missed, matchedControls, classPct, highFound, highAll, words, suggest, d, assetNames };
+}
+
+function cvOpen(key) {
+  const c = _cvCourse[key] || {}, m = (_cvMock[key] || {}).w1 || null;
+  const name = c.name || (m && m.name) || key;
+  const W = cvWeek1(), rubric = (W && W.mock && W.mock.rubric) || [];
+  const notes = (window.MOCK_AUDIT_W1 && MOCK_AUDIT_W1.key && MOCK_AUDIT_W1.key.rubricNotes) || [];
+  const chk = m ? cvAuditCheck(m) : null;
+  const areaName = a => { const x = (window.MOCK_AUDIT_W1 && MOCK_AUDIT_W1.areas || []).find(z => z.id === a); return a === 'all' ? 'Campus-wide' : x ? x.number + '. ' + x.name : (a || '—'); };
+  const ok = v => v === true ? '<span style="color:#00ff41;font-weight:800;">&#10003;</span>' : v === false ? '<span style="color:#ff4d4d;font-weight:800;">&#10007;</span>' : '<span style="color:rgba(200,216,232,0.35);">·</span>';
+  const H = t => `<div style="font-size:.72rem;font-weight:800;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase;margin:22px 0 10px;">${t}</div>`;
+  const tbl = (head, rows) => `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:.8rem;"><thead><tr style="border-bottom:1px solid var(--border);">${head.map(h => `<th style="text-align:left;padding:6px 8px;font-size:.66rem;color:rgba(200,216,232,0.45);text-transform:uppercase;">${h}</th>`).join('')}</tr></thead><tbody>${rows.join('') || `<tr><td colspan="${head.length}" style="padding:8px;color:rgba(200,216,232,0.4);">None</td></tr>`}</tbody></table></div>`;
+  const tr = cells => `<tr style="border-bottom:1px solid rgba(255,255,255,.04);">${cells.map(x => `<td style="padding:6px 8px;vertical-align:top;color:var(--text);">${x}</td>`).join('')}</tr>`;
+
+  // Labs
+  let labsHtml = '';
+  cvIds('lab', 'l').forEach(lid => {
+    const L = (window.COURSE_LABS || {})[lid]; if (!L) return;
+    const r = (c.labs || {})[lid];
+    labsHtml += `<div style="background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;"><b style="color:var(--text);">Lab ${cvEsc(lid)}: ${cvEsc(L.title)}</b><span style="font-size:.78rem;color:${r ? (r.status === 'submitted' ? '#00ff41' : '#ffb020') : 'rgba(200,216,232,0.4)'};">${r ? (r.status === 'submitted' ? 'Submitted' : 'Draft') + ' · ' + new Date(r.at).toLocaleString() + (r.auto ? ` · ${r.correct}/${r.auto} auto-checked correct` : '') : 'Not started'}</span></div>
+      ${r ? tbl(['', 'Checkpoint', 'Answer', 'Key'], (L.checkpoints || []).map(cp => {
+        const v = (r.answers || {})[cp.id];
+        const shown = cp.kind === 'choice' && v != null && v !== '' ? (cp.opts || [])[v] : v;
+        const keyTxt = !('answer' in cp) ? '<span style="color:rgba(200,216,232,0.45)">You read this one</span>' : cvEsc(cp.kind === 'choice' ? (cp.opts || [])[cp.answer] : [].concat(cp.answer).join(' / '));
+        return tr([ok(cvLabRight(cp, v)), cvEsc(cvStrip(cp.q)), `<span style="white-space:pre-wrap;${cp.kind === 'paste' ? 'font-family:monospace;font-size:.75rem;' : ''}">${cvEsc(shown == null ? '' : shown)}</span>`, keyTxt]);
+      })) + (r.reflection ? `<div style="margin-top:8px;font-size:.8rem;color:var(--text);"><span style="color:rgba(200,216,232,0.5);">Reflection: </span><span style="white-space:pre-wrap;">${cvEsc(r.reflection)}</span></div>` : '') : ''}
+    </div>`;
+  });
+
+  // Audit
+  let auditHtml = '';
+  if (!m) auditHtml = '<div style="color:rgba(200,216,232,0.4);">Not started.</div>';
+  else {
+    const g = m.grade || {}, sug = chk ? chk.suggest : [];
+    auditHtml += `<div style="font-size:.8rem;color:rgba(200,216,232,0.6);margin-bottom:10px;">Status: <b style="color:var(--text);">${cvEsc(m.status || 'draft')}</b>${m.submittedAt ? ' · submitted ' + new Date(m.submittedAt).toLocaleString() : ''}${m.submitCount > 1 ? ' · ' + m.submitCount + ' submissions' : ''}${m.grade ? ' · graded ' + new Date(m.grade.gradedAt).toLocaleString() + ' by ' + cvEsc(m.grade.gradedBy) : ''}</div>`;
+    auditHtml += `<div style="background:rgba(255,176,32,0.05);border:1px solid rgba(255,176,32,0.35);border-radius:8px;padding:14px;">
+      <div style="font-weight:800;color:#ffb020;margin-bottom:8px;">Grade (25 points)</div>
+      ${rubric.map((rb, i) => `<div style="display:grid;grid-template-columns:minmax(0,1fr) 90px;gap:10px;align-items:start;padding:8px 0;border-top:${i ? '1px solid rgba(255,255,255,.05)' : 'none'};">
+        <div><b style="color:var(--text);font-size:.85rem;">${cvEsc(rb[0])}</b><div style="font-size:.75rem;color:rgba(200,216,232,0.55);">${cvEsc(rb[1])}</div>${notes[i] ? `<div style="font-size:.72rem;color:rgba(200,216,232,0.4);margin-top:3px;">${cvEsc(notes[i])}</div>` : ''}${sug[i] != null ? `<div style="font-size:.72rem;color:var(--cyan);margin-top:3px;">Suggested from the key check: ${sug[i]} / 5</div>` : ''}</div>
+        <select id="cv-r${i}" onchange="cvTotal()" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px;border-radius:5px;">${[5,4,3,2,1,0].map(n => `<option value="${n}"${(g.rubric ? g.rubric[i] : (sug[i] != null ? sug[i] : 5)) === n ? ' selected' : ''}>${n} / 5</option>`).join('')}</select></div>`).join('')}
+      <textarea id="cv-feedback" placeholder="Feedback the student will see" style="width:100%;min-height:80px;margin-top:8px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;font-family:inherit;">${cvEsc(g.feedback || '')}</textarea>
+      <div style="display:flex;gap:12px;align-items:center;margin-top:10px;flex-wrap:wrap;"><button class="btn" style="background:#ffb020;color:#111;border-color:#ffb020;" onclick="cvSaveGrade('${cvEsc(key)}')">Save grade</button><span id="cv-total" style="font-weight:800;color:var(--text);"></span><span id="cv-saved" style="font-size:.8rem;color:#00ff41;"></span></div>
+    </div>`;
+    if (chk) {
+      const d = chk.d;
+      auditHtml += H(`Asset inventory (${chk.assets.length})`) + tbl(['', 'Asset', 'What', 'Location', 'Owner', 'Class', 'Key class'], chk.assets.map(x => tr([ok(x.k ? x.clsOk : null), cvEsc(x.a.name), cvEsc(x.a.what), cvEsc(x.a.loc), cvEsc(x.a.owner), cvEsc(x.a.cls), x.k ? cvEsc(x.k.cls) : '<span style="color:rgba(200,216,232,0.4)">not in key</span>'])));
+      auditHtml += H(`Controls register (${chk.controls.length} logged · ${chk.matchedControls} match the key · ${Math.round(chk.classPct * 100)}% classified right)`) +
+        tbl(['Area', 'Control', 'Category', 'Type', 'Key says'], chk.controls.map(x => tr([cvEsc(areaName(x.c.area)), cvEsc(x.c.control), ok(x.catOk) + ' ' + cvEsc(x.c.cat), ok(x.typeOk) + ' ' + cvEsc(x.c.type) + (x.c.type2 ? ' / ' + cvEsc(x.c.type2) : ''),
+          x.k ? cvEsc(x.k.cat.join(' or ') + ', ' + x.k.type.join(' or ')) : x.isGap ? '<span style="color:#ffb020">This is a gap, not a control</span>' : '<span style="color:rgba(200,216,232,0.4)">No key match (read it)</span>'])));
+      auditHtml += H(`Gaps (${chk.gaps.length} logged · ${chk.highFound} of ${chk.highAll} high-severity key gaps found)`) +
+        tbl(['#', 'Area', 'Gap and risk', 'L / I', 'Recommendation', 'Key match'], chk.gaps.slice().sort((a, b) => (+a.g.rank || 99) - (+b.g.rank || 99)).map(x => tr([cvEsc(x.g.rank || ''), cvEsc(areaName(x.g.area)), `<b>${cvEsc(x.g.gap)}</b><div style="color:rgba(200,216,232,0.6);">${cvEsc(x.g.risk)}</div>`, cvEsc((x.g.like || '?') + ' / ' + (x.g.impact || '?')),
+          `${cvEsc(x.g.fix)}<div style="color:rgba(200,216,232,0.5);">${cvEsc([x.g.fixCat, x.g.fixType].filter(Boolean).join(', '))}</div>`, x.k ? `<span style="color:#00ff41">${cvEsc(x.k.text)}</span>${x.k.sev ? ' <span style="color:rgba(200,216,232,0.5)">(' + cvEsc(x.k.sev) + ')</span>' : ''}<div style="color:rgba(200,216,232,0.45);">Key fix: ${cvEsc(x.k.fix && x.k.fix.text)}</div>` : '<span style="color:rgba(200,216,232,0.4)">No key match (read it)</span>'])));
+      if (chk.missed.length) auditHtml += `<div style="margin-top:8px;font-size:.78rem;color:#ffb020;">Key gaps not found: ${chk.missed.map(k => cvEsc(k.text) + ' (' + cvEsc(k.sev) + ')').join('; ')}</div>`;
+      auditHtml += H(`Summary for the CFO (${chk.words} words)`) + `<div style="white-space:pre-wrap;font-size:.85rem;color:var(--text);background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;padding:12px;">${cvEsc(d.summary || '') || '<span style="color:rgba(200,216,232,0.4)">No summary yet.</span>'}</div>`;
+      auditHtml += `<div style="margin-top:8px;font-size:.72rem;color:rgba(200,216,232,0.4);">Check marks come from keyword matching against the answer key in course-w1-mock.js. They are a starting point; read rows marked "no key match" yourself.</div>`;
+    }
+  }
+
+  const overlay = document.createElement('div');
+  overlay.id = 'cv-overlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:9900;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px;';
+  overlay.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;max-width:1180px;width:100%;padding:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;"><div><div style="font-size:.8rem;color:var(--cyan);font-family:monospace;">WEEK 1 · ${cvEsc(c.id || (m && m.id) || '')}</div><div style="font-size:1.1rem;font-weight:800;color:var(--text);">${cvEsc(name)}</div></div>
+    <button onclick="document.getElementById('cv-overlay').remove()" style="background:rgba(255,45,94,0.15);border:1px solid rgba(255,45,94,0.4);color:#ff2d5e;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:700;">&#10005;</button></div>
+    ${H('Mock Control Audit')}${auditHtml}${H('Labs')}${labsHtml || '<div style="color:rgba(200,216,232,0.4);">No labs found.</div>'}</div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  cvTotal();
+}
+function cvTotal() {
+  let t = 0, any = false;
+  for (let i = 0; i < 5; i++) { const s = document.getElementById('cv-r' + i); if (s) { any = true; t += +s.value; } }
+  const el = document.getElementById('cv-total'); if (el && any) el.textContent = 'Total: ' + t + ' / 25';
+}
+function cvSaveGrade(key) {
+  const rubric = [0, 1, 2, 3, 4].map(i => +document.getElementById('cv-r' + i).value);
+  const grade = { rubric, score: rubric.reduce((a, b) => a + b, 0), max: 25, feedback: document.getElementById('cv-feedback').value.trim(),
+    gradedBy: sessionStorage.getItem('mccoe_admin_name') || 'Instructor', gradedAt: new Date().toISOString() };
+  _fbDb.ref('mccoe_mockproj/' + key + '/w1/grade').set(grade).then(() => {
+    if (_cvMock[key] && _cvMock[key].w1) _cvMock[key].w1.grade = grade;
+    document.getElementById('cv-saved').textContent = 'Saved. The student sees it on their audit page and in My Work.';
+    loadCourseV2();
+  }).catch(e => { document.getElementById('cv-saved').textContent = 'Could not save: ' + e.message; });
 }
 
 // ════════════════════════════════════════════

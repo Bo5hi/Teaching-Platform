@@ -1,0 +1,22 @@
+From:     Greg Palmer <g.palmer@cedarcreek-ind.com>
+To:       All Office Staff
+Date:     Thu, 20 Aug 2026 08:30
+Subject:  Thank you, Amanda - and a reminder about payment requests
+
+On August 19, Accounts Payable received an email that looked like it came
+from me. It asked for an urgent $48,750 wire to "Northwind Fabrication
+LLC" for a project called Northwind. It was fake. The sender's address
+ended in cedarcreek-lnd.com (a lowercase L where the i should be).
+
+Amanda Singh thought the request was unusual and called me to check.
+Because she did, we did not lose any money. Thank you, Amanda.
+
+From now on:
+- Any new payment, or any change to a vendor's bank details, must be
+  confirmed by a phone call to a number we already have on file. Never
+  use the phone number in the email.
+- I will never ask for a wire by email alone.
+
+We are also hiring a security analyst. More on that soon.
+
+- Greg

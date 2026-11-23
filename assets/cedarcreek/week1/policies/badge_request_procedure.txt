@@ -1,0 +1,32 @@
+CEDAR CREEK INDUSTRIES
+BADGE AND DOOR ACCESS REQUESTS
+
+Owner:         Jordan Pike, Help Desk (badge system)
+Last revised:  2021-09-20
+
+New badges
+1. HR emails the Help Desk with the new hire's name, department, and
+   start date.
+2. The Help Desk prints the badge on BADGE-CTRL and hands it to the
+   employee on their first day.
+3. Default access: LOBBY-IN plus the doors for that department (for
+   example, ENG-SUITE for Engineering or HR-OFFICE for HR).
+
+Extra door access (SERVER-ROOM, HR-OFFICE, ENG-SUITE, PLANT-GATE)
+1. The employee's manager emails the Help Desk and names the door.
+2. The Help Desk adds the door to the badge in BADGE-CTRL.
+
+Lost badges
+Call the Help Desk. We disable the old badge and print a new one.
+
+Doors on the badge system
+LOBBY-IN      Lobby into the office building
+ENG-SUITE     Engineering suite (office building, 2nd floor)
+HR-OFFICE     HR office
+SERVER-ROOM   Server room (badge + PIN)
+DOCK-SIDE     Side door from the loading dock into the plant
+PLANT-GATE    Vehicle gate into the plant yard
+
+Alarms
+If a badge door stays open longer than 30 seconds, BADGE-CTRL writes a
+"DOOR HELD OPEN" alarm to the log. The alarm row has no badge number.

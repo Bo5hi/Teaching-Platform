@@ -1,0 +1,22 @@
+From:     Jordan Pike <j.pike@cedarcreek-ind.com>
+To:       Marcus Reyes <m.reyes@cedarcreek-ind.com>
+Date:     Thu, 5 Nov 2026 10:03
+Subject:  RE: who can get into the server room?
+
+Hi Marcus,
+
+I pulled the access list from BADGE-CTRL. 23 badges can open SERVER-ROOM
+right now. Most were added years ago when someone needed in "just once",
+and we never took them back off. Some examples:
+- all three of us in IT
+- Tom Becker and two of his engineers
+- the maintenance techs (for the AC and the UPS)
+- Greg Palmer (he asked for it after the 2022 tour)
+- the two spare cards in my desk drawer, IT SPARE 2 and IT SPARE 3
+
+The spare cards are for vendors. We do not have a sign-out sheet, so I
+cannot tell you who has them right now. I will look.
+
+The full list is on BADGE-CTRL if you want me to print it.
+
+- Jordan

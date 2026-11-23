@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson | MCCoE</title>
+<link rel="stylesheet" href="course.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="course.js"></script>
+<script src="course-data.js"></script>
+<style>
+.meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 8px 0 22px; color: var(--muted); font-size: .95rem; }
+.intro { font-family: var(--f-read); font-size: 1.08rem; line-height: 1.7; color: var(--text); border-left: 3px solid var(--red); padding: 4px 0 4px 16px; margin: 0 0 10px; max-width: 70ch; }
+.toc { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0 6px; }
+.toc a { font-size: .85rem; color: var(--muted); border: 1px solid var(--line-soft); border-radius: 999px; padding: 3px 11px; text-decoration: none; }
+.toc a:hover { color: var(--text); border-color: rgba(255,255,255,.25); }
+.check-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.result { margin: 14px 0; padding: 14px 16px; border-radius: 10px; border: 1px solid var(--line-soft); background: var(--panel); display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<header id="cc-top"></header>
+<main class="cc-main cc-read" id="page"><div class="empty">Loading lesson...</div></main>
+<script>
+(function () {
+  CC.header('week');
+  var lid = CC.param('l') || '1.1';
+  var href = 'Lesson.html?l=' + lid;
+  var week = String(lid).split('.')[0];
+  var page = document.getElementById('page');
+  var esc = CC.esc;
+
+  CC.require('course-w' + week + '-lessons.js').then(function () {
+    var L = (window.COURSE_LESSONS || {})[lid];
+    if (!L) { page.innerHTML = '<div class="empty">Lesson ' + esc(lid) + ' is not available yet.</div>'; return; }
+    document.title = L.title + ' | MCCoE';
+    render(L);
+    CC.load().then(function (rec) {
+      var prev = rec.checks && rec.checks[lid];
+      if (prev) document.getElementById('prev').textContent = 'Your last score: ' + prev.score + ' / ' + prev.total;
+    });
+  }).catch(function (e) { page.innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
+
+  function para(t) { return '<p>' + t + '</p>'; }
+  function section(s, i) {
+    var h = '<h2 id="s' + i + '">' + esc(s.title) + '</h2>';
+    (s.body || []).forEach(function (p) { h += para(p); });
+    if (s.list && s.list.length) h += '<ul>' + s.list.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>';
+    if (s.table) {
+      h += '<div style="overflow-x:auto"><table><thead><tr>' + s.table.head.map(function (x) { return '<th>' + esc(x) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+        s.table.rows.map(function (r) { return '<tr>' + r.map(function (c) { return '<td>' + c + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div>';
+    }
+    if (s.keyTerms && s.keyTerms.length) {
+      h += '<div class="terms">' + s.keyTerms.map(function (k) { return '<div class="term"><b>' + esc(k.term) + '</b>' + esc(k.definition) + '</div>'; }).join('') + '</div>';
+    }
+    if (s.callout) {
+      var label = { cedar: 'At Cedar Creek', exam: 'On the exam', tip: 'Tip' }[s.callout.kind] || 'Note';
+      h += '<div class="callout ' + esc(s.callout.kind || '') + '"><div class="ct">' + label + (s.callout.title ? ': ' + esc(s.callout.title) : '') + '</div>' + para(s.callout.text) + '</div>';
+    }
+    return h;
+  }
+
+  function render(L) {
+    var check = L.check || [];
+    page.innerHTML =
+      CC.crumb(href, 'Lesson') +
+      '<h1 class="cc-h1">' + esc(L.title) + '</h1>' +
+      '<div class="meta"><span class="chip c-lesson">Lesson</span><span>' + esc(L.mins) + ' min</span>' + (L.module ? '<span>&middot; ' + esc(L.module) + '</span>' : '') + '</div>' +
+      '<div class="prose">' +
+        (L.intro ? '<p class="intro">' + L.intro + '</p>' : '') +
+        ((L.sections || []).length > 2 ? '<nav class="toc" aria-label="In this lesson">' + L.sections.map(function (s, i) { return '<a href="#s' + i + '">' + esc(s.title) + '</a>'; }).join('') + '</nav>' : '') +
+        (L.sections || []).map(section).join('') +
+      '</div>' +
+      (check.length ? '<h2 class="cc-h2" id="check">Knowledge check</h2>' +
+        '<div class="check-head"><p class="sub" style="margin:0">' + check.length + ' questions. Answer all, then check your work.</p><span class="sub" id="prev"></span></div>' +
+        '<form id="checkForm" style="margin-top:12px">' + check.map(function (q, i) {
+          return '<div class="q" data-i="' + i + '"><div class="qn">Question ' + (i + 1) + '</div><div class="qt">' + esc(q.q) + '</div>' +
+            q.opts.map(function (o, j) { return '<label class="opt"><input type="radio" name="q' + i + '" value="' + j + '"><span>' + esc(o) + '</span></label>'; }).join('') +
+            '<div class="why" hidden></div></div>';
+        }).join('') +
+        '<div id="result"></div><button class="btn primary" type="submit">Check my answers</button></form>' : '') +
+      '<div class="done-bar"><span class="sub" id="doneMsg">' + (check.length ? 'Finish the knowledge check to mark this lesson done.' : 'Done reading?') + '</span><span style="display:flex;gap:8px;flex-wrap:wrap">' +
+        (check.length ? '' : '<button class="btn" id="markRead">Mark done</button>') + CC.nextButton(href) + '</span></div>';
+
+    var form = document.getElementById('checkForm');
+    if (form) form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var right = 0, blank = 0;
+      check.forEach(function (q, i) {
+        var box = form.querySelector('.q[data-i="' + i + '"]');
+        var sel = form.querySelector('input[name="q' + i + '"]:checked');
+        box.querySelectorAll('.opt').forEach(function (o, j) { o.classList.remove('right', 'wrong'); if (j === q.ans) o.classList.add('right'); });
+        if (!sel) { blank++; } else if (+sel.value === q.ans) { right++; } else { sel.closest('.opt').classList.add('wrong'); }
+        var w = box.querySelector('.why'); w.hidden = false; w.textContent = q.why || '';
+      });
+      if (blank) {
+        form.querySelectorAll('.why').forEach(function (w) { w.hidden = true; });
+        form.querySelectorAll('.opt').forEach(function (o) { o.classList.remove('right', 'wrong'); });
+        CC.toast('Answer all ' + check.length + ' questions first (' + blank + ' left).');
+        return;
+      }
+      document.getElementById('result').innerHTML = '<div class="result"><span class="score" style="color:' + (right / check.length >= .8 ? 'var(--ok)' : 'var(--warn)') + '">' + right + ' / ' + check.length + '</span><span class="sub">' +
+        (right === check.length ? 'All correct. Nice work.' : 'Read the explanations under each question, then move on or try again.') + '</span></div>';
+      CC.save('checks/' + lid, { score: right, total: check.length, at: new Date().toISOString() });
+      CC.markDoneFor(href);
+      document.getElementById('doneMsg').textContent = 'Lesson marked done.';
+    });
+    var mr = document.getElementById('markRead');
+    if (mr) mr.addEventListener('click', function () { CC.markDoneFor(href); document.getElementById('doneMsg').textContent = 'Lesson marked done.'; mr.disabled = true; });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+From:     Walt Henley <w.henley@cedarcreek-ind.com>
+To:       Marcus Reyes <m.reyes@cedarcreek-ind.com>
+Cc:       Dee Ortiz <d.ortiz@cedarcreek-ind.com>
+Date:     Tue, 13 Oct 2026 06:58
+Subject:  Please do NOT change the plant Wi-Fi password
+
+Marcus,
+
+I heard you might change the CC-PLANT Wi-Fi password. Please don't, or at
+least not during a run. Every handheld scanner, both label printers, and
+the Line 2 tablet would have to be re-entered by hand. The last time we
+did it (2019) we lost half a shift.
+
+The password is printed on the wall in the break room so second shift can
+reconnect the scanners themselves. That has worked fine for years.
+
+Uptime is what pays everybody. Talk to me first.
+
+- Walt

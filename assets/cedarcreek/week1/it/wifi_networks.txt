@@ -1,0 +1,14 @@
+CEDAR CREEK WIRELESS NETWORKS
+Maintained by: Marcus Reyes (last edited 2023-05-02)
+
+SSID:      CC-PLANT
+Where:     Plant floor, warehouse, loading dock
+Security:  WPA2-Personal (one shared password for every device)
+Password:  set in 2019 (talk to Walt before changing it)
+Used by:   handheld scanners, label printers, Line 2 tablet
+
+SSID:      CC-GUEST
+Where:     Office building (lobby and conference rooms)
+Security:  WPA2-Personal, internet only, no access to company systems
+Password:  written on the lobby whiteboard for visitors
+Used by:   visitors and personal phones

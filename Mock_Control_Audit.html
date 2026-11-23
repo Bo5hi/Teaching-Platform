@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock Control Audit | MCCoE</title>
+<link rel="stylesheet" href="course.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="course.js"></script>
+<script src="course-data.js"></script>
+<script src="course-w1-mock.js"></script>
+<style>
+section.sec { scroll-margin-top: 76px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.table-wrap { position: relative; }
+.statline { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 10px 0 18px; font-size: .95rem; }
+.pill { display: inline-block; font-size: .8rem; font-weight: 700; letter-spacing: .5px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line-soft); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pill.ok { color: var(--ok); border-color: rgba(51, 209, 122, .5); }
+.pill.sub { color: var(--cyan); border-color: rgba(0, 245, 255, .45); }
+.pill.warn { color: var(--warn); border-color: rgba(255, 194, 61, .5); }
+.saved { color: var(--muted); }
+.saved.err { color: var(--warn); }
+.preview-note { font-size: .9rem; color: var(--warn); border: 1px dashed rgba(255, 194, 61, .45); border-radius: 8px; padding: 8px 12px; margin-bottom: 16px; }
+
+.brief { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+.brief .from { font-family: var(--f-mono); font-size: .76rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--t-mock); }
+.brief .prose p { margin-bottom: 10px; }
+details.more { margin-top: 4px; }
+details.more summary { cursor: pointer; color: var(--cyan); font-weight: 700; font-size: .95rem; }
+details.more ol { font-family: var(--f-read); font-size: .92rem; color: #dcdce4; padding-left: 22px; margin: 10px 0 0; line-height: 1.55; }
+details.more ol li { margin-bottom: 6px; }
+details.more ol b { color: var(--text); }
+
+.steps5 { list-style: none; padding: 0; margin: 20px 0 12px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 900px) { .steps5 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); } }
+.steps5 a { display: flex; gap: 10px; align-items: center; height: 100%; padding: 10px 12px; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; text-decoration: none; color: var(--text); }
+.steps5 a:hover { border-color: rgba(255, 255, 255, .25); }
+.steps5 .sn { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--red); color: var(--red); font-family: var(--f-display); font-size: .8rem; }
+.steps5 .st { display: grid; line-height: 1.2; min-width: 0; }
+.steps5 .st b { font-weight: 700; font-size: .98rem; }
+.steps5 .st small { color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; }
+.steps5 li.ok .sn { background: var(--ok); border-color: var(--ok); color: #07070f; }
+.steps5 li.ok .st small { color: var(--ok); }
+
+.p1bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 14px; border: 1px solid var(--line-soft); border-left: 3px solid var(--cyan); border-radius: 0 10px 10px 0; background: rgba(0, 245, 255, .04); font-size: .97rem; }
+.p1bar .muted { color: var(--muted); }
+
+.sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 38px 0 6px; }
+.sec-h h2.cc-h2 { margin: 0; }
+.sec-h .right { display: flex; gap: 10px; align-items: center; }
+.sec-intro { font-family: var(--f-read); font-size: .95rem; color: var(--muted); max-width: 80ch; margin: 0 0 12px; line-height: 1.6; font-weight: 400; }
+.sec-intro b { color: var(--text); font-weight: 600; }
+.issues { font-size: .9rem; color: var(--warn); margin: 8px 0 0; min-height: 1px; }
+.to-map { font-size: .9rem; }
+
+/* map + observation panel */
+.walk { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 960px) { .walk { grid-template-columns: minmax(0, 1fr); } }
+.mapbox { padding: 12px; }
+@media (min-width: 961px) { .mapbox { position: sticky; top: 72px; } }
+.mapbox svg { display: block; width: 100%; max-width: 100%; height: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .88rem; color: var(--muted); margin-top: 8px; align-items: center; }
+.legend .k { display: inline-block; width: 13px; height: 13px; border-radius: 50%; border: 2px solid; vertical-align: -2px; margin-right: 5px; }
+.legend .k1 { border-color: var(--cyan); } .legend .k2 { border-color: var(--t-mock); } .legend .kv { border-color: var(--ok); background: var(--ok); }
+.legend .tot { margin-left: auto; color: var(--text); font-weight: 700; }
+
+svg .ground { fill: #08081a; }
+svg .bld { fill: #0e0e20; stroke: rgba(255, 255, 255, .35); stroke-width: 2; }
+svg .bldlbl { fill: var(--faint); font-family: var(--f-mono); font-size: 11px; letter-spacing: 1.5px; }
+svg .muted { fill: var(--faint); font-family: var(--f-body); font-size: 12px; font-weight: 600; }
+svg .fence { fill: none; stroke: #8a93a6; stroke-width: 2; stroke-dasharray: 7 5; }
+svg .gate { stroke: var(--warn); stroke-width: 4; }
+svg .cut { stroke: #08081a; stroke-width: 6; }
+svg .stall { stroke: rgba(255, 255, 255, .16); stroke-width: 1.5; }
+svg .linebar { fill: rgba(255, 255, 255, .1); }
+svg .linebar.l2 { fill: rgba(255, 138, 76, .45); }
+svg .walkway { fill: #15152c; stroke: rgba(255, 255, 255, .25); }
+svg .bay { fill: #2a2a44; }
+svg .hot { cursor: pointer; outline: none; }
+svg .hot .zone { fill: rgba(0, 245, 255, .05); stroke: rgba(255, 255, 255, .3); stroke-width: 1.5; transition: fill .15s, stroke .15s; }
+svg .hot:hover .zone { fill: rgba(0, 245, 255, .13); stroke: var(--cyan); }
+svg .hot:focus-visible .zone { fill: rgba(0, 245, 255, .16); stroke: var(--cyan); stroke-width: 3.5; }
+svg .hot.v .zone { fill: rgba(51, 209, 122, .07); }
+svg .hot.sel .zone { fill: rgba(238, 34, 7, .14); stroke: var(--red); stroke-width: 3; }
+svg .lbl { fill: var(--text); font-family: var(--f-body); font-weight: 700; font-size: 18px; text-anchor: middle; pointer-events: none; }
+svg .lbl.s { fill: var(--muted); font-size: 13px; font-weight: 600; }
+svg .bdg { fill: #07070f; stroke-width: 2.5; }
+svg .p1 .bdg { stroke: var(--cyan); } svg .p2 .bdg { stroke: var(--t-mock); }
+svg .hot.v .bdg { fill: var(--ok); stroke: var(--ok); }
+svg .bn { fill: var(--text); font-family: var(--f-display); font-size: 13px; font-weight: 700; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+svg .hot.v .bn { fill: #07070f; }
+@media (prefers-reduced-motion: reduce) { svg .hot .zone { transition: none; } }
+
+.chips { display: none; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; margin-top: 10px; }
+@media (max-width: 700px) { .chips { display: grid; } }
+.chips button { text-align: left; background: var(--panel-2); border: 1px solid var(--line-soft); border-radius: 6px; padding: 6px 9px; cursor: pointer; font-size: .9rem; font-weight: 600; }
+.chips button .n { font-family: var(--f-display); font-size: .75rem; margin-right: 6px; color: var(--cyan); }
+.chips button.p2 .n { color: var(--t-mock); }
+.chips button.v { border-color: rgba(51, 209, 122, .55); }
+.chips button.v::after { content: " (visited)"; color: var(--ok); font-size: .78rem; font-weight: 500; }
+.chips button.sel { border-color: var(--red); }
+
+.obs { min-height: 260px; }
+.obs .ah { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-family: var(--f-mono); font-size: .78rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); }
+.obs h3.an { font-family: var(--f-body); font-size: 1.45rem; font-weight: 700; color: var(--text); text-transform: none; letter-spacing: .2px; margin: 4px 0 2px; }
+.obs h3.an:focus { outline: none; }
+.obs .ashort { color: var(--muted); margin-bottom: 12px; }
+.obs .prose { font-size: .97rem; }
+.obs .prose p { margin-bottom: 12px; }
+.obs .acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 8px; }
+.obs .here { font-size: .88rem; color: var(--muted); }
+.obs .nav { display: flex; justify-content: space-between; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line-soft); }
+.obs .start { display: grid; gap: 12px; justify-items: start; font-family: var(--f-read); font-size: .97rem; color: #dcdce4; line-height: 1.6; font-weight: 400; }
+details.hint { margin-top: 6px; font-size: .92rem; }
+details.hint summary { cursor: pointer; color: var(--muted); font-weight: 700; }
+details.hint ul { margin: 6px 0 0; padding-left: 20px; font-family: var(--f-read); color: #dcdce4; font-weight: 400; }
+.linkbtn { background: none; border: none; padding: 0; color: var(--cyan); cursor: pointer; text-decoration: underline; font-size: .9rem; }
+
+/* registers */
+table.reg { min-width: 940px; }
+table.reg th, table.reg td { padding: 7px 8px; }
+table.reg td.n { color: var(--faint); font-family: var(--f-mono); font-size: .8rem; padding-top: 15px; width: 34px; }
+table.reg input[type=text], table.reg select, table.reg textarea { padding: 6px 8px; font-size: .9rem; }
+table.reg textarea { min-height: 0; height: 52px; }
+table.reg tr.flash td { background: rgba(0, 245, 255, .08); }
+table.reg td.empty-row { color: var(--muted); padding: 16px; font-family: var(--f-read); font-weight: 400; font-size: .93rem; }
+button.x { background: none; border: 1px solid transparent; color: var(--faint); border-radius: 6px; width: 32px; height: 32px; cursor: pointer; font-size: 1.2rem; line-height: 1; margin-top: 2px; }
+button.x:hover { color: var(--bad); border-color: rgba(255, 90, 90, .4); }
+.addrow { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.undo { font-size: .92rem; color: var(--muted); }
+.undo button { margin-left: 6px; }
+
+details.classify { background: var(--panel); border: 1px solid var(--line-soft); border-left: 3px solid var(--t-pbq); border-radius: 0 10px 10px 0; padding: 10px 16px; margin-bottom: 12px; scroll-margin-top: 76px; }
+details.classify summary { cursor: pointer; font-weight: 700; color: var(--t-pbq); }
+.cgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 18px; margin-top: 10px; }
+@media (max-width: 760px) { .cgrid { grid-template-columns: minmax(0, 1fr); } }
+.cgrid h4 { margin: 0 0 6px; font-family: var(--f-mono); font-weight: 400; font-size: .76rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); }
+.cgrid dl { margin: 0; font-family: var(--f-read); font-size: .9rem; font-weight: 400; line-height: 1.5; }
+.cgrid dt { color: var(--text); font-weight: 600; margin-top: 6px; }
+.cgrid dd { margin: 0; color: #c9c9d4; }
+.ctip { font-family: var(--f-read); font-size: .9rem; color: #c9c9d4; margin: 12px 0 2px; font-weight: 400; }
+.ctip b { color: var(--text); font-weight: 600; }
+
+.gaps { display: grid; gap: 12px; }
+.gap { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px 14px; }
+.gap.flash { border-color: var(--cyan); }
+.gap .gh { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.gap .gh .gt { font-family: var(--f-display); font-size: .85rem; letter-spacing: 1px; color: var(--t-mock); }
+.gap .gh .grow { flex: 1; }
+.gap .gh select { width: auto; min-width: 200px; max-width: 100%; }
+.gap .gh .rank { display: flex; gap: 6px; align-items: center; font-size: .9rem; color: var(--muted); }
+.gap .gh .rank input { width: 70px; }
+.gap .gg { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 14px; }
+@media (max-width: 760px) { .gap .gg { grid-template-columns: minmax(0, 1fr); } }
+.gap .f { display: grid; gap: 4px; align-content: start; }
+.gap .f label { font-size: .88rem; font-weight: 700; color: var(--muted); }
+.gap textarea { min-height: 62px; }
+.gap .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.gap .fix { border-top: 1px dashed var(--line-soft); padding-top: 10px; }
+.riskb { font-size: .8rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line-soft); color: var(--muted); white-space: nowrap; }
+.riskb.High { color: var(--bad); border-color: rgba(255, 90, 90, .5); }
+.riskb.Medium { color: var(--warn); border-color: rgba(255, 194, 61, .5); }
+.riskb.Low { color: var(--ok); border-color: rgba(51, 209, 122, .5); }
+
+.sumgrid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 860px) { .sumgrid { grid-template-columns: minmax(0, 1fr); } }
+.sumgrid textarea { min-height: 240px; }
+.sumgrid ul { margin: 0; padding-left: 18px; font-family: var(--f-read); font-size: .92rem; color: #dcdce4; line-height: 1.55; font-weight: 400; }
+.sumgrid li { margin-bottom: 5px; }
+.wc { font-size: .9rem; color: var(--muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
+.wc.ok { color: var(--ok); }
+
+.confirm { margin-top: 12px; border-color: var(--line); }
+.confirm:focus { outline: none; }
+.confirm h3 { font-family: var(--f-body); font-size: 1.2rem; text-transform: none; letter-spacing: .2px; color: var(--text); font-weight: 700; }
+.checks { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 4px; }
+.checks li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line-soft); font-size: .97rem; }
+.checks li .r { font-weight: 700; white-space: nowrap; }
+.checks li.ok .r { color: var(--ok); } .checks li.short .r { color: var(--warn); }
+.confirm p { font-family: var(--f-read); font-size: .95rem; color: #dcdce4; font-weight: 400; margin: 0 0 12px; }
+.confirm .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.grade { border-color: rgba(51, 209, 122, .45); margin-bottom: 18px; }
+.grade .gtop { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.grade .score span { font-size: 1rem; color: var(--muted); }
+.grade table.cc td.pts { white-space: nowrap; font-weight: 700; text-align: right; }
+.grade table.cc td .d { color: var(--muted); font-size: .88rem; }
+.grade .fb { font-family: var(--f-read); font-size: .95rem; font-weight: 400; color: #dcdce4; white-space: pre-wrap; margin-top: 12px; line-height: 1.6; }
+.grade .gby { font-size: .85rem; color: var(--muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+<header id="cc-top"></header>
+<main class="cc-main" id="page"><div class="empty">Loading the audit...</div></main>
+<script>
+(function () {
+  CC.header('week');
+  var M = window.MOCK_AUDIT_W1;
+  var esc = CC.esc;
+  var page = document.getElementById('page');
+  if (!M) { page.innerHTML = '<div class="empty">The audit data (course-w1-mock.js) did not load. Refresh the page.</div>'; return; }
+
+  var me = CC.student();
+  var LKEY = 'cc_mock_w1_' + (me.key || 'preview');
+  var PATH = 'mccoe_mockproj/' + me.key + '/w1';
+  var WEEK = ((window.COURSE && COURSE.weeks) || []).filter(function (w) { return w.num === 1; })[0] || {};
+  var RUBRIC = (WEEK.mock && WEEK.mock.rubric) || [];
+  var T = { areas: 9, assets: 10, controls: 15, gaps: 5, words: 100 };
+  var AREA = {};
+  M.areas.forEach(function (a) { AREA[a.id] = a; });
+  var CATS = M.categories.map(function (c) { return c.name; });
+  var TYPES = M.types.map(function (c) { return c.name; });
+  var LMH = ['Low', 'Med', 'High'];
+
+  var S = null;
+  var meta = { status: 'draft', submittedAt: null, submitCount: 0, changedSinceSubmit: false, savedAt: null, grade: null };
+  var current = null;
+  var part1Done = false;
+  var remoteOk = false;
+  var saveT = null;
+  var lastDel = null;
+
+  // ---------- storage ----------
+  function readLocal() { try { return JSON.parse(localStorage.getItem(LKEY) || 'null'); } catch (e) { return null; } }
+  function writeLocal(rec) { try { localStorage.setItem(LKEY, JSON.stringify(rec)); } catch (e) {} }
+  function fetchRemote() {
+    if (!CC.online) return Promise.resolve({ ok: false, val: null });
+    return new Promise(function (res) {
+      var settled = false;
+      var t = setTimeout(function () { if (!settled) { settled = true; res({ ok: false, val: null }); } }, 8000);
+      CC.db.ref(PATH).once('value').then(function (s) {
+        if (settled) return; settled = true; clearTimeout(t); res({ ok: true, val: s.val() });
+      }, function () {
+        if (settled) return; settled = true; clearTimeout(t); res({ ok: false, val: null });
+      });
+    });
+  }
+  function list(x) {
+    if (!x) return [];
+    if (Array.isArray(x)) return x.filter(Boolean);
+    return Object.keys(x).sort(function (a, b) { return a - b; }).map(function (k) { return x[k]; }).filter(Boolean);
+  }
+  function str(v) { return v == null ? '' : String(v); }
+  function asset(r) { r = r || {}; return { name: str(r.name), what: str(r.what), loc: str(r.loc), owner: str(r.owner), cls: str(r.cls), notes: str(r.notes) }; }
+  function control(r) { r = r || {}; return { area: str(r.area), control: str(r.control), cat: str(r.cat), type: str(r.type), type2: str(r.type2), protects: str(r.protects) }; }
+  function gap(r) { r = r || {}; return { area: str(r.area), gap: str(r.gap), risk: str(r.risk), like: str(r.like), impact: str(r.impact), fix: str(r.fix), fixCat: str(r.fixCat), fixType: str(r.fixType), rank: str(r.rank) }; }
+  function normData(d) {
+    d = d || {};
+    return {
+      visited: list(d.visited).filter(function (v) { return AREA[v]; }),
+      assets: list(d.assets).map(asset),
+      controls: list(d.controls).map(control),
+      gaps: list(d.gaps).map(gap),
+      summary: str(d.summary)
+    };
+  }
+  function freshData() {
+    var d = normData({});
+    d.assets = (M.assetsSeed || []).map(asset);
+    return d;
+  }
+
+  function setSave(state, at) {
+    var el = document.getElementById('saved');
+    if (!el) return;
+    var t = at ? ' ' + clock(at) : '';
+    el.className = 'saved' + (state === 'err' ? ' err' : '');
+    el.textContent = state === 'pending' ? 'Saving...' :
+      state === 'ok' ? 'Saved' + t :
+      state === 'local' ? 'Saved on this computer' + t :
+      state === 'err' ? 'Could not reach the server. Saved on this computer' + t + '.' : '';
+  }
+  function persist() {
+    clearTimeout(saveT); saveT = null;
+    var now = new Date().toISOString();
+    meta.savedAt = now;
+    var payload = {
+      name: me.name || null, id: me.id || null,
+      status: meta.status, savedAt: now,
+      submittedAt: meta.submittedAt || null,
+      submitCount: meta.submitCount || 0,
+      changedSinceSubmit: !!meta.changedSinceSubmit,
+      data: JSON.parse(JSON.stringify(S))
+    };
+    var localRec = JSON.parse(JSON.stringify(payload));
+    localRec.grade = meta.grade || null;
+    writeLocal(localRec);
+    if (CC.online && remoteOk) {
+      return CC.db.ref(PATH).update(payload).then(function () { setSave('ok', now); }, function () { setSave('err', now); });
+    }
+    setSave('local', now);
+    return Promise.resolve();
+  }
+  function changed() {
+    if (meta.status === 'submitted') meta.changedSinceSubmit = true;
+    setSave('pending');
+    clearTimeout(saveT);
+    saveT = setTimeout(persist, 900);
+    refresh();
+  }
+  function flush() { if (saveT) persist(); }
+  window.addEventListener('pagehide', flush);
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flush(); });
+
+  // ---------- helpers ----------
+  function clock(iso) { try { return new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); } catch (e) { return ''; } }
+  function when(iso) { try { return new Date(iso).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); } catch (e) { return iso || ''; } }
+  function words(s) { var m = String(s || '').trim().match(/\S+/g); return m ? m.length : 0; }
+  function filled(v) { return String(v || '').trim() !== ''; }
+  function areaLabel(id) { return id === 'all' ? 'Campus-wide' : AREA[id] ? AREA[id].number + '. ' + AREA[id].name : ''; }
+  function opts(values, val, ph) {
+    return '<option value="">' + esc(ph) + '</option>' + values.map(function (o) {
+      var v = typeof o === 'string' ? o : o.v, l = typeof o === 'string' ? o : o.l;
+      return '<option value="' + esc(v) + '"' + (v === val ? ' selected' : '') + '>' + esc(l) + '</option>';
+    }).join('');
+  }
+  var AREA_OPTS = M.areas.map(function (a) { return { v: a.id, l: a.number + '. ' + a.name }; }).concat([{ v: 'all', l: 'Campus-wide' }]);
+  function attrs(t, i, f, label) { return ' data-t="' + t + '" data-i="' + i + '" data-f="' + f + '" aria-label="' + esc(label) + '"'; }
+  function inp(t, i, f, val, label, ph) { return '<input type="text"' + attrs(t, i, f, label) + ' value="' + esc(val) + '"' + (ph ? ' placeholder="' + esc(ph) + '"' : '') + '>'; }
+  function ta(t, i, f, val, label, ph) { return '<textarea' + attrs(t, i, f, label) + (ph ? ' placeholder="' + esc(ph) + '"' : '') + '>' + esc(val) + '</textarea>'; }
+  function sel(t, i, f, values, val, label, ph) { return '<select' + attrs(t, i, f, label) + '>' + opts(values, val, ph) + '</select>'; }
+  function lmhScore(v) { return v === 'High' ? 3 : v === 'Med' ? 2 : v === 'Low' ? 1 : 0; }
+  function riskOf(g) {
+    var s = lmhScore(g.like) * lmhScore(g.impact);
+    if (!s) return null;
+    return { score: s, level: s >= 6 ? 'High' : s >= 3 ? 'Medium' : 'Low' };
+  }
+
+  // ---------- counts ----------
+  function counts() {
+    var assets = S.assets.filter(function (a) { return filled(a.name); });
+    var controls = S.controls.filter(function (c) { return filled(c.control); });
+    var gaps = S.gaps.filter(function (g) { return filled(g.gap); });
+    var p1visited = M.areas.filter(function (a) { return a.part === 1 && S.visited.indexOf(a.id) >= 0; }).length;
+    return {
+      visited: S.visited.length, p1visited: p1visited,
+      assets: assets.length,
+      assetsNoCls: assets.filter(function (a) { return !a.cls; }).length,
+      assetsNoOwner: assets.filter(function (a) { return !filled(a.owner) || !filled(a.loc); }).length,
+      controls: controls.length,
+      controlsUnclassed: controls.filter(function (c) { return !c.cat || !c.type; }).length,
+      controlsNoArea: controls.filter(function (c) { return !c.area; }).length,
+      gaps: gaps.length,
+      gapsNoFix: gaps.filter(function (g) { return !filled(g.fix); }).length,
+      gapsNoRisk: gaps.filter(function (g) { return !filled(g.risk) || !g.like || !g.impact; }).length,
+      gapsNoRank: gaps.filter(function (g) { return !filled(g.rank); }).length,
+      words: words(S.summary)
+    };
+  }
+  function part1Ready(c) { return c.p1visited >= 5 && c.controls >= 5; }
+
+  function setPill(id, n, target, unit) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = n + ' of ' + target + ' ' + unit;
+    el.className = 'pill' + (n >= target ? ' ok' : '');
+  }
+  function issue(id, parts) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = parts.filter(Boolean).join(' ');
+  }
+  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+
+  function refresh() {
+    if (!S) return;
+    var c = counts();
+    setPill('pill-walk', c.visited, T.areas, 'areas');
+    setPill('pill-assets', c.assets, T.assets, 'assets');
+    setPill('pill-controls', c.controls, T.controls, 'controls');
+    setPill('pill-gaps', c.gaps, T.gaps, 'gaps');
+    var steps = [
+      [c.visited >= T.areas, c.visited + ' of 9 areas'],
+      [c.assets >= T.assets && !c.assetsNoCls, c.assets + ' of 10+ assets'],
+      [c.controls >= T.controls && !c.controlsUnclassed, c.controls + ' of 15+ controls'],
+      [c.gaps >= T.gaps && !c.gapsNoFix, c.gaps + ' of 5+ gaps'],
+      [meta.status === 'submitted', meta.status === 'submitted' ? (meta.submitCount > 1 ? 'Resubmitted' : 'Submitted') : c.words + ' words, not submitted']
+    ];
+    steps.forEach(function (s, i) {
+      var li = document.getElementById('st-' + (i + 1));
+      if (!li) return;
+      li.className = s[0] ? 'ok' : '';
+      li.querySelector('small').textContent = s[1];
+    });
+    issue('iss-assets', [
+      c.assetsNoCls ? plural(c.assetsNoCls, 'asset needs', 'assets need') + ' a classification.' : '',
+      c.assetsNoOwner ? plural(c.assetsNoOwner, 'asset is', 'assets are') + ' missing a location or owner.' : ''
+    ]);
+    issue('iss-controls', [
+      c.controlsUnclassed ? plural(c.controlsUnclassed, 'control needs', 'controls need') + ' a category and type.' : '',
+      c.controlsNoArea ? plural(c.controlsNoArea, 'control has', 'controls have') + ' no area.' : ''
+    ]);
+    issue('iss-gaps', [
+      c.gapsNoRisk ? plural(c.gapsNoRisk, 'gap needs', 'gaps need') + ' a risk, likelihood, and impact.' : '',
+      c.gapsNoFix ? plural(c.gapsNoFix, 'gap needs', 'gaps need') + ' a recommended control.' : '',
+      c.gapsNoRank ? plural(c.gapsNoRank, 'gap needs', 'gaps need') + ' a priority rank.' : ''
+    ]);
+    var wc = document.getElementById('wc');
+    if (wc) {
+      wc.textContent = plural(c.words, 'word', 'words') + ' (aim for 120 to 250)';
+      wc.className = 'wc' + (c.words >= 120 ? ' ok' : '');
+    }
+    var tot = document.getElementById('walk-tot');
+    if (tot) tot.textContent = c.visited + ' of 9 visited';
+    // part 1 bar
+    var b1 = document.getElementById('btn-p1'), s1 = document.getElementById('p1stat');
+    if (b1 && s1) {
+      if (part1Done) {
+        b1.disabled = true; b1.textContent = 'Part 1 finished';
+        s1.textContent = 'Done. On Day 2, pick up at area 6.';
+      } else {
+        b1.disabled = !part1Ready(c);
+        b1.textContent = 'Finish part 1';
+        s1.textContent = 'Areas 1-5 visited: ' + c.p1visited + ' of 5. Controls logged: ' + c.controls + ' of 5.';
+      }
+    }
+    if (current) {
+      var here = document.getElementById('here');
+      if (here) {
+        var hc = S.controls.filter(function (x) { return x.area === current && filled(x.control); }).length;
+        var hg = S.gaps.filter(function (x) { return x.area === current && filled(x.gap); }).length;
+        here.textContent = 'Logged for this area so far: ' + plural(hc, 'control', 'controls') + ', ' + plural(hg, 'gap', 'gaps') + '.';
+      }
+    }
+    renderStatus();
+  }
+
+  function renderStatus() {
+    var pill = document.getElementById('stat-pill');
+    var btn = document.getElementById('btn-submit');
+    var line = document.getElementById('sub-line');
+    var t, cls;
+    if (meta.status === 'submitted') {
+      t = (meta.submitCount > 1 ? 'Resubmitted ' : 'Submitted ') + when(meta.submittedAt);
+      cls = 'pill sub';
+      if (meta.changedSinceSubmit) { t += ' - changes not resubmitted'; cls = 'pill warn'; }
+    } else { t = 'Draft'; cls = 'pill'; }
+    if (pill) { pill.textContent = t; pill.className = cls; }
+    if (btn) btn.textContent = meta.status === 'submitted' ? 'Resubmit for grading' : 'Submit for grading';
+    if (line) {
+      line.textContent = meta.status !== 'submitted'
+        ? 'Due end of Day 2. You can keep editing after you submit.'
+        : meta.changedSinceSubmit
+          ? 'You changed your work after submitting. Resubmit so your instructor knows the latest version is ready.'
+          : 'Your work is in. You can still edit it and resubmit before it is graded.';
+    }
+  }
+
+  // ---------- map ----------
+  var GEO = {
+    a1: { r: [20, 365, 345, 155], b: [42, 387], l: [[192, 455, 'Perimeter and parking']] },
+    a2: { r: [35, 255, 195, 68], b: [56, 276], l: [[140, 296, 'Main lobby']] },
+    a3: { r: [35, 52, 300, 93], b: [56, 73], l: [[185, 100, 'Office floor'], [185, 120, 'Finance, HR, Marketing (2nd floor)', 's']] },
+    a4: { r: [35, 158, 95, 85], b: [56, 179], l: [[82, 214, 'Server'], [82, 233, 'room']] },
+    a5: { r: [140, 158, 90, 85], b: [161, 179], l: [[185, 214, 'IT'], [185, 233, 'office']] },
+    a6: { r: [240, 158, 95, 165], b: [261, 179], l: [[287, 250, 'Engineering']] },
+    a7: { r: [445, 70, 230, 150], b: [466, 91], l: [[560, 192, 'Plant floor (Line 2)'], [560, 210, 'Production Lines 1-3', 's']] },
+    a8: { r: [605, 232, 165, 93], b: [626, 253], l: [[690, 290, 'Loading dock'], [690, 308, 'Shipping window', 's']] },
+    a9: { r: [685, 70, 85, 95], b: [706, 91], l: [[727, 128, 'Break'], [727, 148, 'room']] }
+  };
+  function mapSvg() {
+    var s = '<svg viewBox="0 0 820 540" role="group" aria-labelledby="map-title" xmlns="http://www.w3.org/2000/svg">' +
+      '<title id="map-title">Cedar Creek campus site plan with 9 numbered audit areas</title>' +
+      '<rect class="ground" x="0" y="0" width="820" height="540" rx="8"/>' +
+      '<rect class="fence" x="395" y="16" width="410" height="508"/>' +
+      '<text class="muted" x="800" y="34" text-anchor="end">Fence</text>' +
+      '<text class="muted" x="600" y="440" text-anchor="middle">Plant yard</text>' +
+      '<line class="cut" x1="470" y1="524" x2="540" y2="524"/><line class="gate" x1="470" y1="524" x2="540" y2="524"/>' +
+      '<text class="muted" x="505" y="512" text-anchor="middle">Vehicle gate</text>' +
+      '<line class="cut" x1="805" y1="360" x2="805" y2="392"/><line class="gate" x1="805" y1="360" x2="805" y2="392"/>' +
+      '<text class="muted" x="795" y="380" text-anchor="end">Side gate</text>' +
+      '<rect class="bld" x="20" y="20" width="330" height="320" rx="4"/>' +
+      '<text class="bldlbl" x="35" y="41">OFFICE BUILDING</text>' +
+      '<rect class="walkway" x="350" y="176" width="80" height="22"/>' +
+      '<text class="muted" x="390" y="216" text-anchor="middle">Walkway</text>' +
+      '<rect class="bld" x="430" y="40" width="355" height="300" rx="4"/>' +
+      '<text class="bldlbl" x="445" y="61">PLANT</text>' +
+      '<rect class="walkway" x="445" y="232" width="150" height="93"/>' +
+      '<text class="muted" x="520" y="283" text-anchor="middle">Warehouse</text>' +
+      [620, 657, 694, 731].map(function (x) { return '<rect class="bay" x="' + x + '" y="336" width="28" height="9"/>'; }).join('');
+    M.areas.forEach(function (a) {
+      var g = GEO[a.id], r = g.r;
+      s += '<g class="hot p' + a.part + '" id="hot-' + a.id + '" data-area="' + a.id + '" tabindex="0" role="button" aria-label="Area ' + a.number + ': ' + esc(a.name) + '">' +
+        '<rect class="zone" x="' + r[0] + '" y="' + r[1] + '" width="' + r[2] + '" height="' + r[3] + '" rx="3"/>';
+      if (a.id === 'a1') {
+        for (var x = 40; x <= 340; x += 30) {
+          s += '<line class="stall" x1="' + x + '" y1="372" x2="' + x + '" y2="402"/><line class="stall" x1="' + x + '" y1="482" x2="' + x + '" y2="512"/>';
+        }
+      }
+      if (a.id === 'a7') {
+        [['Line 1', 108], ['Line 2', 132], ['Line 3', 156]].forEach(function (ln) {
+          s += '<rect class="linebar' + (ln[0] === 'Line 2' ? ' l2' : '') + '" x="520" y="' + (ln[1] - 6) + '" width="140" height="10" rx="2"/>' +
+            '<text class="lbl s" x="490" y="' + (ln[1] + 3) + '">' + ln[0] + '</text>';
+        });
+      }
+      g.l.forEach(function (l) { s += '<text class="lbl' + (l[3] ? ' s' : '') + '" x="' + l[0] + '" y="' + l[1] + '">' + esc(l[2]) + '</text>'; });
+      s += '<circle class="bdg" cx="' + g.b[0] + '" cy="' + g.b[1] + '" r="13"/><text class="bn" x="' + g.b[0] + '" y="' + g.b[1] + '">' + a.number + '</text></g>';
+    });
+    return s + '</svg>';
+  }
+  function paintMap() {
+    M.areas.forEach(function (a) {
+      var v = S.visited.indexOf(a.id) >= 0, on = current === a.id;
+      var g = document.getElementById('hot-' + a.id);
+      if (g) {
+        g.classList.toggle('v', v);
+        g.classList.toggle('sel', on);
+        g.setAttribute('aria-label', 'Area ' + a.number + ': ' + a.name + ', part ' + a.part + (v ? ', visited' : ', not visited yet') + (on ? ', open' : ''));
+      }
+      var c = document.getElementById('chip-' + a.id);
+      if (c) { c.classList.toggle('v', v); c.classList.toggle('sel', on); c.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+    });
+  }
+
+  function renderPanel(focus) {
+    var el = document.getElementById('obs');
+    if (!current) {
+      el.innerHTML = '<div class="start"><div class="ah">Observation notes</div>' +
+        '<p>Pick an area on the map to walk it with Marcus. Read what you see, then log the controls and gaps you spot. Nothing is labeled for you: deciding what is a control and what is a gap is the job.</p>' +
+        '<p>Part 1 (Day 1) covers areas 1 to 5. Part 2 (Day 2) covers areas 6 to 9.</p>' +
+        '<button type="button" class="btn primary" data-act="open" data-area="a1">Start at area 1: Perimeter and parking</button></div>';
+      return;
+    }
+    var a = AREA[current];
+    var idx = M.areas.indexOf(a);
+    var prev = M.areas[idx - 1], next = M.areas[idx + 1];
+    el.innerHTML =
+      '<div class="ah"><span class="chip ' + (a.part === 1 ? 'c-lesson' : 'c-mock') + '">Part ' + a.part + '</span><span>Area ' + a.number + ' of 9</span></div>' +
+      '<h3 class="an" id="obs-h" tabindex="-1">' + esc(a.name) + '</h3>' +
+      '<div class="ashort">' + esc(a.short) + '</div>' +
+      '<div class="prose">' + a.observe.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') + '</div>' +
+      '<div class="acts">' +
+        '<button type="button" class="btn primary" data-act="qa" data-t="controls">Log a control here</button>' +
+        '<button type="button" class="btn" data-act="qa" data-t="gaps">Log a gap here</button>' +
+        '<button type="button" class="btn ghost" data-act="qa" data-t="assets">Add an asset</button>' +
+      '</div>' +
+      '<div class="here" id="here"></div>' +
+      ((a.assetsHere || []).length ? '<details class="hint"><summary>Inventory hint</summary><ul>' + a.assetsHere.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></details>' : '') +
+      '<div style="margin-top:6px"><button type="button" class="linkbtn" data-act="classify">How do I classify a control?</button></div>' +
+      '<div class="nav">' +
+        (prev ? '<button type="button" class="btn ghost" data-act="open" data-area="' + prev.id + '">&larr; Area ' + prev.number + '</button>' : '<span></span>') +
+        (next ? '<button type="button" class="btn ghost" data-act="open" data-area="' + next.id + '">Area ' + next.number + ' &rarr;</button>' : '<a class="btn ghost" href="#s-assets">Go to the asset inventory &rarr;</a>') +
+      '</div>';
+    if (focus) {
+      var h = document.getElementById('obs-h');
+      try { h.focus({ preventScroll: true }); } catch (e) { h.focus(); }
+      if (window.matchMedia('(max-width: 960px)').matches) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function openArea(id, focus) {
+    if (!AREA[id]) return;
+    current = id;
+    var isNew = S.visited.indexOf(id) < 0;
+    if (isNew) { S.visited.push(id); S.visited.sort(); }
+    renderPanel(focus);
+    paintMap();
+    if (isNew) changed(); else refresh();
+  }
+
+  // ---------- registers ----------
+  function renderAssets() {
+    var rows = S.assets.map(function (r, i) {
+      var n = i + 1;
+      return '<tr><td class="n">' + n + '</td>' +
+        '<td>' + inp('assets', i, 'name', r.name, 'Asset ' + n + ': name', 'e.g. FS-HR01') + '</td>' +
+        '<td>' + inp('assets', i, 'what', r.what, 'Asset ' + n + ': what it is', 'What it is / does') + '</td>' +
+        '<td>' + inp('assets', i, 'loc', r.loc, 'Asset ' + n + ': location', 'Where it lives') + '</td>' +
+        '<td>' + inp('assets', i, 'owner', r.owner, 'Asset ' + n + ': owner', 'Who owns it') + '</td>' +
+        '<td>' + sel('assets', i, 'cls', M.classes, r.cls, 'Asset ' + n + ': classification', 'Choose...') + '</td>' +
+        '<td>' + inp('assets', i, 'notes', r.notes, 'Asset ' + n + ': notes', '') + '</td>' +
+        '<td><button type="button" class="x" data-act="del" data-t="assets" data-i="' + i + '" aria-label="Remove asset ' + n + '">&times;</button></td></tr>';
+    }).join('');
+    document.getElementById('tb-assets').innerHTML = rows || '<tr><td colspan="8" class="empty-row">No assets yet. Add one below.</td></tr>';
+  }
+  function renderControls() {
+    var rows = S.controls.map(function (r, i) {
+      var n = i + 1;
+      return '<tr><td class="n">' + n + '</td>' +
+        '<td>' + sel('controls', i, 'area', AREA_OPTS, r.area, 'Control ' + n + ': area', 'Area...') + '</td>' +
+        '<td>' + ta('controls', i, 'control', r.control, 'Control ' + n + ': what you saw', 'What you saw, e.g. badge reader on the vehicle gate') + '</td>' +
+        '<td>' + sel('controls', i, 'cat', CATS, r.cat, 'Control ' + n + ': category', 'Category...') + '</td>' +
+        '<td>' + sel('controls', i, 'type', TYPES, r.type, 'Control ' + n + ': type', 'Type...') + '</td>' +
+        '<td>' + sel('controls', i, 'type2', TYPES, r.type2, 'Control ' + n + ': second type (optional)', '(none)') + '</td>' +
+        '<td>' + ta('controls', i, 'protects', r.protects, 'Control ' + n + ': what it protects', 'What or who it protects') + '</td>' +
+        '<td><button type="button" class="x" data-act="del" data-t="controls" data-i="' + i + '" aria-label="Remove control ' + n + '">&times;</button></td></tr>';
+    }).join('');
+    document.getElementById('tb-controls').innerHTML = rows || '<tr><td colspan="8" class="empty-row">No controls yet. Open an area on the map and use "Log a control here", or add one below.</td></tr>';
+  }
+  function riskBadge(g) {
+    var r = riskOf(g);
+    return r ? '<span class="riskb ' + r.level + '">Risk: ' + r.level + ' (' + r.score + ' of 9)</span>' : '<span class="riskb">Risk: set likelihood and impact</span>';
+  }
+  function renderGaps() {
+    var html = S.gaps.map(function (g, i) {
+      var n = i + 1, p = 'Gap ' + n + ': ';
+      return '<div class="gap" id="gap-' + i + '">' +
+        '<div class="gh"><span class="gt">GAP ' + n + '</span>' +
+          sel('gaps', i, 'area', AREA_OPTS, g.area, p + 'area', 'Area...') +
+          '<span class="grow"></span><span id="rb-' + i + '">' + riskBadge(g) + '</span>' +
+          '<label class="rank">Priority <input type="text" inputmode="numeric"' + attrs('gaps', i, 'rank', p + 'priority rank, 1 is fix first') + ' value="' + esc(g.rank) + '" placeholder="1, 2..."></label>' +
+          '<button type="button" class="x" data-act="del" data-t="gaps" data-i="' + i + '" aria-label="Remove gap ' + n + '">&times;</button>' +
+        '</div>' +
+        '<div class="gg">' +
+          '<div class="f"><label for="g' + i + 'gap">The gap (what is wrong)</label>' + ta('gaps', i, 'gap', g.gap, p + 'the gap', 'What you saw that is missing or broken').replace('<textarea', '<textarea id="g' + i + 'gap"') + '</div>' +
+          '<div class="f"><label for="g' + i + 'risk">Risk if not fixed</label>' + ta('gaps', i, 'risk', g.risk, p + 'risk if not fixed', 'What could happen to Cedar Creek').replace('<textarea', '<textarea id="g' + i + 'risk"') + '</div>' +
+          '<div class="pair"><div class="f"><label for="g' + i + 'like">Likelihood</label>' + sel('gaps', i, 'like', LMH, g.like, p + 'likelihood', 'Choose...').replace('<select', '<select id="g' + i + 'like"') + '</div>' +
+            '<div class="f"><label for="g' + i + 'imp">Impact</label>' + sel('gaps', i, 'impact', LMH, g.impact, p + 'impact', 'Choose...').replace('<select', '<select id="g' + i + 'imp"') + '</div></div>' +
+          '<div></div>' +
+          '<div class="f fix"><label for="g' + i + 'fix">Recommended control</label>' + ta('gaps', i, 'fix', g.fix, p + 'recommended control', 'The control you would add or change').replace('<textarea', '<textarea id="g' + i + 'fix"') + '</div>' +
+          '<div class="pair fix"><div class="f"><label for="g' + i + 'fc">Its category</label>' + sel('gaps', i, 'fixCat', CATS, g.fixCat, p + 'recommended control category', 'Category...').replace('<select', '<select id="g' + i + 'fc"') + '</div>' +
+            '<div class="f"><label for="g' + i + 'ft">Its type</label>' + sel('gaps', i, 'fixType', TYPES, g.fixType, p + 'recommended control type', 'Type...').replace('<select', '<select id="g' + i + 'ft"') + '</div></div>' +
+        '</div></div>';
+    }).join('');
+    document.getElementById('gap-list').innerHTML = html || '<div class="empty">No gaps yet. Open an area on the map and use "Log a gap here", or add one below.</div>';
+  }
+  var BLANK = { assets: asset, controls: control, gaps: gap };
+  var RENDER = { assets: renderAssets, controls: renderControls, gaps: renderGaps };
+  var FIRST = { assets: 'name', controls: 'control', gaps: 'gap' };
+  var NOUN = { assets: 'asset', controls: 'control', gaps: 'gap' };
+
+  function addRow(t, preset) {
+    S[t].push(BLANK[t](preset || {}));
+    RENDER[t]();
+    var i = S[t].length - 1;
+    var f = document.querySelector('[data-t="' + t + '"][data-i="' + i + '"][data-f="' + FIRST[t] + '"]');
+    var box = t === 'gaps' ? document.getElementById('gap-' + i) : f && f.closest('tr');
+    if (box) {
+      box.classList.add('flash');
+      setTimeout(function () { box.classList.remove('flash'); }, 1600);
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    if (f) { try { f.focus({ preventScroll: true }); } catch (e) { f.focus(); } }
+    changed();
+  }
+  function delRow(t, i) {
+    var row = S[t][i];
+    if (!row) return;
+    S[t].splice(i, 1);
+    lastDel = { t: t, i: i, row: row };
+    RENDER[t]();
+    document.querySelectorAll('.undo').forEach(function (x) { x.hidden = true; });
+    var u = document.getElementById('undo-' + t);
+    u.innerHTML = 'Removed ' + NOUN[t] + ' ' + (i + 1) + '. <button type="button" class="btn ghost" data-act="undo">Undo</button>';
+    u.hidden = false;
+    clearTimeout(delRow._h);
+    delRow._h = setTimeout(function () { u.hidden = true; lastDel = null; }, 10000);
+    changed();
+  }
+  function undo() {
+    if (!lastDel) return;
+    var d = lastDel; lastDel = null;
+    S[d.t].splice(Math.min(d.i, S[d.t].length), 0, d.row);
+    RENDER[d.t]();
+    document.getElementById('undo-' + d.t).hidden = true;
+    changed();
+  }
+  function sortGaps() {
+    S.gaps.sort(function (a, b) {
+      var x = parseInt(a.rank, 10), y = parseInt(b.rank, 10);
+      if (isNaN(x)) x = 1e9; if (isNaN(y)) y = 1e9;
+      return x - y;
+    });
+    renderGaps();
+    changed();
+    CC.toast('Gaps sorted by priority.');
+  }
+
+  // ---------- grade ----------
+  function renderGrade() {
+    var el = document.getElementById('grade');
+    var g = meta.grade;
+    if (!g || g.score == null) { el.hidden = true; el.innerHTML = ''; return; }
+    var rub = list(g.rubric);
+    var rows = RUBRIC.map(function (r, i) {
+      return '<tr><td><b>' + esc(r[0]) + '</b><div class="d">' + esc(r[1]) + '</div></td><td class="pts">' + esc(rub[i] == null ? '-' : rub[i]) + ' / 5</td></tr>';
+    }).join('');
+    var after = meta.submittedAt && g.gradedAt && meta.submittedAt > g.gradedAt;
+    el.innerHTML = '<div class="gtop"><h3>Your grade</h3><div class="score">' + esc(g.score) + ' <span>/ ' + esc(g.max || 25) + '</span></div></div>' +
+      (rows ? '<div class="table-wrap" style="margin-top:8px"><table class="cc">' + rows + '</table></div>' : '') +
+      (g.feedback ? '<div class="fb">' + esc(g.feedback) + '</div>' : '') +
+      '<div class="gby">' + (g.gradedBy ? 'Graded by ' + esc(g.gradedBy) : 'Graded') + (g.gradedAt ? ' on ' + esc(when(g.gradedAt)) : '') + '.' +
+      (after ? ' You resubmitted after this grade; your instructor will see the new version.' : '') + '</div>';
+    el.hidden = false;
+  }
+
+  // ---------- submit ----------
+  function checks() {
+    var c = counts();
+    return [
+      ['All 9 areas visited', c.visited >= 9, c.visited + ' / 9'],
+      ['At least 10 assets', c.assets >= 10, c.assets + ' / 10'],
+      ['Every asset has a classification', c.assets > 0 && !c.assetsNoCls, c.assetsNoCls ? c.assetsNoCls + ' missing' : 'Done'],
+      ['At least 15 controls', c.controls >= 15, c.controls + ' / 15'],
+      ['Every control has a category and type', c.controls > 0 && !c.controlsUnclassed, c.controlsUnclassed ? c.controlsUnclassed + ' missing' : 'Done'],
+      ['At least 5 gaps', c.gaps >= 5, c.gaps + ' / 5'],
+      ['Every gap has a recommended control', c.gaps > 0 && !c.gapsNoFix, c.gapsNoFix ? c.gapsNoFix + ' missing' : 'Done'],
+      ['Summary for Greg (100+ words)', c.words >= 100, c.words + ' words']
+    ];
+  }
+  function showConfirm() {
+    var cl = checks();
+    var allOk = cl.every(function (x) { return x[1]; });
+    var el = document.getElementById('confirm');
+    el.innerHTML = '<h3 id="cf-h">' + (meta.status === 'submitted' ? 'Resubmit your audit?' : 'Check before you submit') + '</h3>' +
+      '<ul class="checks">' + cl.map(function (x) {
+        return '<li class="' + (x[1] ? 'ok' : 'short') + '"><span>' + esc(x[0]) + '</span><span class="r">' + (x[1] ? 'Met' : 'Short') + ': ' + esc(x[2]) + '</span></li>';
+      }).join('') + '</ul>' +
+      '<p>' + (allOk
+        ? 'Everything meets the minimums. Your instructor grades it with the 5-part rubric (25 points). You can still edit and resubmit afterward.'
+        : 'Some items are below the minimum. You can keep working on them, or submit now and your instructor will grade what is there.') + '</p>' +
+      '<div class="btns"><button type="button" class="btn primary" data-act="confirm-submit">' + (allOk ? (meta.status === 'submitted' ? 'Resubmit' : 'Submit for grading') : 'Submit anyway') + '</button>' +
+      '<button type="button" class="btn ghost" data-act="cancel-submit">Keep working</button></div>';
+    el.hidden = false;
+    el.focus();
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function doSubmit() {
+    var again = meta.status === 'submitted';
+    meta.status = 'submitted';
+    meta.submittedAt = new Date().toISOString();
+    meta.submitCount = (meta.submitCount || 0) + 1;
+    meta.changedSinceSubmit = false;
+    document.getElementById('confirm').hidden = true;
+    persist().then(function () {
+      CC.toast(again ? 'Resubmitted. Your instructor will grade the latest version.' : 'Submitted for grading. Nice work.');
+    });
+    CC.markDone('w1d2-b6');
+    if (!part1Done && part1Ready(counts())) { part1Done = true; CC.markDone('w1d1-b7'); }
+    refresh();
+    document.getElementById('btn-submit').focus();
+  }
+  function finishPart1() {
+    if (!part1Ready(counts())) return;
+    part1Done = true;
+    flush();
+    CC.markDone('w1d1-b7');
+    CC.toast('Part 1 done. On Day 2, pick up at area 6.');
+    refresh();
+  }
+
+  // ---------- page ----------
+  function shell() {
+    var rubric = RUBRIC.length ? '<details class="more"><summary>How this is graded (25 points)</summary><ol>' + RUBRIC.map(function (r) { return '<li><b>' + esc(r[0]) + ' (5 pts):</b> ' + esc(r[1]) + '</li>'; }).join('') + '</ol></details>' : '';
+    var steps = [['s-walk', 'Walk the campus'], ['s-assets', 'Asset inventory'], ['s-controls', 'Controls register'], ['s-gaps', 'Gaps & recommendations'], ['s-summary', 'Summary & submit']];
+    var dl = function (arr) { return '<dl>' + arr.map(function (x) { return '<dt>' + esc(x.name) + '</dt><dd>' + esc(x.def) + '</dd>'; }).join('') + '</dl>'; };
+    return '<div class="crumb"><a href="' + esc(CC.link('MCCoE_Home.html?week=1')) + '">Week 1</a> &rsaquo; Mock Control Audit</div>' +
+      '<h1 class="cc-h1">Mock Control Audit</h1>' +
+      '<div class="sub">Cedar Creek Industries &middot; Week 1 mock hands-on project &middot; 25 points</div>' +
+      '<div class="statline"><span class="chip c-mock">Mock project</span><span class="pill" id="stat-pill">Draft</span><span class="saved" id="saved" aria-live="polite"></span></div>' +
+      (me.key ? '' : '<div class="preview-note">Preview mode: you are not signed in, so your work saves only in this browser. Open this page from the Hub to save it to your account.</div>') +
+      '<section class="box grade" id="grade" hidden aria-label="Your grade"></section>' +
+      '<div class="box brief"><div class="from">From: Marcus Reyes, IT Manager</div><div class="prose">' + M.brief.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') + '</div>' + rubric + '</div>' +
+      '<ol class="steps5" aria-label="Project steps">' + steps.map(function (s, i) {
+        return '<li id="st-' + (i + 1) + '"><a href="#' + s[0] + '"><span class="sn">' + (i + 1) + '</span><span class="st"><b>' + esc(s[1]) + '</b><small></small></span></a></li>';
+      }).join('') + '</ol>' +
+      '<div class="p1bar"><div><b>Part 1 (Day 1):</b> visit areas 1-5 and log at least 5 controls. <span class="muted" id="p1stat"></span></div><button type="button" class="btn" id="btn-p1" data-act="finish1" disabled>Finish part 1</button></div>' +
+
+      '<section class="sec" id="s-walk"><div class="sec-h"><h2 class="cc-h2">1. Walk the campus</h2><span class="pill" id="pill-walk"></span></div>' +
+      '<p class="sec-intro">Click a numbered area to walk it. Read the notes carefully: every <b>control</b> (something protecting Cedar Creek) and every <b>gap</b> (something missing or broken) is in there. <b>Part 1</b> is areas 1-5, <b>Part 2</b> is areas 6-9.</p>' +
+      '<div class="walk"><div class="box mapbox">' + mapSvg() +
+        '<div class="legend"><span><span class="k k1"></span>Part 1: areas 1-5 (Day 1)</span><span><span class="k k2"></span>Part 2: areas 6-9 (Day 2)</span><span><span class="k kv"></span>Visited</span><span class="tot" id="walk-tot"></span></div>' +
+        '<div class="chips" role="group" aria-label="Audit areas">' + M.areas.map(function (a) {
+          return '<button type="button" class="p' + a.part + '" id="chip-' + a.id + '" data-act="open" data-area="' + a.id + '"><span class="n">' + a.number + '</span>' + esc(a.name) + '</button>';
+        }).join('') + '</div>' +
+      '</div><div class="box obs" id="obs"></div></div></section>' +
+
+      '<section class="sec" id="s-assets"><div class="sec-h"><h2 class="cc-h2">2. Asset inventory</h2><div class="right"><a class="to-map" href="#s-walk">Back to the map</a><span class="pill" id="pill-assets"></span></div></div>' +
+      '<p class="sec-intro">Cedar Creek has never had an inventory; this is the first one. List every system, device, network, and set of data you saw. The first three rows come from Dee\'s starter list; the rest of it is in your lab pack (<span class="mono">it/asset_inventory_stub.csv</span>) and needs checking against what you saw. Classify each one: <b>Public</b> (anyone may see it), <b>Internal</b> (staff only), <b>Confidential</b> (would hurt the company or its people if it leaked), <b>Restricted</b> (the keys to the kingdom: admin systems, security devices).</p>' +
+      '<div class="table-wrap"><table class="cc reg"><colgroup><col style="width:34px"><col style="width:15%"><col style="width:22%"><col style="width:14%"><col style="width:14%"><col style="width:13%"><col><col style="width:44px"></colgroup>' +
+      '<thead><tr><th scope="col">#</th><th scope="col">Asset name</th><th scope="col">What it is</th><th scope="col">Location</th><th scope="col">Owner</th><th scope="col">Classification</th><th scope="col">Notes</th><th scope="col"><span class="sr">Remove</span></th></tr></thead><tbody id="tb-assets"></tbody></table></div>' +
+      '<p class="issues" id="iss-assets" aria-live="polite"></p>' +
+      '<div class="addrow"><button type="button" class="btn" data-act="add" data-t="assets">+ Add an asset</button><span class="undo" id="undo-assets" hidden></span></div></section>' +
+
+      '<section class="sec" id="s-controls"><div class="sec-h"><h2 class="cc-h2">3. Controls register</h2><div class="right"><a class="to-map" href="#s-walk">Back to the map</a><span class="pill" id="pill-controls"></span></div></div>' +
+      '<p class="sec-intro">Log every control you saw, one per row. Give each a <b>category</b> and a <b>type</b>. If a control honestly does two jobs (a camera both records and discourages), add a second type.</p>' +
+      '<details class="classify" id="classify"><summary>How to classify a control</summary><div class="cgrid">' +
+        '<div><h4>Category: who or what makes it work?</h4>' + dl(M.categories) + '</div>' +
+        '<div><h4>Type: what does it do, and when?</h4>' + dl(M.types) + '</div></div>' +
+        '<p class="ctip"><b>Try it:</b> a door badge reader is <b>Physical</b> (you can touch it) and <b>Preventive</b> (it stops entry). A written policy is <b>Managerial</b> and <b>Directive</b>. A log someone reviews is <b>Operational</b> and <b>Detective</b>.</p></details>' +
+      '<div class="table-wrap"><table class="cc reg"><colgroup><col style="width:34px"><col style="width:19%"><col style="width:25%"><col style="width:11%"><col style="width:11%"><col style="width:11%"><col><col style="width:44px"></colgroup>' +
+      '<thead><tr><th scope="col">#</th><th scope="col">Area</th><th scope="col">Control (what you saw)</th><th scope="col">Category</th><th scope="col">Type</th><th scope="col">2nd type</th><th scope="col">What it protects</th><th scope="col"><span class="sr">Remove</span></th></tr></thead><tbody id="tb-controls"></tbody></table></div>' +
+      '<p class="issues" id="iss-controls" aria-live="polite"></p>' +
+      '<div class="addrow"><button type="button" class="btn" data-act="add" data-t="controls">+ Add a control</button><span class="undo" id="undo-controls" hidden></span></div></section>' +
+
+      '<section class="sec" id="s-gaps"><div class="sec-h"><h2 class="cc-h2">4. Gaps &amp; recommendations</h2><div class="right"><a class="to-map" href="#s-walk">Back to the map</a><span class="pill" id="pill-gaps"></span></div></div>' +
+      '<p class="sec-intro">For each gap: what is wrong, what could happen if nobody fixes it, how <b>likely</b> that is and how bad the <b>impact</b> would be, the <b>control you recommend</b> (with its category and type), and a <b>priority</b> (1 = fix first). Things missing across the whole company go under <b>Campus-wide</b>.</p>' +
+      '<div class="gaps" id="gap-list"></div>' +
+      '<p class="issues" id="iss-gaps" aria-live="polite"></p>' +
+      '<div class="addrow"><button type="button" class="btn" data-act="add" data-t="gaps">+ Add a gap</button><button type="button" class="btn ghost" data-act="sort-gaps">Sort by priority</button><span class="undo" id="undo-gaps" hidden></span></div></section>' +
+
+      '<section class="sec" id="s-summary"><div class="sec-h"><h2 class="cc-h2">5. Summary for Greg Palmer</h2></div>' +
+      '<div class="sumgrid"><div class="field"><label for="summary">Your summary (one or two short paragraphs)</label>' +
+        '<textarea id="summary" data-t="summary" placeholder="Bottom line: ..."></textarea><div class="wc" id="wc" aria-live="polite"></div></div>' +
+      '<div class="box"><h3>Writing for a CFO</h3><ul>' +
+        '<li>Greg is sharp but not technical, and busy. Start with the bottom line in one sentence.</li>' +
+        '<li>Name the three biggest risks in plain words: what could happen to the business.</li>' +
+        '<li>Say what to fix first, and whether it is cheap and quick or needs budget.</li>' +
+        '<li>Mention one or two things that already work, so he knows where we stand.</li>' +
+        '<li>Skip acronyms, or explain them the first time.</li></ul></div></div>' +
+      '<div class="done-bar"><div><b>Ready to turn it in?</b><div class="sub" id="sub-line"></div></div><button type="button" class="btn primary" id="btn-submit" data-act="submit">Submit for grading</button></div>' +
+      '<div class="box confirm" id="confirm" tabindex="-1" role="region" aria-labelledby="cf-h" hidden></div></section>';
+  }
+
+  function render() {
+    page.innerHTML = shell();
+    renderPanel(false);
+    paintMap();
+    renderAssets();
+    renderControls();
+    renderGaps();
+    document.getElementById('summary').value = S.summary;
+    renderGrade();
+    refresh();
+  }
+
+  // ---------- events ----------
+  function onEdit(e) {
+    var el = e.target, t = el.getAttribute && el.getAttribute('data-t');
+    if (!t || !S) return;
+    if (t === 'summary') {
+      if (S.summary === el.value) return;
+      S.summary = el.value;
+    } else {
+      var i = +el.getAttribute('data-i'), f = el.getAttribute('data-f');
+      if (!S[t] || !S[t][i] || S[t][i][f] === el.value) return;
+      S[t][i][f] = el.value;
+      if (t === 'gaps' && (f === 'like' || f === 'impact')) {
+        var rb = document.getElementById('rb-' + i);
+        if (rb) rb.innerHTML = riskBadge(S.gaps[i]);
+      }
+    }
+    changed();
+  }
+  page.addEventListener('input', onEdit);
+  page.addEventListener('change', onEdit);
+  page.addEventListener('click', function (e) {
+    if (!S) return;
+    var hot = e.target.closest && e.target.closest('.hot');
+    if (hot) { openArea(hot.getAttribute('data-area'), true); return; }
+    var b = e.target.closest && e.target.closest('[data-act]');
+    if (!b) return;
+    var act = b.getAttribute('data-act'), t = b.getAttribute('data-t');
+    if (act === 'open') openArea(b.getAttribute('data-area'), true);
+    else if (act === 'qa') addRow(t, t === 'assets' ? { loc: AREA[current] ? AREA[current].name : '' } : { area: current || '' });
+    else if (act === 'add') addRow(t, t === 'assets' ? {} : { area: current || '' });
+    else if (act === 'del') delRow(t, +b.getAttribute('data-i'));
+    else if (act === 'undo') undo();
+    else if (act === 'sort-gaps') sortGaps();
+    else if (act === 'classify') {
+      var d = document.getElementById('classify');
+      d.open = true;
+      d.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      d.querySelector('summary').focus({ preventScroll: true });
+    }
+    else if (act === 'finish1') finishPart1();
+    else if (act === 'submit') showConfirm();
+    else if (act === 'confirm-submit') doSubmit();
+    else if (act === 'cancel-submit') { document.getElementById('confirm').hidden = true; document.getElementById('btn-submit').focus(); }
+  });
+  page.addEventListener('keydown', function (e) {
+    var hot = e.target.classList && e.target.classList.contains('hot') ? e.target : null;
+    if (hot && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openArea(hot.getAttribute('data-area'), true); }
+  });
+
+  // ---------- start ----------
+  Promise.all([fetchRemote(), CC.load().catch(function () { return {}; })]).then(function (res) {
+    var remote = res[0], course = res[1] || {};
+    remoteOk = remote.ok;
+    var r = remote.val, l = readLocal();
+    var rec = r || l;
+    var pushLocal = false;
+    if (r && l && (l.savedAt || '') > (r.savedAt || '')) { rec = l; pushLocal = true; }
+    if (!r && l && remoteOk) pushLocal = true;
+    if (rec) {
+      S = normData(rec.data);
+      meta.status = rec.status === 'submitted' ? 'submitted' : 'draft';
+      meta.submittedAt = rec.submittedAt || null;
+      meta.submitCount = +rec.submitCount || (rec.submittedAt ? 1 : 0);
+      meta.changedSinceSubmit = !!rec.changedSinceSubmit;
+      meta.savedAt = rec.savedAt || null;
+    } else {
+      S = freshData();
+    }
+    meta.grade = (r && r.grade) || (rec && rec.grade) || null;
+    part1Done = !!(course.done && course.done['w1d1-b7']);
+    render();
+    if (AREA[CC.param('area')]) openArea(CC.param('area'), false);
+    if (meta.savedAt) setSave(remoteOk ? 'ok' : 'local', meta.savedAt);
+    if (CC.online && !remoteOk) setSave('err');
+    if (pushLocal) persist();
+    if (CC.online && remoteOk) {
+      CC.db.ref(PATH + '/grade').on('value', function (s) { meta.grade = s.val(); renderGrade(); });
+    }
+  });
+})();
+</script>
+</body>
+</html>

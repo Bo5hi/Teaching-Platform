@@ -2327,7 +2327,10 @@ function enterApp() {
       updateOverallProgress();
       const _target = _ssoTargetWeek || wasOnWeek;
       _ssoTargetWeek = null;
-      if (_target) renderWeek(_target);
+      const _openFns = { survey: renderSurvey, surveys: renderSurveys, tickets: openTicketBoard, leaderboard: renderLeaderboard, dashboard: renderStudentDashboard };
+      const _open = new URLSearchParams(location.search).get('open');
+      if (_open && _openFns[_open]) _openFns[_open]();
+      else if (_target) renderWeek(_target);
       else renderStudentDashboard();
     });
   } else {

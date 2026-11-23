@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCCoE | This Week</title>
+<link rel="stylesheet" href="course.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="course.js"></script>
+<script src="course-data.js"></script>
+<style>
+.week-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-bottom: 18px; }
+.week-pick { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.week-pick label { font-size: .85rem; color: var(--muted); display: block; margin-bottom: 4px; }
+.week-pick select { width: auto; }
+.prog { min-width: 220px; }
+.prog .bar { height: 6px; background: var(--line-soft); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+.prog .bar i { display: block; height: 100%; background: var(--ok); transition: width .3s; }
+.prog .lbl { font-size: .9rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.prog .lbl b { color: var(--text); }
+.overview { font-family: var(--f-read); font-size: .98rem; line-height: 1.65; color: var(--muted); max-width: 80ch; margin: -6px 0 20px; }
+
+.days { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.day { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px 14px; text-align: left; cursor: pointer; display: grid; gap: 2px; }
+.day:hover { border-color: rgba(255, 255, 255, 0.22); }
+.day[aria-selected="true"] { border-color: var(--red); background: var(--panel-2); }
+.day .dn { font-family: var(--f-display); font-weight: 700; font-size: 1rem; letter-spacing: 1px; }
+.day .dd { font-size: .92rem; color: var(--muted); }
+.day .dc { font-size: .85rem; color: var(--faint); font-variant-numeric: tabular-nums; }
+.day .dc.done { color: var(--ok); }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 22px; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.day-title { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.day-title h2 { font-size: 1.3rem; margin: 0; font-weight: 700; }
+.day-title .hint { color: var(--muted); font-size: .92rem; }
+
+ol.tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: step; }
+.task { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 14px 16px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; counter-increment: step; }
+.task.mock { border-color: rgba(255, 138, 76, 0.45); }
+.task.done { opacity: .62; }
+.task.done .tt { text-decoration: line-through; text-decoration-color: var(--faint); }
+.check { width: 26px; height: 26px; border-radius: 6px; border: 2px solid rgba(255, 255, 255, 0.3); background: none; cursor: pointer; display: grid; place-items: center; padding: 0; }
+.check svg { width: 14px; height: 14px; opacity: 0; }
+.task.done .check { background: var(--ok); border-color: var(--ok); }
+.task.done .check svg { opacity: 1; }
+.tmeta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 3px; }
+.step { font-family: var(--f-mono); font-size: .78rem; color: var(--faint); }
+.step::before { content: "Step " counter(step); }
+.mins { font-size: .82rem; color: var(--faint); font-variant-numeric: tabular-nums; }
+.due { font-size: .78rem; font-weight: 700; color: var(--warn); }
+.got { font-size: .8rem; font-weight: 700; color: var(--ok); }
+.tt { font-weight: 700; font-size: 1.06rem; }
+.td { color: var(--muted); font-size: .95rem; margin-top: 2px; }
+@media (max-width: 560px) { .task { grid-template-columns: auto minmax(0, 1fr); } .task .btn { grid-column: 2; justify-self: start; } }
+aside.rail { display: grid; gap: 14px; }
+
+.notice { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 20px; display: grid; gap: 10px; justify-items: start; }
+.notice p { margin: 0; color: var(--muted); font-family: var(--f-read); line-height: 1.6; max-width: 70ch; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 8px; }
+.stat { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 14px 16px; }
+.stat .n { font-family: var(--f-display); font-size: 1.35rem; color: var(--text); }
+.stat .l { font-size: .88rem; color: var(--muted); }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
+.card .k { font-weight: 700; font-size: 1.04rem; }
+.card .v { color: var(--muted); font-size: .93rem; }
+.card .btn { justify-self: start; margin-top: 8px; }
+</style>
+</head>
+<body>
+<header id="cc-top"></header>
+<main class="cc-main">
+  <section id="view-week"></section>
+  <section id="view-work" hidden></section>
+  <section id="view-res" hidden></section>
+</main>
+<script>
+(function () {
+  var esc = CC.esc, link = CC.link;
+  var TYPE = { lesson: 'Lesson', practice: 'Practice', lab: 'Lab', mock: 'Mock project', quiz: 'Quiz', checkin: 'Check-in', pbq: 'PBQ Lab' };
+  var CHECK_SVG = '<svg viewBox="0 0 14 14" fill="none" stroke="#07070f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"/></svg>';
+  var weeks = COURSE.weeks;
+  var rec = {}, mockRecs = {};
+
+  // Current week from the cohort start date (Monday). Before the start, Week 1.
+  function currentWeek() {
+    var start = new Date(COURSE.start + 'T00:00:00');
+    var n = Math.floor((Date.now() - start.getTime()) / (7 * 864e5)) + 1;
+    return Math.max(1, Math.min(weeks.length, n));
+  }
+  var CUR = currentWeek();
+  var qWeek = parseInt(CC.param('week'), 10);
+  var state = { week: qWeek >= 1 && qWeek <= weeks.length ? qWeek : CUR, day: null };
+  var qDay = parseInt(CC.param('day'), 10);
+  if (qDay >= 1) state.day = qDay - 1;
+
+  function wk(n) { return weeks.filter(function (w) { return w.num === n; })[0]; }
+  function isDone(id) { return !!(rec.done && rec.done[id]); }
+  function hm(m) { return m >= 60 ? Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '') : m + ' min'; }
+
+  // ── This Week ──
+  function renderWeek() {
+    var W = wk(state.week), el = document.getElementById('view-week');
+    var opts = weeks.filter(function (w) { return w.num <= Math.max(CUR, state.week); }).slice().reverse().map(function (w) {
+      return '<option value="' + w.num + '"' + (w.num === state.week ? ' selected' : '') + '>Week ' + w.num + ': ' + esc(w.title) + (w.num === CUR ? ' (current)' : '') + '</option>';
+    }).join('');
+    var head = '<div class="week-head"><div><div class="crumb">Week ' + W.num + ' of ' + weeks.length + ' &middot; ' + (W.num === CUR ? 'Current week' : W.num < CUR ? 'Past week' : 'Preview') + (W.modules ? ' &middot; ' + esc(W.modules) : '') + '</div>' +
+      '<h1 class="cc-h1">' + esc(W.title) + '</h1>' + (W.sub ? '<div class="sub">' + esc(W.sub) + '</div>' : '') + '</div>' +
+      '<div class="week-pick"><div><label for="weekSel">Week</label><select id="weekSel">' + opts + '</select></div>' +
+      (W.days ? '<div class="prog"><div class="lbl"><b id="pDone">0</b> of <span id="pAll">0</span> steps done this week</div><div class="bar"><i id="pBar" style="width:0"></i></div></div>' : '') + '</div></div>';
+
+    if (W.legacy) {
+      el.innerHTML = head + '<div class="notice"><p>Week ' + W.num + ' still runs in the current Student Platform while the new layout is finished.</p><a class="btn primary" href="' + esc(link('MCCoE_Student_Platform.html?week=' + W.legacy)) + '">Open Week ' + W.num + '</a></div>';
+    } else if (!W.days) {
+      el.innerHTML = head + '<div class="notice"><p>This week is being built. It will follow the same pattern as Week 1: two class days of about 4 hours each, with lessons, Kali labs, practice, and a mock project' + (W.mockTitle ? ' (<strong>' + esc(W.mockTitle) + '</strong>)' : '') + '.</p></div>';
+    } else {
+      if (state.day == null || state.day >= W.days.length) {
+        state.day = 0;
+        for (var i = 0; i < W.days.length; i++) { if (W.days[i].blocks.some(function (b) { return !isDone(b.id); })) { state.day = i; break; } state.day = i; }
+      }
+      el.innerHTML = head + (W.overview ? '<p class="overview">' + esc(W.overview) + '</p>' : '') +
+        '<div class="days" role="tablist" id="dayTabs"></div>' +
+        '<div class="grid"><div><div class="day-title"><h2 id="dayH"></h2><span class="hint" id="dayHint"></span></div><ol class="tasks" id="tasks"></ol></div>' +
+        '<aside class="rail" id="rail"></aside></div>';
+      renderDays(W); renderTasks(W); renderRail(W); renderProg(W);
+    }
+    document.getElementById('weekSel').addEventListener('change', function (e) { state.week = +e.target.value; state.day = null; renderWeek(); });
+  }
+
+  function renderDays(W) {
+    document.getElementById('dayTabs').innerHTML = W.days.map(function (d, i) {
+      var n = d.blocks.length, c = d.blocks.filter(function (b) { return isDone(b.id); }).length;
+      var mins = d.blocks.reduce(function (a, b) { return a + (b.mins || 0); }, 0);
+      return '<button class="day" role="tab" aria-selected="' + (i === state.day) + '" data-day="' + i + '"><span class="dn">' + esc(d.name) + '</span><span class="dd">' + esc(d.focus) + '</span>' +
+        '<span class="dc ' + (c === n ? 'done' : '') + '">' + (c === n ? 'All done' : c + ' of ' + n + ' done') + ' &middot; about ' + hm(mins) + '</span></button>';
+    }).join('');
+  }
+
+  function extra(b) {
+    if (b.type === 'quiz') { var q = (rec.quiz || {})['w' + state.week]; if (q) return '<span class="got">Best ' + q.best + '%</span>'; }
+    if (b.type === 'practice') { var p = (rec.practice || {})[(b.href.split('p=')[1] || '')]; if (p) return '<span class="got">Best ' + p.best + '%</span>'; }
+    if (b.type === 'lab') { var l = (rec.labs || {})[(b.href.split('l=')[1] || '')]; if (l) return '<span class="got">' + (l.status === 'submitted' ? 'Submitted' : 'Draft saved') + '</span>'; }
+    if (b.type === 'lesson') { var k = (rec.checks || {})[(b.href.split('l=')[1] || '')]; if (k) return '<span class="got">Check ' + k.score + '/' + k.total + '</span>'; }
+    if (b.type === 'mock') { var m = mockRecs['w' + state.week]; if (m) return '<span class="got">' + (m.grade ? 'Graded ' + m.grade.score + '/' + (m.grade.max || 25) : m.status === 'submitted' ? 'Submitted' : 'In progress') + '</span>'; }
+    return '';
+  }
+
+  function renderTasks(W) {
+    var d = W.days[state.day];
+    var mins = d.blocks.reduce(function (a, b) { return a + (b.mins || 0); }, 0);
+    document.getElementById('dayH').textContent = d.name + ': ' + d.focus;
+    document.getElementById('dayHint').textContent = 'About ' + hm(mins);
+    document.getElementById('tasks').innerHTML = d.blocks.map(function (b) {
+      var done = isDone(b.id), ext = /^https?:/.test(b.href);
+      return '<li class="task ' + (done ? 'done ' : '') + (b.type === 'mock' ? 'mock' : '') + '">' +
+        '<button class="check" data-id="' + b.id + '" aria-label="' + (done ? 'Mark not done: ' : 'Mark done: ') + esc(b.title) + '">' + CHECK_SVG + '</button>' +
+        '<div style="min-width:0"><div class="tmeta"><span class="step"></span><span class="chip c-' + b.type + '">' + (TYPE[b.type] || b.type) + '</span><span class="mins">' + b.mins + ' min</span>' +
+        (b.due ? '<span class="due">' + esc(b.due) + '</span>' : '') + extra(b) + '</div>' +
+        '<div class="tt">' + esc(b.title) + '</div><div class="td">' + esc(b.desc || '') + '</div></div>' +
+        '<a class="btn" href="' + esc(link(b.href)) + '"' + (ext || b.type === 'checkin' ? ' target="_blank" rel="noopener"' : '') + '>Open</a></li>';
+    }).join('');
+  }
+
+  function renderProg(W) {
+    var all = 0, done = 0;
+    W.days.forEach(function (d) { d.blocks.forEach(function (b) { all++; if (isDone(b.id)) done++; }); });
+    document.getElementById('pDone').textContent = done;
+    document.getElementById('pAll').textContent = all;
+    document.getElementById('pBar').style.width = Math.round(done / all * 100) + '%';
+  }
+
+  function renderRail(W) {
+    var rows = [];
+    W.days.forEach(function (d) { d.blocks.forEach(function (b) { if (b.due || b.type === 'quiz') rows.push([b, d]); }); });
+    var due = rows.map(function (x) {
+      var b = x[0], ok = isDone(b.id);
+      return '<div class="row"><span>' + esc(b.title) + '</span><span class="r ' + (ok ? 'ok' : 'warn') + '">' + (ok ? 'Done' : esc(x[1].name)) + '</span></div>';
+    }).join('');
+    document.getElementById('rail').innerHTML =
+      (due ? '<div class="box"><h3>Due this week</h3>' + due + '</div>' : '') +
+      '<div class="box" id="tkBox"><h3>My SOC tickets</h3><div class="sub" style="font-size:.92rem">Loading...</div></div>' +
+      '<div class="box"><h3>Need help?</h3><div class="sub" style="font-size:.92rem;font-family:var(--f-read);line-height:1.55">Stuck on a lab for more than 15 minutes? Write down the exact command and error, then ask your instructor.</div></div>';
+    loadTickets(function (t) {
+      var box = document.getElementById('tkBox'); if (!box) return;
+      box.innerHTML = '<h3>My SOC tickets</h3>' + (t.length ? t.slice(0, 4).map(function (x) {
+        return '<div class="row"><span class="mono">' + esc(x.id) + '</span><span class="r ' + (x.done ? 'ok' : 'warn') + '">' + esc(x.status) + '</span></div>';
+      }).join('') + '<a class="btn ghost" style="margin-top:10px" href="' + esc(link('MCCoE_Home.html#work')) + '" data-tab-go="work">See all in My Work</a>' : '<div class="sub" style="font-size:.92rem">No tickets assigned yet.</div>');
+    });
+  }
+
+  var _tk = null;
+  function loadTickets(cb) {
+    if (_tk) return cb(_tk);
+    var nm = CC.student().name;
+    if (!CC.db || !nm) { _tk = []; return cb(_tk); }
+    Promise.all(['assignments', 'work/' + nm, 'grades/' + nm].map(function (p) { return CC.db.ref('mccoe_tickets/' + p).once('value').then(function (s) { return s.val() || {}; }); }))
+      .then(function (r) {
+        var a = r[0], work = r[1], grades = r[2];
+        _tk = Object.keys(a).filter(function (id) { return a[id] && a[id][nm]; }).sort().map(function (id) {
+          var w = work[id] || {}, st = w.status || 'New';
+          return { id: id, status: st, done: st === 'Resolved' || st === 'Closed', grade: grades[id] };
+        });
+        _tk.sort(function (x, y) { return (x.done - y.done) || x.id.localeCompare(y.id); });
+        cb(_tk);
+      }).catch(function () { _tk = []; cb(_tk); });
+  }
+
+  // ── My Work ──
+  function renderWork() {
+    var el = document.getElementById('view-work');
+    var built = weeks.filter(function (w) { return w.days && w.num <= Math.max(CUR, state.week); });
+    var quizzes = built.map(function (w) { return (rec.quiz || {})['w' + w.num]; }).filter(Boolean);
+    var qAvg = quizzes.length ? Math.round(quizzes.reduce(function (a, q) { return a + q.best; }, 0) / quizzes.length) : null;
+    var labsDone = Object.keys(rec.labs || {}).filter(function (k) { return rec.labs[k].status === 'submitted'; }).length;
+    var mocks = built.map(function (w) { return mockRecs['w' + w.num]; }).filter(function (m) { return m && m.grade; });
+    var mPts = mocks.reduce(function (a, m) { return a + (m.grade.score || 0); }, 0);
+
+    el.innerHTML = '<div class="crumb">My Work</div><h1 class="cc-h1">Everything you\'re graded on</h1><div class="sub">Quizzes, labs, mock projects, and SOC tickets in one place.</div>' +
+      '<h2 class="cc-h2">At a glance</h2><div class="stats">' +
+        '<div class="stat"><div class="n">' + (qAvg == null ? '&mdash;' : qAvg + '%') + '</div><div class="l">Quiz average (best tries)</div></div>' +
+        '<div class="stat"><div class="n">' + labsDone + '</div><div class="l">Labs submitted</div></div>' +
+        '<div class="stat"><div class="n">' + (mocks.length ? mPts + ' / ' + mocks.length * 25 : '&mdash;') + '</div><div class="l">Mock project points</div></div>' +
+        '<div class="stat"><div class="n" id="tkStat">&mdash;</div><div class="l">SOC tickets resolved</div></div>' +
+      '</div>' +
+      '<h2 class="cc-h2">By week</h2><div class="table-wrap"><table class="cc"><thead><tr><th>Week</th><th>Steps done</th><th>Knowledge checks</th><th>Labs</th><th>Quiz</th><th>Mock project</th></tr></thead><tbody>' +
+      (built.length ? built.map(function (w) {
+        var blocks = [], labs = [], lessons = [];
+        w.days.forEach(function (d) { d.blocks.forEach(function (b) { blocks.push(b); if (b.type === 'lab') labs.push(b.href.split('l=')[1]); if (b.type === 'lesson') lessons.push(b.href.split('l=')[1]); }); });
+        var done = blocks.filter(function (b) { return isDone(b.id); }).length;
+        var ck = lessons.map(function (l) { return (rec.checks || {})[l]; }).filter(Boolean);
+        var ckTxt = ck.length ? Math.round(ck.reduce(function (a, c) { return a + c.score / c.total; }, 0) / ck.length * 100) + '% (' + ck.length + ' of ' + lessons.length + ')' : '&mdash;';
+        var lb = labs.filter(function (l) { return (rec.labs || {})[l] && rec.labs[l].status === 'submitted'; }).length;
+        var q = (rec.quiz || {})['w' + w.num];
+        var m = mockRecs['w' + w.num];
+        var mTxt = !m ? 'Not started' : m.grade ? '<b>' + m.grade.score + ' / ' + (m.grade.max || 25) + '</b>' : m.status === 'submitted' ? 'Submitted, waiting for grade' : 'In progress';
+        return '<tr><td>' + w.num + ' &middot; ' + esc(w.title) + '</td><td>' + done + ' / ' + blocks.length + '</td><td>' + ckTxt + '</td><td>' + lb + ' / ' + labs.length + '</td><td>' +
+          (q ? '<span style="color:' + (q.best >= 80 ? 'var(--ok)' : 'var(--warn)') + '">' + q.best + '%</span>' : '&mdash;') + '</td><td>' + mTxt + '</td></tr>';
+      }).join('') : '<tr><td colspan="6" class="sub">Nothing yet.</td></tr>') + '</tbody></table></div>' +
+      (mocks.length ? '<h2 class="cc-h2">Instructor feedback</h2>' + built.filter(function (w) { var m = mockRecs['w' + w.num]; return m && m.grade && m.grade.feedback; }).map(function (w) {
+        return '<div class="box" style="margin-bottom:10px"><h3>Week ' + w.num + ': ' + esc(w.mock.title) + '</h3><div class="prose" style="white-space:pre-line">' + esc(mockRecs['w' + w.num].grade.feedback) + '</div></div>';
+      }).join('') : '') +
+      '<h2 class="cc-h2">SOC tickets</h2><div id="tkTable" class="empty">Loading...</div>' +
+      '<h2 class="cc-h2">XP and badges</h2><div class="notice"><p>Your XP, level, badges, and the leaderboard are still in the Student Platform for now.</p><a class="btn" href="' + esc(link('MCCoE_Student_Platform.html?open=leaderboard')) + '" target="_blank" rel="noopener">Open leaderboard</a></div>';
+
+    loadTickets(function (t) {
+      document.getElementById('tkStat').textContent = t.filter(function (x) { return x.done; }).length + ' / ' + t.length;
+      var box = document.getElementById('tkTable');
+      if (!t.length) { box.textContent = 'No tickets assigned yet. Your instructor assigns them from the tracker.'; return; }
+      box.className = 'table-wrap';
+      box.innerHTML = '<table class="cc"><thead><tr><th>Ticket</th><th>Status</th><th>Grade</th><th></th></tr></thead><tbody>' + t.map(function (x) {
+        return '<tr><td class="mono">' + esc(x.id) + '</td><td style="color:' + (x.done ? 'var(--ok)' : 'var(--warn)') + '">' + esc(x.status) + '</td><td>' + (x.grade ? x.grade.score + ' / ' + (x.grade.max || 25) : '&mdash;') + '</td>' +
+          '<td><a class="btn" href="' + esc(link('MCCoE_Student_Platform.html?ticket=' + encodeURIComponent(x.id))) + '" target="_blank" rel="noopener">Open</a></td></tr>';
+      }).join('') + '</tbody></table>';
+    });
+  }
+
+  // ── Resources ──
+  var RES = [
+    ['Practice tools', [
+      ['CyberSec Academy tools', 'Phishing Spotter, Password Checker, SOC Simulator.', 'CyberSec_Academy.html'],
+      ['Security+ PBQ Labs', '10 auto-graded simulated labs.', 'SecPlus_PBQ_Labs.html'],
+      ['Security+ Mock Exam', '86-question timed practice exam.', 'SecPlus_Mock_Exam.html'],
+      ['Acronym Drill', 'Security+ acronyms by week.', 'MCCoE_Student_Platform.html']
+    ]],
+    ['Labs', [
+      ['Ethical Hacking Lab', 'The five pentest phases on Hack The Box Pwnbox.', 'Pillar4_EthicalHacking.html'],
+      ['Blue Team Lab', 'Log analysis, detection, and incident response.', 'Pillar5_BlueTeam.html'],
+      ['CTF Challenges', '12 flags across 4 scenarios.', 'MCCoE_CTF.html'],
+      ['Hack The Box', 'Log your HTB progress.', 'MCCoE_Student_Platform.html?open=dashboard']
+    ]],
+    ['Reference', [
+      ['MITRE ATT&CK Map', 'Attack techniques, with the Colonial Pipeline case.', 'MITRE_Attack_Map.html'],
+      ['NIST CSF 2.0 Tool', 'The six functions with examples.', 'NIST_CSF_Map.html'],
+      ['Cedar Creek lab pack', 'The Week 1 files for your Kali labs (zip).', 'assets/cedarcreek/cc-week1.zip'],
+      ['Live Scoreboard', 'Cohort leaderboard.', 'MCCoE_Scoreboard.html']
+    ]]
+  ];
+  function renderRes() {
+    document.getElementById('view-res').innerHTML = '<div class="crumb">Resources</div><h1 class="cc-h1">Tools and references</h1><div class="sub">Everything here also shows up inside the day it\'s assigned. Use this page to go back to a tool any time.</div>' +
+      RES.map(function (g) {
+        return '<h2 class="cc-h2">' + esc(g[0]) + '</h2><div class="cards">' + g[1].map(function (c) {
+          return '<div class="card"><div class="k">' + esc(c[0]) + '</div><div class="v">' + esc(c[1]) + '</div><a class="btn" href="' + esc(link(c[2])) + '" target="_blank" rel="noopener">Open</a></div>';
+        }).join('') + '</div>';
+      }).join('');
+  }
+
+  // ── tabs ──
+  function show(v) {
+    if (['week', 'work', 'res'].indexOf(v) < 0) v = 'week';
+    ['week', 'work', 'res'].forEach(function (k) { document.getElementById('view-' + k).hidden = k !== v; });
+    document.querySelectorAll('.cc-tabs a').forEach(function (a) { a.setAttribute('aria-selected', String(a.getAttribute('data-tab') === v)); });
+    if (v === 'work') renderWork();
+    if (v === 'res') renderRes();
+  }
+
+  CC.header('week');
+  document.addEventListener('click', function (e) {
+    var tab = e.target.closest('.cc-tabs a, [data-tab-go]');
+    if (tab) { e.preventDefault(); var v = tab.getAttribute('data-tab') || tab.getAttribute('data-tab-go'); history.replaceState(null, '', '#' + v); show(v); window.scrollTo(0, 0); return; }
+    var day = e.target.closest('.day');
+    if (day) { state.day = +day.getAttribute('data-day'); var W = wk(state.week); renderDays(W); renderTasks(W); return; }
+    var chk = e.target.closest('.check');
+    if (chk) {
+      var id = chk.getAttribute('data-id'), on = !isDone(id);
+      rec.done = rec.done || {};
+      if (on) rec.done[id] = new Date().toISOString(); else delete rec.done[id];
+      CC.markDone(id, on);
+      var W2 = wk(state.week); renderDays(W2); renderTasks(W2); renderProg(W2); renderRail(W2);
+    }
+  });
+
+  function loadMocks() {
+    var key = CC.student().key;
+    if (CC.db && key) return CC.db.ref('mccoe_mockproj/' + key).once('value').then(function (s) { mockRecs = s.val() || {}; }).catch(function () {});
+    try { var l = JSON.parse(localStorage.getItem('cc_mock_w1_' + (key || 'preview')) || 'null'); if (l) mockRecs.w1 = l; } catch (e) {}
+    return Promise.resolve();
+  }
+
+  renderWeek();
+  show((location.hash || '#week').slice(1));
+  Promise.all([CC.load().then(function (r) { rec = r || {}; }), loadMocks()]).then(function () {
+    renderWeek();
+    show((location.hash || '#week').slice(1));
+  });
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1)); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) location.reload(); });
+})();
+</script>
+</body>
+</html>

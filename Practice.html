@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice | MCCoE</title>
+<link rel="stylesheet" href="course.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="course.js"></script>
+<script src="course-data.js"></script>
+<style>
+.meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 8px 0 18px; color: var(--muted); font-size: .95rem; }
+.sort-item { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; }
+.sort-item .txt { font-family: var(--f-read); font-size: .98rem; line-height: 1.5; }
+.sort-item .num { font-family: var(--f-mono); font-size: .76rem; color: var(--faint); margin-bottom: 3px; }
+.sels { display: flex; gap: 8px; flex-wrap: wrap; }
+.sels select { width: auto; min-width: 150px; }
+.sels select.ok { border-color: var(--ok); }
+.sels select.no { border-color: var(--bad); }
+.sort-item .why { grid-column: 1 / -1; }
+@media (max-width: 640px) { .sort-item { grid-template-columns: minmax(0, 1fr); } }
+.flash-wrap { display: grid; gap: 14px; justify-items: center; margin-top: 10px; }
+.card { width: min(560px, 100%); min-height: 220px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 26px; display: grid; place-items: center; text-align: center; cursor: pointer; }
+.card .term { font-family: var(--f-display); font-size: clamp(1.8rem, 6vw, 2.6rem); letter-spacing: 2px; color: var(--text); background: none; border: none; padding: 0; }
+.card .def { font-family: var(--f-read); font-size: 1.05rem; line-height: 1.6; color: var(--text); }
+.card .def b { display: block; color: var(--cyan); font-weight: 600; font-size: 1.15rem; margin-bottom: 6px; }
+.card .hint { font-size: .85rem; color: var(--faint); margin-top: 10px; }
+.flash-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.fcount { font-family: var(--f-mono); color: var(--muted); font-size: .9rem; }
+.summary { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; padding: 14px 16px; border-radius: 10px; border: 1px solid var(--line-soft); background: var(--panel); margin: 12px 0; }
+</style>
+</head>
+<body>
+<header id="cc-top"></header>
+<main class="cc-main cc-read" id="page"><div class="empty">Loading practice...</div></main>
+<script>
+(function () {
+  CC.header('week');
+  var pid = CC.param('p') || 'controls';
+  var href = 'Practice.html?p=' + pid;
+  var page = document.getElementById('page');
+  var esc = CC.esc;
+  var at = CC.blockFor(href);
+  var week = at ? at.week.num : (pid.match(/w(\d+)/) || [0, 1])[1];
+
+  CC.require('course-w' + week + '-practice.js').then(function () {
+    var P = (window.COURSE_PRACTICE || {})[pid];
+    if (!P) { page.innerHTML = '<div class="empty">This practice set is not available yet.</div>'; return; }
+    document.title = P.title + ' | MCCoE';
+    head(P);
+    if (P.kind === 'sort') sort(P); else flash(P);
+  }).catch(function (e) { page.innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
+
+  function head(P) {
+    page.innerHTML = CC.crumb(href, 'Practice') +
+      '<h1 class="cc-h1">' + esc(P.title) + '</h1>' +
+      '<div class="meta"><span class="chip c-practice">Practice</span>' + (at ? '<span>' + at.block.mins + ' min</span>' : '') + '<span id="best"></span></div>' +
+      (P.instructions ? '<p class="prose">' + P.instructions + '</p>' : '') +
+      '<div id="body"></div>' +
+      '<div class="done-bar"><span class="sub" id="doneMsg"></span>' + CC.nextButton(href) + '</div>';
+    CC.load().then(function (rec) {
+      var p = (rec.practice || {})[pid];
+      if (p) document.getElementById('best').textContent = '· Your best: ' + p.best + '%';
+    });
+  }
+
+  function finish(pct) {
+    CC.load().then(function (rec) {
+      var prev = (rec.practice || {})[pid] || {};
+      var best = Math.max(prev.best || 0, pct);
+      CC.save('practice/' + pid, { best: best, last: pct, at: new Date().toISOString() });
+      document.getElementById('best').textContent = '· Your best: ' + best + '%';
+    });
+    CC.markDoneFor(href);
+    document.getElementById('doneMsg').textContent = 'Practice marked done. Run it again any time.';
+  }
+
+  function sort(P) {
+    var items = CC.shuffle(P.items);
+    var dims = P.dims || [];
+    var body = document.getElementById('body');
+    body.innerHTML = '<form id="sf">' + items.map(function (it, i) {
+      return '<div class="sort-item" data-i="' + i + '"><div><div class="num">' + (i + 1) + ' of ' + items.length + '</div><div class="txt">' + esc(it.text) + '</div></div>' +
+        '<div class="sels">' + dims.map(function (d) {
+          return '<select name="' + d.key + i + '" aria-label="' + esc(d.label) + ' for item ' + (i + 1) + '"><option value="">' + esc(d.label) + '...</option>' +
+            d.options.map(function (o) { return '<option>' + esc(o) + '</option>'; }).join('') + '</select>';
+        }).join('') + '</div><div class="why" hidden></div></div>';
+    }).join('') + '<div id="sum"></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn primary" type="submit">Check my answers</button><button class="btn ghost" type="button" id="again">Start over</button></div></form>';
+    document.getElementById('again').addEventListener('click', function () { sort(P); window.scrollTo(0, 0); });
+    document.getElementById('sf').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var f = e.target, total = 0, right = 0, blank = 0;
+      items.forEach(function (it, i) {
+        dims.forEach(function (d) {
+          var s = f.querySelector('[name="' + d.key + i + '"]');
+          if (!s.value) blank++;
+        });
+      });
+      if (blank) { CC.toast('Pick an answer in every box first (' + blank + ' left).'); return; }
+      items.forEach(function (it, i) {
+        var allOk = true;
+        dims.forEach(function (d) {
+          var s = f.querySelector('[name="' + d.key + i + '"]');
+          var ok = (it.answers[d.key] || []).indexOf(s.value) >= 0;
+          total++; if (ok) right++; else allOk = false;
+          s.classList.remove('ok', 'no'); s.classList.add(ok ? 'ok' : 'no');
+        });
+        var w = f.querySelector('.sort-item[data-i="' + i + '"] .why');
+        w.hidden = false;
+        w.innerHTML = (allOk ? '<b style="color:var(--ok)">Correct.</b> ' : '<b style="color:var(--bad)">Answer: ' + dims.map(function (d) { return esc((it.answers[d.key] || []).join(' or ')); }).join(', ') + '.</b> ') + esc(it.why || '');
+      });
+      var pct = Math.round(right / total * 100);
+      document.getElementById('sum').innerHTML = '<div class="summary"><span class="score" style="color:' + (pct >= 90 ? 'var(--ok)' : 'var(--warn)') + '">' + pct + '%</span><span class="sub">' + right + ' of ' + total + ' choices correct. ' + (pct >= 90 ? 'You hit the 90% target.' : 'Read the explanations, then start over and aim for 90%.') + '</span></div>';
+      finish(pct);
+    });
+  }
+
+  function flash(P) {
+    var deck = CC.shuffle(P.items), i = 0, flipped = false, known = 0, again = [];
+    var body = document.getElementById('body');
+    function show() {
+      if (i >= deck.length) {
+        if (again.length) { deck = CC.shuffle(again); again = []; i = 0; }
+        else {
+          var pct = Math.round(known / P.items.length * 100);
+          body.innerHTML = '<div class="summary"><span class="score" style="color:var(--ok)">Done</span><span class="sub">You went through all ' + P.items.length + ' cards. ' + known + ' you knew the first time (' + pct + '%).</span></div><button class="btn" id="restart">Go again</button>';
+          document.getElementById('restart').addEventListener('click', function () { flash(P); });
+          finish(pct);
+          return;
+        }
+      }
+      var c = deck[i];
+      flipped = false;
+      body.innerHTML = '<div class="flash-wrap"><div class="fcount">Card ' + (i + 1) + ' of ' + deck.length + (again.length ? ' &middot; ' + again.length + ' to repeat' : '') + '</div>' +
+        '<div class="card" id="card" tabindex="0" role="button" aria-label="Flip card"><div><div class="term">' + esc(c.term) + '</div><div class="hint">Say what it stands for, then click to flip</div></div></div>' +
+        '<div class="flash-btns" id="fb" hidden><button class="btn" id="no">Didn\'t know it</button><button class="btn primary" id="yes">Knew it</button></div></div>';
+      var card = document.getElementById('card');
+      function flip() {
+        if (flipped) return; flipped = true;
+        card.innerHTML = '<div class="def"><b>' + esc(c.term) + '</b>' + esc(c.definition) + '</div>';
+        document.getElementById('fb').hidden = false;
+        document.getElementById('yes').focus();
+      }
+      card.addEventListener('click', flip);
+      card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
+      body.addEventListener('click', function handler(e) {
+        if (e.target.id === 'yes' || e.target.id === 'no') {
+          body.removeEventListener('click', handler);
+          if (e.target.id === 'yes') { if (!c._missed) known++; } else { c._missed = true; again.push(c); }
+          i++; show();
+        }
+      });
+    }
+    P.items.forEach(function (x) { delete x._missed; });
+    show();
+  }
+})();
+</script>
+</body>
+</html>

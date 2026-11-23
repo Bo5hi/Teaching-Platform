@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab | MCCoE</title>
+<link rel="stylesheet" href="course.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="course.js"></script>
+<script src="course-data.js"></script>
+<style>
+.meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 8px 0 18px; color: var(--muted); font-size: .95rem; }
+.lab-top { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 16px; margin-bottom: 8px; }
+@media (max-width: 760px) { .lab-top { grid-template-columns: minmax(0, 1fr); } }
+.goal { font-family: var(--f-read); font-size: 1.05rem; line-height: 1.65; color: var(--text); }
+.need ul { margin: 0; padding-left: 18px; font-family: var(--f-read); font-size: .92rem; color: var(--muted); line-height: 1.6; }
+ol.steps { list-style: none; padding: 0; margin: 0; counter-reset: st; }
+ol.steps > li { counter-increment: st; position: relative; padding: 4px 0 8px 46px; border-left: 2px solid var(--line-soft); margin-left: 15px; }
+ol.steps > li::before { content: counter(st); position: absolute; left: -16px; top: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--panel-2); border: 1px solid var(--t-lab); color: var(--t-lab); font-family: var(--f-display); font-size: .82rem; display: grid; place-items: center; }
+ol.steps > li:last-child { border-left-color: transparent; }
+ol.steps h3 { margin: 2px 0 8px; font-size: 1.15rem; font-weight: 700; }
+.steptip { font-size: .9rem; color: var(--muted); border-left: 2px solid var(--warn); padding-left: 10px; margin: 0 0 12px; font-family: var(--f-read); }
+.cp-mark { font-size: .85rem; font-weight: 700; margin-left: 6px; }
+.cp-mark.ok { color: var(--ok); } .cp-mark.no { color: var(--bad); } .cp-mark.read { color: var(--muted); font-weight: 500; }
+.save-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.status { font-size: .9rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<header id="cc-top"></header>
+<main class="cc-main cc-read" id="page"><div class="empty">Loading lab...</div></main>
+<script>
+(function () {
+  CC.header('week');
+  var lid = CC.param('l') || '1.1';
+  var href = 'Lab.html?l=' + lid;
+  var week = String(lid).split('.')[0];
+  var page = document.getElementById('page');
+  var esc = CC.esc;
+  var LAB = null;
+
+  CC.require('course-w' + week + '-labs.js').then(function () {
+    LAB = (window.COURSE_LABS || {})[lid];
+    if (!LAB) { page.innerHTML = '<div class="empty">Lab ' + esc(lid) + ' is not available yet.</div>'; return; }
+    document.title = LAB.title + ' | MCCoE';
+    render();
+    CC.load().then(function (rec) { fill((rec.labs || {})[lid]); });
+  }).catch(function (e) { page.innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
+
+  function envLabel(e) { return e === 'kali' ? 'Kali Linux VM' : e === 'browser' ? 'Browser only' : esc(e || ''); }
+
+  function render() {
+    var L = LAB;
+    page.innerHTML =
+      CC.crumb(href, 'Lab') +
+      '<h1 class="cc-h1">' + esc(L.title) + '</h1>' +
+      '<div class="meta"><span class="chip c-lab">Lab</span><span>' + esc(L.mins) + ' min</span><span>&middot; ' + envLabel(L.env) + '</span></div>' +
+      '<div class="lab-top"><div class="box"><h3>Your goal</h3><div class="goal">' + (L.goal || '') + '</div></div>' +
+      ((L.youNeed || []).length ? '<div class="box need"><h3>You need</h3><ul>' + L.youNeed.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div>' : '') + '</div>' +
+      '<h2 class="cc-h2">Steps</h2>' +
+      '<ol class="steps prose">' + (L.steps || []).map(function (s) {
+        return '<li><h3>' + esc(s.title) + '</h3>' +
+          (s.body || []).map(function (p) { return '<p>' + p + '</p>'; }).join('') +
+          (s.cmd ? '<pre class="cmd" data-cmd="' + esc(s.cmd) + '">' + esc(s.cmd) + '</pre>' : '') +
+          (s.expect ? '<div class="expect"><b>You should see:</b> ' + esc(s.expect) + '</div>' : '') +
+          (s.tip ? '<div class="steptip">' + esc(s.tip) + '</div>' : '') + '</li>';
+      }).join('') + '</ol>' +
+      '<h2 class="cc-h2">Checkpoints</h2>' +
+      '<p class="sub" style="margin-top:-4px">Answer from your own lab work. Some are checked right away; your instructor reads the rest.</p>' +
+      '<form id="labForm">' + (L.checkpoints || []).map(function (c, i) {
+        var input;
+        if (c.kind === 'choice') {
+          input = (c.opts || []).map(function (o, j) { return '<label class="opt"><input type="radio" name="' + esc(c.id) + '" value="' + j + '"><span>' + esc(o) + '</span></label>'; }).join('');
+        } else if (c.kind === 'paste' || c.kind === 'text' && !('answer' in c)) {
+          input = '<textarea id="cp-' + esc(c.id) + '" name="' + esc(c.id) + '"' + (c.kind === 'paste' ? ' style="font-family:var(--f-mono);font-size:.85rem" spellcheck="false"' : '') + '></textarea>';
+        } else {
+          input = '<input type="' + (c.kind === 'number' ? 'number' : 'text') + '" id="cp-' + esc(c.id) + '" name="' + esc(c.id) + '" autocomplete="off">';
+        }
+        return '<div class="q" data-cp="' + esc(c.id) + '"><div class="qn">Checkpoint ' + (i + 1) + '<span class="cp-mark"></span></div><div class="qt"><label for="cp-' + esc(c.id) + '">' + c.q + '</label></div>' + input + '</div>';
+      }).join('') +
+      (L.reflection ? '<div class="q"><div class="qn">Reflection</div><div class="qt"><label for="reflection">' + L.reflection + '</label></div><textarea id="reflection" name="reflection"></textarea></div>' : '') +
+      '<div class="save-row"><button class="btn primary" type="submit">Check and submit lab</button><button class="btn ghost" type="button" id="saveDraft">Save draft</button><span class="status" id="status"></span></div>' +
+      '</form>' +
+      '<div class="done-bar"><span class="sub" id="doneMsg">Submit the lab to mark it done.</span>' + CC.nextButton(href) + '</div>';
+    CC.copyButtons(page);
+    document.getElementById('labForm').addEventListener('submit', function (e) { e.preventDefault(); submit(true); });
+    document.getElementById('saveDraft').addEventListener('click', function () { submit(false); });
+  }
+
+  function answersFromForm() {
+    var form = document.getElementById('labForm'), out = {};
+    (LAB.checkpoints || []).forEach(function (c) {
+      if (c.kind === 'choice') { var s = form.querySelector('input[name="' + c.id + '"]:checked'); out[c.id] = s ? +s.value : null; }
+      else { var el = form.querySelector('[name="' + c.id + '"]'); out[c.id] = el ? el.value.trim() : ''; }
+    });
+    return out;
+  }
+
+  function isRight(c, v) {
+    if (!('answer' in c) || v === null || v === '') return null;
+    if (c.kind === 'choice') return +v === +c.answer;
+    if (c.kind === 'number') return Number(String(v).replace(/,/g, '')) === Number(c.answer);
+    var want = Array.isArray(c.answer) ? c.answer : [c.answer];
+    var got = String(v).trim().toLowerCase().replace(/\s+/g, ' ');
+    return want.some(function (a) { return String(a).trim().toLowerCase().replace(/\s+/g, ' ') === got; });
+  }
+
+  function mark(answers) {
+    var right = 0, auto = 0;
+    (LAB.checkpoints || []).forEach(function (c) {
+      var m = document.querySelector('.q[data-cp="' + c.id + '"] .cp-mark');
+      var r = isRight(c, answers[c.id]);
+      if ('answer' in c) auto++;
+      if (r === true) { right++; m.className = 'cp-mark ok'; m.textContent = ' Correct'; }
+      else if (r === false) { m.className = 'cp-mark no'; m.textContent = ' Not quite. Check your work and try again.'; }
+      else if (!('answer' in c)) { m.className = 'cp-mark read'; m.textContent = ' Instructor reviews this one'; }
+      else { m.className = 'cp-mark'; m.textContent = ''; }
+    });
+    return { right: right, auto: auto };
+  }
+
+  function submit(final) {
+    var answers = answersFromForm();
+    var missing = (LAB.checkpoints || []).filter(function (c) { return answers[c.id] === null || answers[c.id] === ''; }).length;
+    if (final && missing) { CC.toast('Answer every checkpoint first (' + missing + ' left).'); return; }
+    var res = final ? mark(answers) : { right: 0, auto: 0 };
+    var refl = document.getElementById('reflection');
+    var rec = { answers: answers, reflection: refl ? refl.value.trim() : '', status: final ? 'submitted' : 'saved', at: new Date().toISOString() };
+    if (final) { rec.correct = res.right; rec.auto = res.auto; }
+    CC.save('labs/' + lid, rec);
+    var st = document.getElementById('status');
+    if (final) {
+      CC.markDoneFor(href);
+      st.textContent = res.auto ? res.right + ' of ' + res.auto + ' auto-checked answers correct. Submitted.' : 'Submitted.';
+      document.getElementById('doneMsg').textContent = 'Lab marked done. You can fix answers and submit again.';
+    } else st.textContent = 'Draft saved.';
+  }
+
+  function fill(prev) {
+    if (!prev || !prev.answers) return;
+    var form = document.getElementById('labForm');
+    Object.keys(prev.answers).forEach(function (k) {
+      var v = prev.answers[k];
+      var radio = form.querySelector('input[name="' + k + '"][value="' + v + '"]');
+      if (radio) { radio.checked = true; return; }
+      var el = form.querySelector('[name="' + k + '"]');
+      if (el && v != null) el.value = v;
+    });
+    var refl = document.getElementById('reflection');
+    if (refl && prev.reflection) refl.value = prev.reflection;
+    if (prev.status === 'submitted') { mark(prev.answers); document.getElementById('status').textContent = 'Submitted ' + new Date(prev.at).toLocaleString() + '.'; }
+    else document.getElementById('status').textContent = 'Draft from ' + new Date(prev.at).toLocaleString() + '.';
+  }
+})();
+</script>
+</body>
+</html>
