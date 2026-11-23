@@ -4,14 +4,15 @@
 window.COURSE_LABS = window.COURSE_LABS || {};
 
 COURSE_LABS['1.1'] = {
-  id: "1.1", week: 1, title: "Build your Kali Linux lab", mins: 45, env: "kali",
+  id: "1.1", week: 1, title: "Build your Kali Linux lab", mins: 70, env: "kali",
+  waitMins: 40, // download (~15), extract (~5), full-upgrade (~20): time spent waiting, used by docs/tools/estimate_time.js
   goal: "Install VirtualBox on your Windows PC, add the official Kali Linux virtual machine, update it, and save a clean snapshot. This Kali machine is the lab you will use for the rest of the course.",
   youNeed: [
     "A Windows 10 or 11 PC where you can install software (you need administrator rights)",
     "At least 8 GB of RAM (16 GB is better)",
     "At least 60 GB of free disk space",
     "A good internet connection (the Kali download is about 3 GB)",
-    "About 45 minutes, plus extra time if your download or update is slow"
+    "About 70 minutes. Around 40 of that is waiting for the download, extraction, and update, so start the download first"
   ],
   steps: [
     {
@@ -183,12 +184,12 @@ COURSE_LABS['1.1'] = {
 };
 
 COURSE_LABS['1.2'] = {
-  id: "1.2", week: 1, title: "Linux first steps: explore the Cedar Creek file share", mins: 40, env: "kali",
+  id: "1.2", week: 1, title: "Linux first steps: explore the Cedar Creek file share", mins: 45, env: "kali",
   goal: "Learn the Linux commands you will use all course by downloading a copy of Cedar Creek's IT shared drive into Kali and exploring it. Every checkpoint answer is somewhere in those files.",
   youNeed: [
     "Your Kali VM from Lab 1.1, started and logged in",
     "Internet access in Kali (the NAT adapter from Lab 1.1)",
-    "About 40 minutes"
+    "About 45 minutes"
   ],
   steps: [
     {
@@ -339,12 +340,12 @@ COURSE_LABS['1.2'] = {
 };
 
 COURSE_LABS['1.3'] = {
-  id: "1.3", week: 1, title: "Threat actor profiles for Cedar Creek", mins: 35, env: "browser",
+  id: "1.3", week: 1, title: "Threat actor profiles for Cedar Creek", mins: 40, env: "browser",
   goal: "Read four short threat intelligence notes about groups and people who could attack Cedar Creek, and build a profile of each one: who they are, what they want, what they can do, and how they would get in.",
   youNeed: [
     "Lesson 1.3 (threat actors and motivations) and Lesson 1.4 (attack surface and threat vectors) finished",
     "No Kali needed: this lab is all reading and thinking",
-    "About 35 minutes"
+    "About 40 minutes"
   ],
   steps: [
     {
@@ -460,12 +461,12 @@ COURSE_LABS['1.3'] = {
 };
 
 COURSE_LABS['1.4'] = {
-  id: "1.4", week: 1, title: "Badge log investigation", mins: 40, env: "kali",
+  id: "1.4", week: 1, title: "Badge log investigation", mins: 45, env: "kali",
   goal: "Use grep, cut, sort, uniq, and pipes in Kali to investigate one week of Cedar Creek's badge door log. You will find after-hours server room visits, a badge that should not work anymore, repeated denials at the HR office, and evidence of tailgating at the loading dock.",
   youNeed: [
     "Your Kali VM, logged in",
     "The lab pack from Lab 1.2 in ~/labs/cedarcreek-week1 (if it is missing, repeat the wget and unzip steps of Lab 1.2)",
-    "About 40 minutes"
+    "About 45 minutes"
   ],
   steps: [
     {

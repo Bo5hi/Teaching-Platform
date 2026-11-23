@@ -45,12 +45,13 @@ Take everything from the original MCCoE Hub (5 pillars + cards) and reorganize i
 - **Students see** the current and past weeks only. `?preview=1` shows all weeks.
 - **Menu:** This Week | My Work (grades, tickets, XP) | Resources. The Portfolio card is removed; XP, the Scoreboard and HTB stay.
 - **Look:** "Up next" card at the top of This Week; more diagrams in lessons.
-- **Cohort start:** January 2027 (exact first day not given yet).
+- **Cohort start:** **Monday, January 11, 2027** (confirmed). `COURSE.start = '2027-01-11'` in `course-data.js`.
+- **Times are real human hours.** Joey said earlier estimates ran long (Claude would say 2 hours for something that took 30 minutes). Every `mins` value comes from `node docs/tools/estimate_time.js <week>`; the rates are in `docs/COURSE_V2.md` under "Time estimates". Run it for every new week and don't hand-guess minutes.
 
 ## Needs Joey
-1. **Exact first class day in January.** Set `COURSE.start` in `course-data.js` (currently the placeholder `2027-01-11`, a Monday). It decides which week students see.
-2. **Click through the preview** and give feedback on Week 1: day order, reading length, lab difficulty, the audit.
-3. **Before going live, publish two Firebase rules** in the console: `mccoe_course` and `mccoe_mockproj`. Both are already in `database.rules.json`.
+1. **Click through the preview** and give feedback on Week 1: day order, reading length, lab difficulty, the audit. Joey's first reaction (2026-11-23): "looking pretty good."
+2. **Before going live, publish two Firebase rules** in the console: `mccoe_course` and `mccoe_mockproj`. Both are already in `database.rules.json`.
+3. **Kali download:** decide whether students download the Kali image before Day 1, or you hand it out on USB. That would save about 15-20 minutes of Day 1.
 
 ## Next build steps (in order)
 1. Apply Joey's Week 1 feedback.
@@ -73,6 +74,7 @@ Take everything from the original MCCoE Hub (5 pillars + cards) and reorganize i
   - Portable git: `%LOCALAPPDATA%\mccoe-tools\git\cmd\git.exe`
   - node: `%LOCALAPPDATA%\mccoe-tools\node-v22.11.0-win-x64\node.exe`
 - **Local preview with real Firebase:** run `node <serve.js> <repo> 8080`, then open `http://localhost:8080/MCCoE_Home.html?preview=1`. Any small static server works; the one used before was a throwaway script. Signed out, the new pages save only in the browser. Signed in, they write to real Firebase.
+- **Check the times:** `node docs/tools/estimate_time.js 1`
 - **Rebuild the lab pack:** `node docs/tools/make_week1_pack.js` (it also prints every auto-check answer).
 - **Rebuild the Week 1 diagrams:** `node docs/tools/make_week1_figures.js course-w1-figures.js`
 - **Commit messages:** use `git commit -F <file>`. Windows PowerShell 5.1 breaks `-m` messages that contain quote characters.

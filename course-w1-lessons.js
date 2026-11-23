@@ -3,7 +3,7 @@ window.COURSE_LESSONS = window.COURSE_LESSONS || {};
 window.COURSE_QUIZ = window.COURSE_QUIZ || {};
 
 COURSE_LESSONS['1.0'] = {
-  id: '1.0', week: 1, title: 'Welcome to Cedar Creek', mins: 15, module: 'Course orientation',
+  id: '1.0', week: 1, title: 'Welcome to Cedar Creek', mins: 10, module: 'Course orientation',
   intro: "This is your first morning as the first security analyst Cedar Creek Industries has ever hired. Before you learn a single security term, you need to know the company you are protecting, the people you will work with, and how this course runs. Every lesson, lab, and project in Weeks 1 to 5 takes place here.",
   sections: [
     {
@@ -88,7 +88,7 @@ COURSE_LESSONS['1.0'] = {
 };
 
 COURSE_LESSONS['1.1'] = {
-  id: '1.1', week: 1, title: 'Security fundamentals', mins: 35, module: 'CertMaster Module 1',
+  id: '1.1', week: 1, title: 'Security fundamentals', mins: 20, module: 'CertMaster Module 1',
   intro: "Marcus asks you a simple question on your first morning: 'What are we actually protecting, and how will we know if we are doing it well?' This lesson gives you the vocabulary to answer. The CIA triad, non-repudiation, and AAA describe what security is for. The NIST Cybersecurity Framework and gap analysis describe how security work gets organized. You will use every one of these ideas in the control audit this week.",
   sections: [
     {
@@ -200,7 +200,7 @@ COURSE_LESSONS['1.1'] = {
 };
 
 COURSE_LESSONS['1.2'] = {
-  id: '1.2', week: 1, title: 'Security controls', mins: 35, module: 'CertMaster Module 1',
+  id: '1.2', week: 1, title: 'Security controls', mins: 15, module: 'CertMaster Module 1',
   intro: "A <strong>security control</strong> is anything that reduces risk: a lock, a policy, a firewall rule, a trained receptionist. This afternoon you walk the Cedar Creek campus with Marcus and record every control you see. To make that list useful, you must describe each control in a shared language. Security+ uses two labels for every control: its <strong>category</strong> (how it is put in place) and its <strong>type</strong> (what it does). Get both right and your audit will make sense to any auditor, manager, or exam writer.",
   sections: [
     {
@@ -316,7 +316,7 @@ COURSE_LESSONS['1.2'] = {
 };
 
 COURSE_LESSONS['1.3'] = {
-  id: '1.3', week: 1, title: 'Threat actors and motivations', mins: 30, module: 'CertMaster Module 2',
+  id: '1.3', week: 1, title: 'Threat actors and motivations', mins: 15, module: 'CertMaster Module 2',
   intro: "Yesterday you learned what Cedar Creek is protecting. Today you learn who might come after it, and why. Knowing the likely attackers keeps you from wasting money on unlikely threats while leaving the likely ones open. A parts manufacturer with valuable drawings, a large payroll, and a plant that must keep running attracts certain kinds of attackers more than others. By the end of this lesson you should be able to name them and explain what they want.",
   sections: [
     {
@@ -422,7 +422,7 @@ COURSE_LESSONS['1.3'] = {
 };
 
 COURSE_LESSONS['1.4'] = {
-  id: '1.4', week: 1, title: 'Attack surface and threat vectors', mins: 30, module: 'CertMaster Module 2',
+  id: '1.4', week: 1, title: 'Attack surface and threat vectors', mins: 15, module: 'CertMaster Module 2',
   intro: "In the last lesson you met the people who might attack Cedar Creek. This lesson covers how they would get in. Every email inbox, open network port, USB drive, and vendor connection is a possible way in. You saw some of them yesterday, such as the shared admin password written in a notebook in the IT office. More are waiting on today's walk: personal Universal Serial Bus (USB) drives in Engineering, a Wi-Fi password on the break room wall, and a server running an operating system that no longer gets updates. Here you learn the names for these paths and how to shrink the number of them.",
   sections: [
     {
@@ -510,7 +510,7 @@ COURSE_LESSONS['1.4'] = {
 };
 
 COURSE_LESSONS['1.5'] = {
-  id: '1.5', week: 1, title: 'Physical security and asset management', mins: 30, module: 'CertMaster Module 7',
+  id: '1.5', week: 1, title: 'Physical security and asset management', mins: 20, module: 'CertMaster Module 7',
   intro: "Every technical control depends on physical security. If someone can walk into the server room and carry out DC01 or a backup tape, a strong password does not help. Yesterday you saw a fence with its side gate propped open and a server room door wedged open. Today, at the loading dock, you will watch a delivery driver follow an employee into the plant without badging. This lesson explains the physical controls that stop those problems. It also covers asset management, because you cannot protect equipment and data you have not listed. You finish this week by building Cedar Creek's first asset inventory.",
   sections: [
     {

@@ -97,9 +97,37 @@ A week without `days` is shown as "coming soon".
   steps: [{ title, body: ['paragraph'], cmd?: 'command(s)', expect?: 'what you should see', tip? }],
   checkpoints: [{ id: 'c1', q, kind: 'text'|'number'|'choice'|'paste', opts?, answer? }],
   // answer present = auto-checked (number exact, choice index, text case-insensitive match against answer or answer[]); no answer = instructor reads it
-  reflection: 'prompt' }
+  reflection: 'prompt',
+  waitMins?: 40 }   // time spent waiting on downloads/installs/updates; only used by the time estimator
 ```
 
 ### `COURSE_PRACTICE['controls']`
 `{ title, kind: 'sort', instructions, dims: [{key, label, options}], items: [{ text, answers: {category: ['Physical'], type: ['Preventive']}, why }] }`
 or `{ kind: 'flash', items: [{ term, definition }] }`
+
+## Time estimates (real student time)
+The minutes students see come from the content, not from guesses. Joey asked for real human hours, not padded numbers. After building or changing a week's content, run:
+
+```
+node docs/tools/estimate_time.js <week>
+```
+
+It prints each block's estimate next to its `mins` in `course-data.js`, flags any that are off by more than 20%, and gives day totals. Copy the estimates into `course-data.js` and into the lesson and lab `mins` and "About N minutes" lines. The target is about 4 hours per day.
+
+The rates assume a beginner adult working alone:
+
+| Work | Time |
+|---|---|
+| Reading lesson or lab text | 140 words per minute |
+| Diagram | 1 min |
+| Knowledge-check or quiz question | 45 sec |
+| Command line (type, run, read the output) | 45 sec |
+| Lab checkpoint | 1 min |
+| Lab reflection | 4 min |
+| Practice sort item / flash card | 36 sec / 15 sec |
+| Mock audit control / gap / asset row | 1.5 / 2.5 / 1 min, for 80% of the answer key |
+| Mock audit summary | 15 min |
+| Case study long answer / short answer / PDF page | 10 / 3 / 2.5 min |
+| Downloads, installs, updates | the lab's `waitMins` |
+
+Week 1 check (2026-11-23): the first numbers had lessons at about twice their real length (Lesson 1.2 was set at 35 min and is really about 15), and the Mock Control Audit (35 + 40 set, really about 60 + 75) and Kali setup (45 set, really about 70) were too short. The day totals came out about the same: Day 1 4.2 h, Day 2 4.4 h. Once the cohort starts, compare these numbers with how long the work actually takes in class and adjust the rates.
