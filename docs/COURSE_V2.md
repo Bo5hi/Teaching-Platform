@@ -1,6 +1,6 @@
 # Course v2: Week > Day layout (replaces the 5 pillars)
 
-Status: Week 1 pilot on branch `course-v2`. Not linked from the live Hub yet. Goes live before the next cohort.
+Status: all 15 weeks built on branch `course-v2` (not pushed). Goes live between cohorts, before Jan 11, 2027. See `docs/NEXT-STEPS.md`.
 
 ## Decisions (Joey, 2026-11-23)
 - Students land on **This Week**: Week N > Day 1 and Day 2 (class meets 2 days a week, about 4 hours of work per day). Numbered steps in the order to do them. Each step opens its tool directly.
