@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case Study Project | MCCoE</title>
+<link rel="stylesheet" href="course.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="course.js"></script>
+<script src="course-data.js"></script>
+<script src="course-projects.js"></script>
+<style>
+.meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 8px 0 18px; color: var(--muted); font-size: .95rem; }
+.top { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; margin-bottom: 8px; }
+@media (max-width: 760px) { .top { grid-template-columns: minmax(0, 1fr); } }
+.steps3 { margin: 0; padding-left: 20px; font-family: var(--f-read); font-size: .95rem; line-height: 1.7; color: var(--muted); }
+.steps3 b { color: var(--text); font-weight: 500; }
+details.rub { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px 16px; margin: 16px 0; }
+details.rub summary { cursor: pointer; font-weight: 700; color: var(--text); }
+.rrow { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px; padding: 8px 0; border-top: 1px solid var(--line-soft); font-family: var(--f-read); font-size: .9rem; }
+.rrow:first-of-type { border-top: none; }
+.rrow .pts { font-family: var(--f-mono); color: var(--t-pbq); }
+.rrow b { color: var(--text); font-weight: 600; }
+.rrow span { color: var(--muted); }
+.qf { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; }
+.qf label.ql { display: block; font-family: var(--f-read); font-weight: 500; font-size: 1rem; line-height: 1.55; margin-bottom: 10px; }
+.qf .pt { font-family: var(--f-mono); font-size: .78rem; color: var(--faint); margin-bottom: 4px; }
+.cl { margin-top: 10px; display: grid; gap: 4px; }
+.cl label { display: flex; gap: 8px; align-items: flex-start; font-family: var(--f-read); font-size: .86rem; color: var(--muted); cursor: pointer; }
+.cl input { margin-top: 3px; accent-color: var(--t-pbq); }
+.grade { border: 1px solid var(--ok); background: rgba(51, 209, 122, .07); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
+.confirm { border: 1px solid var(--warn); background: rgba(255, 194, 61, .07); border-radius: 10px; padding: 14px 16px; margin-top: 12px; display: grid; gap: 10px; }
+.save-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+.status { font-size: .9rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<header id="cc-top"></header>
+<main class="cc-main cc-read" id="page"><div class="empty">Loading project...</div></main>
+<script>
+(function () {
+  CC.header('week');
+  var n = parseInt(CC.param('p'), 10) || 1;
+  var href = 'Project.html?p=' + n;
+  var page = document.getElementById('page');
+  var esc = CC.esc;
+  var P = (window.HUB_PROJECTS || {})[n], R = (window.HUB_RUBRIC || {})[n] || [];
+  var me = CC.student();
+  var LOCAL = 'cc_proj_' + (me.key || 'preview') + '_' + n;
+  var saved = null;
+  if (!P) { page.innerHTML = '<div class="empty">Project ' + n + ' is not available.</div>'; return; }
+  document.title = 'Project ' + n + ': ' + P.incident + ' | MCCoE';
+
+  function lget() { try { return JSON.parse(localStorage.getItem(LOCAL) || 'null'); } catch (e) { return null; } }
+  function lset(v) { try { localStorage.setItem(LOCAL, JSON.stringify(v)); } catch (e) {} }
+
+  function render() {
+    var doc = (window.PROJECT_DOCS || {})[n];
+    var g = saved && saved.grade;
+    page.innerHTML = CC.crumb(href, 'Case study') +
+      '<h1 class="cc-h1">Project ' + n + ': ' + esc(P.incident) + '</h1>' +
+      '<div class="meta"><span class="chip c-project">Case study</span><span>' + esc(P.type) + '</span><span>&middot; ' + P.max + ' points</span>' +
+      (saved && saved.submittedAt ? '<span>&middot; Submitted ' + new Date(saved.submittedAt).toLocaleString() + '</span>' : '') + '</div>' +
+      (g ? '<div class="grade"><b style="color:var(--ok)">Graded: ' + g.score + ' / ' + P.max + '</b>' + (g.feedback ? '<div class="prose" style="margin-top:6px;white-space:pre-line">' + esc(g.feedback) + '</div>' : '') + '</div>' : '') +
+      '<div class="top"><div class="box"><h3>How to do this project</h3><ol class="steps3">' +
+        '<li><b>Read the project document</b> (PDF). It has the case background and the source documents.</li>' +
+        '<li><b>Open the grading rubric</b> below so you know what earns points.</li>' +
+        '<li><b>Answer each question</b> here. Tick the checklist under each one as you cover it.</li>' +
+        '<li><b>Save a draft</b> any time. Submit when every answer is complete.</li></ol></div>' +
+        '<div class="box"><h3>Project document</h3>' + (doc ? '<a class="btn primary" href="' + esc(doc) + '" target="_blank" rel="noopener">Open the PDF</a><div class="sub" style="font-size:.85rem;margin-top:8px">Opens in a new tab.</div>' : '<div class="sub">No document found.</div>') + '</div></div>' +
+      (R.length ? '<details class="rub"><summary>Grading rubric (' + P.max + ' points)</summary>' + R.map(function (r) { return '<div class="rrow"><div class="pts">' + r.pts + ' pts</div><div><b>' + esc(r.label) + '.</b> <span>' + esc(r.guide) + '</span></div></div>'; }).join('') + '</details>' : '') +
+      '<form id="pf">' + P.fields.map(function (f, i) {
+        var r = R[i];
+        return '<div class="qf"><div class="pt">Question ' + (i + 1) + (r ? ' &middot; ' + r.pts + ' pts' : '') + '</div><label class="ql" for="f-' + f.id + '">' + esc(f.label) + '</label>' +
+          (f.ta ? '<textarea id="f-' + f.id + '" name="' + f.id + '"></textarea>' : '<input type="text" id="f-' + f.id + '" name="' + f.id + '" autocomplete="off">') +
+          (r && r.checks && r.checks.length ? '<div class="cl">' + r.checks.map(function (c, ci) { return '<label><input type="checkbox" id="ck-' + f.id + '-' + ci + '"><span>' + esc(c) + '</span></label>'; }).join('') + '</div>' : '') + '</div>';
+      }).join('') +
+      '<div class="save-row"><button class="btn primary" type="submit">' + (saved && saved.submittedAt ? 'Resubmit project' : 'Submit project') + '</button><button class="btn ghost" type="button" id="draft">Save draft</button><span class="status" id="status"></span></div>' +
+      '<div id="confirm"></div></form>' +
+      '<div class="done-bar"><span class="sub" id="doneMsg">' + (saved && saved.submittedAt ? 'Submitted. You can still edit and resubmit; that resets your grade.' : 'Submit the project to mark it done.') + '</span>' + CC.nextButton(href) + '</div>';
+
+    var form = document.getElementById('pf');
+    var answers = (saved && saved.answers) || (lget() || {}).answers || {};
+    P.fields.forEach(function (f) { var el = form.querySelector('[name="' + f.id + '"]'); if (el && answers[f.id]) el.value = answers[f.id]; });
+    document.getElementById('draft').addEventListener('click', saveDraft);
+    form.addEventListener('submit', function (e) { e.preventDefault(); askSubmit(); });
+    form.addEventListener('input', function () { clearTimeout(saveDraft._t); saveDraft._t = setTimeout(function () { saveDraft(true); }, 1500); });
+  }
+
+  function collect() {
+    var a = {}, form = document.getElementById('pf');
+    P.fields.forEach(function (f) { var el = form.querySelector('[name="' + f.id + '"]'); a[f.id] = el ? el.value.trim() : ''; });
+    return a;
+  }
+  function saveDraft(quiet) {
+    var d = { answers: collect(), savedAt: new Date().toISOString() };
+    lset(d);
+    if (CC.db && me.id) CC.db.ref('mccoe_drafts/' + me.id + '/proj' + n).set(d);
+    document.getElementById('status').textContent = 'Draft saved ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + (me.id ? '' : ' (this browser only)');
+  }
+  function askSubmit() {
+    var a = collect(), empty = P.fields.filter(function (f) { return !a[f.id]; }).length;
+    var again = saved && saved.submittedAt;
+    document.getElementById('confirm').innerHTML = '<div class="confirm"><div>' +
+      (empty ? '<b style="color:var(--warn)">' + empty + ' question' + (empty === 1 ? ' is' : 's are') + ' still empty.</b> ' : '') +
+      (again ? 'Resubmitting replaces your previous answers and resets your grade. ' : '') + 'Send Project ' + n + ' to your instructor?</div>' +
+      '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn primary" type="button" id="yes">' + (again ? 'Yes, resubmit' : 'Yes, submit') + '</button><button class="btn ghost" type="button" id="no">Keep working</button></div></div>';
+    document.getElementById('no').onclick = function () { document.getElementById('confirm').innerHTML = ''; };
+    document.getElementById('yes').onclick = function () { submit(a); };
+  }
+  function submit(a) {
+    var entry = { answers: a, weekNum: n, studentName: me.name || 'Preview', studentId: me.id || '', tempId: me.id || '', incident: P.incident, projectType: P.type, maxScore: P.max, submittedAt: new Date().toISOString() };
+    var done = function () {
+      saved = entry; lset(entry);
+      CC.markDoneFor(href);
+      render();
+      document.getElementById('status').textContent = me.id ? 'Submitted. Your instructor will grade it.' : 'Submitted in preview (saved in this browser only).';
+    };
+    if (CC.db && me.id) {
+      CC.db.ref('mccoe_submissions/' + me.id + '/week' + n).set(entry).then(function () {
+        CC.db.ref('mccoe_drafts/' + me.id + '/proj' + n).remove();
+        done();
+      }).catch(function (e) { CC.toast('Could not submit: ' + e.message); });
+    } else done();
+  }
+
+  if (CC.db && me.id) {
+    CC.db.ref('mccoe_submissions/' + me.id + '/week' + n).once('value').then(function (s) { saved = s.val(); render(); }).catch(function () { saved = lget(); render(); });
+  } else { var l = lget(); saved = l && l.submittedAt ? l : null; render(); }
+})();
+</script>
+</body>
+</html>

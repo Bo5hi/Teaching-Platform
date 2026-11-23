@@ -131,9 +131,14 @@
         return '<a href="' + esc(link('MCCoE_Home.html#' + t[0])) + '" data-tab="' + t[0] + '"' + (active === t[0] ? ' aria-selected="true"' : '') + '>' + t[1] + '</a>';
       }).join('') + '</nav>' +
       '<div class="cc-who">' + (name
-        ? '<div class="cc-avatar">' + esc(initial) + '</div><div><b class="nm">' + esc(name) + '</b> <span class="id">' + esc(id) + '</span></div>'
+        ? '<div class="cc-avatar">' + esc(initial) + '</div><div><b class="nm">' + esc(name) + '</b> <span class="id">' + esc(id) + '</span></div><button class="btn ghost" type="button" id="cc-signout" style="padding:5px 10px;font-size:.85rem">Sign out</button>'
         : '<a class="btn ghost" href="MCCoE_Hub.html">Sign in</a>') + '</div>' +
       '</div>';
+    var so = el.querySelector('#cc-signout');
+    if (so) so.addEventListener('click', function () {
+      try { localStorage.removeItem('hub_name'); localStorage.removeItem('hub_id'); } catch (e) {}
+      location.href = 'MCCoE_Hub.html';
+    });
     return el;
   }
 

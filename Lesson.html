@@ -16,6 +16,9 @@
 .toc a { font-size: .85rem; color: var(--muted); border: 1px solid var(--line-soft); border-radius: 999px; padding: 3px 11px; text-decoration: none; }
 .toc a:hover { color: var(--text); border-color: rgba(255,255,255,.25); }
 .check-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+figure.fig { margin: 8px 0 22px; padding: 14px; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 12px; }
+figure.fig svg { display: block; width: 100%; height: auto; max-width: 100%; }
+figure.fig figcaption { font-size: .86rem; color: var(--muted); margin-top: 10px; text-align: center; }
 .result { margin: 14px 0; padding: 14px 16px; border-radius: 10px; border: 1px solid var(--line-soft); background: var(--panel); display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
 </style>
 </head>
@@ -32,6 +35,8 @@
   var esc = CC.esc;
 
   CC.require('course-w' + week + '-lessons.js').then(function () {
+    return CC.require('course-w' + week + '-figures.js').catch(function () {});
+  }).then(function () {
     var L = (window.COURSE_LESSONS || {})[lid];
     if (!L) { page.innerHTML = '<div class="empty">Lesson ' + esc(lid) + ' is not available yet.</div>'; return; }
     document.title = L.title + ' | MCCoE';
@@ -46,6 +51,8 @@
   function section(s, i) {
     var h = '<h2 id="s' + i + '">' + esc(s.title) + '</h2>';
     (s.body || []).forEach(function (p) { h += para(p); });
+    var fig = s.figure && (window.COURSE_FIGURES || {})[s.figure.id];
+    if (fig) h += '<figure class="fig">' + fig + (s.figure.caption ? '<figcaption>' + esc(s.figure.caption) + '</figcaption>' : '') + '</figure>';
     if (s.list && s.list.length) h += '<ul>' + s.list.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>';
     if (s.table) {
       h += '<div style="overflow-x:auto"><table><thead><tr>' + s.table.head.map(function (x) { return '<th>' + esc(x) + '</th>'; }).join('') + '</tr></thead><tbody>' +

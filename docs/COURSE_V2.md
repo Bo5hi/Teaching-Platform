@@ -11,13 +11,29 @@ Status: Week 1 pilot on branch `course-v2`. Not linked from the live Hub yet. Go
 - Each week ends in a **mock hands-on project**, graded by rubric in the tracker (25 pts, 5 criteria x 5), with Claude draft grades like the SOC tickets.
 - Lesson and quiz duplicates (Student Platform week vs Academy module) merge into one lesson set and one quiz per week.
 
-| Week | Day 1 | Day 2 | Mock project |
+Course length: **15 weeks** (decided 2026-11-23). The previous cohort needed one more week for the mock tickets and two more for the mock assessment.
+
+| Week | Focus | Hands-on project | Case study (Day 2 block, 60-75 min) |
 |---|---|---|---|
-| 1 Foundations | Mod 1 concepts & controls; Kali setup | Mod 2 threat actors & vectors; Mod 7 physical & assets | Mock Control Audit |
-| 2 Cryptography | Mod 3 symmetric/asymmetric/hashing | Mod 3 PKI & certificates (PBQ 2, 9) | Mock Secure File Exchange |
-| 3 Identity & Data | Mod 4 authentication, MFA, AD | Mod 4 authorization; Mod 16 data protection | Mock Access Review |
-| 4 Secure Networks | Mod 5 architecture; Mod 6 cloud (PBQ 4, 5) | Mod 9 secure config & wireless; Mod 11 (PBQ 7, 8) | Mock Firewall & Network Review |
-| 5 Vulnerabilities & Attacks | Mod 8 vulnerability management (PBQ 6) | Mod 13 attacks & indicators; Mod 14 change mgmt (PBQ 1) | Mock Vulnerability Triage |
+| 1 | Security Foundations: Mods 1, 2, 7; Kali setup | Mock Control Audit | Project 1 Target, Deep Dive |
+| 2 | Cryptography & PKI: Mod 3 (PBQ 2, 9) | Mock Secure File Exchange | Project 2 Target, Frameworks |
+| 3 | Identity, Access & Data: Mods 4, 16 | Mock Access Review | Project 3 Colonial, Deep Dive |
+| 4 | Secure Networks: Mods 5, 6, 9, 11 (PBQ 4, 5, 7, 8) | **Mock Pentest part 1**: recon + scanning (firewall review folded in as a lab) | Project 4 Colonial, Frameworks |
+| 5 | Vulnerabilities & Attacks: Mods 8, 13, 14 (PBQ 1, 6) | **Mock Pentest part 2**: exploitation, post-exploitation, report (vuln triage folded in) | Project 5 SolarWinds, Deep Dive |
+| 6 | Human Factors | (existing content) | Project 6 SolarWinds, Frameworks |
+| 7 | Defensive Security & Tools; Blue Team phases 1-3 | | Project 7 Equifax, Deep Dive |
+| 8 | Incident Response; Blue Team phases 4-5 | | Project 8 Equifax, Frameworks |
+| 9 | **SOC Operations: mock tickets, full week** | SOC Ticket Board | |
+| 10-13 | **Capstone: Northgate mock assessment (4 weeks)** | Fieldwork, scoring, risk register/POA&M, report, outbrief | |
+| 14 | Security+ Review | | |
+| 15 | Security+ Mock Exam + PBQ labs | | |
+
+Weeks 9-13 are light-lecture weeks: mostly work time, with one short daily talk tied to that day's work.
+
+Other decisions:
+- The Hub becomes sign-in only. After sign-in, students go to `MCCoE_Home.html`. `MCCoE_Hub.html?classic=1` still shows the old card Hub during the transition.
+- This Week has an "Up next" card (the next unfinished step). Lessons get diagrams (`course-wN-figures.js`, `section.figure = {id, caption}`).
+- Case studies use `Project.html?p=N`. It keeps the Hub's data shape (`mccoe_submissions/{hubId}/week{N}`, drafts at `mccoe_drafts/{hubId}/proj{N}`), so the tracker's Student Submissions grading is unchanged. The question and rubric data is in `course-projects.js`, copied from the Hub.
 
 ## Files
 | File | Purpose |

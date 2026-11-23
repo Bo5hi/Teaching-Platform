@@ -1072,11 +1072,19 @@ function hubLoginSuccess(name, id, doLog) {
   if (badge) { badge.textContent = '👤 ' + name.split(' ')[0].toUpperCase(); badge.style.display = 'inline-block'; }
   if (logoutBtn) logoutBtn.style.display = 'inline-block';
 
+  var writes = [];
   if (doLog) {
     var ts = new Date().toISOString();
-    _hubDb.ref('mccoe_logins/' + id + '/lastLogin').set(ts);
-    _hubDb.ref('mccoe_logins/' + id + '/loginCount').transaction(function(c) { return (c || 0) + 1; });
-    _hubDb.ref('mccoe_logins/' + id + '/history').push({ ts: ts, date: ts.split('T')[0], source: 'Hub' });
+    writes.push(_hubDb.ref('mccoe_logins/' + id + '/lastLogin').set(ts));
+    writes.push(_hubDb.ref('mccoe_logins/' + id + '/loginCount').transaction(function(c) { return (c || 0) + 1; }));
+    writes.push(_hubDb.ref('mccoe_logins/' + id + '/history').push({ ts: ts, date: ts.split('T')[0], source: 'Hub' }));
+  }
+
+  // Course v2: signed-in students go straight to This Week. ?classic=1 keeps the old card Hub.
+  if (new URLSearchParams(window.location.search).get('classic') !== '1') {
+    var go = function() { window.location.replace('MCCoE_Home.html' + p); };
+    Promise.race([Promise.all(writes), new Promise(function(r) { setTimeout(r, 1500); })]).then(go, go);
+    return;
   }
 
   document.getElementById('hub-login-overlay').style.display = 'none';

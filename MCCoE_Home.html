@@ -55,6 +55,17 @@ ol.tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; co
 .td { color: var(--muted); font-size: .95rem; margin-top: 2px; }
 @media (max-width: 560px) { .task { grid-template-columns: auto minmax(0, 1fr); } .task .btn { grid-column: 2; justify-self: start; } }
 aside.rail { display: grid; gap: 14px; }
+.upnext { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; align-items: center; background: linear-gradient(90deg, rgba(238, 34, 7, 0.16), rgba(238, 34, 7, 0.03) 60%), var(--panel-2); border: 1px solid rgba(238, 34, 7, 0.6); border-left: 4px solid var(--red); border-radius: 12px; padding: 18px 20px; margin: 4px 0 18px; }
+.upnext.done { background: rgba(51, 209, 122, 0.07); border-color: rgba(51, 209, 122, 0.5); border-left-color: var(--ok); }
+.un-k { font-family: var(--f-mono); font-size: .8rem; letter-spacing: 1.4px; text-transform: uppercase; color: var(--red); }
+.upnext.done .un-k { color: var(--ok); }
+.un-t { font-size: 1.45rem; font-weight: 700; line-height: 1.2; margin-top: 4px; }
+.un-d { color: var(--muted); font-size: 1rem; margin-top: 4px; }
+.un-go { font-size: 1.1rem; padding: 12px 22px; }
+@media (max-width: 560px) { .upnext { grid-template-columns: minmax(0, 1fr); } .un-go { justify-self: start; } }
+.anyl { display: block; padding: 7px 0; border-top: 1px solid var(--line-soft); color: var(--text); text-decoration: none; font-size: .95rem; }
+.anyl:first-of-type { border-top: none; padding-top: 0; }
+.anyl:hover { color: var(--cyan); }
 
 .notice { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 20px; display: grid; gap: 10px; justify-items: start; }
 .notice p { margin: 0; color: var(--muted); font-family: var(--f-read); line-height: 1.6; max-width: 70ch; }
@@ -80,10 +91,10 @@ aside.rail { display: grid; gap: 14px; }
 <script>
 (function () {
   var esc = CC.esc, link = CC.link;
-  var TYPE = { lesson: 'Lesson', practice: 'Practice', lab: 'Lab', mock: 'Mock project', quiz: 'Quiz', checkin: 'Check-in', pbq: 'PBQ Lab' };
+  var TYPE = { lesson: 'Lesson', practice: 'Practice', lab: 'Lab', mock: 'Mock project', project: 'Case study', quiz: 'Quiz', checkin: 'Check-in', pbq: 'PBQ Lab' };
   var CHECK_SVG = '<svg viewBox="0 0 14 14" fill="none" stroke="#07070f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"/></svg>';
   var weeks = COURSE.weeks;
-  var rec = {}, mockRecs = {};
+  var rec = {}, mockRecs = {}, projRecs = {};
 
   // Current week from the cohort start date (Monday). Before the start, Week 1.
   function currentWeek() {
@@ -92,8 +103,12 @@ aside.rail { display: grid; gap: 14px; }
     return Math.max(1, Math.min(weeks.length, n));
   }
   var CUR = currentWeek();
+  // ?preview=1 (instructor walk-through): every week is selectable.
+  var PREVIEW = CC.param('preview') === '1';
+  var REAL = CUR;
+  if (PREVIEW) CUR = weeks.length;
   var qWeek = parseInt(CC.param('week'), 10);
-  var state = { week: qWeek >= 1 && qWeek <= weeks.length ? qWeek : CUR, day: null };
+  var state = { week: qWeek >= 1 && qWeek <= weeks.length ? qWeek : REAL, day: null };
   var qDay = parseInt(CC.param('day'), 10);
   if (qDay >= 1) state.day = qDay - 1;
 
@@ -105,9 +120,9 @@ aside.rail { display: grid; gap: 14px; }
   function renderWeek() {
     var W = wk(state.week), el = document.getElementById('view-week');
     var opts = weeks.filter(function (w) { return w.num <= Math.max(CUR, state.week); }).slice().reverse().map(function (w) {
-      return '<option value="' + w.num + '"' + (w.num === state.week ? ' selected' : '') + '>Week ' + w.num + ': ' + esc(w.title) + (w.num === CUR ? ' (current)' : '') + '</option>';
+      return '<option value="' + w.num + '"' + (w.num === state.week ? ' selected' : '') + '>Week ' + w.num + ': ' + esc(w.title) + (w.num === REAL ? ' (current)' : '') + '</option>';
     }).join('');
-    var head = '<div class="week-head"><div><div class="crumb">Week ' + W.num + ' of ' + weeks.length + ' &middot; ' + (W.num === CUR ? 'Current week' : W.num < CUR ? 'Past week' : 'Preview') + (W.modules ? ' &middot; ' + esc(W.modules) : '') + '</div>' +
+    var head = '<div class="week-head"><div><div class="crumb">Week ' + W.num + ' of ' + weeks.length + ' &middot; ' + (PREVIEW ? 'Instructor preview' : W.num === CUR ? 'Current week' : W.num < CUR ? 'Past week' : 'Preview') + (W.modules ? ' &middot; ' + esc(W.modules) : '') + '</div>' +
       '<h1 class="cc-h1">' + esc(W.title) + '</h1>' + (W.sub ? '<div class="sub">' + esc(W.sub) + '</div>' : '') + '</div>' +
       '<div class="week-pick"><div><label for="weekSel">Week</label><select id="weekSel">' + opts + '</select></div>' +
       (W.days ? '<div class="prog"><div class="lbl"><b id="pDone">0</b> of <span id="pAll">0</span> steps done this week</div><div class="bar"><i id="pBar" style="width:0"></i></div></div>' : '') + '</div></div>';
@@ -115,17 +130,21 @@ aside.rail { display: grid; gap: 14px; }
     if (W.legacy) {
       el.innerHTML = head + '<div class="notice"><p>Week ' + W.num + ' still runs in the current Student Platform while the new layout is finished.</p><a class="btn primary" href="' + esc(link('MCCoE_Student_Platform.html?week=' + W.legacy)) + '">Open Week ' + W.num + '</a></div>';
     } else if (!W.days) {
-      el.innerHTML = head + '<div class="notice"><p>This week is being built. It will follow the same pattern as Week 1: two class days of about 4 hours each, with lessons, Kali labs, practice, and a mock project' + (W.mockTitle ? ' (<strong>' + esc(W.mockTitle) + '</strong>)' : '') + '.</p></div>';
+      el.innerHTML = head + '<div class="notice"><p>' + (W.light
+        ? 'This week is being built. It is mostly hands-on work time, with one short talk each day tied to that day\'s work.'
+        : 'This week is being built. It follows the same pattern as Week 1: two class days of about 4 hours each, with lessons, Kali labs, practice, and a hands-on project.') + '</p>' +
+        (W.mockTitle ? '<p><strong>Hands-on project:</strong> ' + esc(W.mockTitle) + '</p>' : '') +
+        (W.caseStudy ? '<p><strong>Case study:</strong> ' + esc(W.caseStudy) + '</p>' : '') + '</div>';
     } else {
       if (state.day == null || state.day >= W.days.length) {
         state.day = 0;
         for (var i = 0; i < W.days.length; i++) { if (W.days[i].blocks.some(function (b) { return !isDone(b.id); })) { state.day = i; break; } state.day = i; }
       }
-      el.innerHTML = head + (W.overview ? '<p class="overview">' + esc(W.overview) + '</p>' : '') +
+      el.innerHTML = head + '<div id="upNext"></div>' + (W.overview ? '<p class="overview">' + esc(W.overview) + '</p>' : '') +
         '<div class="days" role="tablist" id="dayTabs"></div>' +
         '<div class="grid"><div><div class="day-title"><h2 id="dayH"></h2><span class="hint" id="dayHint"></span></div><ol class="tasks" id="tasks"></ol></div>' +
         '<aside class="rail" id="rail"></aside></div>';
-      renderDays(W); renderTasks(W); renderRail(W); renderProg(W);
+      renderDays(W); renderTasks(W); renderRail(W); renderProg(W); renderUpNext(W);
     }
     document.getElementById('weekSel').addEventListener('change', function (e) { state.week = +e.target.value; state.day = null; renderWeek(); });
   }
@@ -144,6 +163,7 @@ aside.rail { display: grid; gap: 14px; }
     if (b.type === 'practice') { var p = (rec.practice || {})[(b.href.split('p=')[1] || '')]; if (p) return '<span class="got">Best ' + p.best + '%</span>'; }
     if (b.type === 'lab') { var l = (rec.labs || {})[(b.href.split('l=')[1] || '')]; if (l) return '<span class="got">' + (l.status === 'submitted' ? 'Submitted' : 'Draft saved') + '</span>'; }
     if (b.type === 'lesson') { var k = (rec.checks || {})[(b.href.split('l=')[1] || '')]; if (k) return '<span class="got">Check ' + k.score + '/' + k.total + '</span>'; }
+    if (b.type === 'project') { var pr = projRecs['week' + (b.href.split('p=')[1] || '')]; if (pr && pr.submittedAt) return '<span class="got">' + (pr.grade ? 'Graded ' + pr.grade.score + '/' + (pr.maxScore || '') : 'Submitted') + '</span>'; }
     if (b.type === 'mock') { var m = mockRecs['w' + state.week]; if (m) return '<span class="got">' + (m.grade ? 'Graded ' + m.grade.score + '/' + (m.grade.max || 25) : m.status === 'submitted' ? 'Submitted' : 'In progress') + '</span>'; }
     return '';
   }
@@ -164,6 +184,27 @@ aside.rail { display: grid; gap: 14px; }
     }).join('');
   }
 
+  // The next unfinished step this week, in order, with one big Start button.
+  function renderUpNext(W) {
+    var box = document.getElementById('upNext'); if (!box) return;
+    var next = null, dayIdx = 0, stepNo = 0;
+    for (var i = 0; i < W.days.length && !next; i++) {
+      for (var j = 0; j < W.days[i].blocks.length; j++) {
+        if (!isDone(W.days[i].blocks[j].id)) { next = W.days[i].blocks[j]; dayIdx = i; stepNo = j + 1; break; }
+      }
+    }
+    if (!next) {
+      box.innerHTML = '<div class="upnext done"><div><div class="un-k">Week ' + W.num + ' complete</div><div class="un-t">Every step is done. Nice work.</div><div class="un-d">Check your grades and instructor feedback in My Work.</div></div><a class="btn" href="' + esc(link('MCCoE_Home.html#work')) + '" data-tab-go="work">Open My Work</a></div>';
+      return;
+    }
+    var ext = next.type === 'checkin';
+    var left = W.days[dayIdx].blocks.filter(function (b) { return !isDone(b.id); }).reduce(function (a, b) { return a + (b.mins || 0); }, 0);
+    box.innerHTML = '<div class="upnext"><div style="min-width:0"><div class="un-k">Up next &middot; ' + esc(W.days[dayIdx].name) + ', step ' + stepNo + '</div>' +
+      '<div class="un-t">' + esc(next.title) + '</div><div class="un-d">' + esc(next.desc || '') + '</div>' +
+      '<div class="tmeta" style="margin-top:8px"><span class="chip c-' + next.type + '">' + (TYPE[next.type] || next.type) + '</span><span class="mins">' + next.mins + ' min</span>' + (next.due ? '<span class="due">' + esc(next.due) + '</span>' : '') + '<span class="mins">&middot; about ' + hm(left) + ' left in ' + esc(W.days[dayIdx].name) + '</span></div></div>' +
+      '<a class="btn primary un-go" href="' + esc(link(next.href)) + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + '>Start &rarr;</a></div>';
+  }
+
   function renderProg(W) {
     var all = 0, done = 0;
     W.days.forEach(function (d) { d.blocks.forEach(function (b) { all++; if (isDone(b.id)) done++; }); });
@@ -177,10 +218,11 @@ aside.rail { display: grid; gap: 14px; }
     W.days.forEach(function (d) { d.blocks.forEach(function (b) { if (b.due || b.type === 'quiz') rows.push([b, d]); }); });
     var due = rows.map(function (x) {
       var b = x[0], ok = isDone(b.id);
-      return '<div class="row"><span>' + esc(b.title) + '</span><span class="r ' + (ok ? 'ok' : 'warn') + '">' + (ok ? 'Done' : esc(x[1].name)) + '</span></div>';
+      return '<div class="row"><span>' + esc(b.title) + '</span><span class="r ' + (ok ? 'ok' : 'warn') + '">' + (ok ? 'Done' : esc(b.due ? b.due.replace(/^Due /, '') : x[1].name)) + '</span></div>';
     }).join('');
     document.getElementById('rail').innerHTML =
       (due ? '<div class="box"><h3>Due this week</h3>' + due + '</div>' : '') +
+      ((W.anytime || []).length ? '<div class="box"><h3>Practice any time</h3>' + W.anytime.map(function (a) { return '<a class="anyl" href="' + esc(link(a.href)) + '">' + esc(a.title) + ' &rarr;</a>'; }).join('') + '</div>' : '') +
       '<div class="box" id="tkBox"><h3>My SOC tickets</h3><div class="sub" style="font-size:.92rem">Loading...</div></div>' +
       '<div class="box"><h3>Need help?</h3><div class="sub" style="font-size:.92rem;font-family:var(--f-read);line-height:1.55">Stuck on a lab for more than 15 minutes? Write down the exact command and error, then ask your instructor.</div></div>';
     loadTickets(function (t) {
@@ -208,6 +250,14 @@ aside.rail { display: grid; gap: 14px; }
       }).catch(function () { _tk = []; cb(_tk); });
   }
 
+  function projCell(blocks) {
+    var b = blocks.filter(function (x) { return x.type === 'project'; })[0];
+    if (!b) return '&mdash;';
+    var n = b.href.split('p=')[1], pr = projRecs['week' + n];
+    if (!pr || !pr.submittedAt) return 'Project ' + n + ': not submitted';
+    return 'Project ' + n + ': ' + (pr.grade ? '<b>' + pr.grade.score + ' / ' + pr.maxScore + '</b>' : 'submitted, waiting for grade');
+  }
+
   // ── My Work ──
   function renderWork() {
     var el = document.getElementById('view-work');
@@ -225,7 +275,7 @@ aside.rail { display: grid; gap: 14px; }
         '<div class="stat"><div class="n">' + (mocks.length ? mPts + ' / ' + mocks.length * 25 : '&mdash;') + '</div><div class="l">Mock project points</div></div>' +
         '<div class="stat"><div class="n" id="tkStat">&mdash;</div><div class="l">SOC tickets resolved</div></div>' +
       '</div>' +
-      '<h2 class="cc-h2">By week</h2><div class="table-wrap"><table class="cc"><thead><tr><th>Week</th><th>Steps done</th><th>Knowledge checks</th><th>Labs</th><th>Quiz</th><th>Mock project</th></tr></thead><tbody>' +
+      '<h2 class="cc-h2">By week</h2><div class="table-wrap"><table class="cc"><thead><tr><th>Week</th><th>Steps done</th><th>Knowledge checks</th><th>Labs</th><th>Quiz</th><th>Mock project</th><th>Case study</th></tr></thead><tbody>' +
       (built.length ? built.map(function (w) {
         var blocks = [], labs = [], lessons = [];
         w.days.forEach(function (d) { d.blocks.forEach(function (b) { blocks.push(b); if (b.type === 'lab') labs.push(b.href.split('l=')[1]); if (b.type === 'lesson') lessons.push(b.href.split('l=')[1]); }); });
@@ -237,8 +287,8 @@ aside.rail { display: grid; gap: 14px; }
         var m = mockRecs['w' + w.num];
         var mTxt = !m ? 'Not started' : m.grade ? '<b>' + m.grade.score + ' / ' + (m.grade.max || 25) + '</b>' : m.status === 'submitted' ? 'Submitted, waiting for grade' : 'In progress';
         return '<tr><td>' + w.num + ' &middot; ' + esc(w.title) + '</td><td>' + done + ' / ' + blocks.length + '</td><td>' + ckTxt + '</td><td>' + lb + ' / ' + labs.length + '</td><td>' +
-          (q ? '<span style="color:' + (q.best >= 80 ? 'var(--ok)' : 'var(--warn)') + '">' + q.best + '%</span>' : '&mdash;') + '</td><td>' + mTxt + '</td></tr>';
-      }).join('') : '<tr><td colspan="6" class="sub">Nothing yet.</td></tr>') + '</tbody></table></div>' +
+          (q ? '<span style="color:' + (q.best >= 80 ? 'var(--ok)' : 'var(--warn)') + '">' + q.best + '%</span>' : '&mdash;') + '</td><td>' + mTxt + '</td><td>' + projCell(blocks) + '</td></tr>';
+      }).join('') : '<tr><td colspan="7" class="sub">Nothing yet.</td></tr>') + '</tbody></table></div>' +
       (mocks.length ? '<h2 class="cc-h2">Instructor feedback</h2>' + built.filter(function (w) { var m = mockRecs['w' + w.num]; return m && m.grade && m.grade.feedback; }).map(function (w) {
         return '<div class="box" style="margin-bottom:10px"><h3>Week ' + w.num + ': ' + esc(w.mock.title) + '</h3><div class="prose" style="white-space:pre-line">' + esc(mockRecs['w' + w.num].grade.feedback) + '</div></div>';
       }).join('') : '') +
@@ -259,6 +309,16 @@ aside.rail { display: grid; gap: 14px; }
 
   // ── Resources ──
   var RES = [
+    ['Case studies', [
+      ['Project 1: Target, Deep Dive', '2013 data breach. 50 points.', 'Project.html?p=1'],
+      ['Project 2: Target, Frameworks', 'NIST CSF, executive summary, remediation. 100 points.', 'Project.html?p=2'],
+      ['Project 3: Colonial Pipeline, Deep Dive', '2021 ransomware. 50 points.', 'Project.html?p=3'],
+      ['Project 4: Colonial Pipeline, Frameworks', 'NIST CSF, executive summary, remediation. 100 points.', 'Project.html?p=4'],
+      ['Project 5: SolarWinds, Deep Dive', '2020 supply chain attack. 50 points.', 'Project.html?p=5'],
+      ['Project 6: SolarWinds, Frameworks', 'NIST CSF, executive summary, remediation. 100 points.', 'Project.html?p=6'],
+      ['Project 7: Equifax, Deep Dive', '2017 data breach. 50 points.', 'Project.html?p=7'],
+      ['Project 8: Equifax, Frameworks', 'NIST CSF, executive summary, legal violations. 100 points.', 'Project.html?p=8']
+    ]],
     ['Practice tools', [
       ['CyberSec Academy tools', 'Phishing Spotter, Password Checker, SOC Simulator.', 'CyberSec_Academy.html'],
       ['Security+ PBQ Labs', '10 auto-graded simulated labs.', 'SecPlus_PBQ_Labs.html'],
@@ -282,7 +342,8 @@ aside.rail { display: grid; gap: 14px; }
     document.getElementById('view-res').innerHTML = '<div class="crumb">Resources</div><h1 class="cc-h1">Tools and references</h1><div class="sub">Everything here also shows up inside the day it\'s assigned. Use this page to go back to a tool any time.</div>' +
       RES.map(function (g) {
         return '<h2 class="cc-h2">' + esc(g[0]) + '</h2><div class="cards">' + g[1].map(function (c) {
-          return '<div class="card"><div class="k">' + esc(c[0]) + '</div><div class="v">' + esc(c[1]) + '</div><a class="btn" href="' + esc(link(c[2])) + '" target="_blank" rel="noopener">Open</a></div>';
+          var inSite = /^(Project|Lesson|Lab|Practice|Quiz)\.html/.test(c[2]);
+          return '<div class="card"><div class="k">' + esc(c[0]) + '</div><div class="v">' + esc(c[1]) + '</div><a class="btn" href="' + esc(link(c[2])) + '"' + (inSite ? '' : ' target="_blank" rel="noopener"') + '>Open</a></div>';
         }).join('') + '</div>';
       }).join('');
   }
@@ -308,7 +369,7 @@ aside.rail { display: grid; gap: 14px; }
       rec.done = rec.done || {};
       if (on) rec.done[id] = new Date().toISOString(); else delete rec.done[id];
       CC.markDone(id, on);
-      var W2 = wk(state.week); renderDays(W2); renderTasks(W2); renderProg(W2); renderRail(W2);
+      var W2 = wk(state.week); renderDays(W2); renderTasks(W2); renderProg(W2); renderRail(W2); renderUpNext(W2);
     }
   });
 
@@ -319,9 +380,16 @@ aside.rail { display: grid; gap: 14px; }
     return Promise.resolve();
   }
 
+  function loadProjects() {
+    var me = CC.student();
+    if (CC.db && me.id) return CC.db.ref('mccoe_submissions/' + me.id).once('value').then(function (s) { projRecs = s.val() || {}; }).catch(function () {});
+    for (var n = 1; n <= 8; n++) { try { var l = JSON.parse(localStorage.getItem('cc_proj_' + (me.key || 'preview') + '_' + n) || 'null'); if (l && l.submittedAt) projRecs['week' + n] = l; } catch (e) {} }
+    return Promise.resolve();
+  }
+
   renderWeek();
   show((location.hash || '#week').slice(1));
-  Promise.all([CC.load().then(function (r) { rec = r || {}; }), loadMocks()]).then(function () {
+  Promise.all([CC.load().then(function (r) { rec = r || {}; }), loadMocks(), loadProjects()]).then(function () {
     renderWeek();
     show((location.hash || '#week').slice(1));
   });

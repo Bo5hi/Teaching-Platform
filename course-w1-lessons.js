@@ -105,6 +105,7 @@ COURSE_LESSONS['1.1'] = {
     },
     {
       title: 'The CIA triad',
+      figure: { id: 'cia-triad', caption: 'The CIA triad: each goal asks a different question, and each has a Cedar Creek example.' },
       body: [
         "Almost every security goal fits into one of three words: confidentiality, integrity, and availability. Together they are called the <strong>CIA triad</strong>. When you look at any system, ask what would hurt more: someone reading the data, someone changing it, or the system going down.",
         "<strong>Confidentiality</strong> means only authorized people can read the information. Cedar Creek's engineering drawings on ENG-FS01 are the clearest example. If a competitor obtained them, Cedar Creek could lose customers who trusted it with their designs. Controls that protect confidentiality include file permissions, encryption, and privacy filters on monitors.",
@@ -137,6 +138,7 @@ COURSE_LESSONS['1.1'] = {
     },
     {
       title: 'AAA: authentication, authorization, and accounting',
+      figure: { id: 'aaa-flow', caption: 'AAA always runs in this order. The server room door shows all three.' },
       body: [
         "Every time someone or something uses a system, three questions get answered. Together they are called <strong>AAA</strong>.",
         "<strong>Authentication</strong> asks: are you who you claim to be? You make a claim (a username) and then prove it with one or more factors. The factor types are something you know (a password or personal identification number, PIN), something you have (a badge, a phone app, a hardware key), and something you are (a fingerprint or face). Using two or more different factor types is multifactor authentication (MFA). The server room door at Cedar Creek needs a badge (something you have) plus a PIN (something you know), so it uses two factors.",
@@ -154,6 +156,7 @@ COURSE_LESSONS['1.1'] = {
     },
     {
       title: 'How security work is organized: the NIST CSF',
+      figure: { id: 'nist-csf', caption: 'NIST CSF 2.0: Govern sits at the center and steers the other five functions.' },
       body: [
         "A program needs structure, or it turns into a list of random fixes. Many organizations use the National Institute of Standards and Technology (NIST) Cybersecurity Framework (CSF). It sorts security work into six functions. Version 2.0, released in 2024, added Govern to the original five.",
         "You do not need to memorize the framework's details for Security+. You do need to recognize that security work falls into these broad areas, and that a healthy program does some of each."
@@ -229,6 +232,7 @@ COURSE_LESSONS['1.2'] = {
     },
     {
       title: 'Control types: what a control does',
+      figure: { id: 'controls-grid', caption: 'Every control gets two labels: a category (row) and a type (column). Cedar Creek examples fill the grid.' },
       body: [
         "<strong>Preventive</strong> controls stop an incident before it happens. A locked door prevents entry. A screen lock prevents someone from using an unattended PC.",
         "<strong>Deterrent</strong> controls discourage an attacker from trying. They do not physically stop anyone. Bright lighting and 'Video Surveillance in Use' signs make a target less attractive.",
@@ -342,6 +346,7 @@ COURSE_LESSONS['1.3'] = {
     },
     {
       title: 'Types of threat actors',
+      figure: { id: 'threat-actors', caption: 'Threat actors compared by where they start and how capable they are. Red rings mark the top concerns for Cedar Creek.' },
       body: [
         "<strong>Nation-state</strong> actors work for or on behalf of a government. They have the most resources and the highest sophistication. They want intelligence, strategic advantage, and in some cases the ability to disrupt another country's infrastructure. Many APT groups are nation-state actors.",
         "<strong>Organized crime</strong> groups run attacks as a business. Their goal is money. Ransomware and business email compromise (BEC) are their main products. Many are well funded, and some sell tools and access to each other.",
@@ -422,6 +427,7 @@ COURSE_LESSONS['1.4'] = {
   sections: [
     {
       title: 'Attack surface and threat vectors',
+      figure: { id: 'attack-surface', caption: 'Cedar Creek\'s attack surface: eight threat vectors you will see on the walk, grouped by family.' },
       body: [
         "The <strong>attack surface</strong> is the total of all the points where an attacker could try to get in or pull data out. It includes hardware, software, network connections, accounts, people, and outside partners. A bigger attack surface means more places to defend.",
         "A <strong>threat vector</strong> is one specific path an attacker uses to reach a target. Email is a vector. A USB drive is a vector. The attack surface is the full set of possible vectors and the systems they lead to.",
@@ -509,6 +515,7 @@ COURSE_LESSONS['1.5'] = {
   sections: [
     {
       title: 'Layers of physical security',
+      figure: { id: 'physical-layers', caption: 'Layers from the property line inward. A layer only works while its doors and gates stay shut.' },
       body: [
         "Physical security works in layers, from the property line inward. An intruder should face several barriers before reaching anything valuable. At Cedar Creek the layers run from the fence and parking lot, to the building doors, to interior badge doors, to the server room.",
         "<strong>Fencing</strong> marks the boundary and slows people down. The 8-foot chain-link fence around the plant yard is a preventive control, and it only works if every gate in it stays shut.",
@@ -570,6 +577,7 @@ COURSE_LESSONS['1.5'] = {
     },
     {
       title: 'Asset management',
+      figure: { id: 'asset-lifecycle', caption: 'The asset lifecycle, with a Cedar Creek example at each step.' },
       body: [
         "An <strong>asset</strong> is anything of value to the organization: hardware, software, data, and services. Asset management tracks each asset through its life, from purchase to disposal. Cedar Creek has no asset inventory today. You are building the first one.",
         "<strong>Acquisition and procurement.</strong> Security starts when something is bought. Purchases should go through an approval process that checks the vendor, confirms the product will get security updates, and makes sure it can be supported. A system bought without that check can end up like ENG-APP02, stuck on software nobody can update.",

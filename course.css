@@ -61,7 +61,7 @@ h2.cc-h2 { font-family: var(--f-display); font-size: 1.1rem; letter-spacing: 1px
 /* chips + buttons */
 .chip { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; padding: 1px 8px; border-radius: 4px; border: 1px solid currentColor; }
 .c-lesson { color: var(--t-lesson); } .c-practice { color: var(--t-practice); } .c-lab { color: var(--t-lab); }
-.c-mock { color: var(--t-mock); } .c-quiz { color: var(--t-quiz); } .c-pbq { color: var(--t-pbq); } .c-checkin { color: var(--t-checkin); }
+.c-mock { color: var(--t-mock); } .c-quiz { color: var(--t-quiz); } .c-pbq { color: var(--t-pbq); } .c-project { color: var(--t-pbq); } .c-checkin { color: var(--t-checkin); }
 .btn { display: inline-flex; align-items: center; gap: 6px; background: rgba(238, 34, 7, 0.12); border: 1px solid rgba(238, 34, 7, 0.55); color: var(--text); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 700; white-space: nowrap; text-decoration: none; }
 .btn:hover { background: rgba(238, 34, 7, 0.25); }
 .btn.primary { background: var(--red); border-color: var(--red); color: #fff; }

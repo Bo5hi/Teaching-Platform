@@ -1,6 +1,8 @@
 # CLAUDE.md — MCCoE Platform Briefing
 > Read this first. This file brings you fully up to speed on the MCCoE Cybersecurity Associate Platform.
 
+> **Redesign in progress (Course v2):** the pillars are being replaced by a Week > Day 1 / Day 2 layout, and the course is growing to 15 weeks. The work is on branch `course-v2` (not pushed yet). To pick it up, read `docs/NEXT-STEPS.md` first, then `docs/COURSE_V2.md` and `docs/CEDAR_CREEK.md`.
+
 ---
 
 ## WHO YOU ARE WORKING WITH
