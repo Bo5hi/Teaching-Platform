@@ -1,0 +1,25 @@
+rule,name,enabled,src_zone,src,dst_zone,dst,service,action,log,hits_90d,comment
+1,Admin-Workstation,yes,MGMT,10.99.0.10,any,10.0.0.0/8,ssh;https;rdp;smb,ALLOW,yes,4112,IT-ADMIN-01 manages servers and network gear
+2,Internal-DNS,yes,any,10.0.0.0/8,SERVERS,10.10.1.10,dns,ALLOW,no,1893422,DC01 answers DNS for everyone
+3,Office-to-AD,yes,OFFICE,10.20.0.0/16,SERVERS,10.10.1.10,kerberos;ldap;smb,ALLOW,no,655210,Logons and group policy
+4,Office-to-EngFiles,yes,OFFICE,10.20.0.0/16,SERVERS,10.30.4.10,smb,ALLOW,no,402877,Engineering shares (FS-HR01 is on the office network)
+5,Office-Web,yes,OFFICE,10.20.0.0/16,OUTSIDE,any,http;https,ALLOW,no,9120554,Web browsing and Microsoft 365
+6,Plant-to-Office,yes,PLANT,10.40.0.0/16,OFFICE,10.20.0.0/16,any,ALLOW,no,88341,TEMP: Line 2 label printing fix (2019)
+7,Office-to-Plant,yes,OFFICE,10.20.0.0/16,PLANT,10.40.0.0/16,any,ALLOW,no,120967,TEMP: Line 2 label printing fix (2019)
+8,Plant-to-Servers,yes,PLANT,10.40.0.0/16,SERVERS,10.10.0.0/16;10.30.0.0/16,any,ALLOW,no,230118,Plant PCs need DNS and drawings
+9,EngFS-to-CNC-FTP,yes,SERVERS,10.30.4.10,PLANT,10.40.2.0/24,ftp,ALLOW,yes,2210,ENG-FS01 sends CNC programs to Line 2
+10,Office-Telnet-CNC03,yes,OFFICE,10.20.30.0/24,PLANT,10.40.2.63,telnet,ALLOW,yes,0,Engineers check CNC03 status
+11,VPN-Staff,yes,VPN,10.250.0.0/25,OFFICE;SERVERS,10.20.0.0/16;10.10.0.0/16;10.30.0.0/16,any,ALLOW,yes,51309,Remote staff
+12,VPN-Vendor-HVAC,yes,VPN,10.250.0.128/28,SERVERS;PLANT,10.10.0.0/16;10.30.0.0/16;10.40.0.0/16,any,ALLOW,no,3877,Riverbend Mechanical HVAC support
+13,Inbound-SSL-VPN,yes,OUTSIDE,any,FW-CORE,198.51.100.24,https,ALLOW,yes,77215,VPN portal
+14,Inbound-RDP-ENGAPP02,yes,OUTSIDE,203.0.113.60,SERVERS,198.51.100.24:3389>10.30.4.22,rdp,ALLOW,no,1986,CAD license vendor support (2021)
+15,Inbound-SSH-FWCORE,yes,OUTSIDE,any,FW-CORE,198.51.100.24,ssh,ALLOW,no,61402,Remote admin of FW-CORE (M. Reyes)
+16,ERP-Contractor-SSH,yes,OUTSIDE,203.0.113.150,SERVERS,10.30.4.40,ssh,ALLOW,yes,0,ERP migration contractor - remove after go-live (2020)
+17,Servers-Updates,yes,SERVERS,10.10.0.0/16;10.30.0.0/16,OUTSIDE,any,https,ALLOW,no,310442,Windows Update and vendor updates
+18,Guest-Internet,yes,GUEST,172.16.50.0/24,OUTSIDE,any,dns;http;https,ALLOW,no,268003,CC-GUEST Wi-Fi
+19,Guest-Block-Internal,yes,GUEST,172.16.50.0/24,any,10.0.0.0/8,any,DENY,yes,1207,Keep guests off the internal network
+20,NetMon-SNMP,yes,MGMT,10.99.0.5,any,10.0.0.0/8,snmp,ALLOW,no,744019,NETMON-01 polling (SNMPv2c)
+21,Copier-Test,yes,any,any,any,any,any,ALLOW,no,1546208,Testing new copier scan-to-email - J. Pike 2025-03
+22,Plant-Internet,no,PLANT,10.40.0.0/16,OUTSIDE,any,http;https,ALLOW,no,0,Disabled 2022: plant PCs should not browse
+23,Block-SMB-Out,yes,any,10.0.0.0/8,OUTSIDE,any,smb,DENY,yes,0,Stop file sharing to the internet
+24,Default-Deny,yes,any,any,any,any,any,DENY,yes,0,Cleanup rule: deny everything else

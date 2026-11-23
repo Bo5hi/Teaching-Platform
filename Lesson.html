@@ -29,7 +29,7 @@ figure.fig figcaption { font-size: .86rem; color: var(--muted); margin-top: 10px
 (function () {
   CC.header('week');
   var lid = CC.param('l') || '1.1';
-  var href = 'Lesson.html?l=' + lid;
+  var href = 'Lesson.html?l=' + lid + (CC.param('from') ? '&from=' + CC.param('from') : '');
   var week = String(lid).split('.')[0];
   var page = document.getElementById('page');
   var esc = CC.esc;

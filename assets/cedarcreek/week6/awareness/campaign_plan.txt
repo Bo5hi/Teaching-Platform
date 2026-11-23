@@ -1,0 +1,34 @@
+CEDAR CREEK INDUSTRIES
+PHISHING SIMULATION PLAN - DECEMBER 2026
+
+Approved by:   Marcus Reyes (IT Manager), Greg Palmer (CFO)
+Run by:        Security Analyst
+Sent:          Wed, 16 Dec 2026, 09:00 (one send to every mailbox)
+Closed:        Fri, 18 Dec 2026, 17:00
+
+The lure
+--------
+Subject: "Your 2026 holiday bonus statement is ready"
+From:    "Cedar Creek HR" <hr-notices@cedarcreek-benefits.com>
+A button opens a fake sign-in page that looks like Microsoft 365. Any
+password typed there is thrown away; the page only records that
+something was submitted. Anyone who submits sees a page explaining
+that it was a test and showing the red flags they missed.
+
+What we measure (columns in phish_sim_results.csv)
+--------------------------------------------------
+email        the mailbox the test was sent to
+department   from the HR roster
+building     office or plant
+trained      yes = finished annual security awareness training
+opened       yes = opened the email (images loaded)
+clicked      yes = clicked the button
+submitted    yes = typed something into the fake sign-in page
+reported     yes = used the Report button in Outlook
+report_min   minutes from the send to the report (blank if not reported)
+
+Ground rules
+------------
+- Results are used to target training, not to punish anyone.
+- Managers get department totals, not lists of names.
+- Rosa Medina (HR) approved the wording: no real bonus amounts.

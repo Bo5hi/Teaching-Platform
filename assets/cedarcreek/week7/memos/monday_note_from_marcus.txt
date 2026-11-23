@@ -1,0 +1,29 @@
+From:     Marcus Reyes, IT Manager
+To:       Security Analyst
+Date:     2026-12-21 07:40
+Subject:  Weekend alerts - need your eyes before 10:00
+
+Morning. The firewall and the EDR console sent a pile of alert emails to
+the siem-alerts@cedarcreek-ind.com mailbox over the weekend. Nobody watches
+that mailbox on weekends, and most weeks it is the usual noise, so I have
+not opened them.
+
+I exported everything from Friday 4 PM to last night into logs/. Before our
+10:00 meeting, tell me:
+  1. Is anything here real, or is it all noise?
+  2. If something is real: which PC, which account, and what (if anything)
+     left the building?
+
+Two things you should know:
+- The IPS module on FW-CORE has run in alert-only mode since we turned it
+  on in March 2024. In blocking mode it cut off the payroll portal on a
+  payday, so I switched it to alert-only and never switched it back.
+- Outbound, office PCs get web ports (80 and 443) from rule Office-Web.
+  Anything else falls through to Copier-Test, the any-to-any allow rule
+  you flagged in your Week 4 review. Jordan has not removed it yet: he is
+  waiting for the copier vendor to say what scan-to-email needs. On 12-02
+  he moved Block-SMB-Out above it (the only outbound block, for Windows
+  file sharing) and turned on logging for every rule, so these logs are
+  the first full picture we have.
+
+Marcus

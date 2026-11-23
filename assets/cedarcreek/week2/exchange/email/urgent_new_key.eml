@@ -1,0 +1,20 @@
+Return-Path: <bounce@halvorsen-pumps.com>
+From: "Halvorsen Supplier Quality" <supplier-quality@halvorsen-pumps.com>
+To: p.nair@cedarcreek-ind.com
+Date: Fri, 13 Nov 2026 16:52:10 -0600
+Subject: URGENT: new supplier key and portal certificate
+
+Hello Priya,
+
+Because of a security upgrade, Halvorsen has replaced its Supplier Data
+key and portal certificate. Please use the attached key for all files
+from now on, and install the attached certificate so your computer
+trusts our new portal at https://supplier-halvorsen-pump.com.
+
+Your Rev C package for CCD-3318 is overdue. Please upload it today.
+
+Attachments: halvorsen_key_from_email.asc, portal_cert_from_email.pem
+(saved by IT to exchange/keys and exchange/certs)
+
+Erik Lund
+Supplier Quality Engineer

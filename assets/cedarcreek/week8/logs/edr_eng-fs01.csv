@@ -1,0 +1,39 @@
+time_local,host,user,severity,event,detail
+2026-12-22 03:00:00,ENG-FS01,SYSTEM,INFO,agent,EDR agent heartbeat; policy=detect-only
+2026-12-22 08:12:40,ENG-FS01,t.becker,INFO,file_open,D:\Projects share opened over SMB
+2026-12-22 08:31:05,ENG-FS01,p.nair,INFO,file_open,D:\Projects share opened over SMB
+2026-12-22 12:00:00,ENG-FS01,SYSTEM,INFO,agent,EDR agent heartbeat; policy=detect-only
+2026-12-22 13:02:17,ENG-FS01,t.becker,INFO,file_open,D:\Projects share opened over SMB
+2026-12-22 15:48:51,ENG-FS01,p.nair,INFO,file_open,D:\Projects share opened over SMB
+2026-12-22 22:00:00,ENG-FS01,SYSTEM,INFO,agent,EDR agent heartbeat; policy=detect-only
+2026-12-22 23:10:02,ENG-FS01,SYSTEM,INFO,process_start,vssadmin.exe create shadow /for=D: (scheduled shadow copy)
+2026-12-23 01:58:44,ENG-FS01,ccadmin,INFO,session_start,RDP session from 10.250.0.37
+2026-12-23 02:09:12,ENG-FS01,ccadmin,INFO,file_create,C:\ProgramData\rc\rclone.exe
+2026-12-23 02:09:30,ENG-FS01,ccadmin,INFO,file_create,C:\ProgramData\rc\rclone.conf
+2026-12-23 02:14:05,ENG-FS01,ccadmin,LOW,process_start,rclone.exe copy D:\Projects ccx:drop --transfers 8
+2026-12-23 03:29:51,ENG-FS01,ccadmin,INFO,process_end,rclone.exe exit code 0
+2026-12-23 03:31:02,ENG-FS01,ccadmin,HIGH,process_start,vssadmin.exe delete shadows /all /quiet
+2026-12-23 03:31:40,ENG-FS01,ccadmin,HIGH,process_start,wbadmin.exe delete catalog -quiet
+2026-12-23 03:34:55,ENG-FS01,ccadmin,INFO,file_create,C:\ProgramData\cc_upd.exe
+2026-12-23 03:35:20,ENG-FS01,ccadmin,MEDIUM,process_start,cc_upd.exe -path D:\Projects
+2026-12-23 03:36:02,ENG-FS01,ccadmin,CRITICAL,behavior,Ransomware behavior: mass file rename to .latch by cc_upd.exe
+2026-12-23 03:36:30,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J24-087 renamed=189 ext=.latch note=README_LATCH.txt
+2026-12-23 03:44:48,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J24-102 renamed=345 ext=.latch note=README_LATCH.txt
+2026-12-23 03:54:32,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J24-118 renamed=254 ext=.latch note=README_LATCH.txt
+2026-12-23 04:02:48,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J24-131 renamed=240 ext=.latch note=README_LATCH.txt
+2026-12-23 04:12:48,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J25-004 renamed=268 ext=.latch note=README_LATCH.txt
+2026-12-23 04:22:33,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J25-019 renamed=141 ext=.latch note=README_LATCH.txt
+2026-12-23 04:30:01,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J25-033 renamed=238 ext=.latch note=README_LATCH.txt
+2026-12-23 04:39:30,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J25-047 renamed=265 ext=.latch note=README_LATCH.txt
+2026-12-23 04:48:13,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J25-058 renamed=285 ext=.latch note=README_LATCH.txt
+2026-12-23 04:57:21,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J25-071 renamed=357 ext=.latch note=README_LATCH.txt
+2026-12-23 05:06:09,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J25-090 renamed=260 ext=.latch note=README_LATCH.txt
+2026-12-23 05:16:36,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J25-112 renamed=265 ext=.latch note=README_LATCH.txt
+2026-12-23 05:25:24,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J26-006 renamed=160 ext=.latch note=README_LATCH.txt
+2026-12-23 05:33:00,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J26-021 renamed=190 ext=.latch note=README_LATCH.txt
+2026-12-23 05:43:20,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J26-044 renamed=360 ext=.latch note=README_LATCH.txt
+2026-12-23 05:53:50,ENG-FS01,ccadmin,INFO,file_rename_batch,folder=D:\Projects\J26-063 renamed=357 ext=.latch note=README_LATCH.txt
+2026-12-23 06:14:30,ENG-FS01,d.ortiz,HIGH,response,Network isolation applied to ENG-FS01
+2026-12-23 06:15:02,ENG-FS01,d.ortiz,HIGH,response,Process cc_upd.exe killed
+2026-12-23 06:31:10,ENG-FS01,d.ortiz,INFO,process_start,winpmem.exe acquire memory to E:\CC-IR-2026-01-E2\ENG-FS01_mem.raw
+2026-12-23 06:44:52,ENG-FS01,d.ortiz,INFO,process_start,tasklist /v and netstat -ano saved to F:\CC-IR-2026-01-E1

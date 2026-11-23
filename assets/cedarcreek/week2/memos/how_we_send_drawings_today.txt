@@ -1,0 +1,19 @@
+From:    Priya Nair, Design Engineer
+To:      Junior Security Analyst
+Date:    Fri 2026-11-13
+Subject: How we send drawings today
+
+You asked how we send drawings to customers now. Honestly:
+
+- We zip the files in Windows and set a zip password. Most of us use
+  the customer's name and the year, for example Halvorsen2026.
+- We email the zip to the customer's engineer and type the password in
+  the same email, "so they don't have to call."
+- If the files are too big for email, we use a personal Dropbox link.
+- Nobody checks that the files in the transfer folder are the ones Tom
+  signed off. We just grab whatever is in \\ENG-FS01\Transfer.
+- Halvorsen's old FTP site still works, so sometimes we use that too.
+
+I know this is not great. Tell me what to do instead and I will do it.
+
+Priya

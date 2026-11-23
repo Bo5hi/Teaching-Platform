@@ -1,0 +1,13 @@
+username,department,password_md5
+amanda.singh,Accounts Payable,88cd8e8f702d57b4b45770c751796d14
+m.alvarez,Purchasing,b56e0b4ea4962283bee762525c2d490f
+g.lindqvist,Customer Service,b56e0b4ea4962283bee762525c2d490f
+k.tran,Marketing,541964299fdf7446cd43adf5ea2c9cd8
+l.kim,Marketing,b82eaa787a88070fd601603573b550fd
+r.doyle,Customer Service,b56e0b4ea4962283bee762525c2d490f
+d.reyes,Accounting,07cd01964354d481fba8fe0b109834d1
+p.nair,Engineering,c6a2bdcf2512c1a1dd5c8b1fdcc8bd0e
+t.garza,Plant,cfa80da6e2a5fb31a2706340dff89fda
+n.brooks,Front Desk,541964299fdf7446cd43adf5ea2c9cd8
+s.pruitt,Maintenance,83bdfa8a9f3cc94044809fbdaaddc917
+w.henley,Plant,0265cbe7b49fc9c5ca819a6c2ad6946e

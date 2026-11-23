@@ -1,0 +1,50 @@
+time_local,event_id,account,source_ip,computer,detail
+2026-12-22 06:05:42,4624,j.pike,10.20.1.12,DC01,Logon type 3 (network)
+2026-12-22 06:15:59,4624,d.ortiz,10.99.0.10,DC01,Logon type 3 (network)
+2026-12-22 06:29:29,4624,g.lindqvist,10.20.10.51,DC01,Logon type 3 (network)
+2026-12-22 06:31:16,4625,l.kim,10.20.8.37,DC01,Failed logon (bad password)
+2026-12-22 06:31:51,4624,l.kim,10.20.8.37,DC01,Logon type 3 (network)
+2026-12-22 06:57:36,4624,r.medina,10.20.6.21,DC01,Logon type 3 (network)
+2026-12-22 06:59:38,4624,r.medina,10.20.6.21,FS-HR01,Logon type 3 (network)
+2026-12-22 07:02:11,5145,t.becker,10.20.30.14,DC01,Share \\*\NETLOGON file map_drives.bat ReadData
+2026-12-22 07:05:07,4624,m.alvarez,10.20.10.60,DC01,Logon type 3 (network)
+2026-12-22 07:30:55,4624,d.reyes,10.20.6.43,DC01,Logon type 3 (network)
+2026-12-22 07:37:36,4624,amanda.singh,10.20.6.44,DC01,Logon type 3 (network)
+2026-12-22 07:44:51,5145,amanda.singh,10.20.6.44,DC01,Share \\*\NETLOGON file map_drives.bat ReadData
+2026-12-22 07:50:03,4624,t.becker,10.20.30.14,DC01,Logon type 3 (network)
+2026-12-22 07:59:26,4624,t.becker,10.20.30.14,ENG-FS01,Logon type 3 (network)
+2026-12-22 08:56:12,4624,p.nair,10.20.30.11,DC01,Logon type 3 (network)
+2026-12-22 08:57:04,4624,n.brooks,10.20.12.3,DC01,Logon type 3 (network)
+2026-12-22 08:57:10,4624,k.tran,10.20.8.38,DC01,Logon type 3 (network)
+2026-12-22 08:59:26,4624,p.nair,10.20.30.11,ENG-FS01,Logon type 3 (network)
+2026-12-22 16:04:51,4634,n.brooks,10.20.12.3,DC01,Logoff
+2026-12-22 16:19:44,4634,k.tran,10.20.8.38,DC01,Logoff
+2026-12-22 16:26:12,4634,p.nair,10.20.30.11,DC01,Logoff
+2026-12-22 16:34:04,4634,t.becker,10.20.30.14,DC01,Logoff
+2026-12-22 16:39:11,4634,j.pike,10.20.1.12,DC01,Logoff
+2026-12-22 16:44:32,4634,d.ortiz,10.99.0.10,DC01,Logoff
+2026-12-22 16:57:57,4634,r.medina,10.20.6.21,DC01,Logoff
+2026-12-22 17:02:54,4634,d.reyes,10.20.6.43,DC01,Logoff
+2026-12-22 17:11:51,4634,m.alvarez,10.20.10.60,DC01,Logoff
+2026-12-22 17:18:17,4634,l.kim,10.20.8.37,DC01,Logoff
+2026-12-22 17:38:55,4634,amanda.singh,10.20.6.44,DC01,Logoff
+2026-12-22 17:47:48,4634,g.lindqvist,10.20.10.51,DC01,Logoff
+2026-12-22 21:31:20,4624,d.ortiz,10.250.0.27,DC01,Logon type 3 (network)
+2026-12-23 01:42:10,4624,m.alvarez,10.250.0.37,DC01,Logon type 3 (network)
+2026-12-23 01:49:12,5145,m.alvarez,10.250.0.37,DC01,Share \\*\NETLOGON file logon_banner.txt ReadData
+2026-12-23 01:49:33,5145,m.alvarez,10.250.0.37,DC01,Share \\*\NETLOGON file map_drives.bat ReadData
+2026-12-23 01:49:51,5145,m.alvarez,10.250.0.37,DC01,Share \\*\NETLOGON file printers.vbs ReadData
+2026-12-23 01:53:05,4624,ccadmin,10.250.0.37,DC01,Logon type 3 (network)
+2026-12-23 01:53:06,4672,ccadmin,10.250.0.37,DC01,Special privileges assigned to new logon
+2026-12-23 01:58:41,4624,ccadmin,10.250.0.37,ENG-FS01,Logon type 10 (RemoteInteractive / RDP)
+2026-12-23 02:03:17,4720,ccadmin,10.250.0.37,DC01,A user account was created: svc_update
+2026-12-23 02:04:02,4728,ccadmin,10.250.0.37,DC01,Member added to security-enabled global group Domain Admins: svc_update
+2026-12-23 06:00:12,4625,t.becker,10.20.30.14,DC01,Failed logon (bad password)
+2026-12-23 06:00:19,4625,t.becker,10.20.30.14,DC01,Failed logon (bad password)
+2026-12-23 06:00:27,4625,t.becker,10.20.30.14,DC01,Failed logon (bad password)
+2026-12-23 06:00:36,4625,t.becker,10.20.30.14,DC01,Failed logon (bad password)
+2026-12-23 06:00:44,4625,t.becker,10.20.30.14,DC01,Failed logon (bad password)
+2026-12-23 06:01:05,4624,t.becker,10.20.30.14,DC01,Logon type 2 (interactive) at ENG-14
+2026-12-23 06:20:44,4725,d.ortiz,10.99.0.10,DC01,A user account was disabled: m.alvarez
+2026-12-23 06:21:15,4725,d.ortiz,10.99.0.10,DC01,A user account was disabled: svc_update
+2026-12-23 06:24:02,4724,d.ortiz,10.99.0.10,DC01,An attempt was made to reset an account password: ccadmin

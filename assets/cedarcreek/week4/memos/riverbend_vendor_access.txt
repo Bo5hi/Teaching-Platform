@@ -1,0 +1,19 @@
+From:    service@riverbend-mech.example
+To:      Marcus Reyes
+Date:    2023-06-12
+Subject: Remote access for HVAC monitoring
+
+Marcus,
+
+To support the new building controller we need remote access so our
+technicians can check alarms and adjust setpoints without a site visit.
+We only need the controller's web page (HVAC-CTRL). Please create a VPN
+login for our team.
+
+Thanks,
+Riverbend Mechanical - Service Desk
+
+---- note added by Jordan Pike, 2023-06-14 ----
+Created VPN group VENDOR-HVAC (10.250.0.128/28). Firewall rule 12 lets
+them reach SERVERS and PLANT so we don't have to touch it again if
+they add more equipment. One shared login for all their techs.

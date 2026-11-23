@@ -1,0 +1,67 @@
+date_time,user,ip,result,mfa_detail
+2026-12-10T07:09:49,d.reyes@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T07:10:50,d.edwards@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T07:13:02,l.edwards@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T07:21:23,k.clark@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T07:22:46,k.harris@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T07:32:17,m.alvarez@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T07:32:41,l.harris@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T07:48:46,d.reyes@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T07:49:04,t.becker@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T07:52:08,u.beckett@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T08:03:12,amanda.singh@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T08:15:45,g.rankin@cedarcreek-ind.com,203.0.113.77,Failure,MFA push denied by user
+2026-12-10T08:16:55,g.rankin@cedarcreek-ind.com,203.0.113.77,Failure,MFA push denied by user
+2026-12-10T08:18:20,g.rankin@cedarcreek-ind.com,203.0.113.77,Failure,MFA push denied by user
+2026-12-10T08:19:55,g.rankin@cedarcreek-ind.com,203.0.113.77,Success,MFA push approved
+2026-12-10T08:21:33,y.upton@cedarcreek-ind.com,203.0.113.77,Failure,MFA push denied by user
+2026-12-10T08:22:53,y.upton@cedarcreek-ind.com,203.0.113.77,Failure,MFA push denied by user
+2026-12-10T08:23:31,a.reed@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T08:28:22,d.parker@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T09:19:52,r.doyle@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T10:00:05,f.roberts@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T10:22:28,y.upton@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T10:42:01,d.morris@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T10:48:33,f.jackson@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T11:03:52,j.green@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T11:28:45,g.lindqvist@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T11:50:11,t.roberts@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T12:23:41,g.palmer@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T12:40:57,m.roberts@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T13:18:09,m.alvarez@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T13:23:54,m.edwards@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T13:26:58,o.torres@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T13:31:35,t.becker@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T13:44:20,t.becker@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T13:45:12,k.harris@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T13:50:53,j.edwards@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T13:55:33,d.phillips@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T13:56:36,d.edwards@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T14:15:46,a.reed@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T14:28:23,p.nair@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T14:29:25,l.edwards@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T14:30:32,d.phillips@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T14:30:36,k.carter@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T14:36:15,m.campbell@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T14:40:01,d.phillips@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T14:41:53,m.roberts@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T14:57:00,t.roberts@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T15:07:53,c.roberts@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T15:17:47,n.nolan@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T15:22:39,f.roberts@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T15:25:31,s.torres@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T15:25:50,c.roberts@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T15:26:11,a.reed@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T15:34:57,d.morris@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T15:52:59,l.hall@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T15:57:24,g.palmer@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T16:02:43,m.moore@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T16:08:45,j.edwards@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T16:26:38,j.green@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T16:29:00,o.torres@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T16:32:04,n.brooks@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T16:34:29,t.roberts@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)
+2026-12-10T16:44:26,a.green@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T16:52:21,a.green@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T16:54:33,j.green@cedarcreek-ind.com,198.51.100.24,Success,Previously satisfied
+2026-12-10T16:58:31,l.kim@cedarcreek-ind.com,198.51.100.24,Success,MFA completed (app push)

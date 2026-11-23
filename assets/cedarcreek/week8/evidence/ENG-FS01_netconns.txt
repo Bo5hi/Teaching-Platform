@@ -1,0 +1,6 @@
+Collected 2026-12-23 06:44 by d.ortiz (netstat -ano, trimmed)
+  Proto  Local Address          Foreign Address        State           PID
+  TCP    10.30.4.10:445         0.0.0.0:0              LISTENING       4
+  TCP    10.30.4.10:3389        0.0.0.0:0              LISTENING       1044
+  TCP    10.30.4.10:3389        10.250.0.37:51544      CLOSE_WAIT      1044
+checked this - looks fine. JP

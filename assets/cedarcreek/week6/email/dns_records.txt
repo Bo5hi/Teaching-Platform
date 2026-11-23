@@ -1,0 +1,18 @@
+DNS TXT records, looked up by Jordan Pike on Mon, 14 Dec 2026
+(copied from dig output; one record per line)
+
+# Cedar Creek (our domain)
+cedarcreek-ind.com.          TXT  "v=spf1 include:spf.protection.outlook.com -all"
+_dmarc.cedarcreek-ind.com.   TXT  "v=DMARC1; p=none; rua=mailto:dmarc-reports@cedarcreek-ind.com"
+
+# Sender of report-01
+cedarcreek-it.com.           TXT  "v=spf1 ip4:203.0.113.77 -all"
+_dmarc.cedarcreek-it.com.    TXT  "v=DMARC1; p=none"
+
+# Reply-To domain in report-02
+cedarcreek-lnd.com.          TXT  "v=spf1 ip4:192.0.2.99 ~all"
+_dmarc.cedarcreek-lnd.com.   (no record)
+
+# Sender of report-03
+tallgrasspayroll.com.        TXT  "v=spf1 ip4:198.51.100.176/28 -all"
+_dmarc.tallgrasspayroll.com. TXT  "v=DMARC1; p=reject; rua=mailto:dmarc@tallgrasspayroll.com"

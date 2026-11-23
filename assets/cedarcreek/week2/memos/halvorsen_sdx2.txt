@@ -1,0 +1,34 @@
+HALVORSEN PUMP COMPANY
+Supplier Data Exchange Requirements (SDX-2)
+Effective: 2026-12-01
+Owner:     Halvorsen Supplier Quality
+
+These rules apply to every drawing, model, specification, and inspection
+plan a supplier sends to Halvorsen.
+
+1. Integrity
+   Send a SHA-256 manifest with every package: one line per file, in the
+   format produced by sha256sum. MD5 and SHA-1 are not accepted.
+
+2. Confidentiality
+   Encrypt the package with OpenPGP (for example GnuPG) to the Halvorsen
+   Supplier Data public key. Password-protected zip files are not
+   accepted. Never send a password or key in the same message as the
+   files.
+
+3. Origin
+   Sign the package with the sending engineer's OpenPGP key. Register
+   your signing key with Halvorsen Supplier Quality before your first
+   upload.
+
+4. Transport
+   Upload only to https://supplier.halvorsen-pump.com. The old FTP site
+   (ftp.halvorsen-pump.com) is retired. Before you upload, confirm the
+   site's certificate is valid and issued to supplier.halvorsen-pump.com.
+
+5. Key verification
+   Halvorsen will never send its public key by email alone. Get the key
+   from the portal or from your Halvorsen contact, then confirm its
+   fingerprint by phone, using the number in your supply contract.
+
+Questions: Erik Lund, Supplier Quality Engineer

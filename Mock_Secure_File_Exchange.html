@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock Secure File Exchange | MCCoE</title>
+<link rel="stylesheet" href="course.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="course.js"></script>
+<script src="course-data.js"></script>
+<script src="course-w2-mock.js"></script>
+<style>
+section.sec { scroll-margin-top: 76px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.table-wrap { position: relative; overflow-x: auto; }
+.statline { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 10px 0 18px; font-size: .95rem; }
+.pill { display: inline-block; font-size: .8rem; font-weight: 700; letter-spacing: .5px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line-soft); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pill.ok { color: var(--ok); border-color: rgba(51, 209, 122, .5); }
+.pill.sub { color: var(--cyan); border-color: rgba(0, 245, 255, .45); }
+.pill.warn { color: var(--warn); border-color: rgba(255, 194, 61, .5); }
+.saved { color: var(--muted); }
+.saved.err { color: var(--warn); }
+.preview-note { font-size: .9rem; color: var(--warn); border: 1px dashed rgba(255, 194, 61, .45); border-radius: 8px; padding: 8px 12px; margin-bottom: 16px; }
+.brief .from { font-family: var(--f-mono); font-size: .76rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--t-mock); }
+.brief .prose p { margin-bottom: 10px; }
+details.more { margin-top: 4px; }
+details.more summary { cursor: pointer; color: var(--cyan); font-weight: 700; font-size: .95rem; }
+details.more ol { font-family: var(--f-read); font-size: .92rem; color: #dcdce4; padding-left: 22px; margin: 10px 0 0; line-height: 1.55; }
+details.more ol li { margin-bottom: 6px; }
+details.more ol b { color: var(--text); }
+.steps6 { list-style: none; padding: 0; margin: 20px 0 12px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 980px) { .steps6 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); } }
+.steps6 a { display: flex; gap: 10px; align-items: center; height: 100%; padding: 10px 12px; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; text-decoration: none; color: var(--text); }
+.steps6 a:hover { border-color: rgba(255, 255, 255, .25); }
+.steps6 .sn { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--red); color: var(--red); font-family: var(--f-display); font-size: .8rem; }
+.steps6 .st { display: grid; line-height: 1.2; min-width: 0; }
+.steps6 .st b { font-weight: 700; font-size: .95rem; }
+.steps6 .st small { color: var(--muted); font-size: .82rem; font-variant-numeric: tabular-nums; }
+.steps6 li.ok .sn { background: var(--ok); border-color: var(--ok); color: #07070f; }
+.steps6 li.ok .st small { color: var(--ok); }
+.p1bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 14px; border: 1px solid var(--line-soft); border-left: 3px solid var(--cyan); border-radius: 0 10px 10px 0; background: rgba(0, 245, 255, .04); font-size: .97rem; margin-top: 8px; }
+.p1bar .muted { color: var(--muted); }
+.part { font-family: var(--f-mono); font-size: .78rem; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); margin: 40px 0 0; padding-top: 14px; border-top: 1px solid var(--line-soft); }
+.sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 26px 0 6px; }
+.sec-h h2.cc-h2 { margin: 0; }
+.sec-intro { font-family: var(--f-read); font-size: .95rem; color: var(--muted); max-width: 85ch; margin: 0 0 12px; line-height: 1.6; font-weight: 400; }
+.sec-intro b, .sec-intro code { color: var(--text); font-weight: 600; }
+pre.cmd { margin: 8px 0 14px; }
+table.reg { min-width: 860px; }
+table.reg th, table.reg td { padding: 7px 8px; vertical-align: top; }
+table.reg input[type=text], table.reg select, table.reg textarea { padding: 6px 8px; font-size: .9rem; width: 100%; }
+table.reg textarea { min-height: 0; height: 58px; }
+table.reg td.fname { font-family: var(--f-mono); font-size: .85rem; padding-top: 14px; word-break: break-all; }
+table.reg td.fname small { display: block; font-family: var(--f-read); color: var(--muted); font-size: .82rem; margin-top: 3px; word-break: normal; }
+.hint { font-size: .82rem; margin-top: 4px; min-height: 1em; }
+.hint.ok { color: var(--ok); } .hint.no { color: var(--warn); }
+.field { display: grid; gap: 6px; margin-bottom: 14px; }
+.field label { font-weight: 700; font-size: .92rem; color: var(--muted); }
+.field textarea.paste { font-family: var(--f-mono); font-size: .84rem; min-height: 120px; }
+.cards { display: grid; gap: 12px; }
+.card2 { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px 14px; }
+.card2 .ch { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; margin-bottom: 8px; }
+.card2 .ch b { font-family: var(--f-mono); font-size: .9rem; word-break: break-all; }
+.card2 .ch span { color: var(--muted); font-size: .88rem; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 14px; }
+.grid2 .f { display: grid; gap: 4px; align-content: start; }
+.grid2 .f label { font-size: .86rem; font-weight: 700; color: var(--muted); }
+.grid2 .f.wide { grid-column: 1 / -1; }
+.req { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1.4fr); gap: 10px 14px; align-items: start; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px 14px; }
+@media (max-width: 860px) { .req { grid-template-columns: minmax(0, 1fr); } }
+.req .rt { font-family: var(--f-read); font-size: .95rem; line-height: 1.5; }
+.req .rt small { display: block; color: var(--muted); font-family: var(--f-mono); font-size: .76rem; letter-spacing: 1px; margin-bottom: 4px; }
+.sumgrid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 860px) { .sumgrid { grid-template-columns: minmax(0, 1fr); } }
+.sumgrid textarea { min-height: 220px; }
+.sumgrid ul { margin: 0; padding-left: 18px; font-family: var(--f-read); font-size: .92rem; color: #dcdce4; line-height: 1.55; font-weight: 400; }
+.sumgrid li { margin-bottom: 5px; }
+.wc { font-size: .9rem; color: var(--muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
+.wc.ok { color: var(--ok); }
+.confirm { margin-top: 12px; border-color: var(--line); }
+.confirm:focus { outline: none; }
+.confirm h3 { font-family: var(--f-body); font-size: 1.2rem; text-transform: none; letter-spacing: .2px; color: var(--text); font-weight: 700; }
+.checks { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 4px; }
+.checks li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line-soft); font-size: .97rem; }
+.checks li .r { font-weight: 700; white-space: nowrap; }
+.checks li.ok .r { color: var(--ok); } .checks li.short .r { color: var(--warn); }
+.confirm p { font-family: var(--f-read); font-size: .95rem; color: #dcdce4; font-weight: 400; margin: 0 0 12px; }
+.confirm .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.grade { border-color: rgba(51, 209, 122, .45); margin-bottom: 18px; }
+.grade .gtop { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.grade .score span { font-size: 1rem; color: var(--muted); }
+.grade table.cc td.pts { white-space: nowrap; font-weight: 700; text-align: right; }
+.grade table.cc td .d { color: var(--muted); font-size: .88rem; }
+.grade .fb { font-family: var(--f-read); font-size: .95rem; font-weight: 400; color: #dcdce4; white-space: pre-wrap; margin-top: 12px; line-height: 1.6; }
+.grade .gby { font-size: .85rem; color: var(--muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+<header id="cc-top"></header>
+<main class="cc-main" id="page"><div class="empty">Loading the project...</div></main>
+<script>
+(function () {
+  CC.header('week');
+  var M = window.MOCK_W2;
+  var esc = CC.esc;
+  var page = document.getElementById('page');
+  if (!M) { page.innerHTML = '<div class="empty">The project data (course-w2-mock.js) did not load. Refresh the page.</div>'; return; }
+
+  var me = CC.student();
+  var LKEY = 'cc_mock_w2_' + (me.key || 'preview');
+  var PATH = 'mccoe_mockproj/' + me.key + '/w2';
+  var WEEK = ((window.COURSE && COURSE.weeks) || []).filter(function (w) { return w.num === 2; })[0] || {};
+  var RUBRIC = (WEEK.mock && WEEK.mock.rubric) || M.rubric || [];
+  var PART1_BLOCK = 'w2d1-b8', PART2_BLOCK = 'w2d2-b5';
+  var T = { findings: 60, procedure: 150 };
+
+  var S = null;
+  var meta = { status: 'draft', submittedAt: null, submitCount: 0, changedSinceSubmit: false, savedAt: null, grade: null };
+  var part1Done = false, remoteOk = false, saveT = null;
+
+  // ---------- storage ----------
+  function readLocal() { try { return JSON.parse(localStorage.getItem(LKEY) || 'null'); } catch (e) { return null; } }
+  function writeLocal(rec) { try { localStorage.setItem(LKEY, JSON.stringify(rec)); } catch (e) {} }
+  function fetchRemote() {
+    if (!CC.online) return Promise.resolve({ ok: false, val: null });
+    return new Promise(function (res) {
+      var settled = false;
+      var t = setTimeout(function () { if (!settled) { settled = true; res({ ok: false, val: null }); } }, 8000);
+      CC.db.ref(PATH).once('value').then(function (s) {
+        if (settled) return; settled = true; clearTimeout(t); res({ ok: true, val: s.val() });
+      }, function () {
+        if (settled) return; settled = true; clearTimeout(t); res({ ok: false, val: null });
+      });
+    });
+  }
+  function str(v) { return v == null ? '' : String(v); }
+  function obj(src, fields) { var o = {}; src = src || {}; fields.forEach(function (f) { o[f] = str(src[f]); }); return o; }
+  var FILE_F = ['hash', 'status', 'note'], SDX_F = ['today', 'meets', 'fix'], REQ_F = ['tool', 'why'];
+  var KEY_F = ['fpr', 'match', 'use', 'why'], CERT_F = ['cn', 'issuer', 'notAfter', 'verify', 'trust', 'why'];
+  // Firebase keys cannot contain dots, so files are stored by index (f0..f3).
+  function normData(d) {
+    d = d || {};
+    var out = { files: {}, sdx: {}, methods: {}, keys: {}, certs: {} };
+    M.files.forEach(function (f, i) { out.files['f' + i] = obj((d.files || {})['f' + i], FILE_F); });
+    M.sdx.forEach(function (x) { out.sdx[x.id] = obj((d.sdx || {})[x.id], SDX_F); });
+    M.requirements.forEach(function (r) { out.methods[r.id] = obj((d.methods || {})[r.id], REQ_F); });
+    M.keyFiles.forEach(function (k) { out.keys[k.id] = obj((d.keys || {})[k.id], KEY_F); });
+    M.certFiles.forEach(function (c) { out.certs[c.id] = obj((d.certs || {})[c.id], CERT_F); });
+    ['manifestSig', 'evidence1', 'trialOut', 'findings', 'procedure'].forEach(function (k) { out[k] = str(d[k]); });
+    return out;
+  }
+
+  function setSave(state, at) {
+    var el = document.getElementById('saved');
+    if (!el) return;
+    var t = at ? ' ' + clock(at) : '';
+    el.className = 'saved' + (state === 'err' ? ' err' : '');
+    el.textContent = state === 'pending' ? 'Saving...' :
+      state === 'ok' ? 'Saved' + t :
+      state === 'local' ? 'Saved on this computer' + t :
+      state === 'err' ? 'Could not reach the server. Saved on this computer' + t + '.' : '';
+  }
+  function persist() {
+    clearTimeout(saveT); saveT = null;
+    var now = new Date().toISOString();
+    meta.savedAt = now;
+    var payload = {
+      name: me.name || null, id: me.id || null,
+      status: meta.status, savedAt: now,
+      submittedAt: meta.submittedAt || null,
+      submitCount: meta.submitCount || 0,
+      changedSinceSubmit: !!meta.changedSinceSubmit,
+      data: JSON.parse(JSON.stringify(S))
+    };
+    var localRec = JSON.parse(JSON.stringify(payload));
+    localRec.grade = meta.grade || null;
+    writeLocal(localRec);
+    if (CC.online && remoteOk) {
+      return CC.db.ref(PATH).update(payload).then(function () { setSave('ok', now); }, function () { setSave('err', now); });
+    }
+    setSave('local', now);
+    return Promise.resolve();
+  }
+  function changed() {
+    if (meta.status === 'submitted') meta.changedSinceSubmit = true;
+    setSave('pending');
+    clearTimeout(saveT);
+    saveT = setTimeout(persist, 900);
+    refresh();
+  }
+  function flush() { if (saveT) persist(); }
+  window.addEventListener('pagehide', flush);
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flush(); });
+
+  // ---------- helpers ----------
+  function clock(iso) { try { return new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); } catch (e) { return ''; } }
+  function when(iso) { try { return new Date(iso).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); } catch (e) { return iso || ''; } }
+  function words(s) { var m = String(s || '').trim().match(/\S+/g); return m ? m.length : 0; }
+  function filled(v) { return String(v || '').trim() !== ''; }
+  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+  function opts(values, val, ph) {
+    return '<option value="">' + esc(ph) + '</option>' + values.map(function (o) { return '<option value="' + esc(o) + '"' + (o === val ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('');
+  }
+  function at(g, id, f, label) { return ' data-g="' + g + '" data-id="' + id + '" data-f="' + f + '" aria-label="' + esc(label) + '"'; }
+  function inp(g, id, f, val, label, ph) { return '<input type="text"' + at(g, id, f, label) + ' value="' + esc(val) + '"' + (ph ? ' placeholder="' + esc(ph) + '"' : '') + ' spellcheck="false">'; }
+  function ta(g, id, f, val, label, ph, cls) { return '<textarea' + (cls ? ' class="' + cls + '"' : '') + at(g, id, f, label) + (ph ? ' placeholder="' + esc(ph) + '"' : '') + ' spellcheck="' + (cls === 'paste' ? 'false' : 'true') + '">' + esc(val) + '</textarea>'; }
+  function sel(g, id, f, values, val, label, ph) { return '<select' + at(g, id, f, label) + '>' + opts(values, val, ph) + '</select>'; }
+  function hex(s) { return String(s || '').toLowerCase().replace(/[^0-9a-f]/g, ''); }
+  var ACTUAL = {};
+  M.files.forEach(function (f, i) { ACTUAL['f' + i] = M.key.files[f].actual; });
+  var FPRS = [M.key.keys.k1.fpr, M.key.keys.k2.fpr].map(hex);
+  function hashHint(id) {
+    var v = hex(S.files[id].hash);
+    if (!v) return ['', ''];
+    if (v.length !== 64) return ['no', 'A SHA-256 hash is 64 hex characters; this one has ' + v.length + '.'];
+    return v === ACTUAL[id] ? ['ok', 'Matches this file in the lab pack.'] : ['no', 'Does not match this file in the lab pack. Run sha256sum again and copy the whole hash.'];
+  }
+  function fprHint(id) {
+    var v = hex(S.keys[id].fpr);
+    if (!v) return ['', ''];
+    if (v.length !== 40) return ['no', 'A key fingerprint is 40 hex characters; this one has ' + v.length + '.'];
+    return FPRS.indexOf(v) >= 0 ? ['ok', 'This is the fingerprint of a key in exchange/keys.'] : ['no', 'This does not match either key in exchange/keys. Check what you copied.'];
+  }
+  function paintHint(elId, h) { var el = document.getElementById(elId); if (el) { el.className = 'hint ' + h[0]; el.textContent = h[1]; } }
+
+  // ---------- counts ----------
+  function counts() {
+    var c = {};
+    c.hashes = Object.keys(S.files).filter(function (k) { return hashHint(k)[0] === 'ok'; }).length;
+    c.status = Object.keys(S.files).filter(function (k) { return S.files[k].status; }).length;
+    c.sdx = Object.keys(S.sdx).filter(function (k) { return S.sdx[k].meets && filled(S.sdx[k].fix); }).length;
+    c.methods = Object.keys(S.methods).filter(function (k) { return S.methods[k].tool; }).length;
+    c.methodsWhy = Object.keys(S.methods).filter(function (k) { return S.methods[k].tool && filled(S.methods[k].why); }).length;
+    c.keys = Object.keys(S.keys).filter(function (k) { return S.keys[k].use && filled(S.keys[k].fpr); }).length;
+    c.certs = Object.keys(S.certs).filter(function (k) { return S.certs[k].trust && S.certs[k].verify; }).length;
+    c.trial = filled(S.trialOut);
+    c.fw = words(S.findings);
+    c.pw = words(S.procedure);
+    return c;
+  }
+  function part1Ready(c) { return c.status >= 4 && !!S.manifestSig && c.methods >= 3; }
+
+  function refresh() {
+    if (!S) return;
+    var c = counts();
+    var steps = [
+      [c.status >= 4 && c.hashes >= 4 && !!S.manifestSig, c.hashes + ' of 4 hashes'],
+      [c.sdx >= 5, c.sdx + ' of 5 rules'],
+      [c.methodsWhy >= 6, c.methodsWhy + ' of 6 with reasons'],
+      [c.keys >= 2 && c.certs >= 3, (c.keys + c.certs) + ' of 5 decisions'],
+      [c.trial, c.trial ? 'Output pasted' : 'Not yet'],
+      [meta.status === 'submitted', meta.status === 'submitted' ? (meta.submitCount > 1 ? 'Resubmitted' : 'Submitted') : c.pw + ' words, not submitted']
+    ];
+    steps.forEach(function (s, i) {
+      var li = document.getElementById('st-' + (i + 1));
+      if (!li) return;
+      li.className = s[0] ? 'ok' : '';
+      li.querySelector('small').textContent = s[1];
+    });
+    var fw = document.getElementById('wc-findings'), pw = document.getElementById('wc-procedure');
+    if (fw) { fw.textContent = plural(c.fw, 'word', 'words') + ' (aim for ' + T.findings + ' to 150)'; fw.className = 'wc' + (c.fw >= T.findings ? ' ok' : ''); }
+    if (pw) { pw.textContent = plural(c.pw, 'word', 'words') + ' (aim for ' + T.procedure + ' to 350)'; pw.className = 'wc' + (c.pw >= T.procedure ? ' ok' : ''); }
+    var b1 = document.getElementById('btn-p1'), s1 = document.getElementById('p1stat');
+    if (b1 && s1) {
+      if (part1Done) { b1.disabled = true; b1.textContent = 'Part 1 finished'; s1.textContent = 'Done. On Day 2, pick up at section 4.'; }
+      else {
+        b1.disabled = !part1Ready(c); b1.textContent = 'Finish part 1';
+        s1.textContent = 'Files checked: ' + c.status + ' of 4. Manifest signature: ' + (S.manifestSig ? 'recorded' : 'not yet') + '. Requirements answered: ' + c.methods + ' of 6 (need 3).';
+      }
+    }
+    renderStatus();
+  }
+
+  function renderStatus() {
+    var pill = document.getElementById('stat-pill'), btn = document.getElementById('btn-submit'), line = document.getElementById('sub-line');
+    var t, cls;
+    if (meta.status === 'submitted') {
+      t = (meta.submitCount > 1 ? 'Resubmitted ' : 'Submitted ') + when(meta.submittedAt); cls = 'pill sub';
+      if (meta.changedSinceSubmit) { t += ' - changes not resubmitted'; cls = 'pill warn'; }
+    } else { t = 'Draft'; cls = 'pill'; }
+    if (pill) { pill.textContent = t; pill.className = cls; }
+    if (btn) btn.textContent = meta.status === 'submitted' ? 'Resubmit for grading' : 'Submit for grading';
+    if (line) {
+      line.textContent = meta.status !== 'submitted' ? 'Due end of Day 2. You can keep editing after you submit.'
+        : meta.changedSinceSubmit ? 'You changed your work after submitting. Resubmit so your instructor knows the latest version is ready.'
+        : 'Your work is in. You can still edit it and resubmit before it is graded.';
+    }
+  }
+
+  // ---------- grade ----------
+  function list(x) { if (!x) return []; if (Array.isArray(x)) return x; return Object.keys(x).sort(function (a, b) { return a - b; }).map(function (k) { return x[k]; }); }
+  function renderGrade() {
+    var el = document.getElementById('grade'), g = meta.grade;
+    if (!g || g.score == null) { el.hidden = true; el.innerHTML = ''; return; }
+    var rub = list(g.rubric);
+    var rows = RUBRIC.map(function (r, i) { return '<tr><td><b>' + esc(r[0]) + '</b><div class="d">' + esc(r[1]) + '</div></td><td class="pts">' + esc(rub[i] == null ? '-' : rub[i]) + ' / 5</td></tr>'; }).join('');
+    var after = meta.submittedAt && g.gradedAt && meta.submittedAt > g.gradedAt;
+    el.innerHTML = '<div class="gtop"><h3>Your grade</h3><div class="score">' + esc(g.score) + ' <span>/ ' + esc(g.max || 25) + '</span></div></div>' +
+      (rows ? '<div class="table-wrap" style="margin-top:8px"><table class="cc">' + rows + '</table></div>' : '') +
+      (g.feedback ? '<div class="fb">' + esc(g.feedback) + '</div>' : '') +
+      '<div class="gby">' + (g.gradedBy ? 'Graded by ' + esc(g.gradedBy) : 'Graded') + (g.gradedAt ? ' on ' + esc(when(g.gradedAt)) : '') + '.' +
+      (after ? ' You resubmitted after this grade; your instructor will see the new version.' : '') + '</div>';
+    el.hidden = false;
+  }
+
+  // ---------- submit ----------
+  function checks() {
+    var c = counts();
+    return [
+      ['All 4 files hashed and checked', c.hashes >= 4 && c.status >= 4, c.hashes + ' / 4'],
+      ['Manifest signature recorded', !!S.manifestSig, S.manifestSig ? 'Done' : 'Missing'],
+      ['All 5 SDX-2 rules compared', c.sdx >= 5, c.sdx + ' / 5'],
+      ['All 6 requirements with a tool and a reason', c.methodsWhy >= 6, c.methodsWhy + ' / 6'],
+      ['Both keys and all 3 certificates decided', c.keys >= 2 && c.certs >= 3, (c.keys + c.certs) + ' / 5'],
+      ['Trial run output pasted', c.trial, c.trial ? 'Done' : 'Missing'],
+      ['Findings (' + T.findings + '+ words)', c.fw >= T.findings, c.fw + ' words'],
+      ['Procedure (' + T.procedure + '+ words)', c.pw >= T.procedure, c.pw + ' words']
+    ];
+  }
+  function showConfirm() {
+    var cl = checks(), allOk = cl.every(function (x) { return x[1]; });
+    var el = document.getElementById('confirm');
+    el.innerHTML = '<h3 id="cf-h">' + (meta.status === 'submitted' ? 'Resubmit your project?' : 'Check before you submit') + '</h3>' +
+      '<ul class="checks">' + cl.map(function (x) { return '<li class="' + (x[1] ? 'ok' : 'short') + '"><span>' + esc(x[0]) + '</span><span class="r">' + (x[1] ? 'Met' : 'Short') + ': ' + esc(x[2]) + '</span></li>'; }).join('') + '</ul>' +
+      '<p>' + (allOk ? 'Everything meets the minimums. Your instructor grades it with the 5-part rubric (25 points). You can still edit and resubmit afterward.'
+        : 'Some items are below the minimum. You can keep working on them, or submit now and your instructor will grade what is there.') + '</p>' +
+      '<div class="btns"><button type="button" class="btn primary" data-act="confirm-submit">' + (allOk ? (meta.status === 'submitted' ? 'Resubmit' : 'Submit for grading') : 'Submit anyway') + '</button>' +
+      '<button type="button" class="btn ghost" data-act="cancel-submit">Keep working</button></div>';
+    el.hidden = false; el.focus(); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function doSubmit() {
+    var again = meta.status === 'submitted';
+    meta.status = 'submitted'; meta.submittedAt = new Date().toISOString();
+    meta.submitCount = (meta.submitCount || 0) + 1; meta.changedSinceSubmit = false;
+    document.getElementById('confirm').hidden = true;
+    persist().then(function () { CC.toast(again ? 'Resubmitted. Your instructor will grade the latest version.' : 'Submitted for grading. Nice work.'); });
+    CC.markDone(PART2_BLOCK);
+    if (!part1Done && part1Ready(counts())) { part1Done = true; CC.markDone(PART1_BLOCK); }
+    refresh();
+    document.getElementById('btn-submit').focus();
+  }
+  function finishPart1() {
+    if (!part1Ready(counts())) return;
+    part1Done = true; flush(); CC.markDone(PART1_BLOCK);
+    CC.toast('Part 1 done. On Day 2, pick up at section 4.');
+    refresh();
+  }
+
+  // ---------- page ----------
+  function cmdBlock(lines) { var t = lines.join('\n'); return '<pre class="cmd" data-cmd="' + esc(t) + '">' + esc(t) + '</pre>'; }
+  function shell() {
+    var rubric = RUBRIC.length ? '<details class="more"><summary>How this is graded (25 points)</summary><ol>' + RUBRIC.map(function (r) { return '<li><b>' + esc(r[0]) + ' (5 pts):</b> ' + esc(r[1]) + '</li>'; }).join('') + '</ol></details>' : '';
+    var steps = [['s1', 'Verify the release'], ['s2', 'Today vs SDX-2'], ['s3', 'Right tool'], ['s4', 'Keys & certificates'], ['s5', 'Trial run'], ['s6', 'Findings & procedure']];
+    var h = '<div class="crumb"><a href="' + esc(CC.link('MCCoE_Home.html?week=2')) + '">Week 2</a> &rsaquo; Mock Secure File Exchange</div>' +
+      '<h1 class="cc-h1">Mock Secure File Exchange</h1>' +
+      '<div class="sub">Cedar Creek Industries &middot; Week 2 mock hands-on project &middot; 25 points</div>' +
+      '<div class="statline"><span class="chip c-mock">Mock project</span><span class="pill" id="stat-pill">Draft</span><span class="saved" id="saved" aria-live="polite"></span></div>' +
+      (me.key ? '' : '<div class="preview-note">Preview mode: you are not signed in, so your work saves only in this browser. Open this page from the Hub to save it to your account.</div>') +
+      '<section class="box grade" id="grade" hidden aria-label="Your grade"></section>' +
+      '<div class="box brief"><div class="from">From: Marcus Reyes, IT Manager</div><div class="prose">' + M.brief.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') + '</div>' + rubric + '</div>' +
+      '<ol class="steps6" aria-label="Project steps">' + steps.map(function (s, i) {
+        return '<li id="st-' + (i + 1) + '"><a href="#' + s[0] + '"><span class="sn">' + (i + 1) + '</span><span class="st"><b>' + esc(s[1]) + '</b><small></small></span></a></li>';
+      }).join('') + '</ol>' +
+      '<div class="p1bar"><div><b>Part 1 (Day 1):</b> sections 1 to 3. <span class="muted" id="p1stat"></span></div><button type="button" class="btn" id="btn-p1" data-act="finish1" disabled>Finish part 1</button></div>';
+
+    // Part 1
+    h += '<div class="part">Part 1 &middot; Day 1</div>';
+    h += '<section class="sec" id="s1"><div class="sec-h"><h2 class="cc-h2">1. Verify the release</h2></div>' +
+      '<p class="sec-intro">Priya copied the CCD-3318 Rev C package from <code>\\\\ENG-FS01\\Transfer</code>. Tom signed <code>MANIFEST.sha256</code> when he released it. Hash every file, check the files against the manifest, and check Tom\'s signature on the manifest. You imported Tom\'s key in Lab 2.3.</p>' +
+      cmdBlock(['cd ~/labs/cedarcreek-week2/exchange/release/CCD-3318_RevC', 'cat ../release_signoff.txt', 'sha256sum *.pdf *.step *.csv', 'sha256sum -c MANIFEST.sha256', 'gpg --verify MANIFEST.sha256.asc MANIFEST.sha256']) +
+      '<div class="table-wrap"><table class="cc reg"><colgroup><col style="width:22%"><col style="width:38%"><col style="width:14%"><col></colgroup>' +
+      '<thead><tr><th scope="col">File</th><th scope="col">SHA-256 you calculated</th><th scope="col">Manifest check</th><th scope="col">Note</th></tr></thead><tbody>' +
+      M.files.map(function (f, i) {
+        var id = 'f' + i, r = S.files[id];
+        return '<tr><td class="fname">' + esc(f) + '</td><td>' + inp('files', id, 'hash', r.hash, f + ': SHA-256', 'Paste the 64-character hash') + '<div class="hint" id="hh-' + id + '"></div></td>' +
+          '<td>' + sel('files', id, 'status', ['OK', 'FAILED'], r.status, f + ': manifest check', 'Result...') + '</td>' +
+          '<td>' + ta('files', id, 'note', r.note, f + ': note', 'Anything you noticed') + '</td></tr>';
+      }).join('') + '</tbody></table></div>' +
+      '<div class="grid2" style="margin-top:12px"><div class="f"><label for="msig">Tom\'s signature on MANIFEST.sha256</label><select id="msig" data-g="root" data-id="manifestSig" data-f="v">' +
+        opts(['Good signature from Tom Becker', 'BAD signature', 'No public key / could not check'], S.manifestSig, 'Result...') + '</select></div>' +
+      '<div class="f wide"><label for="ev1">Paste the output of sha256sum -c and gpg --verify</label><textarea class="paste" id="ev1" data-g="root" data-id="evidence1" data-f="v" spellcheck="false" style="font-family:var(--f-mono);font-size:.84rem;min-height:120px">' + esc(S.evidence1) + '</textarea></div></div></section>';
+
+    h += '<section class="sec" id="s2"><div class="sec-h"><h2 class="cc-h2">2. Today vs Halvorsen\'s rules</h2></div>' +
+      '<p class="sec-intro">Read <code>memos/halvorsen_sdx2.txt</code> and Priya\'s <code>memos/how_we_send_drawings_today.txt</code>. For each SDX-2 rule, describe what Cedar Creek does today, say whether that meets the rule, and write the fix. This is a gap analysis, like the Week 1 audit.</p>' +
+      cmdBlock(['cat ~/labs/cedarcreek-week2/memos/halvorsen_sdx2.txt', 'cat ~/labs/cedarcreek-week2/memos/how_we_send_drawings_today.txt']) +
+      '<div class="table-wrap"><table class="cc reg"><colgroup><col style="width:24%"><col style="width:30%"><col style="width:12%"><col></colgroup>' +
+      '<thead><tr><th scope="col">SDX-2 rule</th><th scope="col">What Cedar Creek does today</th><th scope="col">Meets it?</th><th scope="col">Fix</th></tr></thead><tbody>' +
+      M.sdx.map(function (x) {
+        var r = S.sdx[x.id];
+        return '<tr><td class="fname" style="font-family:var(--f-read)"><b>' + esc(x.rule) + '</b><small>' + esc(x.text) + '</small></td>' +
+          '<td>' + ta('sdx', x.id, 'today', r.today, x.rule + ': today', 'From Priya\'s memo') + '</td>' +
+          '<td>' + sel('sdx', x.id, 'meets', ['Yes', 'Partly', 'No'], r.meets, x.rule + ': meets the rule?', 'Choose...') + '</td>' +
+          '<td>' + ta('sdx', x.id, 'fix', r.fix, x.rule + ': fix', 'What should change') + '</td></tr>';
+      }).join('') + '</tbody></table></div></section>';
+
+    h += '<section class="sec" id="s3"><div class="sec-h"><h2 class="cc-h2">3. Pick the right tool for each job</h2></div>' +
+      '<p class="sec-intro">Marcus wants to be sure everyone understands why each step exists. For each requirement, choose the tool that meets it and explain in a sentence or two how it does. Some tools fit none of the requirements.</p>' +
+      '<div class="cards">' + M.requirements.map(function (q, i) {
+        var r = S.methods[q.id];
+        return '<div class="req"><div class="rt"><small>REQUIREMENT ' + (i + 1) + '</small>' + esc(q.text) + '</div>' +
+          '<div>' + sel('methods', q.id, 'tool', M.tools, r.tool, 'Requirement ' + (i + 1) + ': tool', 'Choose a tool...') + '</div>' +
+          '<div>' + ta('methods', q.id, 'why', r.why, 'Requirement ' + (i + 1) + ': why', 'How does this tool meet the requirement?') + '</div></div>';
+      }).join('') + '</div></section>';
+
+    // Part 2
+    h += '<div class="part">Part 2 &middot; Day 2</div>';
+    h += '<section class="sec" id="s4"><div class="sec-h"><h2 class="cc-h2">4. Keys and certificates: what can we trust?</h2></div>' +
+      '<p class="sec-intro">Two keys claim to be Halvorsen Supplier Data. Read <code>exchange/phone_call_notes.txt</code> and <code>exchange/email/urgent_new_key.eml</code>, import both keys, and compare fingerprints with what Halvorsen read to Tom over the phone.</p>' +
+      cmdBlock(['cd ~/labs/cedarcreek-week2/exchange', 'cat phone_call_notes.txt email/urgent_new_key.eml', 'gpg --import keys/halvorsen_supplier_data.asc keys/halvorsen_key_from_email.asc', 'gpg --fingerprint supplier-data@halvorsen-pump.com']) +
+      '<div class="cards">' + M.keyFiles.map(function (k) {
+        var r = S.keys[k.id];
+        return '<div class="card2"><div class="ch"><b>' + esc(k.file) + '</b><span>' + esc(k.note) + '</span></div><div class="grid2">' +
+          '<div class="f wide"><label>Fingerprint (as gpg prints it)</label>' + inp('keys', k.id, 'fpr', r.fpr, k.file + ': fingerprint', 'XXXX XXXX ...') + '<div class="hint" id="kh-' + k.id + '"></div></div>' +
+          '<div class="f"><label>Matches the phone note?</label>' + sel('keys', k.id, 'match', ['Yes', 'No'], r.match, k.file + ': matches the phone note', 'Choose...') + '</div>' +
+          '<div class="f"><label>Decision</label>' + sel('keys', k.id, 'use', ['Use', 'Do not use'], r.use, k.file + ': decision', 'Choose...') + '</div>' +
+          '<div class="f wide"><label>Why</label>' + ta('keys', k.id, 'why', r.why, k.file + ': why', 'The evidence for your decision') + '</div></div></div>';
+      }).join('') + '</div>' +
+      '<p class="sec-intro" style="margin-top:20px">Now the three certificates. For the portal, give openssl the Meridian Trust root as the trusted CA and the TLS CA 1 certificate as the intermediate, as in Lab 2.4. Change the file name to check each one.</p>' +
+      cmdBlock(['cd ~/labs/cedarcreek-week2/exchange/certs', 'openssl x509 -in supplier_portal.pem -noout -subject -issuer -dates -ext subjectAltName', 'openssl verify -CAfile meridian_trust_root_ca.pem -untrusted meridian_trust_tls_ca1.pem supplier_portal.pem']) +
+      '<div class="cards">' + M.certFiles.map(function (c) {
+        var r = S.certs[c.id];
+        return '<div class="card2"><div class="ch"><b>' + esc(c.file) + '</b><span>' + esc(c.note) + '</span></div><div class="grid2">' +
+          '<div class="f"><label>Subject CN</label>' + inp('certs', c.id, 'cn', r.cn, c.file + ': subject CN', '') + '</div>' +
+          '<div class="f"><label>Issuer CN</label>' + inp('certs', c.id, 'issuer', r.issuer, c.file + ': issuer CN', '') + '</div>' +
+          '<div class="f"><label>Valid until (notAfter)</label>' + inp('certs', c.id, 'notAfter', r.notAfter, c.file + ': valid until', 'YYYY-MM-DD') + '</div>' +
+          '<div class="f"><label>openssl verify result</label>' + sel('certs', c.id, 'verify', M.verifyResults, r.verify, c.file + ': verify result', 'Choose...') + '</div>' +
+          '<div class="f"><label>Decision</label>' + sel('certs', c.id, 'trust', ['Trust', 'Do not trust'], r.trust, c.file + ': decision', 'Choose...') + '</div>' +
+          '<div class="f wide"><label>Why</label>' + ta('certs', c.id, 'why', r.why, c.file + ': why', 'Dates, issuer, names, and what Halvorsen\'s rules say') + '</div></div></div>';
+      }).join('') + '</div></section>';
+
+    h += '<section class="sec" id="s5"><div class="sec-h"><h2 class="cc-h2">5. Trial run: encrypt and sign</h2></div>' +
+      '<p class="sec-intro">Do a trial run of the real process in your own work folder. Nothing gets uploaded. Package the folder, hash the package, then encrypt it to Halvorsen\'s key and sign it with your own key in one step. Two keys now share the name Halvorsen Pump Supplier Data, so name the recipient by the <b>fingerprint you verified</b>: replace VERIFIED_FINGERPRINT with it, typed without spaces. Then list the packets to prove which key the package is encrypted to. gpg will say it cannot decrypt: that is correct, because only Halvorsen holds the private key.</p>' +
+      cmdBlock(M.trialCmds) +
+      '<div class="field"><label for="trial">Paste the terminal output from sha256sum to the end of gpg --list-packets</label><textarea class="paste" id="trial" data-g="root" data-id="trialOut" data-f="v" spellcheck="false" style="font-family:var(--f-mono);font-size:.84rem;min-height:160px">' + esc(S.trialOut) + '</textarea></div></section>';
+
+    h += '<section class="sec" id="s6"><div class="sec-h"><h2 class="cc-h2">6. Findings and procedure</h2></div>' +
+      '<div class="sumgrid"><div>' +
+        '<div class="field"><label for="findings">Findings for Tom and Marcus: what you found, what it means, what should happen next</label><textarea id="findings" data-g="root" data-id="findings" data-f="v" placeholder="1. ...">' + esc(S.findings) + '</textarea><div class="wc" id="wc-findings" aria-live="polite"></div></div>' +
+        '<div class="field"><label for="procedure">Secure file exchange procedure for Engineering (numbered steps)</label><textarea id="procedure" data-g="root" data-id="procedure" data-f="v" placeholder="1. Before you send anything, ..." style="min-height:300px">' + esc(S.procedure) + '</textarea><div class="wc" id="wc-procedure" aria-live="polite"></div></div>' +
+      '</div><div class="box"><h3>Writing for engineers</h3><ul>' +
+        '<li>Priya will follow this every time. Number the steps and keep them in order.</li>' +
+        '<li>Give the actual command or the actual click for each step, and what a good result looks like.</li>' +
+        '<li>Say what to do when something fails: a FAILED hash, a BAD signature, a certificate warning.</li>' +
+        '<li>Cover the never-do list: passwords or keys in email, keys received by email, personal file sharing, the old FTP site.</li>' +
+        '<li>In the findings, lead with anything that stops this package from going out today.</li></ul></div></div>' +
+      '<div class="done-bar"><div><b>Ready to turn it in?</b><div class="sub" id="sub-line"></div></div><button type="button" class="btn primary" id="btn-submit" data-act="submit">Submit for grading</button></div>' +
+      '<div class="box confirm" id="confirm" tabindex="-1" role="region" aria-labelledby="cf-h" hidden></div></section>';
+    return h;
+  }
+
+  function paintHints() {
+    Object.keys(S.files).forEach(function (id) { paintHint('hh-' + id, hashHint(id)); });
+    Object.keys(S.keys).forEach(function (id) { paintHint('kh-' + id, fprHint(id)); });
+  }
+  function render() {
+    page.innerHTML = shell();
+    CC.copyButtons(page);
+    paintHints();
+    renderGrade();
+    refresh();
+  }
+
+  // ---------- events ----------
+  function onEdit(e) {
+    var el = e.target, g = el.getAttribute && el.getAttribute('data-g');
+    if (!g || !S) return;
+    var id = el.getAttribute('data-id'), f = el.getAttribute('data-f');
+    if (g === 'root') { if (S[id] === el.value) return; S[id] = el.value; }
+    else { if (!S[g] || !S[g][id] || S[g][id][f] === el.value) return; S[g][id][f] = el.value; }
+    if (g === 'files' && f === 'hash') paintHint('hh-' + id, hashHint(id));
+    if (g === 'keys' && f === 'fpr') paintHint('kh-' + id, fprHint(id));
+    changed();
+  }
+  page.addEventListener('input', onEdit);
+  page.addEventListener('change', onEdit);
+  page.addEventListener('click', function (e) {
+    if (!S) return;
+    var b = e.target.closest && e.target.closest('[data-act]');
+    if (!b) return;
+    var act = b.getAttribute('data-act');
+    if (act === 'finish1') finishPart1();
+    else if (act === 'submit') showConfirm();
+    else if (act === 'confirm-submit') doSubmit();
+    else if (act === 'cancel-submit') { document.getElementById('confirm').hidden = true; document.getElementById('btn-submit').focus(); }
+  });
+
+  // ---------- start ----------
+  Promise.all([fetchRemote(), CC.load().catch(function () { return {}; })]).then(function (res) {
+    var remote = res[0], course = res[1] || {};
+    remoteOk = remote.ok;
+    var r = remote.val, l = readLocal();
+    var rec = r || l, pushLocal = false;
+    if (r && l && (l.savedAt || '') > (r.savedAt || '')) { rec = l; pushLocal = true; }
+    if (!r && l && remoteOk) pushLocal = true;
+    S = normData(rec && rec.data);
+    if (rec) {
+      meta.status = rec.status === 'submitted' ? 'submitted' : 'draft';
+      meta.submittedAt = rec.submittedAt || null;
+      meta.submitCount = +rec.submitCount || (rec.submittedAt ? 1 : 0);
+      meta.changedSinceSubmit = !!rec.changedSinceSubmit;
+      meta.savedAt = rec.savedAt || null;
+    }
+    meta.grade = (r && r.grade) || (rec && rec.grade) || null;
+    part1Done = !!(course.done && course.done[PART1_BLOCK]);
+    render();
+    if (meta.savedAt) setSave(remoteOk ? 'ok' : 'local', meta.savedAt);
+    if (CC.online && !remoteOk) setSave('err');
+    if (pushLocal) persist();
+    if (CC.online && remoteOk) CC.db.ref(PATH + '/grade').on('value', function (s) { meta.grade = s.val(); renderGrade(); });
+  });
+})();
+</script>
+</body>
+</html>

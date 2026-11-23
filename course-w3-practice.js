@@ -1,0 +1,160 @@
+// Week 3 practice sets. Shapes: docs/COURSE_V2.md
+// Practice ids contain "w3" so Practice.html can find this file.
+window.COURSE_PRACTICE = window.COURSE_PRACTICE || {};
+
+COURSE_PRACTICE['access-w3'] = {
+  title: 'Access Control Model Sorter',
+  kind: 'sort',
+  instructions: 'For each situation, choose the access control model it describes. Look for the clue: who makes the decision, and what the decision is based on. Aim for 90% or higher, and read every explanation.',
+  dims: [
+    { key: 'model', label: 'Model', options: ['DAC', 'MAC', 'RBAC', 'Rule-based', 'ABAC'] }
+  ],
+  items: [
+    { text: 'Tom Becker owns a project folder on a Linux server and uses chmod and chown to let Priya read it.', answers: { model: ['DAC'] },
+      why: 'The owner of the object decides who gets access. That is discretionary access control, and Linux permissions are the classic example.' },
+    { text: 'Every new engineer is added to ENG-Share-RW on day one, and that group has Modify rights on the drawings share.', answers: { model: ['RBAC'] },
+      why: 'Access follows the job role through a group. People join and leave the role; the permissions stay with the role.' },
+    { text: 'A defense contractor\'s system lets a user open a file only if the user\'s clearance is at least as high as the file\'s label. Users cannot change labels.', answers: { model: ['MAC'] },
+      why: 'Labels and clearances enforced by the system, with no owner override, define mandatory access control.' },
+    { text: 'The VPN refuses every sign-in between midnight and 5:00 AM, for every user.', answers: { model: ['Rule-based'] },
+      why: 'A global rule set by an administrator applies to everyone regardless of role. That is rule-based access control.' },
+    { text: 'Microsoft 365 allows a Confidential file to open only if the user is in Engineering, the laptop is company-managed, and the sign-in comes from the United States.', answers: { model: ['ABAC'] },
+      why: 'Several attributes of the user, the device, and the location are combined into one decision. That is attribute-based access control.' },
+    { text: 'A Windows user right-clicks a folder she created, opens Properties, and shares it with two coworkers.', answers: { model: ['DAC'] },
+      why: 'The creator and owner of the folder chooses who may use it, which is discretionary.' },
+    { text: 'A firewall checks each packet against an ordered list of allow and deny rules, ending with deny all.', answers: { model: ['Rule-based'] },
+      why: 'Access is decided by administrator-written rules that apply to all traffic, not by who owns the data or what role someone holds.' },
+    { text: 'The help desk role is allowed to reset passwords and unlock accounts. Jordan is placed in that role.', answers: { model: ['RBAC'] },
+      why: 'Rights are attached to a job function, and the person gets them by being placed in the role.' },
+    { text: 'SELinux on a server prevents the web server process from reading files labeled for the database, even though root owns both.', answers: { model: ['MAC'] },
+      why: 'SELinux enforces policy based on security labels that ordinary ownership cannot override. That is mandatory access control.' },
+    { text: 'A payroll app shows salary data only to users whose department attribute is HR or Finance and whose employment status attribute is Active.', answers: { model: ['ABAC'] },
+      why: 'The decision evaluates attributes of the user (department and status), not just a single role membership.' },
+    { text: 'The badge system lets everyone with a badge through the plant gate only during their scheduled shift hours.', answers: { model: ['Rule-based', 'ABAC'] },
+      why: 'A time-based rule applied to all badge holders is rule-based. Because the rule uses each person\'s own shift as an attribute, ABAC is also defensible.' },
+    { text: 'Customer Service representatives can view orders but cannot change prices. Pricing changes are allowed only for the Pricing Analyst role.', answers: { model: ['RBAC'] },
+      why: 'Each capability is tied to a job role. That is role-based access control, and it also supports separation of duties.' },
+    { text: 'On a shared drive with no central rules, each employee decides who can see the files they save.', answers: { model: ['DAC'] },
+      why: 'Access is left to each owner\'s discretion. It is flexible, but access tends to spread over time.' },
+    { text: 'Military documents are marked Unclassified, Confidential, Secret, or Top Secret, and access requires a matching clearance.', answers: { model: ['MAC'] },
+      why: 'Classification labels with matching clearances are the defining feature of mandatory access control.' },
+    { text: 'Zero trust policy: allow access to the HR share only from a compliant device with current patches, after MFA, with a low sign-in risk score.', answers: { model: ['ABAC'] },
+      why: 'Device health, authentication strength, and risk score are attributes weighed together. Zero trust designs usually rely on ABAC.' },
+    { text: 'All accounts are locked for 15 minutes after five failed sign-in attempts.', answers: { model: ['Rule-based'] },
+      why: 'A single rule written by an administrator applies to every account. That is rule-based.' },
+    { text: 'A new Accounts Payable clerk receives exactly the same permissions as every other AP clerk by joining the AP group.', answers: { model: ['RBAC'] },
+      why: 'Standard permissions for a job, granted by group membership, is role-based access control.' },
+    { text: 'A file\'s owner removes "Everyone" from its permissions and adds only her own team.', answers: { model: ['DAC'] },
+      why: 'The owner is changing who may access her own object. That is discretionary access control, used well.' },
+    { text: 'A cloud storage policy blocks downloads of files tagged Restricted unless the request comes from the office IP address range.', answers: { model: ['ABAC', 'Rule-based'] },
+      why: 'The decision combines an attribute of the file (its tag) with an attribute of the request (its network). ABAC fits best; because it is a single administrator rule, rule-based is also accepted.' },
+    { text: 'Engineers in the Lead Engineer role can approve drawing releases; other engineers can only submit them.', answers: { model: ['RBAC'] },
+      why: 'The approval right belongs to a role. This is RBAC, and splitting submit from approve is separation of duties.' }
+  ]
+};
+
+COURSE_PRACTICE['data-w3'] = {
+  title: 'Data Sorter: type and state',
+  kind: 'sort',
+  instructions: 'For each piece of Cedar Creek data, choose its main data type and the state it is in right now (at rest, in transit, or in use). Where two types are defensible, either earns credit. Aim for 90% or higher.',
+  dims: [
+    { key: 'type', label: 'Data type', options: ['PII', 'Health information (PHI)', 'Financial', 'Customer IP / trade secret', 'Credentials / security config', 'Internal business info', 'Public info'] },
+    { key: 'state', label: 'State', options: ['At rest', 'In transit', 'In use'] }
+  ],
+  items: [
+    { text: 'A payroll export file with SSNs and bank account numbers being uploaded to the cloud payroll service over HTTPS.', answers: { type: ['Financial', 'PII'], state: ['In transit'] },
+      why: 'Pay and bank details are financial data and the SSNs are PII. Moving across the internet, it is in transit and protected by TLS.' },
+    { text: 'Customer CAD drawings stored on ENG-FS01.', answers: { type: ['Customer IP / trade secret'], state: ['At rest'] },
+      why: 'Customers\' designs are their intellectual property, which Cedar Creek promised to protect. Stored on a server, they are at rest.' },
+    { text: 'An engineer has a customer drawing open in the CAD program, rotating the 3D model.', answers: { type: ['Customer IP / trade secret'], state: ['In use'] },
+      why: 'The drawing is being processed in memory and shown on screen, so it is in use.' },
+    { text: 'Health plan enrollment forms saved in \\\\FS-HR01\\Benefits.', answers: { type: ['Health information (PHI)'], state: ['At rest'] },
+      why: 'Health information tied to named employees is PHI. Saved on a server, it is at rest.' },
+    { text: 'FW-CORE\'s configuration backup, including VPN settings, stored in the IT$ share.', answers: { type: ['Credentials / security config'], state: ['At rest'] },
+      why: 'Firewall and VPN configuration can help an attacker take control, so it belongs with credentials and security configuration (Restricted). It is stored, so at rest.' },
+    { text: 'Rosa reviews an employee\'s personnel file on her screen, including home address and date of birth.', answers: { type: ['PII'], state: ['In use'] },
+      why: 'Home address and date of birth identify a person. Open on screen, it is in use; a privacy filter helps here.' },
+    { text: 'A released product brochure posted on the website.', answers: { type: ['Public info'], state: ['At rest'] },
+      why: 'Approved for anyone, it is public. Sitting on the web server, it is at rest.' },
+    { text: 'Last week\'s backup tapes of FS-HR01 sitting on the server room shelf.', answers: { type: ['PII', 'Financial'], state: ['At rest'] },
+      why: 'The tapes hold HR and payroll data. Stored media is data at rest, which is why backups should be encrypted and kept off-site.' },
+    { text: 'Greg Palmer\'s VPN password typed into the VPN client and sent to FW-CORE.', answers: { type: ['Credentials / security config'], state: ['In transit'] },
+      why: 'A password is a credential. While it travels to the VPN gateway it is in transit, protected by the VPN\'s encryption.' },
+    { text: 'An email to a supplier with Cedar Creek\'s confidential price list attached, on its way across the internet.', answers: { type: ['Customer IP / trade secret', 'Financial'], state: ['In transit'] },
+      why: 'Pricing is a trade secret (and financial). Moving as email, it is in transit; TLS between mail servers protects it.' },
+    { text: 'The payroll service\'s server calculates net pay for each employee during the payroll run.', answers: { type: ['Financial', 'PII'], state: ['In use'] },
+      why: 'Pay data being processed is in use. Cedar Creek relies on the processor\'s controls for this state.' },
+    { text: 'The service account passwords written in a setup notes file on DC01.', answers: { type: ['Credentials / security config'], state: ['At rest'] },
+      why: 'Stored passwords are credentials at rest. They belong in a password vault, not a text file on a share.' },
+    { text: 'An I-9 form with a copy of a driver\'s license, scanned at the copier and sent to the scan folder over the network.', answers: { type: ['PII'], state: ['In transit'] },
+      why: 'Identity documents are PII. While traveling from the copier to the share, the scan is in transit.' },
+    { text: 'A customer specification PDF stored on an engineer\'s personal USB drive in her jacket pocket.', answers: { type: ['Customer IP / trade secret'], state: ['At rest'] },
+      why: 'Customer specs are customer IP. On a USB drive it is at rest, and on an unencrypted personal drive it is unprotected if the drive is lost.' },
+    { text: 'A leave request with a doctor\'s note being read by the benefits specialist.', answers: { type: ['Health information (PHI)'], state: ['In use'] },
+      why: 'Medical information about an employee is health information. Being read on screen, it is in use.' },
+    { text: 'The holiday schedule for 2027 on the Company share.', answers: { type: ['Internal business info'], state: ['At rest'] },
+      why: 'Nothing in it is sensitive, but it is meant for staff, not the public, so it is internal business information. A folder named Company does not make it public. It is stored, so at rest.' },
+    { text: 'A VPN session carrying an engineer\'s file copy from ENG-FS01 to her home laptop.', answers: { type: ['Customer IP / trade secret'], state: ['In transit'] },
+      why: 'Drawings moving through the VPN tunnel are in transit, protected by the tunnel\'s encryption.' },
+    { text: 'Credit card numbers held only as random tokens in Cedar Creek\'s online parts store database.', answers: { type: ['Financial'], state: ['At rest'] },
+      why: 'Card data is financial (regulated by PCI DSS). Tokens in a database are at rest, and tokenization means a thief gets nothing usable.' },
+    { text: 'An SSH private key file in Dee\'s home folder on IT-ADMIN-01, with permissions 600.', answers: { type: ['Credentials / security config'], state: ['At rest'] },
+      why: 'A private key is a credential. Stored on disk it is at rest, and 600 (owner read and write only) is the right permission.' },
+    { text: 'A customer\'s purchase order with part numbers and quantities shown on a Customer Service screen.', answers: { type: ['Customer IP / trade secret', 'Financial'], state: ['In use'] },
+      why: 'Order details and pricing are commercially sensitive (trade secret or financial). On screen, they are in use.' }
+  ]
+};
+
+COURSE_PRACTICE['acro-w3a'] = {
+  title: 'Acronyms: Week 3, set A',
+  kind: 'flash',
+  items: [
+    { term: 'ACL', definition: 'Access Control List. A list attached to a file, folder, or network device that names who is allowed or denied which actions.' },
+    { term: 'DAC', definition: 'Discretionary Access Control. The owner of a file or folder decides who may use it, as with Linux permissions.' },
+    { term: 'MAC', definition: 'Mandatory Access Control. The system grants access by comparing a user\'s clearance with the data\'s label; owners cannot override it. (In networking, MAC also means a media access control address.)' },
+    { term: 'RBAC', definition: 'Role-Based Access Control. Permissions are given to roles or groups, and people get access by being placed in a role.' },
+    { term: 'PAM', definition: 'Privileged Access Management. Tools and practices that vault, rotate, grant just in time, and record the use of admin and service credentials.' },
+    { term: 'SSO', definition: 'Single Sign-On. Authenticate once, then use many applications without signing in again.' },
+    { term: 'IdP', definition: 'Identity Provider. The system that authenticates a user and vouches for them to other applications in single sign-on or federation.' },
+    { term: 'SAML', definition: 'Security Assertion Markup Language. An XML standard for sending a signed statement from an identity provider to an application, used for enterprise web SSO.' },
+    { term: 'OAuth', definition: 'Open Authorization. A standard that gives one application a limited access token to act for you in another, without sharing your password. Authorization, not authentication.' },
+    { term: 'LDAP', definition: 'Lightweight Directory Access Protocol. The protocol used to search and update a directory such as Active Directory.' },
+    { term: 'LDAPS', definition: 'LDAP Secure. LDAP protected by TLS encryption, so directory queries and passwords are not sent in clear text.' },
+    { term: 'KDC', definition: 'Key Distribution Center. The Kerberos service on a domain controller that issues tickets proving a user\'s identity.' },
+    { term: 'TGT', definition: 'Ticket Granting Ticket. The Kerberos ticket a user receives after signing in, used to request tickets for other services.' },
+    { term: 'NTLM', definition: 'New Technology LAN Manager. An older Microsoft challenge-response authentication protocol, weaker than Kerberos and still found on many networks.' },
+    { term: 'RADIUS', definition: 'Remote Authentication Dial-In User Service. A protocol that lets VPNs, Wi-Fi, and network devices send sign-in checks to a central AAA server.' },
+    { term: 'TACACS+', definition: 'Terminal Access Controller Access-Control System Plus. A Cisco-developed AAA protocol, common for administrator logins to network devices, that can authorize and log each command.' },
+    { term: 'OTP', definition: 'One-Time Password. A code that works once or for a short time, used as a second factor.' },
+    { term: 'TOTP', definition: 'Time-Based One-Time Password. An authenticator app code calculated from a shared secret and the current time, changing about every 30 seconds.' },
+    { term: 'HOTP', definition: 'HMAC-Based One-Time Password. A one-time code calculated from a shared secret and a counter that increases each time a code is used.' },
+    { term: 'CAC', definition: 'Common Access Card. The US Department of Defense smart card used for building access and certificate-based sign-in with a PIN.' }
+  ]
+};
+
+COURSE_PRACTICE['acro-w3b'] = {
+  title: 'Acronyms: Week 3, set B',
+  kind: 'flash',
+  items: [
+    { term: 'PIV', definition: 'Personal Identity Verification. The smart card standard used across US federal agencies for sign-in and building access.' },
+    { term: 'PAP', definition: 'Password Authentication Protocol. An old protocol that sends the password in clear text. Avoid it.' },
+    { term: 'CHAP', definition: 'Challenge Handshake Authentication Protocol. Proves knowledge of a password by answering a challenge, so the password itself is not sent.' },
+    { term: 'MSCHAP', definition: 'Microsoft Challenge Handshake Authentication Protocol. Microsoft\'s version of CHAP, with known weaknesses; avoid it unless protected inside another encrypted tunnel.' },
+    { term: 'EAP', definition: 'Extensible Authentication Protocol. A framework that carries many sign-in methods (passwords, certificates, tokens) for Wi-Fi and network access.' },
+    { term: 'PEAP', definition: 'Protected Extensible Authentication Protocol. Wraps EAP inside a TLS tunnel so the inner sign-in is encrypted.' },
+    { term: 'GPO', definition: 'Group Policy Object. A set of Active Directory settings, such as password and lockout rules, pushed to many computers and users at once.' },
+    { term: 'SELinux', definition: 'Security-Enhanced Linux. A Linux security module that enforces mandatory access control using labels on files and processes.' },
+    { term: 'NTFS', definition: 'New Technology File System. The Windows file system, which stores an access control list on every file and folder.' },
+    { term: 'SIM', definition: 'Subscriber Identity Module. The card that ties a phone number to a phone. SIM swapping moves a victim\'s number to an attacker, which defeats SMS codes.' },
+    { term: 'SMS', definition: 'Short Message Service. Text messaging. SMS one-time codes are the weakest common MFA method.' },
+    { term: 'DLP', definition: 'Data Loss Prevention. Tools that recognize sensitive data and alert on or block it leaving through USB drives, email, or cloud sharing.' },
+    { term: 'PHI', definition: 'Protected Health Information. Health information linked to an identifiable person.' },
+    { term: 'GDPR', definition: 'General Data Protection Regulation. The European Union\'s privacy law, giving people rights over their personal data and requiring breach notification.' },
+    { term: 'DPO', definition: 'Data Protection Officer. The person who oversees an organization\'s privacy compliance, required for some organizations under GDPR.' },
+    { term: 'PCI DSS', definition: 'Payment Card Industry Data Security Standard. The card brands\' rules for any business that stores, processes, or transmits payment card data.' },
+    { term: 'CASB', definition: 'Cloud Access Security Broker. A tool between users and cloud services that enforces security policy, such as blocking risky sharing links.' },
+    { term: 'BYOD', definition: 'Bring Your Own Device. A policy that lets staff use personal phones or laptops for work, which raises data protection questions.' },
+    { term: 'ZTA', definition: 'Zero Trust Architecture. A design where every request is checked by identity, device, and context, with no automatic trust for being on the internal network.' },
+    { term: 'ISSO', definition: 'Information Systems Security Officer. The person responsible for the security of a specific information system, common in government settings.' }
+  ]
+};

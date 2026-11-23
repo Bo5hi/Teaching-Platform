@@ -1,0 +1,31 @@
+id,ip,host,port,proto,severity,cvss,cve,exploit,finding,solution
+1001,10.40.2.57,PLANT-PC-07,445,tcp,High,8.1,CVE-2017-0144,yes,MS17-010 SMBv1 remote code execution (EternalBlue),Apply Microsoft update MS17-010 and disable SMBv1
+1002,10.40.2.57,PLANT-PC-07,3389,tcp,Critical,9.8,CVE-2019-0708,yes,Remote Desktop Services remote code execution (BlueKeep),Apply the May 2019 Microsoft update; disable RDP or require Network Level Authentication
+1003,10.40.2.57,PLANT-PC-07,0,tcp,Critical,10.0,,no,Microsoft Windows 7 unsupported version detected,Upgrade to a supported operating system or isolate the host
+1004,10.40.2.57,PLANT-PC-07,445,tcp,Medium,5.3,,no,SMB version 1 protocol enabled,Disable SMBv1
+1005,10.30.4.22,ENG-APP02,0,tcp,Critical,10.0,,no,Microsoft Windows Server 2012 R2 unsupported version detected,Upgrade to a supported operating system or isolate the host
+1006,10.30.4.22,ENG-APP02,445,tcp,Medium,5.3,,no,SMB signing not required,Require SMB signing by Group Policy
+1007,10.30.4.22,ENG-APP02,3389,tcp,Medium,6.5,,no,TLS 1.0 enabled on Remote Desktop,Disable TLS 1.0 and TLS 1.1
+1008,10.20.6.15,FS-HR01,445,tcp,High,8.8,CVE-2021-34527,yes,Windows Print Spooler remote code execution (PrintNightmare),Apply the July 2021 Microsoft update; stop and disable the Print Spooler service if the server does not print
+1009,10.20.6.15,FS-HR01,445,tcp,Medium,5.3,,no,SMB signing not required,Require SMB signing by Group Policy
+1010,10.30.4.10,ENG-FS01,445,tcp,Medium,5.3,,no,SMB signing not required,Require SMB signing by Group Policy
+1011,10.10.1.10,DC01,0,icmp,Low,2.1,CVE-1999-0524,no,ICMP timestamp request remote date disclosure,Block ICMP timestamp requests at the host firewall
+1012,10.10.1.10,DC01,0,tcp,Info,0.0,,no,Print Spooler service running on a domain controller,Disable the Print Spooler service on domain controllers
+1013,10.99.0.15,NVR-01,80,tcp,Critical,9.8,,yes,Web admin login accepts default credentials (admin with a blank password),Set a strong unique admin password; allow the web interface only from the management network
+1014,10.99.0.15,NVR-01,443,tcp,High,7.5,CVE-2014-0160,yes,OpenSSL heartbeat information disclosure (Heartbleed),Update the recorder firmware; ask the vendor for a fixed version
+1015,10.99.0.15,NVR-01,80,tcp,Medium,4.3,,no,Web login page served over cleartext HTTP,Serve the web interface over HTTPS only
+1016,10.99.0.16,BADGE-CTRL,80,tcp,Medium,5.3,,no,Web login page served over cleartext HTTP,Serve the web interface over HTTPS only
+1017,10.99.0.16,BADGE-CTRL,23,tcp,Medium,6.5,,no,Telnet service enabled,Disable Telnet; use SSH for remote management
+1018,10.40.0.20,TIMECLOCK-01,23,tcp,Medium,6.5,,no,Telnet service enabled,Disable Telnet; use SSH for remote management
+1019,10.40.0.20,TIMECLOCK-01,161,udp,High,7.5,,yes,SNMP agent uses the default community name public,Change the community name or disable SNMP; use SNMPv3
+1020,198.51.100.24,FW-CORE,443,tcp,Medium,6.5,,no,SSL VPN portal accepts TLS 1.0 and TLS 1.1,Disable TLS 1.0 and TLS 1.1 on the VPN portal
+1021,198.51.100.24,FW-CORE,22,tcp,Medium,5.3,,no,SSH banner reports an outdated OpenSSH version (banner check only),Confirm the installed version with the vendor; update the firewall firmware
+1022,10.20.6.41,FIN-LT-09,0,tcp,Critical,10.0,,no,Microsoft Office 2016 unsupported version detected,Upgrade to a supported version of Microsoft Office
+1023,10.99.0.10,IT-ADMIN-01,0,tcp,Info,0.0,,no,Operating system identified: Windows 11 Pro,None
+1030,10.10.1.10,DC01,0,tcp,Info,0.0,,no,Credentialed checks succeeded,None
+1031,10.20.6.15,FS-HR01,0,tcp,Info,0.0,,no,Credentialed checks succeeded,None
+1032,10.30.4.10,ENG-FS01,0,tcp,Info,0.0,,no,Credentialed checks succeeded,None
+1033,10.30.4.22,ENG-APP02,0,tcp,Info,0.0,,no,Credentialed checks succeeded,None
+1034,10.99.0.10,IT-ADMIN-01,0,tcp,Info,0.0,,no,Credentialed checks succeeded,None
+1035,10.20.6.41,FIN-LT-09,0,tcp,Info,0.0,,no,Credentialed checks succeeded,None
+1036,10.40.2.57,PLANT-PC-07,0,tcp,Info,0.0,,no,Credentialed checks not attempted (plant safe-scan rule),None

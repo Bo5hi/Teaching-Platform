@@ -1,0 +1,12 @@
+host,ip,role,owner,criticality,exposure,notes
+FW-CORE,10.99.0.1 / 198.51.100.24,Perimeter firewall and SSL VPN portal,Marcus Reyes,Critical,Internet-facing,VPN portal is open to the internet for remote staff
+DC01,10.10.1.10,Domain controller (Active Directory and DNS),Dee Ortiz,Critical,Internal,Every login depends on it
+ENG-FS01,10.30.4.10,Engineering file server (CAD drawings and customer specs),Tom Becker,Critical,Internal,Crown jewels
+ENG-APP02,10.30.4.22,CAD license and product data server,Tom Becker,Critical,Internal,Windows Server 2012 R2; CAD license server will not run on a newer OS yet
+FS-HR01,10.20.6.15,HR file server (personnel files and payroll exports),Rosa Medina,High,Internal,Any domain user can reach its shares
+PLANT-PC-07,10.40.2.57,Line 2 HMI and operator PC,Walt Henley,Critical,Internal (plant network; reachable from office network),Vendor-certified Windows 7 image; downtime stops Line 2
+TIMECLOCK-01,10.40.0.20,Badge time-clock kiosk,Rosa Medina,Medium,Internal (plant network),Feeds hours to payroll
+NVR-01,10.99.0.15,Camera recorder (16 cameras),Jordan Pike,Medium,Internal (management network; reachable from office network),Holds the only copy of camera footage
+BADGE-CTRL,10.99.0.16,Badge access controller and badge database,Jordan Pike,High,Internal (management network; reachable from office network),Controls every badge door on campus
+IT-ADMIN-01,10.99.0.10,IT admin workstation,Marcus Reyes,Critical,Internal,Used for domain admin work
+FIN-LT-09,10.20.6.41,Finance laptop,Greg Palmer (dept.),High,Leaves the building; connects by VPN,Used for payments and wire approvals

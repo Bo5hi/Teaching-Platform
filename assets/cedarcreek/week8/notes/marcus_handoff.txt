@@ -1,0 +1,26 @@
+From: Marcus Reyes <m.reyes@cedarcreek-ind.com>
+Sent: Wednesday, December 23, 2026 07:35
+Subject: ENG-FS01 - incident CC-IR-2026-01 - please build the timeline
+
+Thanks for catching this at 6. Here is where we are.
+
+- Dee isolated ENG-FS01 at 06:14 and killed the encryption process.
+- CC-LEGACY is off and the VPN is IT-only until further notice. Accounts
+  m.alvarez and svc_update are disabled. The ccadmin password was reset.
+- This one is a declared incident, not a cleanup like last weekend's
+  laptop. It is our first: CC-IR-2026-01.
+- Dee took a memory image and some triage files before touching anything
+  else (items E1 and E2, see the custody sheet in evidence/).
+- Greg wants a plain-English summary by 3 PM. I have to call our insurance
+  company and probably the FBI.
+
+I need from you:
+1. A timeline: how they got in, what they touched, what they took, and when.
+2. Check that the evidence files have not been changed since Dee hashed them.
+3. Look over the custody sheet. Jordan was helping and I do not think he
+   knew the rules.
+
+Log times: FW-CORE logs are in UTC. The Windows and EDR exports are in local
+time (Central, which is UTC-6 in December). Keep that straight.
+
+Marcus

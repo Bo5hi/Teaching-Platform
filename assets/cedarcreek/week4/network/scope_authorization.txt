@@ -1,0 +1,45 @@
+CEDAR CREEK INDUSTRIES
+AUTHORIZATION FOR INTERNAL NETWORK SCANNING AND PACKET CAPTURE
+
+Date:          2026-11-25
+Authorized by: Greg Palmer, CFO (security program sponsor)
+Requested by:  Marcus Reyes, IT Manager
+Testers:       Dee Ortiz (Systems Administrator), Jordan Pike (Help Desk),
+               and the junior security analyst
+
+1. Purpose
+Find out which plant and server systems can be reached from the office
+network, and what traffic crosses the plant network, before we change
+any firewall rules.
+
+2. In scope
+- Port and service scan from IT-LT-04 (10.20.1.77), a spare laptop on an
+  ordinary office port, so the results show what any office PC can reach.
+  Targets: the Line 2 devices 10.40.2.10, 10.40.2.57, 10.40.2.63-65 and
+  10.40.2.70, plus 10.40.9.15 (HVAC-CTRL) and 10.30.4.22 (ENG-APP02)
+- A 10-minute packet capture from a mirror (SPAN) port on PLANT-SW1
+- Review of the FW-CORE rule export
+
+3. Allowed techniques
+Host discovery, TCP port scanning, and service version detection only.
+
+4. Not allowed
+- Logging in to any system with found or guessed passwords
+- Exploits, password guessing, or denial-of-service tests
+- Writing anything to LINE2-PLC or the CNC machines
+- Microsoft 365 and the payroll service (third parties; they need
+  their own permission)
+
+5. When
+Scan: Monday 2026-11-30 after second shift ends at 11:00 PM (Walt
+Henley agreed). Capture: Tuesday 2026-12-01, morning.
+
+6. Stop conditions and contacts
+If the Line 2 HMI (PLANT-PC-07) shows any error during the scan, stop
+at once and call Walt Henley (plant) and Marcus Reyes (IT).
+
+7. Handling the results
+Scan output and captures are Confidential. They may contain passwords.
+Store them only on IT-ADMIN-01 and delete them after the review.
+
+Signed: Greg Palmer          Signed: Marcus Reyes

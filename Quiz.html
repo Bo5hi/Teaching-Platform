@@ -23,7 +23,7 @@
 (function () {
   CC.header('week');
   var w = CC.param('w') || '1';
-  var href = 'Quiz.html?w=' + w;
+  var href = 'Quiz.html?w=' + w + (CC.param('from') ? '&from=' + CC.param('from') : '');
   var page = document.getElementById('page');
   var esc = CC.esc;
   var Q, qs, prev;

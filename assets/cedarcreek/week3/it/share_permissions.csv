@@ -1,0 +1,17 @@
+Share,Contents (from Dee),Principal,Access
+\\ENG-FS01\Drawings,Customer CAD drawings and revision history,ENG-Share-RW,Modify
+\\ENG-FS01\Drawings,Customer CAD drawings and revision history,Domain Admins,Full Control
+\\ENG-FS01\CustomerSpecs,Customer specifications and quality requirements sent with purchase orders,ENG-Share-RW,Modify
+\\ENG-FS01\CustomerSpecs,Customer specifications and quality requirements sent with purchase orders,Everyone,Read
+\\ENG-FS01\ShopFloor,Released work instructions and setup sheets for Lines 1-3,ENG-Share-RW,Modify
+\\ENG-FS01\ShopFloor,Released work instructions and setup sheets for Lines 1-3,Plant-Leads,Read
+\\FS-HR01\Personnel,Personnel files: offer letters; reviews; I-9 forms; home addresses,HR-Share-RW,Modify
+\\FS-HR01\Payroll,Payroll exports with Social Security numbers; pay rates; bank account numbers,HR-Share-RW,Modify
+\\FS-HR01\Payroll,Payroll exports with Social Security numbers; pay rates; bank account numbers,Finance-Share-RW,Read
+\\FS-HR01\Benefits,Health plan enrollment forms and leave paperwork,HR-Share-RW,Modify
+\\FS-HR01\Company,Employee handbook; holiday schedule; Acceptable Use Policy; blank forms,Domain Users,Read
+\\FS-HR01\Company,Employee handbook; holiday schedule; Acceptable Use Policy; blank forms,HR-Share-RW,Modify
+\\DC01\IT$,IT scripts; FW-CORE configuration backups; setup notes with service account passwords,Domain Admins,Full Control
+\\DC01\IT$,IT scripts; FW-CORE configuration backups; setup notes with service account passwords,Domain Users,Read
+SharePoint: Marketing - Published,Released product brochures and the line card posted on the website,Anyone with the link,View
+SharePoint: Marketing - Published,Released product brochures and the line card posted on the website,Marketing (M365 group),Edit

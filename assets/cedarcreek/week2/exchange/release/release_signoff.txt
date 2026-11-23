@@ -1,0 +1,12 @@
+CEDAR CREEK INDUSTRIES - ENGINEERING RELEASE
+Drawing:    CCD-3318 Rev C, HV-310 pump mounting bracket
+Customer:   Halvorsen Pump
+Released:   Thu 2026-11-12, 10:30 AM
+Drawn by:   Priya Nair
+Approved:   Tom Becker, Engineering Manager
+
+Files released: 4 (listed in MANIFEST.sha256)
+Tom signed MANIFEST.sha256 with his OpenPGP key at release
+(signature: MANIFEST.sha256.asc).
+
+This folder is a copy taken from \\ENG-FS01\Transfer on Mon 2026-11-16.

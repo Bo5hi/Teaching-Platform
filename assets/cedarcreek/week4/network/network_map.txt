@@ -1,0 +1,52 @@
+CEDAR CREEK INDUSTRIES - NETWORK MAP
+Maintained by: Dee Ortiz      Last updated: 2026-11-24
+
+All routing between internal zones goes through FW-CORE.
+There is no core router: if FW-CORE allows it, it gets through.
+
+ZONE      SUBNET            WHAT LIVES THERE
+OUTSIDE   internet          Public address (NAT) 198.51.100.24
+OFFICE    10.20.0.0/16      Office PCs and laptops (DHCP)
+                            10.20.6.x HR and Finance (FS-HR01 sits here too),
+                            10.20.30.x Engineering
+SERVERS   10.10.0.0/16      Core servers: domain controller and backups
+          10.30.0.0/16      Application and file servers
+PLANT     10.40.0.0/16      Plant floor: Lines 1-3, HMIs, PLCs, CNCs, printers,
+                            HVAC controller, and CC-PLANT Wi-Fi clients
+MGMT      10.99.0.0/24      Network devices, IT admin workstation, camera and badge systems
+GUEST     172.16.50.0/24    CC-GUEST Wi-Fi, internet only
+VPN       10.250.0.0/24     Remote access pool on FW-CORE
+                            10.250.0.0/25   staff (group VPN-STAFF = AD group VPN-Users)
+                            10.250.0.128/28 vendors (group VENDOR-HVAC)
+
+KEY HOSTS
+Name            Address        Zone     Notes
+FW-CORE         10.99.0.1      MGMT     Perimeter firewall, routes all zones, SSL VPN on 443
+                                        (profiles CC-REMOTE and CC-LEGACY, see Week 3)
+                                         (profiles CC-REMOTE and CC-LEGACY; see Week 3)
+CORE-SW1        10.99.0.2      MGMT     Office/server core switch
+NETMON-01       10.99.0.5      MGMT     Network monitor (SNMPv2c polling)
+IT-ADMIN-01     10.99.0.10     MGMT     IT admin workstation
+PLANT-SW1       10.99.0.12     MGMT     Plant switch (one flat plant VLAN)
+NVR-01          10.99.0.15     MGMT     Camera recorder (16 cameras)
+BADGE-CTRL      10.99.0.16     MGMT     Badge access controller
+IT-LT-04        10.20.1.77     OFFICE   Spare IT laptop (used for test scans)
+FS-HR01         10.20.6.15     OFFICE   HR file server, on the HR/Finance subnet
+FIN-LT-09       10.20.6.41     OFFICE   Finance laptop
+ENG-09          10.20.30.9     OFFICE   Engineering workstation
+DC01            10.10.1.10     SERVERS  Domain controller and DNS (cedarcreek.local)
+ENG-FS01        10.30.4.10     SERVERS  Engineering file server
+ENG-APP02       10.30.4.22     SERVERS  CAD license / product data, Windows Server 2012 R2
+LINE2-PLC       10.40.2.10     PLANT    Line 2 programmable logic controller (Modbus/TCP)
+PLANT-PC-07     10.40.2.57     PLANT    Line 2 HMI / operator PC
+LINE2-CNC03     10.40.2.63     PLANT    CNC machine, Line 2
+LINE2-CNC04     10.40.2.64     PLANT    CNC machine, Line 2
+LINE2-CNC05     10.40.2.65     PLANT    CNC machine, Line 2 (down for rebuild)
+LINE2-LABEL     10.40.2.70     PLANT    Line 2 label printer
+TIMECLOCK-01    10.40.0.20     PLANT    Badge time clock
+HVAC-CTRL       10.40.9.15     PLANT    Building HVAC controller (Riverbend Mechanical)
+(CC-PLANT Wi-Fi clients get 10.40.100.x addresses from DHCP)
+
+KNOWN ISSUES (from the Week 1 walk-through)
+- The plant and office zones can reach each other freely.
+- CC-PLANT is WPA2-Personal; the password is on the break room wall.

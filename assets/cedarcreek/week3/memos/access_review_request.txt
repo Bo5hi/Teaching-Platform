@@ -1,0 +1,29 @@
+From:     Marcus Reyes <m.reyes@cedarcreek-ind.com>
+To:       Security Analyst
+Cc:       Dee Ortiz <d.ortiz@cedarcreek-ind.com>
+Date:     Mon, 23 Nov 2026 07:40
+Subject:  Access review - who can get into what
+
+Last week on the walk, Dee said a former engineer's account was
+"probably never turned off." Your badge log work then showed that Brian
+Kessler's badge still opened doors after his last day. That tells me we
+have never checked who still has access to our systems.
+
+So this week I want our first access review. Dee pulled the Active
+Directory accounts, the group memberships, the share permissions, and
+the VPN logs. Rosa sent the HR roster. Please compare them and tell me:
+
+  1. Which accounts belong to people who no longer work here.
+  2. Which accounts have more access than the job needs, and which
+     accounts are shared by several people.
+  3. Who can reach our network from home without MFA.
+  4. What is on each file share and how sensitive it is.
+
+Do not disable anything yourself. Bring me the list with a recommended
+action for each item, and I will get Dee to make the changes. If you
+find something that looks like someone is actively using an account
+they should not have, tell me right away instead of waiting.
+
+Greg wants a short summary by Thursday.
+
+- Marcus

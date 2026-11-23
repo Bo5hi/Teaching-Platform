@@ -1,0 +1,21 @@
+FW-CORE REMOTE ACCESS VPN - PROFILE SUMMARY
+Exported by: Dee Ortiz, 2026-11-23
+
+Profile:        CC-REMOTE
+Created:        2021-04-12 (Marcus Reyes)
+Who can use it: members of VPN-MFA-Users
+Sign-in:        company VPN certificate + domain password + push approval
+                in the authenticator app (multifactor authentication)
+Status:         In use
+
+Profile:        CC-LEGACY
+Created:        2017-03-01
+Who can use it: members of VPN-Users
+Sign-in:        domain password only (no certificate, no MFA)
+Status:         "Temporary" since 2021-04-12. Kept for people who had not
+                set up the authenticator app yet.
+
+Notes from Dee:
+- Every member of VPN-Users can connect with CC-LEGACY, even people who
+  also have CC-REMOTE. The firewall does not stop them.
+- Sessions log: vpn_sessions.csv (2026-10-01 to 2026-11-22).

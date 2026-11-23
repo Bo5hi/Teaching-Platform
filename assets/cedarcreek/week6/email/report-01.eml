@@ -1,0 +1,42 @@
+Received: from BN8PR04MB6211.namprd04.prod.outlook.com (10.167.24.11) by
+ SA1PR04MB8890.namprd04.prod.outlook.com with HTTPS; Thu, 10 Dec 2026
+ 14:02:19 +0000
+Received: from BN1NAM04FT021.mail.protection.outlook.com (10.167.18.92) by
+ BN8PR04MB6211.namprd04.prod.outlook.com with SMTP; Thu, 10 Dec 2026
+ 14:02:18 +0000
+Received: from mail.cedarcreek-it.com (203.0.113.77) by
+ BN1NAM04FT021.mail.protection.outlook.com with ESMTP; Thu, 10 Dec 2026
+ 14:02:16 +0000
+Authentication-Results: spf=pass (sender IP is 203.0.113.77)
+ smtp.mailfrom=cedarcreek-it.com; dkim=pass (signature was verified)
+ header.d=cedarcreek-it.com; dmarc=pass action=none
+ header.from=cedarcreek-it.com; compauth=pass reason=100
+Received-SPF: Pass (protection.outlook.com: domain of cedarcreek-it.com
+ designates 203.0.113.77 as permitted sender)
+Return-Path: <servicedesk@cedarcreek-it.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cedarcreek-it.com;
+ s=mail; h=from:to:subject:date:message-id;
+ bh=Qm9ndXNIYXNoRm9yVHJhaW5pbmdPbmx5MDAwMDAwMDA=;
+ b=VGhpcyBpcyBub3QgYSByZWFsIHNpZ25hdHVyZS4gVHJhaW5pbmcgZGF0YSBvbmx5Lg==
+From: "Cedar Creek IT Service Desk" <servicedesk@cedarcreek-it.com>
+To: Kevin Tran <k.tran@cedarcreek-ind.com>
+Subject: [Action Required] Your Microsoft 365 password expires in 4 hours
+Date: Thu, 10 Dec 2026 08:02:11 -0600
+Message-ID: <20261210140211.4471.servicedesk@mail.cedarcreek-it.com>
+X-Mailer: PHPMailer 6.8.1
+MIME-Version: 1.0
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+<html><body style="font-family:Segoe UI,Arial,sans-serif;font-size:14px">
+<p>Hi Kevin,</p>
+<p>Our records show that the password for <b>k.tran@cedarcreek-ind.com</b>
+expires <b>today at 12:00 PM CST</b>. After that time you will lose access
+to Outlook, Teams, and OneDrive until the Help Desk can reset it.</p>
+<p>To keep your current password, confirm it on the Microsoft 365 portal:</p>
+<p><a href="https://cedarcreek-it.com/m365/keep.php?u=k.tran"
+style="background:#0078d4;color:#ffffff;padding:8px 16px;text-decoration:none">
+https://portal.office.com/keep-password</a></p>
+<p>This takes less than one minute. Do not reply to this message.</p>
+<p>Thank you,<br>Jordan Pike<br>Help Desk, Cedar Creek Industries</p>
+</body></html>

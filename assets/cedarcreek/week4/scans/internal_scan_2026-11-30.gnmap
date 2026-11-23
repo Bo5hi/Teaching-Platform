@@ -1,0 +1,16 @@
+# Nmap 7.95 scan initiated Mon Nov 30 23:20:12 2026 as: nmap -sS -sV -p- --open -T4 -oA internal_scan_2026-11-30 10.40.2.10 10.40.2.57 10.40.2.63-65 10.40.2.70 10.40.9.15 10.30.4.22
+Host: 10.40.2.10 (line2-plc.cedarcreek.local)	Status: Up
+Host: 10.40.2.10 (line2-plc.cedarcreek.local)	Ports: 80/open/tcp//http//Embedded HTTP server/, 502/open/tcp//modbus//Modbus TCP/	Ignored State: closed (65533)
+Host: 10.40.2.57 (plant-pc-07.cedarcreek.local)	Status: Up
+Host: 10.40.2.57 (plant-pc-07.cedarcreek.local)	Ports: 135/open/tcp//msrpc//Microsoft Windows RPC/, 139/open/tcp//netbios-ssn//Microsoft Windows netbios-ssn/, 445/open/tcp//microsoft-ds//Microsoft Windows 7 - 10 microsoft-ds/, 3389/open/tcp//ms-wbt-server//Microsoft Terminal Services/	Ignored State: closed (65531)
+Host: 10.40.2.63 (line2-cnc03.cedarcreek.local)	Status: Up
+Host: 10.40.2.63 (line2-cnc03.cedarcreek.local)	Ports: 21/open/tcp//ftp//Embedded FTP server/, 23/open/tcp//telnet//BusyBox telnetd/	Ignored State: closed (65533)
+Host: 10.40.2.64 (line2-cnc04.cedarcreek.local)	Status: Up
+Host: 10.40.2.64 (line2-cnc04.cedarcreek.local)	Ports: 21/open/tcp//ftp//Embedded FTP server/	Ignored State: closed (65534)
+Host: 10.40.2.70 (line2-label.cedarcreek.local)	Status: Up
+Host: 10.40.2.70 (line2-label.cedarcreek.local)	Ports: 80/open/tcp//http//Embedded HTTP server/, 9100/open/tcp//jetdirect///	Ignored State: closed (65533)
+Host: 10.40.9.15 (hvac-ctrl.cedarcreek.local)	Status: Up
+Host: 10.40.9.15 (hvac-ctrl.cedarcreek.local)	Ports: 80/open/tcp//http//Embedded HTTP server (HVAC controller login page)/	Ignored State: closed (65534)
+Host: 10.30.4.22 (eng-app02.cedarcreek.local)	Status: Up
+Host: 10.30.4.22 (eng-app02.cedarcreek.local)	Ports: 80/open/tcp//http//Microsoft IIS httpd 8.5/, 135/open/tcp//msrpc//Microsoft Windows RPC/, 139/open/tcp//netbios-ssn//Microsoft Windows netbios-ssn/, 445/open/tcp//microsoft-ds//Microsoft Windows Server 2008 R2 - 2012 microsoft-ds/, 3389/open/tcp//ms-wbt-server//Microsoft Terminal Services/	Ignored State: closed (65530)
+# Nmap done at Mon Nov 30 23:46:47 2026 -- 8 IP addresses (7 hosts up) scanned in 1595.22 seconds

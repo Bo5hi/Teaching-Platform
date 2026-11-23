@@ -43,18 +43,26 @@ COURSE_LESSONS['1.0'] = {
       }
     },
     {
-      title: 'Your five weeks',
+      title: 'Your 15 weeks',
       body: [
-        "Each week teaches one block of Security+ material and ends with a mock project: a realistic piece of work a junior analyst would hand to Marcus."
+        "Weeks 1 to 5 happen at Cedar Creek. Each one teaches a block of Security+ material and ends with a mock project: a realistic piece of work a junior analyst would hand to Marcus. Weeks 4 and 5 are a two-week mock penetration test.",
+        "Weeks 1 to 8 also each carry a real-world case study on Day 2. You study four real breaches, two weeks each: first a deep dive into what happened, then the frameworks and an executive summary.",
+        "After that you work Cedar Creek's SOC ticket queue for a full week, run a four-week security assessment for a second client, Northgate Supply Co., and finish with Security+ review and a full mock exam."
       ],
       table: {
-        head: ['Week', 'Topic', 'Mock project'],
+        head: ['Week', 'Topic', 'Hands-on project', 'Case study'],
         rows: [
-          ['1', 'Security foundations: concepts, controls, threats, physical security, assets', 'Mock Control Audit'],
-          ['2', 'Cryptography and certificates', 'Mock Secure File Exchange'],
-          ['3', 'Identity, access, and data protection', 'Mock Access Review'],
-          ['4', 'Secure networks, cloud, and wireless', 'Mock Firewall & Network Review'],
-          ['5', 'Vulnerabilities and attacks', 'Mock Vulnerability Triage']
+          ['1', 'Security foundations', 'Mock Control Audit', 'Target (2013), deep dive'],
+          ['2', 'Cryptography and certificates', 'Mock Secure File Exchange', 'Target, frameworks'],
+          ['3', 'Identity, access, and data protection', 'Mock Access Review', 'Colonial Pipeline (2021), deep dive'],
+          ['4', 'Secure networks, cloud, and wireless', 'Mock Pentest, part 1: recon and scanning', 'Colonial Pipeline, frameworks'],
+          ['5', 'Vulnerabilities and attacks', 'Mock Pentest, part 2: exploitation and report', 'SolarWinds (2020), deep dive'],
+          ['6', 'Human factors', 'Password and phishing labs', 'SolarWinds, frameworks'],
+          ['7', 'Defensive security and tools', 'Blue Team Lab, phases 1-3', 'Equifax (2017), deep dive'],
+          ['8', 'Incident response', 'Blue Team Lab, phases 4-5', 'Equifax, frameworks'],
+          ['9', 'SOC operations', 'A full week of Cedar Creek tickets', ''],
+          ['10-13', 'Capstone', 'Northgate security assessment and outbrief', ''],
+          ['14-15', 'Security+ review and mock exam', 'PBQ labs and the full mock exam', '']
         ]
       }
     },

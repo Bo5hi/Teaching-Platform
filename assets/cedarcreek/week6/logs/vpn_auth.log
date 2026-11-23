@@ -1,0 +1,131 @@
+2026-12-11T18:22:02 FW-CORE vpn-auth: user=p.nair src=203.0.113.47 result=FAIL reason=bad_password
+2026-12-11T18:22:18 FW-CORE vpn-auth: user=p.nair src=203.0.113.47 result=SUCCESS
+2026-12-11T18:38:02 FW-CORE vpn-auth: user=j.pike src=203.0.113.11 result=SUCCESS
+2026-12-11T18:57:51 FW-CORE vpn-auth: user=l.kim src=192.0.2.78 result=SUCCESS
+2026-12-11T19:33:02 FW-CORE vpn-session: user=j.pike src=203.0.113.11 event=logout duration_min=55
+2026-12-11T19:38:35 FW-CORE vpn-auth: user=p.nair src=203.0.113.47 result=SUCCESS
+2026-12-11T20:09:18 FW-CORE vpn-session: user=p.nair src=203.0.113.47 event=logout duration_min=107
+2026-12-11T20:18:43 FW-CORE vpn-auth: user=j.pike src=203.0.113.11 result=FAIL reason=bad_password
+2026-12-11T20:19:23 FW-CORE vpn-auth: user=j.pike src=203.0.113.11 result=SUCCESS
+2026-12-11T20:44:35 FW-CORE vpn-session: user=p.nair src=203.0.113.47 event=logout duration_min=66
+2026-12-11T21:00:51 FW-CORE vpn-session: user=l.kim src=192.0.2.78 event=logout duration_min=123
+2026-12-11T21:09:35 FW-CORE vpn-auth: user=g.palmer src=192.0.2.41 result=FAIL reason=bad_password
+2026-12-11T21:10:16 FW-CORE vpn-auth: user=g.palmer src=192.0.2.41 result=SUCCESS
+2026-12-11T21:30:17 FW-CORE vpn-auth: user=w.henley src=192.0.2.216 result=SUCCESS
+2026-12-11T21:34:16 FW-CORE vpn-session: user=g.palmer src=192.0.2.41 event=logout duration_min=24
+2026-12-11T21:40:10 FW-CORE vpn-auth: user=t.becker src=192.0.2.118 result=SUCCESS
+2026-12-11T22:14:10 FW-CORE vpn-session: user=t.becker src=192.0.2.118 event=logout duration_min=34
+2026-12-11T22:15:23 FW-CORE vpn-session: user=j.pike src=203.0.113.11 event=logout duration_min=116
+2026-12-11T23:17:17 FW-CORE vpn-session: user=w.henley src=192.0.2.216 event=logout duration_min=107
+2026-12-12T02:04:10 FW-CORE vpn-auth: user=g.lindqvist src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:05:58 FW-CORE vpn-auth: user=t.garza src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:08:02 FW-CORE vpn-auth: user=l.kim src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:10:08 FW-CORE vpn-auth: user=n.brooks src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:12:07 FW-CORE vpn-auth: user=p.nair src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:13:45 FW-CORE vpn-auth: user=t.becker src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:15:27 FW-CORE vpn-auth: user=r.doyle src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:17:15 FW-CORE vpn-auth: user=m.alvarez src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:18:54 FW-CORE vpn-auth: user=ccadmin src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:20:42 FW-CORE vpn-auth: user=g.palmer src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:22:38 FW-CORE vpn-auth: user=s.pruitt src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:24:43 FW-CORE vpn-auth: user=d.reyes src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:26:44 FW-CORE vpn-auth: user=m.reyes src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:28:59 FW-CORE vpn-auth: user=k.tran src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:30:58 FW-CORE vpn-auth: user=w.henley src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:33:18 FW-CORE vpn-auth: user=j.pike src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:34:54 FW-CORE vpn-auth: user=amanda.singh src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:37:09 FW-CORE vpn-auth: user=b.kessler src=203.0.113.200 result=SUCCESS
+2026-12-12T02:38:52 FW-CORE vpn-auth: user=r.medina src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:40:42 FW-CORE vpn-auth: user=d.ortiz src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T02:42:57 FW-CORE vpn-auth: user=operator src=203.0.113.200 result=FAIL reason=bad_password
+2026-12-12T03:24:09 FW-CORE vpn-session: user=b.kessler src=203.0.113.200 event=logout duration_min=47
+2026-12-12T12:42:27 FW-CORE vpn-auth: user=m.reyes src=192.0.2.244 result=SUCCESS
+2026-12-12T13:20:27 FW-CORE vpn-session: user=m.reyes src=192.0.2.244 event=logout duration_min=38
+2026-12-12T17:21:06 FW-CORE vpn-auth: user=m.reyes src=192.0.2.244 result=FAIL reason=bad_password
+2026-12-12T17:21:46 FW-CORE vpn-auth: user=m.reyes src=192.0.2.244 result=SUCCESS
+2026-12-12T18:41:07 FW-CORE vpn-auth: user=m.reyes src=192.0.2.244 result=SUCCESS
+2026-12-12T19:02:46 FW-CORE vpn-session: user=m.reyes src=192.0.2.244 event=logout duration_min=101
+2026-12-12T20:00:05 FW-CORE vpn-auth: user=l.kim@cedarcreek-ind.com src=192.0.2.150 result=FAIL reason=bad_password
+2026-12-12T20:01:59 FW-CORE vpn-auth: user=k.tran@cedarcreek-ind.com src=192.0.2.151 result=FAIL reason=bad_password
+2026-12-12T20:04:15 FW-CORE vpn-auth: user=amanda.singh@cedarcreek-ind.com src=192.0.2.152 result=FAIL reason=bad_password
+2026-12-12T20:06:34 FW-CORE vpn-auth: user=d.reyes@cedarcreek-ind.com src=192.0.2.153 result=FAIL reason=bad_password
+2026-12-12T20:08:52 FW-CORE vpn-auth: user=p.nair@cedarcreek-ind.com src=192.0.2.154 result=FAIL reason=bad_password
+2026-12-12T20:10:29 FW-CORE vpn-auth: user=r.doyle@cedarcreek-ind.com src=192.0.2.155 result=FAIL reason=bad_password
+2026-12-12T20:12:24 FW-CORE vpn-auth: user=kevin.tran@cedarcreek-ind.com src=192.0.2.156 result=FAIL reason=unknown_user
+2026-12-12T20:15:02 FW-CORE vpn-auth: user=laura.kim@cedarcreek-ind.com src=192.0.2.157 result=FAIL reason=unknown_user
+2026-12-12T20:17:32 FW-CORE vpn-auth: user=lkim1979@cedarcreek-ind.com src=192.0.2.150 result=FAIL reason=unknown_user
+2026-12-12T20:19:08 FW-CORE vpn-auth: user=amanda.s@cedarcreek-ind.com src=192.0.2.151 result=FAIL reason=unknown_user
+2026-12-12T20:21:28 FW-CORE vpn-auth: user=asingh@cedarcreek-ind.com src=192.0.2.152 result=FAIL reason=unknown_user
+2026-12-12T20:23:49 FW-CORE vpn-auth: user=dana.reyes@cedarcreek-ind.com src=192.0.2.153 result=FAIL reason=unknown_user
+2026-12-12T20:26:04 FW-CORE vpn-auth: user=priya.nair@cedarcreek-ind.com src=192.0.2.154 result=FAIL reason=unknown_user
+2026-12-12T20:27:55 FW-CORE vpn-auth: user=pnair88@cedarcreek-ind.com src=192.0.2.155 result=FAIL reason=unknown_user
+2026-12-12T20:30:12 FW-CORE vpn-auth: user=ryan.doyle@cedarcreek-ind.com src=192.0.2.156 result=FAIL reason=unknown_user
+2026-12-12T20:32:22 FW-CORE vpn-auth: user=rdoyle@cedarcreek-ind.com src=192.0.2.157 result=FAIL reason=unknown_user
+2026-12-12T20:34:48 FW-CORE vpn-auth: user=greg.palmer@cedarcreek-ind.com src=192.0.2.150 result=FAIL reason=unknown_user
+2026-12-12T20:37:11 FW-CORE vpn-auth: user=gpalmer@cedarcreek-ind.com src=192.0.2.151 result=FAIL reason=unknown_user
+2026-12-12T20:39:26 FW-CORE vpn-auth: user=tom.becker@cedarcreek-ind.com src=192.0.2.152 result=FAIL reason=unknown_user
+2026-12-12T20:41:09 FW-CORE vpn-auth: user=tbecker@cedarcreek-ind.com src=192.0.2.153 result=FAIL reason=unknown_user
+2026-12-12T20:43:04 FW-CORE vpn-auth: user=rosa.medina@cedarcreek-ind.com src=192.0.2.154 result=FAIL reason=unknown_user
+2026-12-12T20:45:40 FW-CORE vpn-auth: user=rmedina@cedarcreek-ind.com src=192.0.2.155 result=FAIL reason=unknown_user
+2026-12-12T20:48:20 FW-CORE vpn-auth: user=walt.henley@cedarcreek-ind.com src=192.0.2.156 result=FAIL reason=unknown_user
+2026-12-12T20:50:01 FW-CORE vpn-auth: user=whenley@cedarcreek-ind.com src=192.0.2.157 result=FAIL reason=unknown_user
+2026-12-12T20:51:44 FW-CORE vpn-auth: user=nina.brooks@cedarcreek-ind.com src=192.0.2.150 result=FAIL reason=unknown_user
+2026-12-12T20:52:07 FW-CORE vpn-session: user=m.reyes src=192.0.2.244 event=logout duration_min=131
+2026-12-12T20:53:21 FW-CORE vpn-auth: user=nbrooks@cedarcreek-ind.com src=192.0.2.151 result=FAIL reason=unknown_user
+2026-12-12T20:55:43 FW-CORE vpn-auth: user=marcus.reyes@cedarcreek-ind.com src=192.0.2.152 result=FAIL reason=unknown_user
+2026-12-12T20:56:00 FW-CORE vpn-auth: user=r.medina src=198.51.100.129 result=SUCCESS
+2026-12-12T20:58:16 FW-CORE vpn-auth: user=mreyes@cedarcreek-ind.com src=192.0.2.153 result=FAIL reason=unknown_user
+2026-12-12T21:00:39 FW-CORE vpn-auth: user=dee.ortiz@cedarcreek-ind.com src=192.0.2.154 result=FAIL reason=unknown_user
+2026-12-12T21:02:34 FW-CORE vpn-auth: user=dortiz@cedarcreek-ind.com src=192.0.2.155 result=FAIL reason=unknown_user
+2026-12-12T21:04:26 FW-CORE vpn-auth: user=jordan.pike@cedarcreek-ind.com src=192.0.2.156 result=FAIL reason=unknown_user
+2026-12-12T21:06:33 FW-CORE vpn-auth: user=jpike@cedarcreek-ind.com src=192.0.2.157 result=FAIL reason=unknown_user
+2026-12-12T21:08:06 FW-CORE vpn-auth: user=shane.pruitt@cedarcreek-ind.com src=192.0.2.150 result=FAIL reason=unknown_user
+2026-12-12T21:10:08 FW-CORE vpn-auth: user=tina.garza@cedarcreek-ind.com src=192.0.2.151 result=FAIL reason=unknown_user
+2026-12-12T21:12:24 FW-CORE vpn-auth: user=mike.alvarez@cedarcreek-ind.com src=192.0.2.152 result=FAIL reason=unknown_user
+2026-12-12T21:14:56 FW-CORE vpn-auth: user=malvarez@cedarcreek-ind.com src=192.0.2.153 result=FAIL reason=unknown_user
+2026-12-12T21:17:33 FW-CORE vpn-auth: user=gina.lindqvist@cedarcreek-ind.com src=192.0.2.154 result=FAIL reason=unknown_user
+2026-12-12T21:19:24 FW-CORE vpn-auth: user=glindqvist@cedarcreek-ind.com src=192.0.2.155 result=FAIL reason=unknown_user
+2026-12-12T21:21:16 FW-CORE vpn-auth: user=info@cedarcreek-ind.com src=192.0.2.156 result=FAIL reason=unknown_user
+2026-12-12T21:23:01 FW-CORE vpn-auth: user=sales@cedarcreek-ind.com src=192.0.2.157 result=FAIL reason=unknown_user
+2026-12-12T23:13:00 FW-CORE vpn-session: user=r.medina src=198.51.100.129 event=logout duration_min=137
+2026-12-13T09:15:14 FW-CORE vpn-auth: user=r.medina src=198.51.100.129 result=SUCCESS
+2026-12-13T11:16:14 FW-CORE vpn-session: user=r.medina src=198.51.100.129 event=logout duration_min=121
+2026-12-13T14:02:00 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=bad_password
+2026-12-13T14:02:14 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=bad_password
+2026-12-13T14:02:28 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=bad_password
+2026-12-13T14:02:37 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=bad_password
+2026-12-13T14:02:45 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=bad_password
+2026-12-13T14:02:52 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=bad_password
+2026-12-13T14:02:58 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=bad_password
+2026-12-13T14:03:11 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=bad_password
+2026-12-13T14:03:21 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=bad_password
+2026-12-13T14:03:33 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=bad_password
+2026-12-13T14:03:39 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=LOCKED reason=too_many_failures
+2026-12-13T14:03:45 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:03:53 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:04:04 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:04:17 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:04:31 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:04:42 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:04:52 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:05:01 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:05:08 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:05:14 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:05:21 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:05:30 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:05:41 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:05:51 FW-CORE vpn-auth: user=m.reyes src=192.0.2.77 result=FAIL reason=account_locked
+2026-12-13T14:15:10 FW-CORE vpn-auth: user=p.nair src=203.0.113.47 result=SUCCESS
+2026-12-13T14:32:45 FW-CORE vpn-auth: user=l.kim src=192.0.2.78 result=SUCCESS
+2026-12-13T14:42:10 FW-CORE vpn-session: user=p.nair src=203.0.113.47 event=logout duration_min=27
+2026-12-13T15:22:45 FW-CORE vpn-session: user=l.kim src=192.0.2.78 event=logout duration_min=50
+2026-12-13T16:24:10 FW-CORE vpn-auth: user=r.medina src=198.51.100.129 result=SUCCESS
+2026-12-13T18:22:24 FW-CORE vpn-auth: user=d.ortiz src=203.0.113.38 result=SUCCESS
+2026-12-13T18:36:10 FW-CORE vpn-session: user=r.medina src=198.51.100.129 event=logout duration_min=132
+2026-12-13T18:43:24 FW-CORE vpn-session: user=d.ortiz src=203.0.113.38 event=logout duration_min=21
+2026-12-13T19:07:02 FW-CORE vpn-auth: user=amanda.singh src=198.51.100.150 result=SUCCESS
+2026-12-13T19:12:41 FW-CORE vpn-auth: user=m.reyes src=192.0.2.244 result=FAIL reason=account_locked
+2026-12-13T19:13:30 FW-CORE vpn-auth: user=m.reyes src=192.0.2.244 result=FAIL reason=account_locked
+2026-12-13T20:40:02 FW-CORE vpn-session: user=amanda.singh src=198.51.100.150 event=logout duration_min=93
+2026-12-13T21:40:56 FW-CORE vpn-auth: user=t.becker src=192.0.2.118 result=SUCCESS
+2026-12-13T23:32:56 FW-CORE vpn-session: user=t.becker src=192.0.2.118 event=logout duration_min=112

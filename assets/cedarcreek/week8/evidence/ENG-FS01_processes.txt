@@ -1,0 +1,11 @@
+Collected 2026-12-23 06:44 by d.ortiz (tasklist /v, trimmed)
+Image Name                     PID Session Name   User Name
+========================= ======== ============== ====================
+System                           4 Services       NT AUTHORITY\SYSTEM
+lsass.exe                      712 Services       NT AUTHORITY\SYSTEM
+svchost.exe                   1044 Services       NT AUTHORITY\NETWORK SERVICE
+edr-agent.exe                 2210 Services       NT AUTHORITY\SYSTEM
+rdpclip.exe                   5120 RDP-Tcp#3      CEDARCREEK\ccadmin
+explorer.exe                  5388 RDP-Tcp#3      CEDARCREEK\ccadmin
+cmd.exe                       6012 RDP-Tcp#3      CEDARCREEK\ccadmin
+tasklist.exe                  7440 Console        CEDARCREEK\d.ortiz

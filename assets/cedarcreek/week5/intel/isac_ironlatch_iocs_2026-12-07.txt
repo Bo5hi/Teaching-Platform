@@ -1,0 +1,21 @@
+# Heartland Manufacturing ISAC - IRONLATCH indicator update
+# TLP:AMBER - share only inside your organization, with people who need it
+# Date: 2026-12-07   Confidence: high
+# Affiliates now also use fake browser-update downloads, besides VPN password spraying.
+# One indicator per line. Lines that start with # are comments.
+
+# SHA-256 hashes
+1f5b94e6df7dfb31f80b79b34435f57f6364778e90f8d7812a242023e34d8ea1
+cf30ad621c1210370b4f4a2b654062f1e496bad7cd7842528a911fa697c46356
+# The next hash is the EICAR anti-malware test file, added so members can test their tools.
+275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f
+
+# Domains
+browser-update-cdn.example.net
+secure-docshare.example.org
+pay-ironlatch.example.com
+
+# IP addresses
+203.0.113.45
+203.0.113.77
+203.0.113.130

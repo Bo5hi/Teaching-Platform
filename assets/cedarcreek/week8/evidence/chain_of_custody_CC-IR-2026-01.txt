@@ -1,0 +1,20 @@
+CEDAR CREEK INDUSTRIES - EVIDENCE CHAIN OF CUSTODY
+Incident: CC-IR-2026-01 (ransomware, ENG-FS01)
+
+ITEM E1: USB drive, SanDisk 32 GB, serial 4C53 0001 7712, labeled CC-IR-2026-01-E1
+  Contents: ENG-FS01_processes.txt, ENG-FS01_netconns.txt, README_LATCH.txt, copy of cc_upd.exe
+  Hashes recorded at collection: SHA256SUMS.txt (on the drive)
+ITEM E2: External hard drive, WD 2 TB, serial WX42A1, labeled CC-IR-2026-01-E2
+  Contents: ENG-FS01_mem.raw (memory image, 16 GB)
+
+Date        Time   Item  Released by         Received by         Purpose                         Signatures
+----------  -----  ----  ------------------  ------------------  ------------------------------  ----------
+2026-12-23  06:31  E2    (collected)         Dee Ortiz           Memory image of ENG-FS01        DO
+2026-12-23  06:52  E1    (collected)         Dee Ortiz           Triage files from ENG-FS01      DO
+2026-12-23  07:10  E1    Dee Ortiz           Jordan Pike         Review on help desk PC          DO / (blank)
+2026-12-23  07:15  E2    Dee Ortiz           Marcus Reyes        Lock in IT office safe          DO / MR
+2026-12-23  16:45  E1    (not recorded)      Marcus Reyes        Lock in IT office safe          MR
+
+Notes:
+- E1 was found on the help desk counter at 16:40 by Marcus.
+- Jordan says he opened the files on the help desk PC to "take a look".

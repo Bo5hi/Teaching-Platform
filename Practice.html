@@ -38,11 +38,11 @@
 (function () {
   CC.header('week');
   var pid = CC.param('p') || 'controls';
-  var href = 'Practice.html?p=' + pid;
+  var href = 'Practice.html?p=' + pid + (CC.param('from') ? '&from=' + CC.param('from') : '');
   var page = document.getElementById('page');
   var esc = CC.esc;
   var at = CC.blockFor(href);
-  var week = at ? at.week.num : (pid.match(/w(\d+)/) || [0, 1])[1];
+  var week = (pid.match(/w(\d+)/) || [])[1] || (at ? at.week.num : 1);
 
   CC.require('course-w' + week + '-practice.js').then(function () {
     var P = (window.COURSE_PRACTICE || {})[pid];

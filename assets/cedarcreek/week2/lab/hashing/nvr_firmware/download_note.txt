@@ -1,0 +1,13 @@
+From:    Jordan Pike, Help Desk
+Date:    Thu 2026-11-12
+Subject: NVR-01 firmware 5.7.2
+
+The camera recorder (NVR-01) needs firmware 5.7.2. The vendor's download
+site was crawling, so I also grabbed a copy from a forum mirror that a
+guy on a security-camera forum posted. Both copies are here:
+
+  vendor/NVR01_FW_5.7.2.bin   from the vendor's support site
+  mirror/NVR01_FW_5.7.2.bin   from the forum mirror (finished first)
+
+SHA256SUMS is the checksum file published on the vendor's site.
+Can you tell me which one is safe to install before I flash it?

@@ -42,7 +42,7 @@ details.rub summary { cursor: pointer; font-weight: 700; color: var(--text); }
 (function () {
   CC.header('week');
   var n = parseInt(CC.param('p'), 10) || 1;
-  var href = 'Project.html?p=' + n;
+  var href = 'Project.html?p=' + n + (CC.param('from') ? '&from=' + CC.param('from') : '');
   var page = document.getElementById('page');
   var esc = CC.esc;
   var P = (window.HUB_PROJECTS || {})[n], R = (window.HUB_RUBRIC || {})[n] || [];

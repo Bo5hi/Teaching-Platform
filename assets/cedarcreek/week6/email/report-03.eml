@@ -1,0 +1,44 @@
+Received: from CH2PR04MB7001.namprd04.prod.outlook.com (10.167.24.73) by
+ SA1PR04MB8890.namprd04.prod.outlook.com with HTTPS; Mon, 14 Dec 2026
+ 15:10:06 +0000
+Received: from BN1NAM04FT058.mail.protection.outlook.com (10.167.18.140) by
+ CH2PR04MB7001.namprd04.prod.outlook.com with SMTP; Mon, 14 Dec 2026
+ 15:10:05 +0000
+Received: from out2.tallgrasspayroll.com (198.51.100.180) by
+ BN1NAM04FT058.mail.protection.outlook.com with ESMTPS; Mon, 14 Dec 2026
+ 15:10:03 +0000
+Authentication-Results: spf=pass (sender IP is 198.51.100.180)
+ smtp.mailfrom=tallgrasspayroll.com; dkim=pass (signature was verified)
+ header.d=tallgrasspayroll.com; dmarc=pass action=none
+ header.from=tallgrasspayroll.com; compauth=pass reason=100
+Received-SPF: Pass (protection.outlook.com: domain of tallgrasspayroll.com
+ designates 198.51.100.180 as permitted sender)
+Return-Path: <bounces@tallgrasspayroll.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tallgrasspayroll.com;
+ s=tp2026; h=from:to:subject:date:message-id;
+ bh=VHJhaW5pbmdEYXRhQm9keUhhc2hOb3RSZWFsMDAwMDA=;
+ b=VHJhaW5pbmcgZGF0YS4gTm90IGEgcmVhbCBES0lNIHNpZ25hdHVyZS4=
+From: "Tallgrass Payroll" <notices@tallgrasspayroll.com>
+To: Walt Henley <w.henley@cedarcreek-ind.com>
+Subject: Your 2026 Form W-2 will be available in January
+Date: Mon, 14 Dec 2026 09:10:01 -0600
+Message-ID: <tp.20261214.88231.notice@tallgrasspayroll.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+Hello Walt,
+
+Cedar Creek Industries uses Tallgrass Payroll to pay employees. Your
+2026 Form W-2 will be ready by January 25, 2027.
+
+There is nothing you need to do today. When it is ready, sign in the
+way you normally do at https://app.tallgrasspayroll.com and open
+Tax Documents. We will never ask for your password, your Social
+Security number, or bank details by email.
+
+Questions? Contact your HR department, Rosa Medina.
+
+Tallgrass Payroll
+This message was sent to w.henley@cedarcreek-ind.com because your
+employer uses Tallgrass Payroll.

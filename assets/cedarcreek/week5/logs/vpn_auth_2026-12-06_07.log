@@ -1,0 +1,108 @@
+2026-12-06T17:05:05 FW-CORE sslvpn: login ok user=j.pike src=203.0.113.11 profile=CC-REMOTE mfa=push
+2026-12-06T17:13:01 FW-CORE sslvpn: login failed user=v.chu src=192.0.2.67 reason=bad_password
+2026-12-06T17:14:17 FW-CORE sslvpn: login ok user=v.chu src=192.0.2.67 profile=CC-REMOTE mfa=push
+2026-12-06T17:25:04 FW-CORE sslvpn: login ok user=t.becker src=192.0.2.118 profile=CC-LEGACY mfa=none
+2026-12-06T17:31:55 FW-CORE sslvpn: login ok user=s.ortega src=203.0.113.233 profile=CC-REMOTE mfa=push
+2026-12-06T18:31:20 FW-CORE sslvpn: login ok user=v.chu src=192.0.2.67 profile=CC-REMOTE mfa=push
+2026-12-06T18:32:36 FW-CORE sslvpn: login ok user=s.ortega src=203.0.113.233 profile=CC-REMOTE mfa=push
+2026-12-06T18:38:16 FW-CORE sslvpn: login ok user=m.reyes src=192.0.2.244 profile=CC-REMOTE mfa=push
+2026-12-06T19:23:10 FW-CORE sslvpn: login ok user=g.palmer src=192.0.2.41 profile=CC-LEGACY mfa=none
+2026-12-06T19:28:31 FW-CORE sslvpn: login ok user=m.reyes src=192.0.2.244 profile=CC-REMOTE mfa=push
+2026-12-06T19:53:10 FW-CORE sslvpn: login ok user=amanda.singh src=198.51.100.150 profile=CC-LEGACY mfa=none
+2026-12-06T20:06:56 FW-CORE sslvpn: login failed user=d.ortiz src=203.0.113.38 reason=bad_password
+2026-12-06T20:07:35 FW-CORE sslvpn: login ok user=d.ortiz src=203.0.113.38 profile=CC-REMOTE mfa=push
+2026-12-06T20:10:51 FW-CORE sslvpn: login ok user=r.medina src=198.51.100.129 profile=CC-LEGACY mfa=none
+2026-12-06T20:30:09 FW-CORE sslvpn: login ok user=t.becker src=192.0.2.118 profile=CC-LEGACY mfa=none
+2026-12-06T20:35:57 FW-CORE sslvpn: login ok user=amanda.singh src=198.51.100.150 profile=CC-LEGACY mfa=none
+2026-12-06T20:48:08 FW-CORE sslvpn: login failed user=s.ortega src=203.0.113.233 reason=bad_password
+2026-12-06T20:49:36 FW-CORE sslvpn: login ok user=s.ortega src=203.0.113.233 profile=CC-REMOTE mfa=push
+2026-12-06T21:17:12 FW-CORE sslvpn: login ok user=d.ortiz src=203.0.113.38 profile=CC-REMOTE mfa=push
+2026-12-06T21:25:21 FW-CORE sslvpn: login ok user=m.alvarez src=198.51.100.137 profile=CC-LEGACY mfa=none
+2026-12-06T21:44:58 FW-CORE sslvpn: login ok user=m.reyes src=192.0.2.244 profile=CC-REMOTE mfa=push
+2026-12-06T21:46:54 FW-CORE sslvpn: login failed user=r.medina src=198.51.100.129 reason=bad_password
+2026-12-06T21:47:15 FW-CORE sslvpn: login ok user=r.medina src=198.51.100.129 profile=CC-LEGACY mfa=none
+2026-12-06T22:02:28 FW-CORE sslvpn: login ok user=j.pike src=203.0.113.11 profile=CC-REMOTE mfa=push
+2026-12-06T22:04:14 FW-CORE sslvpn: login ok user=j.pike src=203.0.113.11 profile=CC-REMOTE mfa=push
+2026-12-06T22:16:34 FW-CORE sslvpn: login ok user=d.ortiz src=203.0.113.38 profile=CC-REMOTE mfa=push
+2026-12-06T22:22:05 FW-CORE sslvpn: login ok user=s.ortega src=203.0.113.233 profile=CC-REMOTE mfa=push
+2026-12-06T22:45:25 FW-CORE sslvpn: login ok user=j.pike src=203.0.113.11 profile=CC-REMOTE mfa=push
+2026-12-07T02:03:46 FW-CORE sslvpn: login failed user=k.tran src=203.0.113.45 reason=bad_password
+2026-12-07T02:04:46 FW-CORE sslvpn: login failed user=o.gallagher src=203.0.113.45 reason=bad_password
+2026-12-07T02:05:24 FW-CORE sslvpn: login failed user=b.kessler src=203.0.113.45 reason=bad_password
+2026-12-07T02:06:22 FW-CORE sslvpn: login failed user=g.palmer src=203.0.113.45 reason=bad_password
+2026-12-07T02:07:08 FW-CORE sslvpn: login failed user=m.alvarez src=203.0.113.45 reason=bad_password
+2026-12-07T02:08:21 FW-CORE sslvpn: login failed user=i.mcbride src=203.0.113.45 reason=bad_password
+2026-12-07T02:09:01 FW-CORE sslvpn: login failed user=scanner src=203.0.113.45 reason=unknown_user
+2026-12-07T02:09:59 FW-CORE sslvpn: login failed user=test src=203.0.113.45 reason=unknown_user
+2026-12-07T02:10:59 FW-CORE sslvpn: login failed user=b.sato src=203.0.113.45 reason=bad_password
+2026-12-07T02:12:03 FW-CORE sslvpn: login failed user=d.hale src=203.0.113.45 reason=bad_password
+2026-12-07T02:13:16 FW-CORE sslvpn: login failed user=d.ortiz src=203.0.113.45 reason=bad_password
+2026-12-07T02:14:27 FW-CORE sslvpn: login failed user=admin src=203.0.113.45 reason=unknown_user
+2026-12-07T02:15:15 FW-CORE sslvpn: login failed user=j.ford src=203.0.113.45 reason=bad_password
+2026-12-07T02:16:08 FW-CORE sslvpn: login failed user=r.medina src=203.0.113.45 reason=bad_password
+2026-12-07T02:16:58 FW-CORE sslvpn: login failed user=v.chu src=203.0.113.45 reason=bad_password
+2026-12-07T02:17:58 FW-CORE sslvpn: login failed user=t.lund src=203.0.113.45 reason=bad_password
+2026-12-07T02:18:56 FW-CORE sslvpn: login failed user=m.holt src=203.0.113.45 reason=bad_password
+2026-12-07T02:20:10 FW-CORE sslvpn: login failed user=c.benson src=203.0.113.45 reason=bad_password
+2026-12-07T02:21:17 FW-CORE sslvpn: login failed user=t.becker src=203.0.113.45 reason=bad_password
+2026-12-07T02:22:08 FW-CORE sslvpn: login failed user=amanda.singh src=203.0.113.45 reason=bad_password
+2026-12-07T02:22:50 FW-CORE sslvpn: login failed user=n.quinn src=203.0.113.45 reason=bad_password
+2026-12-07T02:23:41 FW-CORE sslvpn: login failed user=g.lindqvist src=203.0.113.45 reason=bad_password
+2026-12-07T02:24:42 FW-CORE sslvpn: login failed user=d.reyes src=203.0.113.45 reason=bad_password
+2026-12-07T02:25:18 FW-CORE sslvpn: login failed user=p.nair src=203.0.113.45 reason=bad_password
+2026-12-07T02:26:24 FW-CORE sslvpn: login failed user=l.fischer src=203.0.113.45 reason=bad_password
+2026-12-07T02:27:07 FW-CORE sslvpn: login failed user=j.pike src=203.0.113.45 reason=bad_password
+2026-12-07T02:28:21 FW-CORE sslvpn: login failed user=t.greene src=203.0.113.45 reason=bad_password
+2026-12-07T02:29:35 FW-CORE sslvpn: login failed user=j.smith src=203.0.113.45 reason=unknown_user
+2026-12-07T02:30:35 FW-CORE sslvpn: login failed user=helpdesk src=203.0.113.45 reason=unknown_user
+2026-12-07T03:30:02 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:08 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:14 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:16 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:20 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:25 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:29 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:32 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:36 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:40 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:42 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:44 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:47 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:53 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:30:55 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:31:00 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:31:04 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:31:09 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:31:14 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:31:18 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:31:23 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:31:28 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:31:30 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T03:31:35 FW-CORE sslvpn: login failed user=vpnadmin src=203.0.113.201 reason=unknown_user
+2026-12-07T04:59:07 FW-CORE sslvpn: login failed user=d.ortiz src=203.0.113.38 reason=bad_password
+2026-12-07T05:00:07 FW-CORE sslvpn: login ok user=d.ortiz src=203.0.113.38 profile=CC-REMOTE mfa=push
+2026-12-07T05:11:27 FW-CORE sslvpn: login ok user=m.reyes src=192.0.2.244 profile=CC-REMOTE mfa=push
+2026-12-07T05:18:55 FW-CORE sslvpn: login failed user=s.ortega src=203.0.113.233 reason=bad_password
+2026-12-07T05:19:18 FW-CORE sslvpn: login ok user=w.henley src=192.0.2.216 profile=CC-REMOTE mfa=push
+2026-12-07T05:19:56 FW-CORE sslvpn: login ok user=s.ortega src=203.0.113.233 profile=CC-REMOTE mfa=push
+2026-12-07T05:32:18 FW-CORE sslvpn: login ok user=v.chu src=192.0.2.67 profile=CC-REMOTE mfa=push
+2026-12-07T05:49:50 FW-CORE sslvpn: login ok user=t.becker src=192.0.2.118 profile=CC-LEGACY mfa=none
+2026-12-07T05:57:46 FW-CORE sslvpn: login ok user=p.nair src=203.0.113.47 profile=CC-REMOTE mfa=push
+2026-12-07T05:59:13 FW-CORE sslvpn: login ok user=j.pike src=203.0.113.11 profile=CC-REMOTE mfa=push
+2026-12-07T06:54:38 FW-CORE sslvpn: login ok user=r.dempsey src=203.0.113.240 profile=CC-REMOTE mfa=push
+2026-12-07T06:57:56 FW-CORE sslvpn: login ok user=p.nair src=203.0.113.47 profile=CC-REMOTE mfa=push
+2026-12-07T07:07:14 FW-CORE sslvpn: login ok user=g.palmer src=192.0.2.41 profile=CC-LEGACY mfa=none
+2026-12-07T07:11:14 FW-CORE sslvpn: login ok user=s.ortega src=203.0.113.233 profile=CC-REMOTE mfa=push
+2026-12-07T07:13:04 FW-CORE sslvpn: login failed user=r.medina src=198.51.100.129 reason=bad_password
+2026-12-07T07:13:30 FW-CORE sslvpn: login ok user=v.chu src=192.0.2.67 profile=CC-REMOTE mfa=push
+2026-12-07T07:14:01 FW-CORE sslvpn: login ok user=r.medina src=198.51.100.129 profile=CC-LEGACY mfa=none
+2026-12-07T07:23:14 FW-CORE sslvpn: login ok user=r.dempsey src=203.0.113.240 profile=CC-REMOTE mfa=push
+2026-12-07T07:30:43 FW-CORE sslvpn: login failed user=g.palmer src=192.0.2.41 reason=bad_password
+2026-12-07T07:31:27 FW-CORE sslvpn: login ok user=g.palmer src=192.0.2.41 profile=CC-LEGACY mfa=none
+2026-12-07T07:38:44 FW-CORE sslvpn: login failed user=p.nair src=203.0.113.47 reason=bad_password
+2026-12-07T07:39:09 FW-CORE sslvpn: login ok user=p.nair src=203.0.113.47 profile=CC-REMOTE mfa=push
+2026-12-07T07:40:28 FW-CORE sslvpn: login ok user=d.ortiz src=203.0.113.38 profile=CC-REMOTE mfa=push
+2026-12-07T07:41:13 FW-CORE sslvpn: login ok user=m.alvarez src=198.51.100.137 profile=CC-LEGACY mfa=none
+2026-12-07T07:41:45 FW-CORE sslvpn: login ok user=t.becker src=192.0.2.118 profile=CC-LEGACY mfa=none
+2026-12-07T07:43:56 FW-CORE sslvpn: login ok user=r.medina src=198.51.100.129 profile=CC-LEGACY mfa=none
+2026-12-07T07:51:55 FW-CORE sslvpn: login ok user=w.henley src=192.0.2.216 profile=CC-REMOTE mfa=push

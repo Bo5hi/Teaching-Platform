@@ -158,12 +158,15 @@ aside.rail { display: grid; gap: 14px; }
     }).join('');
   }
 
+  // One query parameter from a block's href (hrefs can carry &from=N when a later week repeats an earlier step).
+  function hp(href, k) { var m = String(href).match(new RegExp('[?&]' + k + '=([^&#]*)')); return m ? decodeURIComponent(m[1]) : ''; }
+
   function extra(b) {
-    if (b.type === 'quiz') { var q = (rec.quiz || {})['w' + state.week]; if (q) return '<span class="got">Best ' + q.best + '%</span>'; }
-    if (b.type === 'practice') { var p = (rec.practice || {})[(b.href.split('p=')[1] || '')]; if (p) return '<span class="got">Best ' + p.best + '%</span>'; }
-    if (b.type === 'lab') { var l = (rec.labs || {})[(b.href.split('l=')[1] || '')]; if (l) return '<span class="got">' + (l.status === 'submitted' ? 'Submitted' : 'Draft saved') + '</span>'; }
-    if (b.type === 'lesson') { var k = (rec.checks || {})[(b.href.split('l=')[1] || '')]; if (k) return '<span class="got">Check ' + k.score + '/' + k.total + '</span>'; }
-    if (b.type === 'project') { var pr = projRecs['week' + (b.href.split('p=')[1] || '')]; if (pr && pr.submittedAt) return '<span class="got">' + (pr.grade ? 'Graded ' + pr.grade.score + '/' + (pr.maxScore || '') : 'Submitted') + '</span>'; }
+    if (b.type === 'quiz' && /^Quiz\.html/.test(b.href)) { var q = (rec.quiz || {})['w' + (hp(b.href, 'w') || state.week)]; if (q) return '<span class="got">Best ' + q.best + '%</span>'; }
+    if (b.type === 'practice') { var p = (rec.practice || {})[hp(b.href, 'p')]; if (p) return '<span class="got">Best ' + p.best + '%</span>'; }
+    if (b.type === 'lab') { var l = (rec.labs || {})[hp(b.href, 'l')]; if (l) return '<span class="got">' + (l.status === 'submitted' ? 'Submitted' : 'Draft saved') + '</span>'; }
+    if (b.type === 'lesson' || b.type === 'talk') { var k = (rec.checks || {})[hp(b.href, 'l')]; if (k) return '<span class="got">Check ' + k.score + '/' + k.total + '</span>'; }
+    if (b.type === 'project') { var pr = projRecs['week' + hp(b.href, 'p')]; if (pr && pr.submittedAt) return '<span class="got">' + (pr.grade ? 'Graded ' + pr.grade.score + '/' + (pr.maxScore || '') : 'Submitted') + '</span>'; }
     if (b.type === 'mock') { var m = mockRecs['w' + state.week]; if (m) return '<span class="got">' + (m.grade ? 'Graded ' + m.grade.score + '/' + (m.grade.max || 25) : m.status === 'submitted' ? 'Submitted' : 'In progress') + '</span>'; }
     return '';
   }
@@ -259,7 +262,7 @@ aside.rail { display: grid; gap: 14px; }
   function projCell(blocks) {
     var b = blocks.filter(function (x) { return x.type === 'project'; })[0];
     if (!b) return '&mdash;';
-    var n = b.href.split('p=')[1], pr = projRecs['week' + n];
+    var n = hp(b.href, 'p'), pr = projRecs['week' + n];
     if (!pr || !pr.submittedAt) return 'Project ' + n + ': not submitted';
     return 'Project ' + n + ': ' + (pr.grade ? '<b>' + pr.grade.score + ' / ' + pr.maxScore + '</b>' : 'submitted, waiting for grade');
   }
@@ -284,14 +287,14 @@ aside.rail { display: grid; gap: 14px; }
       '<h2 class="cc-h2">By week</h2><div class="table-wrap"><table class="cc"><thead><tr><th>Week</th><th>Steps done</th><th>Knowledge checks</th><th>Labs</th><th>Quiz</th><th>Mock project</th><th>Case study</th></tr></thead><tbody>' +
       (built.length ? built.map(function (w) {
         var blocks = [], labs = [], lessons = [];
-        w.days.forEach(function (d) { d.blocks.forEach(function (b) { blocks.push(b); if (b.type === 'lab') labs.push(b.href.split('l=')[1]); if (b.type === 'lesson') lessons.push(b.href.split('l=')[1]); }); });
+        w.days.forEach(function (d) { d.blocks.forEach(function (b) { blocks.push(b); if (b.type === 'lab' && labs.indexOf(hp(b.href, 'l')) < 0) labs.push(hp(b.href, 'l')); if ((b.type === 'lesson' || b.type === 'talk') && lessons.indexOf(hp(b.href, 'l')) < 0) lessons.push(hp(b.href, 'l')); }); });
         var done = blocks.filter(function (b) { return isDone(b.id); }).length;
         var ck = lessons.map(function (l) { return (rec.checks || {})[l]; }).filter(Boolean);
         var ckTxt = ck.length ? Math.round(ck.reduce(function (a, c) { return a + c.score / c.total; }, 0) / ck.length * 100) + '% (' + ck.length + ' of ' + lessons.length + ')' : '&mdash;';
         var lb = labs.filter(function (l) { return (rec.labs || {})[l] && rec.labs[l].status === 'submitted'; }).length;
         var q = (rec.quiz || {})['w' + w.num];
         var m = mockRecs['w' + w.num];
-        var mTxt = !m ? 'Not started' : m.grade ? '<b>' + m.grade.score + ' / ' + (m.grade.max || 25) + '</b>' : m.status === 'submitted' ? 'Submitted, waiting for grade' : 'In progress';
+        var mTxt = !m ? (w.mock ? 'Not started' : '&mdash;') : m.grade ? '<b>' + m.grade.score + ' / ' + (m.grade.max || 25) + '</b>' : m.status === 'submitted' ? 'Submitted, waiting for grade' : 'In progress';
         return '<tr><td>' + w.num + ' &middot; ' + esc(w.title) + '</td><td>' + done + ' / ' + blocks.length + '</td><td>' + ckTxt + '</td><td>' + lb + ' / ' + labs.length + '</td><td>' +
           (q ? '<span style="color:' + (q.best >= 80 ? 'var(--ok)' : 'var(--warn)') + '">' + q.best + '%</span>' : '&mdash;') + '</td><td>' + mTxt + '</td><td>' + projCell(blocks) + '</td></tr>';
       }).join('') : '<tr><td colspan="7" class="sub">Nothing yet.</td></tr>') + '</tbody></table></div>' +
@@ -382,7 +385,9 @@ aside.rail { display: grid; gap: 14px; }
   function loadMocks() {
     var key = CC.student().key;
     if (CC.db && key) return CC.db.ref('mccoe_mockproj/' + key).once('value').then(function (s) { mockRecs = s.val() || {}; }).catch(function () {});
-    try { var l = JSON.parse(localStorage.getItem('cc_mock_w1_' + (key || 'preview')) || 'null'); if (l) mockRecs.w1 = l; } catch (e) {}
+    for (var mw = 1; mw <= 15; mw++) {
+      try { var l = JSON.parse(localStorage.getItem('cc_mock_w' + mw + '_' + (key || 'preview')) || 'null'); if (l) mockRecs['w' + mw] = l; } catch (e) {}
+    }
     return Promise.resolve();
   }
 

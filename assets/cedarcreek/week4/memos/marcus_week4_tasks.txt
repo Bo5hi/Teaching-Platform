@@ -1,0 +1,18 @@
+From:    Marcus Reyes
+To:      Junior Security Analyst
+Date:    2026-11-30
+Subject: This week: the network
+
+Your walk-through said the plant can reach the office. Let's prove it
+and see how bad it is before Walt hears we want to change anything.
+
+1. Jordan mirrored a port on PLANT-SW1 Tuesday morning for a few minutes.
+   Look at what crosses the plant network (captures/plant_span.pcap).
+2. Review the FW-CORE rules (firewall/fw-core_rules.csv). Jordan and I
+   have added rules for years and never removed any.
+3. Dee ran the scan Greg approved (scans/). Tell me what is exposed.
+
+Greg will ask "are we OK?" Give me three things to fix first, in plain
+English.
+
+- Marcus

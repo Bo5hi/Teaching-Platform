@@ -1,0 +1,7 @@
+feature,characteristic,nominal_mm,tolerance_mm,method,frequency
+A1,mounting hole diameter,10.50,0.05,pin gauge,every part
+A2,bolt circle,120.00,0.10,CMM,first and last of lot
+A3,slot width (detail A),12.00,0.10,caliper,1 in 10
+A4,bend radius (detail B),6.00,0.25,radius gauge,1 in 10
+A5,plate thickness,6.35,0.10,micrometer,1 in 25
+A6,anodize thickness,0.010,0.005,eddy current,1 per lot

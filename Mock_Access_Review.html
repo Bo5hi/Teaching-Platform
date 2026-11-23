@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock Access Review | MCCoE</title>
+<link rel="stylesheet" href="course.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="course.js"></script>
+<script src="course-data.js"></script>
+<script src="course-w3-mock.js"></script>
+<style>
+section.sec { scroll-margin-top: 76px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.table-wrap { position: relative; overflow-x: auto; }
+.statline { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 10px 0 18px; font-size: .95rem; }
+.pill { display: inline-block; font-size: .8rem; font-weight: 700; letter-spacing: .5px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line-soft); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pill.ok { color: var(--ok); border-color: rgba(51, 209, 122, .5); }
+.pill.sub { color: var(--cyan); border-color: rgba(0, 245, 255, .45); }
+.pill.warn { color: var(--warn); border-color: rgba(255, 194, 61, .5); }
+.saved { color: var(--muted); }
+.saved.err { color: var(--warn); }
+.preview-note { font-size: .9rem; color: var(--warn); border: 1px dashed rgba(255, 194, 61, .45); border-radius: 8px; padding: 8px 12px; margin-bottom: 16px; }
+
+.brief .from { font-family: var(--f-mono); font-size: .76rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--t-mock); }
+.brief .prose p { margin-bottom: 10px; }
+details.more { margin-top: 4px; }
+details.more summary { cursor: pointer; color: var(--cyan); font-weight: 700; font-size: .95rem; }
+details.more ol { font-family: var(--f-read); font-size: .92rem; color: #dcdce4; padding-left: 22px; margin: 10px 0 0; line-height: 1.55; }
+details.more ol li { margin-bottom: 6px; }
+details.more ol b { color: var(--text); }
+
+.steps5 { list-style: none; padding: 0; margin: 20px 0 12px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 900px) { .steps5 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); } }
+.steps5 a { display: flex; gap: 10px; align-items: center; height: 100%; padding: 10px 12px; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; text-decoration: none; color: var(--text); }
+.steps5 a:hover { border-color: rgba(255, 255, 255, .25); }
+.steps5 .sn { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--red); color: var(--red); font-family: var(--f-display); font-size: .8rem; }
+.steps5 .st { display: grid; line-height: 1.2; min-width: 0; }
+.steps5 .st b { font-weight: 700; font-size: .98rem; }
+.steps5 .st small { color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; }
+.steps5 li.ok .sn { background: var(--ok); border-color: var(--ok); color: #07070f; }
+.steps5 li.ok .st small { color: var(--ok); }
+
+.p1bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 14px; border: 1px solid var(--line-soft); border-left: 3px solid var(--cyan); border-radius: 0 10px 10px 0; background: rgba(0, 245, 255, .04); font-size: .97rem; }
+.p1bar .muted { color: var(--muted); }
+
+.sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 38px 0 6px; }
+.sec-h h2.cc-h2 { margin: 0; }
+.sec-intro { font-family: var(--f-read); font-size: .95rem; color: var(--muted); max-width: 80ch; margin: 0 0 12px; line-height: 1.6; font-weight: 400; }
+.sec-intro b { color: var(--text); font-weight: 600; }
+.issues { font-size: .9rem; color: var(--warn); margin: 8px 0 0; min-height: 1px; }
+
+/* evidence */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.tabs button { background: var(--panel); border: 1px solid var(--line-soft); color: var(--text); border-radius: 8px; padding: 7px 12px; cursor: pointer; font-weight: 700; font-size: .92rem; }
+.tabs button[aria-selected="true"] { border-color: var(--red); background: rgba(238, 34, 7, .1); }
+.tabs button.v::after { content: " \2713"; color: var(--ok); }
+.evbox { padding: 12px 14px; }
+.evtools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+.evtools input[type=search] { max-width: 320px; }
+.evtools select { width: auto; }
+.evcount { color: var(--muted); font-size: .88rem; }
+.evscroll { max-height: 460px; overflow: auto; border: 1px solid var(--line-soft); border-radius: 8px; }
+table.ev { width: 100%; border-collapse: collapse; font-size: .84rem; }
+table.ev th { position: sticky; top: 0; background: #15152c; text-align: left; padding: 6px 8px; font-size: .76rem; letter-spacing: .4px; color: var(--muted); white-space: nowrap; z-index: 1; }
+table.ev td { padding: 5px 8px; border-top: 1px solid var(--line-soft); white-space: nowrap; font-family: var(--f-mono); }
+table.ev td.wrap { white-space: normal; font-family: var(--f-read); min-width: 220px; }
+table.ev tr.off td { color: var(--faint); }
+pre.memo { white-space: pre-wrap; font-family: var(--f-mono); font-size: .85rem; line-height: 1.5; background: rgba(0, 0, 0, .25); border: 1px solid var(--line-soft); border-radius: 8px; padding: 12px; margin: 0 0 12px; color: #dcdce4; }
+.ggrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.gcard { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 10px 12px; }
+.gcard h4 { margin: 0 0 6px; font-family: var(--f-mono); font-weight: 400; font-size: .85rem; color: var(--cyan); display: flex; justify-content: space-between; gap: 8px; }
+.gcard ul { margin: 0; padding-left: 16px; font-size: .86rem; line-height: 1.5; }
+.gcard li span { color: var(--muted); }
+.evnote { font-family: var(--f-read); font-size: .9rem; color: var(--muted); margin: 0 0 10px; }
+
+/* findings */
+.cards { display: grid; gap: 12px; }
+.fcard { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px 14px; }
+.fcard.flash { border-color: var(--cyan); }
+.fcard .gh { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.fcard .gh .gt { font-family: var(--f-display); font-size: .85rem; letter-spacing: 1px; color: var(--t-mock); }
+.fcard .gh .grow { flex: 1; }
+.fcard .gh input.acct { width: 200px; }
+.fcard .gh .rank { display: flex; gap: 6px; align-items: center; font-size: .9rem; color: var(--muted); }
+.fcard .gh .rank input { width: 70px; }
+.fcard .gg { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 14px; }
+@media (max-width: 760px) { .fcard .gg { grid-template-columns: minmax(0, 1fr); } }
+.fcard .f { display: grid; gap: 4px; align-content: start; }
+.fcard .f label, .fcard .f .lb { font-size: .88rem; font-weight: 700; color: var(--muted); }
+.fcard textarea { min-height: 62px; }
+.fcard .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.checks2 { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .9rem; }
+.checks2 label { display: flex; gap: 6px; align-items: center; font-weight: 500; color: var(--text); }
+.shead { font-family: var(--f-mono); font-size: .9rem; color: var(--cyan); }
+.scont { font-family: var(--f-read); font-size: .92rem; color: #dcdce4; margin: 4px 0 6px; }
+.sperm { font-size: .85rem; color: var(--muted); margin-bottom: 10px; }
+.sperm code { color: var(--text); }
+button.x { background: none; border: 1px solid transparent; color: var(--faint); border-radius: 6px; width: 32px; height: 32px; cursor: pointer; font-size: 1.2rem; line-height: 1; }
+button.x:hover { color: var(--bad); border-color: rgba(255, 90, 90, .4); }
+.addrow { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.undo { font-size: .92rem; color: var(--muted); }
+.undo button { margin-left: 6px; }
+.qbox { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+.qbox .qh { font-weight: 700; margin-bottom: 6px; }
+.qbox .qs { font-family: var(--f-read); font-size: .9rem; color: var(--muted); margin-bottom: 8px; }
+.sevb { font-size: .8rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line-soft); color: var(--muted); }
+
+.sumgrid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 860px) { .sumgrid { grid-template-columns: minmax(0, 1fr); } }
+.sumgrid textarea { min-height: 240px; }
+.sumgrid ul { margin: 0; padding-left: 18px; font-family: var(--f-read); font-size: .92rem; color: #dcdce4; line-height: 1.55; font-weight: 400; }
+.sumgrid li { margin-bottom: 5px; }
+.wc { font-size: .9rem; color: var(--muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
+.wc.ok { color: var(--ok); }
+
+.confirm { margin-top: 12px; border-color: var(--line); }
+.confirm:focus { outline: none; }
+.confirm h3 { font-family: var(--f-body); font-size: 1.2rem; text-transform: none; letter-spacing: .2px; color: var(--text); font-weight: 700; }
+.checks { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 4px; }
+.checks li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line-soft); font-size: .97rem; }
+.checks li .r { font-weight: 700; white-space: nowrap; }
+.checks li.ok .r { color: var(--ok); } .checks li.short .r { color: var(--warn); }
+.confirm p { font-family: var(--f-read); font-size: .95rem; color: #dcdce4; font-weight: 400; margin: 0 0 12px; }
+.confirm .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.grade { border-color: rgba(51, 209, 122, .45); margin-bottom: 18px; }
+.grade .gtop { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.grade .score span { font-size: 1rem; color: var(--muted); }
+.grade table.cc td.pts { white-space: nowrap; font-weight: 700; text-align: right; }
+.grade table.cc td .d { color: var(--muted); font-size: .88rem; }
+.grade .fb { font-family: var(--f-read); font-size: .95rem; font-weight: 400; color: #dcdce4; white-space: pre-wrap; margin-top: 12px; line-height: 1.6; }
+.grade .gby { font-size: .85rem; color: var(--muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+<header id="cc-top"></header>
+<main class="cc-main" id="page"><div class="empty">Loading the access review...</div></main>
+<script>
+(function () {
+  CC.header('week');
+  var M = window.MOCK_W3;
+  var esc = CC.esc;
+  var page = document.getElementById('page');
+  if (!M || !M.evidence) { page.innerHTML = '<div class="empty">The review data (course-w3-mock.js) did not load. Refresh the page.</div>'; return; }
+  var E = M.evidence;
+
+  var me = CC.student();
+  var LKEY = 'cc_mock_w3_' + (me.key || 'preview');
+  var PATH = 'mccoe_mockproj/' + me.key + '/w3';
+  var WEEK = ((window.COURSE && COURSE.weeks) || []).filter(function (w) { return w.num === 3; })[0] || {};
+  var RUBRIC = (WEEK.mock && WEEK.mock.rubric) || M.rubric || [];
+  var PART1_BLOCK = 'w3d1-b9', SUBMIT_BLOCK = 'w3d2-b4';
+  var T = { findings: 10, words: 100 };
+  var TABS = [['acc', 'Accounts'], ['grp', 'Groups'], ['hr', 'HR roster'], ['vpn', 'VPN'], ['shr', 'Shares'], ['memo', 'Memos']];
+  var SAMS = E.ad.map(function (r) { return r[0]; });
+  var NAME = {}; E.ad.forEach(function (r) { NAME[r[0]] = r[1]; });
+  var VPNU = E.groups['VPN-Users'] || [];
+
+  var S = null;
+  var meta = { status: 'draft', submittedAt: null, submitCount: 0, changedSinceSubmit: false, savedAt: null, grade: null };
+  var part1Done = false, remoteOk = false, saveT = null, lastDel = null, tab = 'acc';
+  var filt = { acc: '', accEn: 'all', hr: '', hrOnly: false, vpn: '' };
+
+  // ---------- storage ----------
+  function readLocal() { try { return JSON.parse(localStorage.getItem(LKEY) || 'null'); } catch (e) { return null; } }
+  function writeLocal(rec) { try { localStorage.setItem(LKEY, JSON.stringify(rec)); } catch (e) {} }
+  function fetchRemote() {
+    if (!CC.online) return Promise.resolve({ ok: false, val: null });
+    return new Promise(function (res) {
+      var settled = false;
+      var t = setTimeout(function () { if (!settled) { settled = true; res({ ok: false, val: null }); } }, 8000);
+      CC.db.ref(PATH).once('value').then(function (s) {
+        if (settled) return; settled = true; clearTimeout(t); res({ ok: true, val: s.val() });
+      }, function () {
+        if (settled) return; settled = true; clearTimeout(t); res({ ok: false, val: null });
+      });
+    });
+  }
+  function list(x) {
+    if (!x) return [];
+    if (Array.isArray(x)) return x.filter(function (v) { return v != null; });
+    return Object.keys(x).sort(function (a, b) { return a - b; }).map(function (k) { return x[k]; }).filter(function (v) { return v != null; });
+  }
+  function str(v) { return v == null ? '' : String(v); }
+  function finding(r) { r = r || {}; return { acct: str(r.acct), type: str(r.type), type2: str(r.type2), sev: str(r.sev), evidence: str(r.evidence), action: str(r.action), detail: str(r.detail), rank: str(r.rank) }; }
+  function share(r) { r = r || {}; return { cls: str(r.cls), data: list(r.data).map(str), owner: str(r.owner), verdict: str(r.verdict), fix: str(r.fix) }; }
+  function normData(d) {
+    d = d || {};
+    var v = d.vpn || {}, sh = d.shares || {}, out = {};
+    E.shares.forEach(function (s) { out[s.id] = share(sh[s.id]); });
+    return {
+      viewed: list(d.viewed).filter(function (t) { return TABS.some(function (x) { return x[0] === t; }); }),
+      findings: list(d.findings).map(finding),
+      vpn: { notEnrolled: list(v.notEnrolled).map(str), usedLegacy: list(v.usedLegacy).map(str), enrolledCan: str(v.enrolledCan), fix: str(v.fix), colonial: str(v.colonial) },
+      shares: out,
+      summary: str(d.summary)
+    };
+  }
+
+  function setSave(state, at) {
+    var el = document.getElementById('saved');
+    if (!el) return;
+    var t = at ? ' ' + clock(at) : '';
+    el.className = 'saved' + (state === 'err' ? ' err' : '');
+    el.textContent = state === 'pending' ? 'Saving...' :
+      state === 'ok' ? 'Saved' + t :
+      state === 'local' ? 'Saved on this computer' + t :
+      state === 'err' ? 'Could not reach the server. Saved on this computer' + t + '.' : '';
+  }
+  function persist() {
+    clearTimeout(saveT); saveT = null;
+    var now = new Date().toISOString();
+    meta.savedAt = now;
+    var payload = {
+      name: me.name || null, id: me.id || null,
+      status: meta.status, savedAt: now,
+      submittedAt: meta.submittedAt || null,
+      submitCount: meta.submitCount || 0,
+      changedSinceSubmit: !!meta.changedSinceSubmit,
+      data: JSON.parse(JSON.stringify(S))
+    };
+    var localRec = JSON.parse(JSON.stringify(payload));
+    localRec.grade = meta.grade || null;
+    writeLocal(localRec);
+    if (CC.online && remoteOk) {
+      return CC.db.ref(PATH).update(payload).then(function () { setSave('ok', now); }, function () { setSave('err', now); });
+    }
+    setSave('local', now);
+    return Promise.resolve();
+  }
+  function changed() {
+    if (meta.status === 'submitted') meta.changedSinceSubmit = true;
+    setSave('pending');
+    clearTimeout(saveT);
+    saveT = setTimeout(persist, 900);
+    refresh();
+  }
+  function flush() { if (saveT) persist(); }
+  window.addEventListener('pagehide', flush);
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flush(); });
+
+  // ---------- helpers ----------
+  function clock(iso) { try { return new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); } catch (e) { return ''; } }
+  function when(iso) { try { return new Date(iso).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); } catch (e) { return iso || ''; } }
+  function words(s) { var m = String(s || '').trim().match(/\S+/g); return m ? m.length : 0; }
+  function filled(v) { return String(v || '').trim() !== ''; }
+  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+  function opts(values, val, ph) {
+    return '<option value="">' + esc(ph) + '</option>' + values.map(function (o) {
+      return '<option value="' + esc(o) + '"' + (o === val ? ' selected' : '') + '>' + esc(o) + '</option>';
+    }).join('');
+  }
+  function attrs(t, i, f, label) { return ' data-t="' + t + '" data-i="' + esc(i) + '" data-f="' + f + '" aria-label="' + esc(label) + '"'; }
+  function ta(t, i, f, val, label, ph, id) { return '<textarea' + (id ? ' id="' + id + '"' : '') + attrs(t, i, f, label) + (ph ? ' placeholder="' + esc(ph) + '"' : '') + '>' + esc(val) + '</textarea>'; }
+  function sel(t, i, f, values, val, label, ph, id) { return '<select' + (id ? ' id="' + id + '"' : '') + attrs(t, i, f, label) + '>' + opts(values, val, ph) + '</select>'; }
+  function inp(t, i, f, val, label, ph, extra) { return '<input type="text"' + attrs(t, i, f, label) + ' value="' + esc(val) + '"' + (ph ? ' placeholder="' + esc(ph) + '"' : '') + (extra || '') + '>'; }
+
+  // ---------- counts ----------
+  function counts() {
+    var f = S.findings.filter(function (x) { return filled(x.acct); });
+    var sh = E.shares.map(function (s) { return S.shares[s.id]; });
+    var v = S.vpn;
+    return {
+      viewed: S.viewed.length,
+      findings: f.length,
+      fNoType: f.filter(function (x) { return !x.type || !x.sev; }).length,
+      fNoAction: f.filter(function (x) { return !x.action; }).length,
+      fNoEvidence: f.filter(function (x) { return !filled(x.evidence); }).length,
+      fNoRank: f.filter(function (x) { return !filled(x.rank); }).length,
+      vpnDone: (v.notEnrolled.length > 0 && v.usedLegacy.length > 0 && !!v.enrolledCan && filled(v.fix) && words(v.colonial) >= 25),
+      sharesDone: sh.filter(function (x) { return x.cls && x.verdict; }).length,
+      sharesNoOwner: sh.filter(function (x) { return x.cls && !filled(x.owner); }).length,
+      words: words(S.summary)
+    };
+  }
+  function part1Ready(c) { return c.viewed >= 4 && c.findings >= 6; }
+  function setPill(id, n, target, unit) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = n + ' of ' + target + ' ' + unit;
+    el.className = 'pill' + (n >= target ? ' ok' : '');
+  }
+  function issue(id, parts) { var el = document.getElementById(id); if (el) el.textContent = parts.filter(Boolean).join(' '); }
+
+  function refresh() {
+    if (!S) return;
+    var c = counts();
+    setPill('pill-ev', c.viewed, TABS.length, 'opened');
+    setPill('pill-f', c.findings, T.findings, 'findings');
+    setPill('pill-sh', c.sharesDone, E.shares.length, 'shares');
+    var vp = document.getElementById('pill-vpn');
+    if (vp) { vp.textContent = c.vpnDone ? 'Answered' : 'Not finished'; vp.className = 'pill' + (c.vpnDone ? ' ok' : ''); }
+    var steps = [
+      [c.viewed >= TABS.length, c.viewed + ' of ' + TABS.length + ' opened'],
+      [c.findings >= T.findings && !c.fNoType && !c.fNoAction, c.findings + ' of 10+ findings'],
+      [c.vpnDone, c.vpnDone ? 'Answered' : 'Not finished'],
+      [c.sharesDone >= E.shares.length, c.sharesDone + ' of ' + E.shares.length + ' shares'],
+      [meta.status === 'submitted', meta.status === 'submitted' ? (meta.submitCount > 1 ? 'Resubmitted' : 'Submitted') : c.words + ' words, not submitted']
+    ];
+    steps.forEach(function (s, i) {
+      var li = document.getElementById('st-' + (i + 1));
+      if (!li) return;
+      li.className = s[0] ? 'ok' : '';
+      li.querySelector('small').textContent = s[1];
+    });
+    issue('iss-f', [
+      c.fNoType ? plural(c.fNoType, 'finding needs', 'findings need') + ' a type and severity.' : '',
+      c.fNoEvidence ? plural(c.fNoEvidence, 'finding has', 'findings have') + ' no evidence.' : '',
+      c.fNoAction ? plural(c.fNoAction, 'finding needs', 'findings need') + ' a recommended action.' : '',
+      c.fNoRank ? plural(c.fNoRank, 'finding needs', 'findings need') + ' a priority rank.' : ''
+    ]);
+    issue('iss-sh', [c.sharesNoOwner ? plural(c.sharesNoOwner, 'share needs', 'shares need') + ' an owner.' : '']);
+    var wc = document.getElementById('wc');
+    if (wc) { wc.textContent = plural(c.words, 'word', 'words') + ' (aim for 120 to 250)'; wc.className = 'wc' + (c.words >= 120 ? ' ok' : ''); }
+    var cw = document.getElementById('wc-col');
+    if (cw) cw.textContent = plural(words(S.vpn.colonial), 'word', 'words') + ' (aim for 3 to 5 sentences)';
+    var b1 = document.getElementById('btn-p1'), s1 = document.getElementById('p1stat');
+    if (b1 && s1) {
+      if (part1Done) { b1.disabled = true; b1.textContent = 'Part 1 finished'; s1.textContent = 'Done. On Day 2, pick up at step 3.'; }
+      else { b1.disabled = !part1Ready(c); b1.textContent = 'Finish part 1'; s1.textContent = 'Evidence tabs opened: ' + c.viewed + ' of 4. Findings logged: ' + c.findings + ' of 6.'; }
+    }
+    TABS.forEach(function (t) { var b = document.getElementById('tab-' + t[0]); if (b) b.classList.toggle('v', S.viewed.indexOf(t[0]) >= 0); });
+    renderStatus();
+  }
+  function renderStatus() {
+    var pill = document.getElementById('stat-pill'), btn = document.getElementById('btn-submit'), line = document.getElementById('sub-line');
+    var t, cls;
+    if (meta.status === 'submitted') {
+      t = (meta.submitCount > 1 ? 'Resubmitted ' : 'Submitted ') + when(meta.submittedAt);
+      cls = 'pill sub';
+      if (meta.changedSinceSubmit) { t += ' - changes not resubmitted'; cls = 'pill warn'; }
+    } else { t = 'Draft'; cls = 'pill'; }
+    if (pill) { pill.textContent = t; pill.className = cls; }
+    if (btn) btn.textContent = meta.status === 'submitted' ? 'Resubmit for grading' : 'Submit for grading';
+    if (line) {
+      line.textContent = meta.status !== 'submitted' ? 'Due end of Day 2. You can keep editing after you submit.'
+        : meta.changedSinceSubmit ? 'You changed your work after submitting. Resubmit so your instructor knows the latest version is ready.'
+        : 'Your work is in. You can still edit it and resubmit before it is graded.';
+    }
+  }
+
+  // ---------- evidence ----------
+  function table(head, rows, rowCls, wrapCols) {
+    wrapCols = wrapCols || [];
+    return '<div class="evscroll"><table class="ev"><thead><tr>' + head.map(function (h) { return '<th scope="col">' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      (rows.length ? rows.map(function (r) {
+        return '<tr' + (rowCls ? ' class="' + rowCls(r) + '"' : '') + '>' + r.map(function (c, i) { return '<td' + (wrapCols.indexOf(i) >= 0 ? ' class="wrap"' : '') + '>' + esc(c) + '</td>'; }).join('') + '</tr>';
+      }).join('') : '<tr><td colspan="' + head.length + '">No rows match.</td></tr>') + '</tbody></table></div>';
+  }
+  function match(row, q) { q = q.trim().toLowerCase(); return !q || row.join(' ').toLowerCase().indexOf(q) >= 0; }
+  function evAccounts() {
+    var rows = E.ad.filter(function (r) { return match(r, filt.acc) && (filt.accEn === 'all' || (filt.accEn === 'on' ? r[4] === 'True' : r[4] === 'False')); });
+    return '<p class="evnote">Active Directory user export, run ' + esc(E.exportDay) + '. Dates are year-month-day. "Enabled" False means the account cannot sign in.</p>' +
+      '<div class="evtools"><input type="search" data-ev="acc" placeholder="Filter: name, department, date..." value="' + esc(filt.acc) + '" aria-label="Filter accounts">' +
+      '<select data-ev="accEn" aria-label="Enabled filter"><option value="all"' + (filt.accEn === 'all' ? ' selected' : '') + '>All accounts</option><option value="on"' + (filt.accEn === 'on' ? ' selected' : '') + '>Enabled only</option><option value="off"' + (filt.accEn === 'off' ? ' selected' : '') + '>Disabled only</option></select>' +
+      '<span class="evcount">' + rows.length + ' of ' + E.ad.length + ' accounts</span></div>' +
+      table(E.adHead, rows, function (r) { return r[4] === 'False' ? 'off' : ''; }, [9]);
+  }
+  function evGroups() {
+    return '<p class="evnote">Members of the groups that matter most. Every account is also in Domain Users. VPN-MFA-Users is the list of people enrolled in the authenticator app.</p><div class="ggrid">' +
+      Object.keys(E.groups).map(function (g) {
+        var m = E.groups[g];
+        return '<div class="gcard"><h4><span>' + esc(g) + '</span><span>' + m.length + '</span></h4><ul>' + m.map(function (s) { return '<li>' + esc(s) + (NAME[s] && NAME[s] !== s ? ' <span>' + esc(NAME[s]) + '</span>' : '') + '</li>'; }).join('') + '</ul></div>';
+      }).join('') + '</div>';
+  }
+  function evRoster() {
+    var q = filt.hr.trim();
+    var rows = E.roster.filter(function (r) { return (filt.hrOnly ? r[4] !== 'Active' : true) && (q ? match(r, q) : filt.hrOnly); });
+    return '<p class="evnote">Rosa\'s roster lists every employee (' + E.roster.length + ' rows, ' + E.roster.filter(function (r) { return r[4] === 'Active'; }).length + ' Active). Search for a name, or show only people who are not Active.</p>' +
+      '<div class="evtools"><input type="search" data-ev="hr" placeholder="Search a name or department..." value="' + esc(filt.hr) + '" aria-label="Search the HR roster">' +
+      '<span class="checks2"><label><input type="checkbox" data-ev="hrOnly"' + (filt.hrOnly ? ' checked' : '') + '> Only people who are not Active</label></span>' +
+      '<span class="evcount">' + (q || filt.hrOnly ? rows.length + ' match' + (rows.length === 1 ? '' : 'es') : 'Type to search') + '</span></div>' +
+      (q || filt.hrOnly ? table(['EmployeeID', 'Name', 'Department', 'Title', 'Status', 'HireDate', 'TermDate'], rows.slice(0, 60)) : '');
+  }
+  function evVpn() {
+    var rows = E.vpnSessions.filter(function (r) { return match(r, filt.vpn); });
+    return '<pre class="memo">' + esc(E.vpnProfiles) + '</pre>' +
+      '<div class="evtools"><input type="search" data-ev="vpn" placeholder="Filter: user, profile, date, IP..." value="' + esc(filt.vpn) + '" aria-label="Filter VPN sessions">' +
+      '<span class="evcount">' + rows.length + ' of ' + E.vpnSessions.length + ' sessions</span></div>' +
+      table(['Date', 'Time', 'User', 'Profile', 'SourceIP', 'Result', 'Minutes'], rows);
+  }
+  function evShares() {
+    var rows = [];
+    E.shares.forEach(function (s) { s.perms.forEach(function (p) { rows.push([s.path, p[0], p[1], s.holds]); }); });
+    return '<p class="evnote">Share permissions exported from ENG-FS01, FS-HR01, DC01, and Microsoft 365. The contents column is Dee\'s description.</p>' +
+      table(['Share', 'Who', 'Access', 'Contents (from Dee)'], rows, null, [3]);
+  }
+  function evMemos() { return '<pre class="memo">' + esc(E.memos.request) + '</pre><pre class="memo">' + esc(E.memos.rollout) + '</pre>'; }
+  var EV = { acc: evAccounts, grp: evGroups, hr: evRoster, vpn: evVpn, shr: evShares, memo: evMemos };
+  function renderEvidence(keepFocus) {
+    var el = document.getElementById('evbody');
+    var active = document.activeElement, key = active && active.getAttribute && active.getAttribute('data-ev'), pos = active && active.selectionStart;
+    el.innerHTML = EV[tab]();
+    TABS.forEach(function (t) { var b = document.getElementById('tab-' + t[0]); if (b) b.setAttribute('aria-selected', t[0] === tab ? 'true' : 'false'); });
+    if (keepFocus && key) { var n = el.querySelector('[data-ev="' + key + '"]'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} } }
+  }
+  function openTab(t) {
+    tab = t;
+    renderEvidence(false);
+    if (S.viewed.indexOf(t) < 0) { S.viewed.push(t); changed(); } else refresh();
+  }
+
+  // ---------- findings ----------
+  function renderFindings() {
+    var html = S.findings.map(function (g, i) {
+      var n = i + 1, p = 'Finding ' + n + ': ';
+      return '<div class="fcard" id="f-' + i + '">' +
+        '<div class="gh"><span class="gt">FINDING ' + n + '</span>' +
+          inp('findings', i, 'acct', g.acct, p + 'account', 'Account, e.g. b.kessler', ' class="acct" list="samlist"') +
+          '<span class="grow"></span>' +
+          sel('findings', i, 'sev', M.severities, g.sev, p + 'severity', 'Severity...') +
+          '<label class="rank">Priority <input type="text" inputmode="numeric"' + attrs('findings', i, 'rank', p + 'priority rank, 1 is fix first') + ' value="' + esc(g.rank) + '" placeholder="1, 2..."></label>' +
+          '<button type="button" class="x" data-act="del" data-i="' + i + '" aria-label="Remove finding ' + n + '">&times;</button>' +
+        '</div>' +
+        '<div class="gg">' +
+          '<div class="pair"><div class="f"><label for="f' + i + 't">What is wrong</label>' + sel('findings', i, 'type', M.findingTypes, g.type, p + 'finding type', 'Choose...', 'f' + i + 't') + '</div>' +
+            '<div class="f"><label for="f' + i + 't2">Also (optional)</label>' + sel('findings', i, 'type2', M.findingTypes, g.type2, p + 'second finding type', '(none)', 'f' + i + 't2') + '</div></div>' +
+          '<div class="pair"><div class="f"><label for="f' + i + 'a">Recommended action</label>' + sel('findings', i, 'action', M.actions, g.action, p + 'recommended action', 'Choose...', 'f' + i + 'a') + '</div><div></div></div>' +
+          '<div class="f"><label for="f' + i + 'e">Evidence (what the files show)</label>' + ta('findings', i, 'evidence', g.evidence, p + 'evidence', 'e.g. HR roster: last day 2026-10-16. Export: Enabled True, last sign-in ...', 'f' + i + 'e') + '</div>' +
+          '<div class="f"><label for="f' + i + 'd">Details of the fix and the risk</label>' + ta('findings', i, 'detail', g.detail, p + 'fix details', 'What to change, and what could happen if nobody does', 'f' + i + 'd') + '</div>' +
+        '</div></div>';
+    }).join('');
+    document.getElementById('flist').innerHTML = html || '<div class="empty">No findings yet. Use the evidence above, then add one below.</div>';
+  }
+  function addFinding(preset) {
+    S.findings.push(finding(preset || {}));
+    renderFindings();
+    var i = S.findings.length - 1, box = document.getElementById('f-' + i);
+    if (box) { box.classList.add('flash'); setTimeout(function () { box.classList.remove('flash'); }, 1600); box.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    var f = box && box.querySelector('input.acct'); if (f) { try { f.focus({ preventScroll: true }); } catch (e) { f.focus(); } }
+    changed();
+  }
+  function delFinding(i) {
+    var row = S.findings[i]; if (!row) return;
+    S.findings.splice(i, 1);
+    lastDel = { i: i, row: row };
+    renderFindings();
+    var u = document.getElementById('undo-f');
+    u.innerHTML = 'Removed finding ' + (i + 1) + '. <button type="button" class="btn ghost" data-act="undo">Undo</button>';
+    u.hidden = false;
+    clearTimeout(delFinding._h);
+    delFinding._h = setTimeout(function () { u.hidden = true; lastDel = null; }, 10000);
+    changed();
+  }
+  function undo() {
+    if (!lastDel) return;
+    var d = lastDel; lastDel = null;
+    S.findings.splice(Math.min(d.i, S.findings.length), 0, d.row);
+    renderFindings();
+    document.getElementById('undo-f').hidden = true;
+    changed();
+  }
+  function sortFindings() {
+    S.findings.sort(function (a, b) { var x = parseInt(a.rank, 10), y = parseInt(b.rank, 10); if (isNaN(x)) x = 1e9; if (isNaN(y)) y = 1e9; return x - y; });
+    renderFindings(); changed(); CC.toast('Findings sorted by priority.');
+  }
+
+  // ---------- VPN ----------
+  function tickList(field, label) {
+    return '<div class="checks2" role="group" aria-label="' + esc(label) + '">' + VPNU.map(function (s) {
+      return '<label><input type="checkbox" data-t="vpnset" data-f="' + field + '" value="' + esc(s) + '"' + (S.vpn[field].indexOf(s) >= 0 ? ' checked' : '') + '> ' + esc(s) + '</label>';
+    }).join('') + '</div>';
+  }
+  function renderVpn() {
+    var v = S.vpn;
+    document.getElementById('vpnbox').innerHTML =
+      '<div class="qbox"><div class="qh">a. Which VPN-Users members are not enrolled in MFA?</div><div class="qs">Compare VPN-Users with VPN-MFA-Users on the Groups tab.</div>' + tickList('notEnrolled', 'VPN users not enrolled in MFA') + '</div>' +
+      '<div class="qbox"><div class="qh">b. Which accounts actually signed in through CC-LEGACY between October 1 and November 22?</div><div class="qs">Filter the VPN tab by CC-LEGACY.</div>' + tickList('usedLegacy', 'Accounts that used CC-LEGACY') + '</div>' +
+      '<div class="qbox"><div class="qh">c. Could a user who IS enrolled in MFA still connect with only a password today?</div><div class="qs">Read the profile summary and Dee\'s notes on the VPN tab.</div><div class="checks2">' +
+        ['Yes', 'No'].map(function (o) { return '<label><input type="radio" name="encan" data-t="vpn" data-f="enrolledCan" value="' + o + '"' + (v.enrolledCan === o ? ' checked' : '') + '> ' + o + '</label>'; }).join('') + '</div></div>' +
+      '<div class="qbox"><div class="field"><label for="vfix" class="qh">d. What should happen to CC-LEGACY and VPN-Users? Give the steps in order.</label>' + ta('vpn', 0, 'fix', v.fix, 'CC-LEGACY recommendation', 'First... then...', 'vfix') + '</div></div>' +
+      '<div class="qbox"><div class="field"><label for="vcol" class="qh">e. The Colonial Pipeline parallel (3 to 5 sentences)</label><div class="qs">What do the public sources say about how the attackers got into Colonial Pipeline, and how is Cedar Creek\'s situation similar? Say only what the sources support.</div>' + ta('vpn', 0, 'colonial', v.colonial, 'Colonial Pipeline parallel', '', 'vcol') + '<div class="wc" id="wc-col"></div></div></div>';
+  }
+
+  // ---------- shares ----------
+  function renderShares() {
+    document.getElementById('shlist').innerHTML = E.shares.map(function (s, i) {
+      var r = S.shares[s.id], p = 'Share ' + (i + 1) + ': ';
+      return '<div class="fcard"><div class="shead">' + esc(s.path) + '</div><div class="scont">' + esc(s.holds) + '</div>' +
+        '<div class="sperm">Access: ' + s.perms.map(function (x) { return '<code>' + esc(x[0]) + '</code> ' + esc(x[1]); }).join(' &middot; ') + '</div>' +
+        '<div class="gg">' +
+          '<div class="pair"><div class="f"><label for="s' + i + 'c">Classification</label>' + sel('shares', s.id, 'cls', M.classes.map(function (c) { return c.name; }), r.cls, p + 'classification', 'Choose...', 's' + i + 'c') + '</div>' +
+            '<div class="f"><label for="s' + i + 'o">Data owner</label>' + inp('shares', s.id, 'owner', r.owner, p + 'data owner', 'Who decides access?').replace('<input', '<input id="s' + i + 'o"') + '</div></div>' +
+          '<div class="f"><span class="lb">Data types inside</span><div class="checks2">' + M.dataTypes.map(function (d) {
+            return '<label><input type="checkbox" data-t="sharedata" data-i="' + s.id + '" value="' + esc(d) + '"' + (r.data.indexOf(d) >= 0 ? ' checked' : '') + '> ' + esc(d) + '</label>';
+          }).join('') + '</div></div>' +
+          '<div class="f"><label for="s' + i + 'v">Do the permissions fit?</label>' + sel('shares', s.id, 'verdict', M.verdicts, r.verdict, p + 'permission verdict', 'Choose...', 's' + i + 'v') + '</div>' +
+          '<div class="f"><label for="s' + i + 'f">Fix (or "none needed")</label>' + ta('shares', s.id, 'fix', r.fix, p + 'fix', 'Which group or account to remove, or what to change', 's' + i + 'f') + '</div>' +
+        '</div></div>';
+    }).join('');
+  }
+
+  // ---------- grade ----------
+  function renderGrade() {
+    var el = document.getElementById('grade'), g = meta.grade;
+    if (!g || g.score == null) { el.hidden = true; el.innerHTML = ''; return; }
+    var rub = list(g.rubric);
+    var rows = RUBRIC.map(function (r, i) { return '<tr><td><b>' + esc(r[0]) + '</b><div class="d">' + esc(r[1]) + '</div></td><td class="pts">' + esc(rub[i] == null ? '-' : rub[i]) + ' / 5</td></tr>'; }).join('');
+    var after = meta.submittedAt && g.gradedAt && meta.submittedAt > g.gradedAt;
+    el.innerHTML = '<div class="gtop"><h3>Your grade</h3><div class="score">' + esc(g.score) + ' <span>/ ' + esc(g.max || 25) + '</span></div></div>' +
+      (rows ? '<div class="table-wrap" style="margin-top:8px"><table class="cc">' + rows + '</table></div>' : '') +
+      (g.feedback ? '<div class="fb">' + esc(g.feedback) + '</div>' : '') +
+      '<div class="gby">' + (g.gradedBy ? 'Graded by ' + esc(g.gradedBy) : 'Graded') + (g.gradedAt ? ' on ' + esc(when(g.gradedAt)) : '') + '.' +
+      (after ? ' You resubmitted after this grade; your instructor will see the new version.' : '') + '</div>';
+    el.hidden = false;
+  }
+
+  // ---------- submit ----------
+  function checks() {
+    var c = counts();
+    return [
+      ['All 6 evidence tabs opened', c.viewed >= TABS.length, c.viewed + ' / ' + TABS.length],
+      ['At least 10 account findings', c.findings >= T.findings, c.findings + ' / ' + T.findings],
+      ['Every finding has a type, severity, and action', c.findings > 0 && !c.fNoType && !c.fNoAction, (c.fNoType + c.fNoAction) ? (c.fNoType + c.fNoAction) + ' missing' : 'Done'],
+      ['Remote access and MFA questions answered', c.vpnDone, c.vpnDone ? 'Done' : 'Not finished'],
+      ['All 9 shares classified with a verdict', c.sharesDone >= E.shares.length, c.sharesDone + ' / ' + E.shares.length],
+      ['Summary for Greg (100+ words)', c.words >= T.words, c.words + ' words']
+    ];
+  }
+  function showConfirm() {
+    var cl = checks(), allOk = cl.every(function (x) { return x[1]; });
+    var el = document.getElementById('confirm');
+    el.innerHTML = '<h3 id="cf-h">' + (meta.status === 'submitted' ? 'Resubmit your review?' : 'Check before you submit') + '</h3>' +
+      '<ul class="checks">' + cl.map(function (x) { return '<li class="' + (x[1] ? 'ok' : 'short') + '"><span>' + esc(x[0]) + '</span><span class="r">' + (x[1] ? 'Met' : 'Short') + ': ' + esc(x[2]) + '</span></li>'; }).join('') + '</ul>' +
+      '<p>' + (allOk ? 'Everything meets the minimums. Your instructor grades it with the 5-part rubric (25 points). You can still edit and resubmit afterward.'
+        : 'Some items are below the minimum. You can keep working on them, or submit now and your instructor will grade what is there.') + '</p>' +
+      '<div class="btns"><button type="button" class="btn primary" data-act="confirm-submit">' + (allOk ? (meta.status === 'submitted' ? 'Resubmit' : 'Submit for grading') : 'Submit anyway') + '</button>' +
+      '<button type="button" class="btn ghost" data-act="cancel-submit">Keep working</button></div>';
+    el.hidden = false; el.focus(); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function doSubmit() {
+    var again = meta.status === 'submitted';
+    meta.status = 'submitted';
+    meta.submittedAt = new Date().toISOString();
+    meta.submitCount = (meta.submitCount || 0) + 1;
+    meta.changedSinceSubmit = false;
+    document.getElementById('confirm').hidden = true;
+    persist().then(function () { CC.toast(again ? 'Resubmitted. Your instructor will grade the latest version.' : 'Submitted for grading. Nice work.'); });
+    CC.markDone(SUBMIT_BLOCK);
+    if (!part1Done && part1Ready(counts())) { part1Done = true; CC.markDone(PART1_BLOCK); }
+    refresh();
+    document.getElementById('btn-submit').focus();
+  }
+  function finishPart1() {
+    if (!part1Ready(counts())) return;
+    part1Done = true; flush(); CC.markDone(PART1_BLOCK);
+    CC.toast('Part 1 done. On Day 2, pick up at step 3.');
+    refresh();
+  }
+
+  // ---------- page ----------
+  function shell() {
+    var rubric = RUBRIC.length ? '<details class="more"><summary>How this is graded (25 points)</summary><ol>' + RUBRIC.map(function (r) { return '<li><b>' + esc(r[0]) + ' (5 pts):</b> ' + esc(r[1]) + '</li>'; }).join('') + '</ol></details>' : '';
+    var steps = [['s-ev', 'Read the evidence'], ['s-f', 'Account findings'], ['s-vpn', 'Remote access & MFA'], ['s-sh', 'Shares & data'], ['s-sum', 'Summary & submit']];
+    return '<div class="crumb"><a href="' + esc(CC.link('MCCoE_Home.html?week=3')) + '">Week 3</a> &rsaquo; Mock Access Review</div>' +
+      '<h1 class="cc-h1">Mock Access Review</h1>' +
+      '<div class="sub">Cedar Creek Industries &middot; Week 3 mock hands-on project &middot; 25 points</div>' +
+      '<div class="statline"><span class="chip c-mock">Mock project</span><span class="pill" id="stat-pill">Draft</span><span class="saved" id="saved" aria-live="polite"></span></div>' +
+      (me.key ? '' : '<div class="preview-note">Preview mode: you are not signed in, so your work saves only in this browser. Open this page from the Hub to save it to your account.</div>') +
+      '<section class="box grade" id="grade" hidden aria-label="Your grade"></section>' +
+      '<div class="box brief"><div class="from">From: Marcus Reyes, IT Manager</div><div class="prose">' + M.brief.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') + '</div>' + rubric + '</div>' +
+      '<ol class="steps5" aria-label="Project steps">' + steps.map(function (s, i) {
+        return '<li id="st-' + (i + 1) + '"><a href="#' + s[0] + '"><span class="sn">' + (i + 1) + '</span><span class="st"><b>' + esc(s[1]) + '</b><small></small></span></a></li>';
+      }).join('') + '</ol>' +
+      '<div class="p1bar"><div><b>Part 1 (Day 1):</b> open at least 4 evidence tabs and log at least 6 account findings. <span class="muted" id="p1stat"></span></div><button type="button" class="btn" id="btn-p1" data-act="finish1" disabled>Finish part 1</button></div>' +
+
+      '<section class="sec" id="s-ev"><div class="sec-h"><h2 class="cc-h2">1. Read the evidence</h2><span class="pill" id="pill-ev"></span></div>' +
+      '<p class="sec-intro">These are the same files you worked with in Lab 3.3. Use your Kali results to know where to look, then confirm each finding here. <b>Nothing is marked for you:</b> deciding what is a problem is the job.</p>' +
+      '<div class="tabs" role="tablist">' + TABS.map(function (t) { return '<button type="button" role="tab" id="tab-' + t[0] + '" data-act="tab" data-tab="' + t[0] + '" aria-selected="false">' + esc(t[1]) + '</button>'; }).join('') + '</div>' +
+      '<div class="box evbox" id="evbody" role="tabpanel"></div></section>' +
+
+      '<section class="sec" id="s-f"><div class="sec-h"><h2 class="cc-h2">2. Account findings</h2><span class="pill" id="pill-f"></span></div>' +
+      '<p class="sec-intro">One card per problem account. Say <b>what is wrong</b>, the <b>evidence</b> (which file shows it, with the date or group), how <b>severe</b> it is, the <b>action</b> you recommend, and a <b>priority</b> (1 = fix first). An account with two problems can use the second type box. Leave accounts that are fine off the list.</p>' +
+      '<datalist id="samlist">' + SAMS.map(function (s) { return '<option value="' + esc(s) + '">' + esc(NAME[s]) + '</option>'; }).join('') + '</datalist>' +
+      '<div class="cards" id="flist"></div><p class="issues" id="iss-f" aria-live="polite"></p>' +
+      '<div class="addrow"><button type="button" class="btn" data-act="add">+ Add a finding</button><button type="button" class="btn ghost" data-act="sort">Sort by priority</button><span class="undo" id="undo-f" hidden></span></div></section>' +
+
+      '<section class="sec" id="s-vpn"><div class="sec-h"><h2 class="cc-h2">3. Remote access and MFA</h2><span class="pill" id="pill-vpn"></span></div>' +
+      '<p class="sec-intro">Part 2 starts here. The VPN is the front door from the internet. Answer from the VPN and Groups tabs.</p><div id="vpnbox"></div></section>' +
+
+      '<section class="sec" id="s-sh"><div class="sec-h"><h2 class="cc-h2">4. Shares and data classification</h2><span class="pill" id="pill-sh"></span></div>' +
+      '<p class="sec-intro">For each share: how sensitive is the data (<b>Public, Internal, Confidential, Restricted</b>), what <b>types</b> of data are inside, who the <b>data owner</b> is (the person who decides who gets access), and whether the current permissions follow need-to-know.</p>' +
+      '<details class="more" style="margin-bottom:12px"><summary>Cedar Creek\'s draft classification levels</summary><ol>' + M.classes.map(function (c) { return '<li><b>' + esc(c.name) + ':</b> ' + esc(c.def) + '</li>'; }).join('') + '</ol></details>' +
+      '<div class="cards" id="shlist"></div><p class="issues" id="iss-sh" aria-live="polite"></p></section>' +
+
+      '<section class="sec" id="s-sum"><div class="sec-h"><h2 class="cc-h2">5. Summary for Greg Palmer</h2></div>' +
+      '<div class="sumgrid"><div class="field"><label for="summary">Your summary (one or two short paragraphs)</label>' +
+        '<textarea id="summary" data-t="summary" placeholder="Bottom line: ..."></textarea><div class="wc" id="wc" aria-live="polite"></div></div>' +
+      '<div class="box"><h3>Writing for a CFO</h3><ul>' +
+        '<li>Start with the bottom line in one sentence.</li>' +
+        '<li>Lead with anything urgent, and say what has already been escalated.</li>' +
+        '<li>Name the two or three biggest risks in plain words: what could happen to the business.</li>' +
+        '<li>Say what to fix first and whether it is a quick change or a project.</li>' +
+        '<li>Greg is on the list of people without MFA. Say so plainly and politely.</li>' +
+        '<li>Skip acronyms, or explain them the first time.</li></ul></div></div>' +
+      '<div class="done-bar"><div><b>Ready to turn it in?</b><div class="sub" id="sub-line"></div></div><button type="button" class="btn primary" id="btn-submit" data-act="submit">Submit for grading</button></div>' +
+      '<div class="box confirm" id="confirm" tabindex="-1" role="region" aria-labelledby="cf-h" hidden></div></section>';
+  }
+  function render() {
+    page.innerHTML = shell();
+    renderEvidence(false);
+    renderFindings();
+    renderVpn();
+    renderShares();
+    document.getElementById('summary').value = S.summary;
+    renderGrade();
+    refresh();
+  }
+
+  // ---------- events ----------
+  function onEdit(e) {
+    var el = e.target;
+    if (!S || !el.getAttribute) return;
+    var ev = el.getAttribute('data-ev');
+    if (ev) {
+      if (ev === 'hrOnly') filt.hrOnly = el.checked; else filt[ev] = el.value;
+      renderEvidence(true);
+      return;
+    }
+    var t = el.getAttribute('data-t');
+    if (!t) return;
+    var f = el.getAttribute('data-f'), i = el.getAttribute('data-i');
+    if (t === 'summary') { if (S.summary === el.value) return; S.summary = el.value; }
+    else if (t === 'findings') { var r = S.findings[+i]; if (!r || r[f] === el.value) return; r[f] = el.value; }
+    else if (t === 'vpn') { if (el.type === 'radio' && !el.checked) return; if (S.vpn[f] === el.value) return; S.vpn[f] = el.value; }
+    else if (t === 'vpnset') {
+      var arr = S.vpn[f], k = arr.indexOf(el.value);
+      if (el.checked && k < 0) arr.push(el.value); else if (!el.checked && k >= 0) arr.splice(k, 1); else return;
+      arr.sort();
+    }
+    else if (t === 'shares') { var s = S.shares[i]; if (!s || s[f] === el.value) return; s[f] = el.value; }
+    else if (t === 'sharedata') {
+      var d = S.shares[i].data, j = d.indexOf(el.value);
+      if (el.checked && j < 0) d.push(el.value); else if (!el.checked && j >= 0) d.splice(j, 1); else return;
+    }
+    else return;
+    changed();
+  }
+  page.addEventListener('input', onEdit);
+  page.addEventListener('change', onEdit);
+  page.addEventListener('click', function (e) {
+    if (!S) return;
+    var b = e.target.closest && e.target.closest('[data-act]');
+    if (!b) return;
+    var act = b.getAttribute('data-act');
+    if (act === 'tab') openTab(b.getAttribute('data-tab'));
+    else if (act === 'add') addFinding();
+    else if (act === 'del') delFinding(+b.getAttribute('data-i'));
+    else if (act === 'undo') undo();
+    else if (act === 'sort') sortFindings();
+    else if (act === 'finish1') finishPart1();
+    else if (act === 'submit') showConfirm();
+    else if (act === 'confirm-submit') doSubmit();
+    else if (act === 'cancel-submit') { document.getElementById('confirm').hidden = true; document.getElementById('btn-submit').focus(); }
+  });
+
+  // ---------- start ----------
+  Promise.all([fetchRemote(), CC.load().catch(function () { return {}; })]).then(function (res) {
+    var remote = res[0], course = res[1] || {};
+    remoteOk = remote.ok;
+    var r = remote.val, l = readLocal();
+    var rec = r || l, pushLocal = false;
+    if (r && l && (l.savedAt || '') > (r.savedAt || '')) { rec = l; pushLocal = true; }
+    if (!r && l && remoteOk) pushLocal = true;
+    if (rec) {
+      S = normData(rec.data);
+      meta.status = rec.status === 'submitted' ? 'submitted' : 'draft';
+      meta.submittedAt = rec.submittedAt || null;
+      meta.submitCount = +rec.submitCount || (rec.submittedAt ? 1 : 0);
+      meta.changedSinceSubmit = !!rec.changedSinceSubmit;
+      meta.savedAt = rec.savedAt || null;
+    } else S = normData({});
+    meta.grade = (r && r.grade) || (rec && rec.grade) || null;
+    part1Done = !!(course.done && course.done[PART1_BLOCK]);
+    render();
+    if (S.viewed.indexOf('acc') < 0) { S.viewed.push('acc'); refresh(); }
+    if (meta.savedAt) setSave(remoteOk ? 'ok' : 'local', meta.savedAt);
+    if (CC.online && !remoteOk) setSave('err');
+    if (pushLocal) persist();
+    if (CC.online && remoteOk) CC.db.ref(PATH + '/grade').on('value', function (s) { meta.grade = s.val(); renderGrade(); });
+  });
+})();
+</script>
+</body>
+</html>

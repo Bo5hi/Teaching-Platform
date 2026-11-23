@@ -1,0 +1,3 @@
+TRAINING PLACEHOLDER. This is not malware.
+In the real incident this file was cc_upd.exe, copied from C:\ProgramData on ENG-FS01.
+Real malware samples are stored in a password-protected archive and never opened on a normal PC.

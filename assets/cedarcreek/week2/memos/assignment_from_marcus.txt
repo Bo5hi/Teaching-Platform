@@ -1,0 +1,31 @@
+From:    Marcus Reyes, IT Manager
+To:      Junior Security Analyst
+Cc:      Tom Becker, Engineering Manager
+Date:    Mon 2026-11-16
+Subject: Week 2 - sending drawings to Halvorsen the right way
+
+Welcome to week two. Good work on the control audit.
+
+Halvorsen Pump is one of our biggest customers. They have told every
+supplier that, starting December 1, drawings and models must be sent
+under their new Supplier Data Exchange rules (memos/halvorsen_sdx2.txt).
+Today we email drawings as a zipped attachment and put the zip password
+in the same email. Halvorsen says that is no longer acceptable, and I
+agree with them.
+
+Priya Nair in Engineering is releasing Rev C of drawing CCD-3318 (the
+HV-310 pump mounting bracket) this week. It is the first package that has
+to go out under the new rules. I want you to:
+
+  1. Check that the release package is exactly what Tom released.
+  2. Work out which tool does which job: hashing, encryption,
+     signatures, certificates.
+  3. Make sure we are using Halvorsen's real key and real portal.
+  4. Do a trial run of encrypting and signing the package.
+  5. Write a short procedure Priya and the other engineers can follow
+     every time.
+
+Everything you need is in exchange/. Do the labs first; they teach the
+commands.
+
+Marcus

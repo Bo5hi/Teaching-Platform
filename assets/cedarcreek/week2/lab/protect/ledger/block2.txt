@@ -1,0 +1,5 @@
+block: 2
+time:  2026-10-05T14:10:00
+event: Released CCD-2875 Rev D (hydraulic elbow fitting)
+by:    Tom Becker
+prev:  2d2c86ee90f8d47cb4422a8b2c425ea2d6412fa4051c0b8bb46bf4d7b7c9c516

@@ -34,7 +34,7 @@ ol.steps h3 { margin: 2px 0 8px; font-size: 1.15rem; font-weight: 700; }
 (function () {
   CC.header('week');
   var lid = CC.param('l') || '1.1';
-  var href = 'Lab.html?l=' + lid;
+  var href = 'Lab.html?l=' + lid + (CC.param('from') ? '&from=' + CC.param('from') : '');
   var week = String(lid).split('.')[0];
   var page = document.getElementById('page');
   var esc = CC.esc;
@@ -62,6 +62,7 @@ ol.steps h3 { margin: 2px 0 8px; font-size: 1.15rem; font-weight: 700; }
       '<ol class="steps prose">' + (L.steps || []).map(function (s) {
         return '<li><h3>' + esc(s.title) + '</h3>' +
           (s.body || []).map(function (p) { return '<p>' + p + '</p>'; }).join('') +
+          (s.list && s.list.length ? '<ul>' + s.list.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>' : '') +
           (s.cmd ? '<pre class="cmd" data-cmd="' + esc(s.cmd) + '">' + esc(s.cmd) + '</pre>' : '') +
           (s.expect ? '<div class="expect"><b>You should see:</b> ' + esc(s.expect) + '</div>' : '') +
           (s.tip ? '<div class="steptip">' + esc(s.tip) + '</div>' : '') + '</li>';

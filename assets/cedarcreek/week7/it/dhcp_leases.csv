@@ -1,0 +1,17 @@
+ip,hostname,mac,user,department
+10.20.1.10,IT-LT-03,00:1b:21:7c:10:40,m.reyes,IT
+10.20.1.11,IT-LT-01,00:1b:21:7c:11:43,d.ortiz,IT
+10.20.1.12,IT-LT-02,00:1b:21:7c:12:46,j.pike,IT
+10.20.6.41,FIN-LT-09,00:1b:21:7c:13:49,g.palmer,Finance
+10.20.6.43,FINANCE-07,00:1b:21:7c:14:4c,d.reyes,Finance
+10.20.6.44,FIN-PC-03,00:1b:21:7c:15:4f,amanda.singh,Finance
+10.20.6.20,HR-05,00:1b:21:7c:16:52,t.greene,HR
+10.20.6.21,HR-PC-01,00:1b:21:7c:17:55,r.medina,HR
+10.20.8.37,MKT-LT-02,00:1b:21:7c:18:58,l.kim,Marketing
+10.20.8.38,MKT-PC-04,00:1b:21:7c:19:5b,k.tran,Marketing
+10.20.30.14,ENG-14,00:1b:21:7c:1a:5e,t.becker,Engineering
+10.20.30.9,ENG-09,00:1b:21:7c:1b:61,o.gallagher,Engineering
+10.20.30.11,ENG-11,00:1b:21:7c:1c:64,p.nair,Engineering
+10.20.10.50,CS-PC-06,00:1b:21:7c:1d:67,j.dorsey,Customer Service
+10.20.10.51,CS-PC-02,00:1b:21:7c:1e:6a,g.lindqvist,Customer Service
+10.20.10.60,PUR-PC-01,00:1b:21:7c:1f:6d,m.alvarez,Purchasing

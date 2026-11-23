@@ -1,0 +1,21 @@
+host,os,support,owner,last_patched,missing_critical,missing_high,auto_update,notes
+DC01,Windows Server 2019,Supported,Dee Ortiz,2026-12-16,0,0,Manual,Patched in the December window
+FS-HR01,Windows Server 2016,Supported,Rosa Medina,2026-12-16,0,1,Manual,
+ENG-FS01,Windows Server 2019,Supported,Tom Becker,2026-11-17,2,3,Manual,Engineering asked to skip the December window (customer deadline)
+ENG-APP02,Windows Server 2012 R2,EOL,Tom Becker,2023-10-10,0,0,Manual,No security updates since end of support so the console reports nothing missing
+FW-CORE,Firewall firmware 7.2.5,Supported,Marcus Reyes,2026-09-02,1,0,Manual,Vendor advisory 2026-12-10: Critical flaw in the VPN portal; fixed in 7.2.8
+NVR-01,Camera recorder firmware 4.1,Supported,Jordan Pike,2024-03-02,1,2,Manual,5.7.2 downloaded and verified in November (Week 2); not installed yet
+BADGE-CTRL,Badge controller firmware 2.8,Supported,Jordan Pike,2025-06-11,0,1,Manual,
+PLANT-PC-07,Windows 7 SP1 (line vendor image),EOL,Walt Henley,2020-01-14,0,0,Off,Line 2 HMI; vendor-certified image; vendor will not support it if IT patches it
+IT-ADMIN-01,Windows 11,Supported,Marcus Reyes,2026-12-15,0,0,On,
+IT-LT-01,Windows 11,Supported,Dee Ortiz,2026-12-15,0,0,On,
+IT-LT-02,Windows 11,Supported,Jordan Pike,2026-12-15,0,0,On,
+FIN-LT-09,Windows 11,Supported,Greg Palmer,2026-12-15,0,0,On,
+FINANCE-07,Windows 11,Supported,Greg Palmer,2026-12-16,0,0,On,
+HR-PC-01,Windows 11,Supported,Rosa Medina,2026-12-15,0,0,On,
+MKT-LT-02,Windows 11,Supported,Laura Kim,2026-11-10,4,2,On,Office updates failing since November (disk full)
+MKT-PC-04,Windows 11,Supported,Laura Kim,2026-12-16,0,0,On,
+ENG-14,Windows 11,Supported,Tom Becker,2026-12-15,0,1,On,
+ENG-09,Windows 11,Supported,Tom Becker,2026-12-16,0,0,On,
+CS-PC-06,Windows 11,Supported,Gail Lindqvist,2026-12-15,0,0,On,
+CS-PC-02,Windows 11,Supported,Gail Lindqvist,2026-12-16,0,0,On,

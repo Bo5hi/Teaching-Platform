@@ -639,7 +639,7 @@ select option { background:var(--surface); color:var(--text); }
     <span id="sub-badge" style="display:none;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:auto;"></span>
   </button>
   <button class="nav-btn" onclick="showView('course',this)">
-    <span class="nav-icon">&#9638;</span> Course Week 1 (pilot)
+    <span class="nav-icon">&#9638;</span> Course v2 (weeks)
   </button>
   <div class="nav-section">Content</div>
   <button class="nav-btn" onclick="showView('library',this)">
@@ -1312,10 +1312,13 @@ select option { background:var(--surface); color:var(--text); }
 <div id="view-course" class="view">
   <div class="page-header">
     <div>
-      <h2>Course Week 1: Security Foundations (pilot)</h2>
-      <p>Progress on the new Week &gt; Day layout, lab answers, and Mock Control Audit grading. Click Review on a student to read their labs and grade their audit.</p>
+      <h2 id="cv-title">Course v2: weekly progress and mock projects</h2>
+      <p>Progress on the new Week &gt; Day layout, lab answers, and mock project grading. Pick a week, then click Review on a student to read their labs and grade their mock project.</p>
     </div>
-    <button class="btn btn-outline" onclick="loadCourseV2()">&#8635; Refresh</button>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <select id="cv-week" onchange="_cvWeek = +this.value; loadCourseV2();" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:6px;"><option value="1">Week 1</option></select>
+      <button class="btn btn-outline" onclick="loadCourseV2()">&#8635; Refresh</button>
+    </div>
   </div>
   <div id="cv-kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px;"></div>
   <div id="cv-table-wrap"></div>
@@ -3599,7 +3602,7 @@ function loadMockScores() {
 //  COURSE V2: WEEK 1 PILOT (progress, lab answers, Mock Control Audit grading)
 //  Data: mccoe_course/{key}, mccoe_mockproj/{key}/w1. Shapes: docs/COURSE_V2.md
 // ════════════════════════════════════════════
-let _cvCourse = {}, _cvMock = {}, _cvLoaded = {};
+let _cvCourse = {}, _cvMock = {}, _cvLoaded = {}, _cvWeek = 1;
 function cvRequire(src) {
   if (_cvLoaded[src]) return _cvLoaded[src];
   _cvLoaded[src] = new Promise((res, rej) => {
@@ -3612,52 +3615,67 @@ function cvRequire(src) {
 const cvEsc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const cvStrip = s => String(s == null ? '' : s).replace(/<[^>]+>/g, '');
 const cvPc = p => p >= 80 ? '#00ff41' : p >= 60 ? '#ffb020' : '#ff4d4d';
-function cvWeek1() { return (window.COURSE && COURSE.weeks || []).find(w => w.num === 1); }
-function cvBlocks() { const w = cvWeek1(); const out = []; (w && w.days || []).forEach(d => d.blocks.forEach(b => out.push(b))); return out; }
-function cvIds(type, param) { return cvBlocks().filter(b => b.type === type).map(b => b.href.split(param + '=')[1]); }
+function cvWeekObj() { return (window.COURSE && COURSE.weeks || []).find(w => w.num === _cvWeek); }
+// Week 1 uses the Mock Control Audit answer key; other weeks with their own mock page set window.MOCK_W<N>.
+function cvMockKey() { return _cvWeek === 1 ? (window.MOCK_AUDIT_W1 && MOCK_AUDIT_W1.key) : window['MOCK_W' + _cvWeek]; }
+function cvHasMockPage() { const w = cvWeekObj(); return !!(w && w.mock && /^Mock_/.test(w.mock.href || '')); }
+function cvMockOf(key) { return (_cvMock[key] || {})['w' + _cvWeek] || null; }
+function cvBlocks() { const w = cvWeekObj(); const out = []; (w && w.days || []).forEach(d => d.blocks.forEach(b => out.push(b))); return out; }
+function cvIds(type, param) { return [...new Set(cvBlocks().filter(b => b.type === type && b.href.indexOf(param + '=') >= 0).map(b => b.href.split(param + '=')[1].split('&')[0]))]; }
 
 function loadCourseV2() {
   const wrap = document.getElementById('cv-table-wrap'), kpis = document.getElementById('cv-kpis'), notyet = document.getElementById('cv-notyet');
   const muted = 'color:rgba(200,216,232,0.4);font-size:.85rem;padding:20px 0;';
   wrap.innerHTML = '<div style="' + muted + '">Loading...</div>'; notyet.innerHTML = '';
   if (!_fbDb) { wrap.innerHTML = '<div style="' + muted + '">Firebase not connected.</div>'; return; }
-  Promise.all(['course-data.js', 'course-w1-labs.js', 'course-w1-mock.js'].map(cvRequire))
+  const N = _cvWeek, wk = 'w' + N;
+  cvRequire('course-data.js')
+    .then(() => {
+      const sel = document.getElementById('cv-week');
+      sel.innerHTML = (COURSE.weeks || []).filter(w => w.days).map(w => `<option value="${w.num}"${w.num === N ? ' selected' : ''}>Week ${w.num}: ${cvEsc(w.title)}</option>`).join('');
+      const W = cvWeekObj();
+      document.getElementById('cv-title').textContent = W ? `Course v2, Week ${N}: ${W.title}` : 'Course v2';
+      return Promise.all(['course-w' + N + '-labs.js', 'course-w' + N + '-mock.js'].map(f => cvRequire(f).catch(() => null)));
+    })
     .then(() => Promise.all([_fbDb.ref('mccoe_course').once('value'), _fbDb.ref('mccoe_mockproj').once('value')]))
     .then(([cs, ms]) => {
       _cvCourse = cs.val() || {}; _cvMock = ms.val() || {};
-      const keys = new Set(Object.keys(_cvCourse).concat(Object.keys(_cvMock).filter(k => _cvMock[k] && _cvMock[k].w1)));
+      const keys = new Set(Object.keys(_cvCourse).concat(Object.keys(_cvMock).filter(k => _cvMock[k] && _cvMock[k][wk])));
       const rows = [...keys].map(k => {
-        const c = _cvCourse[k] || {}, m = (_cvMock[k] || {}).w1 || null;
+        const c = _cvCourse[k] || {}, m = cvMockOf(k);
         return { key: k, name: c.name || (m && m.name) || k, id: c.id || (m && m.id) || '', c, m };
       }).filter(r => keyInView(r.key, r)).sort((a, b) => a.name.localeCompare(b.name));
       const seen = new Set(rows.map(r => r.key)), seenNames = new Set(rows.map(r => r.name.toLowerCase()));
       const waiting = roster().filter(s => !(s.portalTempId && seen.has(s.portalTempId.replace(/[.#$[\]]/g, '_'))) && !seenNames.has((s.name || '').toLowerCase()));
       notyet.innerHTML = waiting.length ? `<div style="font-size:.75rem;color:rgba(200,216,232,0.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Not started yet (${waiting.length})</div><div style="display:flex;flex-wrap:wrap;gap:8px;">${waiting.map(s => `<span style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px 12px;font-size:.8rem;color:var(--text);">${cvEsc(s.name)}</span>`).join('')}</div>` : '';
-      if (!rows.length) { wrap.innerHTML = '<div style="' + muted + '">No Week 1 activity yet. Students open the new Week 1 from MCCoE_Home.html.</div>'; kpis.innerHTML = ''; return; }
+      if (!rows.length) { wrap.innerHTML = '<div style="' + muted + '">No Week ' + N + ' activity yet. Students open their weeks from MCCoE_Home.html.</div>'; kpis.innerHTML = ''; return; }
 
-      const blocks = cvBlocks(), lessons = cvIds('lesson', 'l'), labs = cvIds('lab', 'l');
+      const blocks = cvBlocks(), lessons = cvIds('lesson', 'l').concat(cvIds('talk', 'l')), labs = cvIds('lab', 'l');
+      const pid = cvIds('practice', 'p')[0];
+      const hasMock = cvHasMockPage();
       const submitted = rows.filter(r => r.m && r.m.status === 'submitted');
       const toGrade = submitted.filter(r => !r.m.grade || (r.m.submittedAt || '') > (r.m.grade.gradedAt || '')).length;
-      const quizzed = rows.filter(r => r.c.quiz && r.c.quiz.w1);
+      const quizzed = rows.filter(r => r.c.quiz && r.c.quiz[wk]);
       kpis.innerHTML = [
         [rows.length + (waiting.length ? ' / ' + (rows.length + waiting.length) : ''), 'Students started'],
-        [quizzed.length ? Math.round(quizzed.reduce((a, r) => a + r.c.quiz.w1.best, 0) / quizzed.length) + '%' : '—', 'Avg quiz (best)'],
-        [submitted.length, 'Audits submitted'],
-        [toGrade, 'Audits to grade'],
-      ].map(([v, l]) => `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;"><div style="font-size:1.2rem;font-weight:900;color:${l === 'Audits to grade' && v ? '#ffb020' : 'var(--cyan)'};">${v}</div><div style="font-size:.7rem;color:rgba(200,216,232,0.5);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">${l}</div></div>`).join('');
+        [quizzed.length ? Math.round(quizzed.reduce((a, r) => a + r.c.quiz[wk].best, 0) / quizzed.length) + '%' : '—', 'Avg quiz (best)'],
+        [hasMock ? submitted.length : '—', 'Mock projects submitted'],
+        [hasMock ? toGrade : '—', 'Mock projects to grade'],
+      ].map(([v, l]) => `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;"><div style="font-size:1.2rem;font-weight:900;color:${l === 'Mock projects to grade' && v ? '#ffb020' : 'var(--cyan)'};">${v}</div><div style="font-size:.7rem;color:rgba(200,216,232,0.5);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">${l}</div></div>`).join('') +
+        (hasMock ? '' : `<div style="grid-column:1/-1;font-size:.8rem;color:rgba(200,216,232,0.55);">This week's hands-on project is graded in its own view: ${/Pillar4/.test((cvWeekObj().mock || {}).href || '') ? 'Pentest Lab' : /Pillar5/.test((cvWeekObj().mock || {}).href || '') ? 'Blue Team Lab' : 'SOC Tickets, Student Submissions, or the capstone views'}.</div>`);
 
       const th = 'padding:10px 6px;font-size:.66rem;color:rgba(200,216,232,0.45);font-weight:700;text-transform:uppercase;letter-spacing:.4px;';
       wrap.innerHTML = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:.82rem;">
         <thead><tr style="border-bottom:1px solid var(--border);">
-          <th style="text-align:left;${th}">Student</th><th style="${th}">Steps</th><th style="${th}">Checks</th><th style="${th}">Labs</th><th style="${th}">Sorter</th><th style="${th}">Quiz</th><th style="${th}">Mock audit</th><th style="text-align:left;${th}">Last activity</th><th style="${th}"></th>
+          <th style="text-align:left;${th}">Student</th><th style="${th}">Steps</th><th style="${th}">Checks</th><th style="${th}">Labs</th><th style="${th}">Practice</th><th style="${th}">Quiz</th><th style="${th}">Mock project</th><th style="text-align:left;${th}">Last activity</th><th style="${th}"></th>
         </tr></thead><tbody>${rows.map(r => {
           const c = r.c, done = blocks.filter(b => c.done && c.done[b.id]).length;
           const ck = lessons.map(l => (c.checks || {})[l]).filter(Boolean);
           const ckP = ck.length ? Math.round(ck.reduce((a, x) => a + x.score / x.total, 0) / ck.length * 100) : null;
           const lb = labs.map(l => (c.labs || {})[l]).filter(x => x && x.status === 'submitted');
           const auto = lb.reduce((a, x) => a + (x.auto || 0), 0), right = lb.reduce((a, x) => a + (x.correct || 0), 0);
-          const so = (c.practice || {}).controls, qz = (c.quiz || {}).w1, m = r.m;
-          const mTxt = !m ? '<span style="color:rgba(200,216,232,0.4)">—</span>'
+          const so = pid ? (c.practice || {})[pid] : null, qz = (c.quiz || {})[wk], m = r.m;
+          const mTxt = !hasMock ? (m && m.grade ? `<b style="color:${cvPc(m.grade.score / 25 * 100)}">${m.grade.score} / 25</b>` : '<span style="color:rgba(200,216,232,0.4)">grade in Review</span>') : !m ? '<span style="color:rgba(200,216,232,0.4)">—</span>'
             : m.grade && (m.submittedAt || '') <= (m.grade.gradedAt || '') ? `<b style="color:${cvPc(m.grade.score / 25 * 100)}">${m.grade.score} / 25</b>`
             : m.status === 'submitted' ? `<b style="color:#ffb020">${m.grade ? 'Resubmitted' : 'To grade'}</b>` : '<span style="color:rgba(200,216,232,0.6)">Draft</span>';
           const td = 'padding:10px 6px;text-align:center;';
@@ -3733,11 +3751,12 @@ function cvAuditCheck(m) {
 }
 
 function cvOpen(key) {
-  const c = _cvCourse[key] || {}, m = (_cvMock[key] || {}).w1 || null;
+  const c = _cvCourse[key] || {}, m = cvMockOf(key);
   const name = c.name || (m && m.name) || key;
-  const W = cvWeek1(), rubric = (W && W.mock && W.mock.rubric) || [];
-  const notes = (window.MOCK_AUDIT_W1 && MOCK_AUDIT_W1.key && MOCK_AUDIT_W1.key.rubricNotes) || [];
-  const chk = m ? cvAuditCheck(m) : null;
+  const W = cvWeekObj(), rubric = (W && W.mock && W.mock.rubric) || [];
+  const notes = (cvMockKey() && cvMockKey().rubricNotes) || [];
+  const chk = m && _cvWeek === 1 ? cvAuditCheck(m) : null;
+  const hasMock = cvHasMockPage(), mockTitle = (W && W.mock && W.mock.title) || 'Mock project';
   const areaName = a => { const x = (window.MOCK_AUDIT_W1 && MOCK_AUDIT_W1.areas || []).find(z => z.id === a); return a === 'all' ? 'Campus-wide' : x ? x.number + '. ' + x.name : (a || '—'); };
   const ok = v => v === true ? '<span style="color:#00ff41;font-weight:800;">&#10003;</span>' : v === false ? '<span style="color:#ff4d4d;font-weight:800;">&#10007;</span>' : '<span style="color:rgba(200,216,232,0.35);">·</span>';
   const H = t => `<div style="font-size:.72rem;font-weight:800;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase;margin:22px 0 10px;">${t}</div>`;
@@ -3762,10 +3781,14 @@ function cvOpen(key) {
 
   // Audit
   let auditHtml = '';
-  if (!m) auditHtml = '<div style="color:rgba(200,216,232,0.4);">Not started.</div>';
+  // Weeks without their own mock page (Pentest Lab, Blue Team Lab, capstone) can still be graded here against the week's rubric:
+  // read the work in its own view or in the lab answers below, then save the rubric grade to mccoe_mockproj/{key}/wN/grade.
+  if (!hasMock && !rubric.length) auditHtml = '<div style="color:rgba(200,216,232,0.55);">This week\'s hands-on work is graded in its own tracker view (SOC Tickets, Student Submissions, Security+ views).</div>';
+  else if (hasMock && !m) auditHtml = '<div style="color:rgba(200,216,232,0.4);">Not started.</div>';
   else {
-    const g = m.grade || {}, sug = chk ? chk.suggest : [];
-    auditHtml += `<div style="font-size:.8rem;color:rgba(200,216,232,0.6);margin-bottom:10px;">Status: <b style="color:var(--text);">${cvEsc(m.status || 'draft')}</b>${m.submittedAt ? ' · submitted ' + new Date(m.submittedAt).toLocaleString() : ''}${m.submitCount > 1 ? ' · ' + m.submitCount + ' submissions' : ''}${m.grade ? ' · graded ' + new Date(m.grade.gradedAt).toLocaleString() + ' by ' + cvEsc(m.grade.gradedBy) : ''}</div>`;
+    const g = (m && m.grade) || {}, sug = chk ? chk.suggest : [];
+    auditHtml += !hasMock ? `<div style="font-size:.8rem;color:rgba(200,216,232,0.6);margin-bottom:10px;">The work for this project lives in ${cvEsc(W.mock.href || 'its own tool')} (see its tracker view) and in the lab answers below. Grade it here against the week's rubric.${g.gradedAt ? ' Graded ' + new Date(g.gradedAt).toLocaleString() + ' by ' + cvEsc(g.gradedBy) + '.' : ''}</div><div id="cv-phases"></div>`
+      : `<div style="font-size:.8rem;color:rgba(200,216,232,0.6);margin-bottom:10px;">Status: <b style="color:var(--text);">${cvEsc(m.status || 'draft')}</b>${m.submittedAt ? ' · submitted ' + new Date(m.submittedAt).toLocaleString() : ''}${m.submitCount > 1 ? ' · ' + m.submitCount + ' submissions' : ''}${m.grade ? ' · graded ' + new Date(m.grade.gradedAt).toLocaleString() + ' by ' + cvEsc(m.grade.gradedBy) : ''}</div>`;
     auditHtml += `<div style="background:rgba(255,176,32,0.05);border:1px solid rgba(255,176,32,0.35);border-radius:8px;padding:14px;">
       <div style="font-weight:800;color:#ffb020;margin-bottom:8px;">Grade (25 points)</div>
       ${rubric.map((rb, i) => `<div style="display:grid;grid-template-columns:minmax(0,1fr) 90px;gap:10px;align-items:start;padding:8px 0;border-top:${i ? '1px solid rgba(255,255,255,.05)' : 'none'};">
@@ -3786,6 +3809,10 @@ function cvOpen(key) {
       if (chk.missed.length) auditHtml += `<div style="margin-top:8px;font-size:.78rem;color:#ffb020;">Key gaps not found: ${chk.missed.map(k => cvEsc(k.text) + ' (' + cvEsc(k.sev) + ')').join('; ')}</div>`;
       auditHtml += H(`Summary for the CFO (${chk.words} words)`) + `<div style="white-space:pre-wrap;font-size:.85rem;color:var(--text);background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;padding:12px;">${cvEsc(d.summary || '') || '<span style="color:rgba(200,216,232,0.4)">No summary yet.</span>'}</div>`;
       auditHtml += `<div style="margin-top:8px;font-size:.72rem;color:rgba(200,216,232,0.4);">Check marks come from keyword matching against the answer key in course-w1-mock.js. They are a starting point; read rows marked "no key match" yourself.</div>`;
+    } else if (m && m.data) {
+      auditHtml += H('Student work') + cvDataHtml(m.data, tbl, tr);
+      const K = cvMockKey();
+      if (K && K.key) auditHtml += `<details style="margin-top:14px;"><summary style="cursor:pointer;color:var(--cyan);font-size:.8rem;">Answer key (course-w${_cvWeek}-mock.js)</summary><div style="margin-top:8px;">${cvDataHtml(K.key, tbl, tr)}</div></details>`;
     }
   }
 
@@ -3793,12 +3820,46 @@ function cvOpen(key) {
   overlay.id = 'cv-overlay';
   overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:9900;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px;';
   overlay.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;max-width:1180px;width:100%;padding:24px;">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;"><div><div style="font-size:.8rem;color:var(--cyan);font-family:monospace;">WEEK 1 · ${cvEsc(c.id || (m && m.id) || '')}</div><div style="font-size:1.1rem;font-weight:800;color:var(--text);">${cvEsc(name)}</div></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;"><div><div style="font-size:.8rem;color:var(--cyan);font-family:monospace;">WEEK ${_cvWeek} · ${cvEsc(c.id || (m && m.id) || '')}</div><div style="font-size:1.1rem;font-weight:800;color:var(--text);">${cvEsc(name)}</div></div>
     <button onclick="document.getElementById('cv-overlay').remove()" style="background:rgba(255,45,94,0.15);border:1px solid rgba(255,45,94,0.4);color:#ff2d5e;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:700;">&#10005;</button></div>
-    ${H('Mock Control Audit')}${auditHtml}${H('Labs')}${labsHtml || '<div style="color:rgba(200,216,232,0.4);">No labs found.</div>'}</div>`;
+    ${H(cvEsc(mockTitle))}${auditHtml}${H('Labs')}${labsHtml || '<div style="color:rgba(200,216,232,0.4);">No labs found.</div>'}</div>`;
   document.body.appendChild(overlay);
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   cvTotal();
+  cvShowPhases(key, W);
+}
+// Pentest Lab (weeks 4-5) and Blue Team Lab (weeks 7-8) save phase links elsewhere; show this week's phases next to the rubric.
+function cvShowPhases(key, W) {
+  const box = document.getElementById('cv-phases'), href = (W && W.mock && W.mock.href) || '';
+  if (!box || !_fbDb) return;
+  const isP4 = /Pillar4/.test(href), isP5 = /Pillar5/.test(href);
+  if (!isP4 && !isP5) return;
+  const names = isP4 ? ['Recon', 'Scanning', 'Exploitation', 'Post-exploitation', 'Reporting', 'Capstone'] : ['Log Analysis', 'Threat Detection', 'Packet Analysis', 'Incident Response', 'Defensive Report'];
+  const phases = [];
+  W.days.forEach(d => d.blocks.forEach(b => { const m = (b.href || '').match(/[?&]phase=(\d+)/); if (m && phases.indexOf(+m[1]) < 0) phases.push(+m[1]); }));
+  _fbDb.ref((isP4 ? 'mccoe_pentest/' : 'mccoe_blueteam/') + key).once('value').then(s => {
+    const r = s.val() || {};
+    box.innerHTML = `<div style="background:rgba(0,245,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:12px;"><div style="font-weight:800;color:var(--cyan);font-size:.8rem;margin-bottom:6px;">${isP4 ? 'Pentest Lab' : 'Blue Team Lab'} phases this week</div>` +
+      phases.map(i => `<div style="font-size:.82rem;padding:3px 0;color:var(--text);">${r['phase' + i] ? '<span style="color:#00ff41;font-weight:800;">&#10003;</span>' : '<span style="color:rgba(200,216,232,0.35);">·</span>'} ${cvEsc(names[i] || 'Phase ' + (i + 1))}: ${r['phase' + i + '_link'] ? `<a href="${cvEsc(r['phase' + i + '_link'])}" target="_blank" rel="noopener" style="color:var(--cyan);">${cvEsc(r['phase' + i + '_link'])}</a>` : '<span style="color:rgba(200,216,232,0.4);">not submitted</span>'}</div>`).join('') + '</div>';
+  }).catch(() => {});
+}
+// Readable view of any mock project's saved data: lists of rows become tables, text keeps its line breaks.
+function cvDataHtml(v, tbl, tr, depth) {
+  depth = depth || 0;
+  const lab = k => cvEsc(String(k).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' '));
+  const cell = x => x == null ? '' : typeof x === 'object' ? cvEsc(JSON.stringify(x)) : `<span style="white-space:pre-wrap;">${cvEsc(x)}</span>`;
+  if (v == null) return '';
+  if (typeof v !== 'object') return `<div style="white-space:pre-wrap;font-size:.85rem;color:var(--text);">${cvEsc(v)}</div>`;
+  if (Array.isArray(v)) {
+    const rows = v.filter(x => x != null && x !== '');
+    if (rows.length && rows.every(x => x && typeof x === 'object' && !Array.isArray(x))) {
+      const cols = [...new Set(rows.flatMap(x => Object.keys(x)))];
+      return tbl(cols.map(lab), rows.map(x => tr(cols.map(k => cell(x[k])))));
+    }
+    return '<ul style="margin:0;padding-left:18px;font-size:.85rem;color:var(--text);">' + rows.map(x => '<li>' + cell(x) + '</li>').join('') + '</ul>';
+  }
+  return Object.keys(v).map(k => `<div style="margin:${depth ? 6 : 12}px 0 4px;font-size:.74rem;font-weight:800;color:rgba(200,216,232,0.6);text-transform:uppercase;letter-spacing:.5px;">${lab(k)}</div>` +
+    (v[k] && typeof v[k] === 'object' && depth < 3 ? cvDataHtml(v[k], tbl, tr, depth + 1) : `<div style="white-space:pre-wrap;font-size:.85rem;color:var(--text);">${cvEsc(typeof v[k] === 'object' ? JSON.stringify(v[k]) : v[k])}</div>`)).join('');
 }
 function cvTotal() {
   let t = 0, any = false;
@@ -3809,9 +3870,10 @@ function cvSaveGrade(key) {
   const rubric = [0, 1, 2, 3, 4].map(i => +document.getElementById('cv-r' + i).value);
   const grade = { rubric, score: rubric.reduce((a, b) => a + b, 0), max: 25, feedback: document.getElementById('cv-feedback').value.trim(),
     gradedBy: sessionStorage.getItem('mccoe_admin_name') || 'Instructor', gradedAt: new Date().toISOString() };
-  _fbDb.ref('mccoe_mockproj/' + key + '/w1/grade').set(grade).then(() => {
-    if (_cvMock[key] && _cvMock[key].w1) _cvMock[key].w1.grade = grade;
-    document.getElementById('cv-saved').textContent = 'Saved. The student sees it on their audit page and in My Work.';
+  const wk = 'w' + _cvWeek;
+  _fbDb.ref('mccoe_mockproj/' + key + '/' + wk + '/grade').set(grade).then(() => {
+    if (_cvMock[key] && _cvMock[key][wk]) _cvMock[key][wk].grade = grade;
+    document.getElementById('cv-saved').textContent = 'Saved. The student sees it on their mock project page and in My Work.';
     loadCourseV2();
   }).catch(e => { document.getElementById('cv-saved').textContent = 'Could not save: ' + e.message; });
 }

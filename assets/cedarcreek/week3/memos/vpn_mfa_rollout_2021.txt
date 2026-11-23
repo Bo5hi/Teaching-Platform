@@ -1,0 +1,18 @@
+From:     Marcus Reyes <m.reyes@cedarcreek-ind.com>
+To:       IT Team
+Date:     Mon, 12 Apr 2021 16:05
+Subject:  VPN now has MFA
+
+Team,
+
+The new VPN profile, CC-REMOTE, is live. It needs the company
+certificate, the domain password, and a push approval in the
+authenticator app. Please move everyone over this month.
+
+I am leaving the old password-only profile (CC-LEGACY) on for a few
+weeks for people who have not set up the app yet. We will shut it off
+once everyone has moved. Tom asked to stay on the old one until his
+phone is replaced, and the CAD vendor says their support staff cannot
+use our app.
+
+- Marcus

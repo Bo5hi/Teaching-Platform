@@ -1,0 +1,7 @@
+time,host,user,severity,policy,threat,file,action
+2026-12-18T16:12:09,ENG-14,t.becker,LOW,Protect,Potentially unwanted application (browser toolbar),C:\Users\t.becker\Downloads\freepdf_setup.exe,Quarantined
+2026-12-18T16:53:10,MKT-LT-02,l.kim,HIGH,Detect,Office document macro launched PowerShell with an encoded command,C:\Users\l.kim\Downloads\Q4_Invoice_Review.xlsm,Alert only
+2026-12-18T16:53:41,MKT-LT-02,l.kim,MEDIUM,Detect,Unsigned program added to the Run key (starts at every logon),C:\Users\l.kim\AppData\Roaming\SyncHelper\synchelper.exe,Alert only
+2026-12-19T02:10:05,MKT-LT-02,l.kim,MEDIUM,Detect,Process attempted many network logons to the domain controller,C:\Users\l.kim\AppData\Roaming\SyncHelper\synchelper.exe,Alert only
+2026-12-19T02:35:18,MKT-LT-02,l.kim,HIGH,Detect,Large archive created from files on a network share,C:\Users\l.kim\AppData\Local\Temp\cc_q4.7z,Alert only
+2026-12-20T11:31:52,CS-PC-06,j.dorsey,LOW,Protect,Adware bundled with a free software installer,C:\Users\j.dorsey\Downloads\video_converter.exe,Quarantined

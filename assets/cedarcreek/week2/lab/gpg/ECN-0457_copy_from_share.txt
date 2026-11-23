@@ -1,0 +1,23 @@
+CEDAR CREEK INDUSTRIES - ENGINEERING CHANGE NOTICE
+ECN number:   ECN-0457
+Date:         2026-11-11
+Drawing:      CCD-2875 Rev D, hydraulic elbow fitting
+Customer:     Halvorsen Pump
+Requested by: Priya Nair, Design Engineer
+Approved by:  Tom Becker, Engineering Manager
+
+Change
+------
+Bore diameter tolerance on section B-B changes
+  from +/- 0.05 mm
+  to   +/- 0.20 mm
+
+Reason
+------
+Customer testing showed seal leaks at the loose end of the old
+tolerance. The tighter tolerance matches the new O-ring supplier.
+
+Effect on production
+--------------------
+Line 1 must re-check the bore gauge before the next run of CCD-2875.
+Parts already in stock are not affected.

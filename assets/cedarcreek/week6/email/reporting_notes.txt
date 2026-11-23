@@ -1,0 +1,21 @@
+From:     Jordan Pike <j.pike@cedarcreek-ind.com>
+To:       Security Analyst
+Cc:       Marcus Reyes <m.reyes@cedarcreek-ind.com>
+Date:     Mon, 14 Dec 2026 09:40
+Subject:  Three messages from the Report button
+
+Three people used the Report button in Outlook last week. I saved each
+message with its full headers so you can look at them:
+
+  report-01.eml  reported by Kevin Tran (Marketing)    Thu 10 Dec
+  report-02.eml  reported by Amanda Singh (AP)          Fri 11 Dec
+  report-03.eml  reported by Walt Henley (Plant)        Mon 14 Dec
+
+Kevin did not click. Amanda called Greg on his desk phone first, the way
+the August memo says, and he said he never sent it. Walt says the W-2
+one "looked like the scams in the training video".
+
+Can you tell me which are real, which are phishing, and what we should
+block? I also pulled the DNS records and domain lookups for the senders.
+
+- Jordan

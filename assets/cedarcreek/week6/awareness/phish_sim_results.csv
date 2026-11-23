@@ -1,0 +1,115 @@
+email,department,building,trained,opened,clicked,submitted,reported,report_min
+g.palmer@cedarcreek-ind.com,Finance,office,yes,yes,no,no,yes,83
+amanda.singh@cedarcreek-ind.com,Finance,office,yes,yes,no,no,yes,166
+d.reyes@cedarcreek-ind.com,Finance,office,yes,yes,no,no,yes,54
+d.parker@cedarcreek-ind.com,Finance,office,yes,yes,no,no,yes,29
+l.hall@cedarcreek-ind.com,Finance,office,yes,yes,no,no,no,
+b.king@cedarcreek-ind.com,Finance,office,yes,yes,no,no,yes,147
+k.harris@cedarcreek-ind.com,Finance,office,yes,yes,no,no,yes,59
+r.clark@cedarcreek-ind.com,Finance,office,yes,yes,no,no,no,
+m.campbell@cedarcreek-ind.com,Finance,office,yes,no,no,no,no,
+r.medina@cedarcreek-ind.com,HR,office,yes,yes,no,no,no,
+o.torres@cedarcreek-ind.com,HR,office,yes,yes,no,no,yes,116
+k.carter@cedarcreek-ind.com,HR,office,yes,no,no,no,no,
+k.clark@cedarcreek-ind.com,HR,office,yes,yes,no,no,no,
+m.edwards@cedarcreek-ind.com,HR,office,yes,yes,no,no,no,
+m.reyes@cedarcreek-ind.com,IT,office,yes,yes,no,no,yes,98
+d.ortiz@cedarcreek-ind.com,IT,office,yes,yes,no,no,yes,13
+j.pike@cedarcreek-ind.com,IT,office,yes,yes,no,no,yes,6
+t.becker@cedarcreek-ind.com,Engineering,office,yes,no,no,no,no,
+p.nair@cedarcreek-ind.com,Engineering,office,yes,yes,no,no,no,
+e.taylor@cedarcreek-ind.com,Engineering,office,yes,no,no,no,no,
+m.roberts@cedarcreek-ind.com,Engineering,office,yes,yes,no,no,yes,105
+r.morgan@cedarcreek-ind.com,Engineering,office,yes,no,no,no,no,
+d.hill@cedarcreek-ind.com,Engineering,office,yes,no,no,no,no,
+u.beckett@cedarcreek-ind.com,Engineering,office,no,yes,no,no,no,
+s.torres@cedarcreek-ind.com,Engineering,office,yes,yes,no,no,no,
+f.jackson@cedarcreek-ind.com,Engineering,office,yes,yes,no,no,no,
+l.peterson@cedarcreek-ind.com,Engineering,office,yes,no,no,no,no,
+l.edwards@cedarcreek-ind.com,Engineering,office,yes,yes,no,no,no,
+f.roberts@cedarcreek-ind.com,Engineering,office,yes,yes,no,no,yes,153
+d.morris@cedarcreek-ind.com,Engineering,office,yes,no,no,no,no,
+g.rankin@cedarcreek-ind.com,Engineering,office,no,yes,yes,no,no,
+m.moore@cedarcreek-ind.com,Engineering,office,yes,no,no,no,no,
+m.cooper@cedarcreek-ind.com,Engineering,office,yes,yes,no,no,yes,35
+f.nguyen@cedarcreek-ind.com,Engineering,office,yes,yes,no,no,no,
+f.hester@cedarcreek-ind.com,Engineering,office,yes,no,no,no,no,
+l.kim@cedarcreek-ind.com,Marketing,office,yes,yes,no,no,yes,156
+k.tran@cedarcreek-ind.com,Marketing,office,yes,yes,no,no,yes,36
+j.green@cedarcreek-ind.com,Marketing,office,yes,yes,no,no,no,
+i.hall@cedarcreek-ind.com,Marketing,office,yes,yes,no,no,no,
+l.harris@cedarcreek-ind.com,Marketing,office,yes,no,no,no,no,
+j.edwards@cedarcreek-ind.com,Marketing,office,yes,yes,no,no,no,
+g.lindqvist@cedarcreek-ind.com,Customer Service,office,yes,yes,no,no,yes,3
+r.doyle@cedarcreek-ind.com,Customer Service,office,no,yes,yes,no,no,
+d.phillips@cedarcreek-ind.com,Customer Service,office,no,yes,no,no,no,
+c.bailey@cedarcreek-ind.com,Customer Service,office,yes,no,no,no,no,
+s.roberts@cedarcreek-ind.com,Customer Service,office,no,yes,yes,no,no,
+a.green@cedarcreek-ind.com,Customer Service,office,yes,no,no,no,no,
+b.murphy@cedarcreek-ind.com,Customer Service,office,yes,yes,yes,no,yes,119
+n.nolan@cedarcreek-ind.com,Customer Service,office,yes,no,no,no,no,
+d.edwards@cedarcreek-ind.com,Customer Service,office,yes,yes,no,no,yes,134
+c.roberts@cedarcreek-ind.com,Customer Service,office,yes,yes,no,no,yes,130
+m.alvarez@cedarcreek-ind.com,Purchasing,office,yes,yes,yes,yes,no,
+t.roberts@cedarcreek-ind.com,Purchasing,office,yes,yes,no,no,no,
+c.rivera@cedarcreek-ind.com,Purchasing,office,yes,yes,no,no,no,
+e.phillips@cedarcreek-ind.com,Purchasing,office,no,yes,no,no,no,
+y.upton@cedarcreek-ind.com,Purchasing,office,no,yes,no,no,no,
+a.reed@cedarcreek-ind.com,Purchasing,office,yes,yes,no,no,no,
+n.brooks@cedarcreek-ind.com,Office Admin,office,yes,yes,no,no,yes,94
+j.collins@cedarcreek-ind.com,Office Admin,office,no,no,no,no,no,
+w.henley@cedarcreek-ind.com,Production,plant,no,no,no,no,no,
+s.allen@cedarcreek-ind.com,Production,plant,no,yes,yes,no,no,
+f.morris@cedarcreek-ind.com,Production,plant,yes,no,no,no,no,
+m.harris@cedarcreek-ind.com,Production,plant,no,yes,no,no,no,
+s.green@cedarcreek-ind.com,Production,plant,yes,yes,no,no,no,
+l.jackson@cedarcreek-ind.com,Production,plant,no,yes,no,no,no,
+a.baker@cedarcreek-ind.com,Production,plant,no,no,no,no,no,
+o.mitchell@cedarcreek-ind.com,Production,plant,no,yes,yes,no,no,
+l.phillips@cedarcreek-ind.com,Production,plant,yes,yes,no,no,no,
+p.anderson@cedarcreek-ind.com,Production,plant,no,yes,no,no,yes,101
+s.martin@cedarcreek-ind.com,Production,plant,yes,yes,no,no,yes,139
+s.murphy@cedarcreek-ind.com,Production,plant,yes,yes,no,no,yes,137
+k.bailey@cedarcreek-ind.com,Production,plant,yes,yes,no,no,yes,8
+s.bailey@cedarcreek-ind.com,Production,plant,no,yes,yes,no,no,
+a.king@cedarcreek-ind.com,Production,plant,yes,yes,no,no,yes,105
+l.thomas@cedarcreek-ind.com,Production,plant,no,yes,no,no,no,
+o.scott@cedarcreek-ind.com,Production,plant,yes,yes,no,no,yes,14
+s.hill@cedarcreek-ind.com,Production,plant,no,yes,no,no,no,
+c.collins@cedarcreek-ind.com,Production,plant,yes,yes,no,no,no,
+r.cooper@cedarcreek-ind.com,Production,plant,no,yes,no,no,no,
+p.hall@cedarcreek-ind.com,Production,plant,yes,yes,no,no,yes,174
+s.evans@cedarcreek-ind.com,Production,plant,no,no,no,no,no,
+d.garcia@cedarcreek-ind.com,Production,plant,no,yes,no,no,no,
+l.cooper@cedarcreek-ind.com,Production,plant,no,yes,no,no,no,
+b.miller@cedarcreek-ind.com,Production,plant,yes,yes,no,no,yes,99
+k.hill@cedarcreek-ind.com,Production,plant,no,yes,yes,yes,no,
+k.evans@cedarcreek-ind.com,Production,plant,yes,yes,no,no,yes,115
+s.wilson@cedarcreek-ind.com,Production,plant,no,yes,no,no,no,
+m.davis@cedarcreek-ind.com,Production,plant,no,no,no,no,no,
+r.parker@cedarcreek-ind.com,Production,plant,no,yes,no,no,no,
+d.murphy@cedarcreek-ind.com,Quality,plant,yes,yes,no,no,no,
+b.cook@cedarcreek-ind.com,Quality,plant,yes,no,no,no,no,
+n.cooper@cedarcreek-ind.com,Quality,plant,yes,yes,no,no,no,
+l.thompson@cedarcreek-ind.com,Quality,plant,yes,no,no,no,no,
+c.cooper@cedarcreek-ind.com,Quality,plant,no,yes,no,no,no,
+r.white@cedarcreek-ind.com,Quality,plant,no,yes,no,no,no,
+m.wilson@cedarcreek-ind.com,Quality,plant,yes,yes,no,no,yes,30
+m.thomas@cedarcreek-ind.com,Quality,plant,no,no,no,no,no,
+s.pruitt@cedarcreek-ind.com,Maintenance,plant,no,no,no,no,no,
+m.jackson@cedarcreek-ind.com,Maintenance,plant,no,no,no,no,no,
+b.martin@cedarcreek-ind.com,Maintenance,plant,yes,yes,no,no,yes,135
+i.morgan@cedarcreek-ind.com,Maintenance,plant,no,yes,yes,yes,no,
+j.turner@cedarcreek-ind.com,Maintenance,plant,no,yes,yes,no,no,
+r.roberts@cedarcreek-ind.com,Maintenance,plant,no,no,no,no,no,
+l.green@cedarcreek-ind.com,Maintenance,plant,yes,yes,no,no,no,
+l.taylor@cedarcreek-ind.com,Shipping,plant,yes,no,no,no,no,
+i.wilson@cedarcreek-ind.com,Shipping,plant,yes,yes,no,no,no,
+r.carter@cedarcreek-ind.com,Shipping,plant,yes,yes,yes,yes,no,
+o.phillips@cedarcreek-ind.com,Shipping,plant,no,yes,no,no,no,
+m.anderson@cedarcreek-ind.com,Shipping,plant,yes,yes,no,no,no,
+t.stewart@cedarcreek-ind.com,Shipping,plant,yes,yes,no,no,no,
+s.taylor@cedarcreek-ind.com,Shipping,plant,yes,yes,no,no,no,
+l.miller@cedarcreek-ind.com,Shipping,plant,yes,yes,no,no,no,
+t.evans@cedarcreek-ind.com,Shipping,plant,yes,yes,no,no,yes,37
+f.stewart@cedarcreek-ind.com,Shipping,plant,yes,no,no,no,no,

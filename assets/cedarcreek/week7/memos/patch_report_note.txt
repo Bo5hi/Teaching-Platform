@@ -1,0 +1,26 @@
+From:     Dee Ortiz, Systems Administrator
+To:       Security Analyst
+Date:     2026-12-21
+Subject:  Patch status for your review
+
+it/patch_status.csv is this morning's export from the patch console.
+
+How we patch today:
+- Windows PCs and servers: Patch Tuesday (the 2nd Tuesday of the month)
+  plus 7 days for testing. December's Patch Tuesday was 2026-12-08, so
+  every machine on the normal cycle should show 2026-12-15 or later.
+- Servers are patched by hand in a Saturday window.
+- Firmware (FW-CORE, NVR-01, BADGE-CTRL) is patched "when we get to it".
+
+Things I am worried about:
+- FW-CORE: the vendor rated the VPN portal flaw in its 2026-12-10 advisory
+  Critical. Updating means a reboot, and a FW-CORE reboot drops the plant
+  for about 10 minutes, so Walt has to approve a window.
+- ENG-APP02 still runs Windows Server 2012 R2. No more patches will come.
+- PLANT-PC-07 runs the line vendor's certified Windows 7 image. Windows 7
+  went out of support on 2020-01-14, and the vendor will not support the
+  PC if we patch it.
+
+Tell me what you would patch first and why.
+
+Dee

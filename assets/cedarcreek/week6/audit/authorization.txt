@@ -1,0 +1,35 @@
+CEDAR CREEK INDUSTRIES
+AUTHORIZATION FOR INTERNAL PASSWORD AUDIT
+
+Date:            2026-12-14
+Requested by:    Marcus Reyes, IT Manager
+Approved by:     Greg Palmer, CFO (security program sponsor)
+Performed by:    Security Analyst, with Dee Ortiz (Systems Administrator)
+
+Scope
+-----
+Dee Ortiz will export the NT password hashes of 25 Active Directory
+accounts on DC01: every privileged, shared and service account, plus a
+sample of staff accounts chosen by Marcus. The security analyst may run
+offline password cracking against that export, on the analyst's lab
+virtual machine only, between 2026-12-15 and 2026-12-18.
+
+Rules
+-----
+1. No online guessing against DC01, Microsoft 365, or any live system.
+2. Cracked passwords are not shared with anyone, including managers.
+   The report lists account names and weakness patterns only.
+3. Every account whose password is cracked gets a forced password
+   change. Greg has scheduled the resets for Monday 2027-01-04, after
+   the year-end change freeze, because ccadmin and operator are wired
+   into scripts and the Line 2 HMI.
+4. The hash export and the cracking results are deleted when the
+   report is accepted.
+
+Why
+---
+The 2019 password memo still sets an 8-character minimum with 90-day
+changes. Before we change the policy, we want evidence of how strong
+our passwords really are.
+
+Signed:  Greg Palmer     Marcus Reyes

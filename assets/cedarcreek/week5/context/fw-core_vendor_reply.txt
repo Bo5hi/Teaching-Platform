@@ -1,0 +1,17 @@
+From: support@fw-vendor.example.com
+To: d.ortiz@cedarcreek-ind.com
+Date: Thu, 3 Dec 2026 14:10
+Subject: RE: Case 88213 - SSH version banner
+
+Hello Dee,
+
+Firmware 7.2.5 keeps the original OpenSSH version string in the SSH banner for
+compatibility. The security fixes for that OpenSSH version were backported into
+the 7.2.5 build. Scanners that judge only by the banner will report the old
+version as vulnerable. You can confirm the build in the management console under
+System > Firmware: 7.2.5 build 3311 or later includes the fixes.
+
+Separately, we recommend that SSH management not be reachable from the internet.
+
+Regards,
+Vendor Support

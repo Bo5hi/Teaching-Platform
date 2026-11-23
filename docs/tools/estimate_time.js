@@ -55,7 +55,7 @@ function lab(id) {
 function practice(id) {
   const p = (window.COURSE_PRACTICE || {})[id]; if (!p) return null;
   const n = (p.items || p.cards || []).length;
-  return n * (p.mode === 'flash' ? RATE.flashCard : RATE.sortItem);
+  return n * ((p.kind || p.mode) === 'flash' ? RATE.flashCard : RATE.sortItem);
 }
 function quiz() {
   const z = (window.COURSE_QUIZ || {})['w' + week]; if (!z) return null;

@@ -1,0 +1,13 @@
+Phone call notes - Tom Becker
+Date:        Thu 2026-11-12, 2:40 PM
+Called:      Halvorsen Pump main line (number from our supply contract)
+Spoke with:  Erik Lund, Supplier Quality Engineer
+
+Erik read the fingerprint of the Halvorsen Supplier Data OpenPGP key
+over the phone. I wrote it down in groups of four:
+
+  79EB 39A3 C109 216D 82B9  499E C5A6 BCBA 55F1 E01B
+
+Erik says the key file is on the supplier portal under Downloads. I
+saved it as exchange/keys/halvorsen_supplier_data.asc.
+Erik also said Halvorsen will never send a new key by email.

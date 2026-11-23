@@ -1,0 +1,18 @@
+From:     Dee Ortiz, Systems Administrator
+To:       IT team
+Date:     2026-11-30
+Subject:  Marketing EDR policy moved to Detect (temporary)
+
+The EDR quarantined FontVault, the font manager the Marketing design team
+uses, twice last week during the catalog deadline. Laura asked for it to
+stop. I moved the Marketing group (MKT-LT-02 and MKT-PC-04) from the
+Protect policy to the Detect policy.
+
+Protect = the EDR kills and quarantines threats on its own.
+Detect  = the EDR only raises an alert. It does not stop anything.
+
+This is temporary until the vendor sends the allow-list exception for
+FontVault. I set a reminder to move Marketing back to Protect on
+2026-12-14.
+
+Dee

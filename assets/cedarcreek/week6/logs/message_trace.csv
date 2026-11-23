@@ -1,0 +1,102 @@
+date_time,sender,recipient,subject,status
+2026-12-10T07:00:32,orders@ozarksteelsupply.com,s.torres@cedarcreek-ind.com,Updated price list,Delivered
+2026-12-10T07:06:23,w.henley@cedarcreek-ind.com,s.roberts@cedarcreek-ind.com,Line 2 schedule for Friday,Delivered
+2026-12-10T07:12:24,orders@ozarksteelsupply.com,k.carter@cedarcreek-ind.com,Updated price list,Delivered
+2026-12-10T07:16:03,m.alvarez@cedarcreek-ind.com,u.beckett@cedarcreek-ind.com,RE: quote request,Delivered
+2026-12-10T07:33:20,t.becker@cedarcreek-ind.com,t.becker@cedarcreek-ind.com,RE: drawing rev C for bracket 7731,Delivered
+2026-12-10T07:34:03,w.henley@cedarcreek-ind.com,l.kim@cedarcreek-ind.com,Line 2 schedule for Friday,Delivered
+2026-12-10T07:36:32,j.pike@cedarcreek-ind.com,k.clark@cedarcreek-ind.com,Printer on 2nd floor fixed,Delivered
+2026-12-10T07:50:31,r.medina@cedarcreek-ind.com,s.torres@cedarcreek-ind.com,Holiday schedule,Delivered
+2026-12-10T07:50:52,j.pike@cedarcreek-ind.com,r.doyle@cedarcreek-ind.com,Printer on 2nd floor fixed,Delivered
+2026-12-10T07:51:12,orders@ozarksteelsupply.com,r.doyle@cedarcreek-ind.com,Updated price list,Delivered
+2026-12-10T07:58:42,r.medina@cedarcreek-ind.com,j.edwards@cedarcreek-ind.com,Holiday schedule,Delivered
+2026-12-10T08:02:11,servicedesk@cedarcreek-it.com,k.tran@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:13,servicedesk@cedarcreek-it.com,a.green@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Quarantined
+2026-12-10T08:02:15,servicedesk@cedarcreek-it.com,k.harris@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:15,servicedesk@cedarcreek-it.com,m.edwards@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:16,servicedesk@cedarcreek-it.com,u.beckett@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:18,servicedesk@cedarcreek-it.com,r.morgan@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:19,servicedesk@cedarcreek-it.com,f.hester@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:19,servicedesk@cedarcreek-it.com,j.green@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:21,servicedesk@cedarcreek-it.com,r.medina@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:21,servicedesk@cedarcreek-it.com,t.roberts@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:21,servicedesk@cedarcreek-it.com,m.alvarez@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:21,servicedesk@cedarcreek-it.com,d.phillips@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:23,servicedesk@cedarcreek-it.com,o.torres@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:25,servicedesk@cedarcreek-it.com,g.rankin@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:27,servicedesk@cedarcreek-it.com,s.roberts@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:27,servicedesk@cedarcreek-it.com,l.kim@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:29,servicedesk@cedarcreek-it.com,amanda.singh@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:31,servicedesk@cedarcreek-it.com,d.morris@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:32,servicedesk@cedarcreek-it.com,t.becker@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:33,servicedesk@cedarcreek-it.com,l.harris@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:33,servicedesk@cedarcreek-it.com,f.nguyen@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:33,servicedesk@cedarcreek-it.com,d.reyes@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:33,servicedesk@cedarcreek-it.com,d.edwards@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:33,servicedesk@cedarcreek-it.com,m.cooper@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Quarantined
+2026-12-10T08:02:33,servicedesk@cedarcreek-it.com,j.edwards@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:34,servicedesk@cedarcreek-it.com,c.bailey@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Quarantined
+2026-12-10T08:02:35,servicedesk@cedarcreek-it.com,g.lindqvist@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:35,servicedesk@cedarcreek-it.com,n.nolan@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:35,servicedesk@cedarcreek-it.com,m.roberts@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Quarantined
+2026-12-10T08:02:36,servicedesk@cedarcreek-it.com,y.upton@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:02:38,servicedesk@cedarcreek-it.com,m.moore@cedarcreek-ind.com,[Action Required] Your Microsoft 365 password expires in 4 hours,Delivered
+2026-12-10T08:03:26,m.alvarez@cedarcreek-ind.com,b.murphy@cedarcreek-ind.com,RE: quote request,Delivered
+2026-12-10T08:12:41,w.henley@cedarcreek-ind.com,m.cooper@cedarcreek-ind.com,Line 2 schedule for Friday,Delivered
+2026-12-10T08:13:54,t.becker@cedarcreek-ind.com,d.edwards@cedarcreek-ind.com,RE: drawing rev C for bracket 7731,Delivered
+2026-12-10T08:16:36,notices@tallgrasspayroll.com,k.harris@cedarcreek-ind.com,Timecard reminder,Delivered
+2026-12-10T08:20:42,r.medina@cedarcreek-ind.com,k.tran@cedarcreek-ind.com,Lunch and learn next Tuesday,Delivered
+2026-12-10T08:21:31,g.palmer@cedarcreek-ind.com,c.rivera@cedarcreek-ind.com,RE: customer visit Monday,Delivered
+2026-12-10T08:24:12,g.palmer@cedarcreek-ind.com,j.green@cedarcreek-ind.com,RE: customer visit Monday,Delivered
+2026-12-10T08:25:54,w.henley@cedarcreek-ind.com,l.peterson@cedarcreek-ind.com,Line 2 schedule for Friday,Delivered
+2026-12-10T08:29:43,t.becker@cedarcreek-ind.com,y.upton@cedarcreek-ind.com,RE: drawing rev C for bracket 7731,Delivered
+2026-12-10T08:41:44,orders@ozarksteelsupply.com,r.morgan@cedarcreek-ind.com,Invoice 20931 attached,Delivered
+2026-12-10T08:57:09,orders@ozarksteelsupply.com,l.harris@cedarcreek-ind.com,Invoice 20931 attached,Delivered
+2026-12-10T09:02:23,m.alvarez@cedarcreek-ind.com,f.roberts@cedarcreek-ind.com,PO 44871 confirmation,Delivered
+2026-12-10T09:13:15,r.medina@cedarcreek-ind.com,k.harris@cedarcreek-ind.com,Holiday schedule,Delivered
+2026-12-10T09:25:15,orders@ozarksteelsupply.com,m.roberts@cedarcreek-ind.com,Updated price list,Delivered
+2026-12-10T09:28:33,g.palmer@cedarcreek-ind.com,u.beckett@cedarcreek-ind.com,RE: customer visit Monday,Delivered
+2026-12-10T09:29:14,w.henley@cedarcreek-ind.com,g.lindqvist@cedarcreek-ind.com,Line 2 schedule for Friday,Delivered
+2026-12-10T09:53:10,orders@ozarksteelsupply.com,t.becker@cedarcreek-ind.com,Updated price list,Delivered
+2026-12-10T10:11:32,m.alvarez@cedarcreek-ind.com,g.rankin@cedarcreek-ind.com,PO 44871 confirmation,Delivered
+2026-12-10T10:27:46,m.alvarez@cedarcreek-ind.com,n.brooks@cedarcreek-ind.com,PO 44871 confirmation,Delivered
+2026-12-10T10:38:32,notices@tallgrasspayroll.com,m.alvarez@cedarcreek-ind.com,Timecard reminder,Delivered
+2026-12-10T10:41:03,j.pike@cedarcreek-ind.com,t.roberts@cedarcreek-ind.com,Printer on 2nd floor fixed,Delivered
+2026-12-10T10:42:25,r.medina@cedarcreek-ind.com,l.harris@cedarcreek-ind.com,Holiday schedule,Delivered
+2026-12-10T10:43:40,orders@ozarksteelsupply.com,c.rivera@cedarcreek-ind.com,Updated price list,Delivered
+2026-12-10T10:49:34,r.medina@cedarcreek-ind.com,d.phillips@cedarcreek-ind.com,Holiday schedule,Delivered
+2026-12-10T10:49:34,r.medina@cedarcreek-ind.com,r.morgan@cedarcreek-ind.com,Lunch and learn next Tuesday,Delivered
+2026-12-10T11:00:06,orders@ozarksteelsupply.com,r.medina@cedarcreek-ind.com,Updated price list,Delivered
+2026-12-10T11:02:27,t.becker@cedarcreek-ind.com,i.hall@cedarcreek-ind.com,RE: drawing rev C for bracket 7731,Delivered
+2026-12-10T11:02:54,g.palmer@cedarcreek-ind.com,m.roberts@cedarcreek-ind.com,RE: customer visit Monday,Delivered
+2026-12-10T11:31:14,m.alvarez@cedarcreek-ind.com,g.palmer@cedarcreek-ind.com,PO 44871 confirmation,Delivered
+2026-12-10T11:48:02,w.henley@cedarcreek-ind.com,l.harris@cedarcreek-ind.com,Line 2 schedule for Friday,Delivered
+2026-12-10T12:00:26,r.medina@cedarcreek-ind.com,m.campbell@cedarcreek-ind.com,Holiday schedule,Delivered
+2026-12-10T12:33:49,r.medina@cedarcreek-ind.com,g.rankin@cedarcreek-ind.com,Lunch and learn next Tuesday,Delivered
+2026-12-10T12:35:01,t.becker@cedarcreek-ind.com,u.beckett@cedarcreek-ind.com,RE: drawing rev C for bracket 7731,Delivered
+2026-12-10T12:38:41,r.medina@cedarcreek-ind.com,f.jackson@cedarcreek-ind.com,Holiday schedule,Delivered
+2026-12-10T12:43:32,r.medina@cedarcreek-ind.com,s.torres@cedarcreek-ind.com,Lunch and learn next Tuesday,Delivered
+2026-12-10T13:00:07,g.palmer@cedarcreek-ind.com,f.roberts@cedarcreek-ind.com,RE: customer visit Monday,Delivered
+2026-12-10T13:14:06,t.becker@cedarcreek-ind.com,b.king@cedarcreek-ind.com,RE: drawing rev C for bracket 7731,Delivered
+2026-12-10T13:33:55,r.medina@cedarcreek-ind.com,f.roberts@cedarcreek-ind.com,Lunch and learn next Tuesday,Delivered
+2026-12-10T13:35:20,orders@ozarksteelsupply.com,c.roberts@cedarcreek-ind.com,Updated price list,Delivered
+2026-12-10T13:41:10,r.medina@cedarcreek-ind.com,j.collins@cedarcreek-ind.com,Lunch and learn next Tuesday,Delivered
+2026-12-10T13:42:24,orders@ozarksteelsupply.com,m.roberts@cedarcreek-ind.com,Updated price list,Delivered
+2026-12-10T13:51:33,r.medina@cedarcreek-ind.com,a.green@cedarcreek-ind.com,Lunch and learn next Tuesday,Delivered
+2026-12-10T14:32:26,t.becker@cedarcreek-ind.com,r.doyle@cedarcreek-ind.com,RE: drawing rev C for bracket 7731,Delivered
+2026-12-10T14:32:42,notices@tallgrasspayroll.com,s.torres@cedarcreek-ind.com,Timecard reminder,Delivered
+2026-12-10T14:40:36,m.alvarez@cedarcreek-ind.com,s.roberts@cedarcreek-ind.com,PO 44871 confirmation,Delivered
+2026-12-10T15:03:14,r.medina@cedarcreek-ind.com,f.jackson@cedarcreek-ind.com,Holiday schedule,Delivered
+2026-12-10T15:05:46,orders@ozarksteelsupply.com,f.jackson@cedarcreek-ind.com,Invoice 20931 attached,Delivered
+2026-12-10T15:19:05,w.henley@cedarcreek-ind.com,m.edwards@cedarcreek-ind.com,Line 2 schedule for Friday,Delivered
+2026-12-10T15:23:35,m.alvarez@cedarcreek-ind.com,k.carter@cedarcreek-ind.com,PO 44871 confirmation,Delivered
+2026-12-10T15:27:59,m.alvarez@cedarcreek-ind.com,k.clark@cedarcreek-ind.com,RE: quote request,Delivered
+2026-12-10T15:33:15,m.alvarez@cedarcreek-ind.com,p.nair@cedarcreek-ind.com,PO 44871 confirmation,Delivered
+2026-12-10T15:35:38,m.alvarez@cedarcreek-ind.com,l.kim@cedarcreek-ind.com,RE: quote request,Delivered
+2026-12-10T15:46:33,notices@tallgrasspayroll.com,g.rankin@cedarcreek-ind.com,Timecard reminder,Delivered
+2026-12-10T15:53:50,orders@ozarksteelsupply.com,k.harris@cedarcreek-ind.com,Invoice 20931 attached,Delivered
+2026-12-10T15:58:52,r.medina@cedarcreek-ind.com,r.medina@cedarcreek-ind.com,Holiday schedule,Delivered
+2026-12-10T16:15:17,orders@ozarksteelsupply.com,m.roberts@cedarcreek-ind.com,Updated price list,Delivered
+2026-12-10T16:32:29,w.henley@cedarcreek-ind.com,f.jackson@cedarcreek-ind.com,Weekly safety huddle notes,Delivered
+2026-12-10T16:38:18,w.henley@cedarcreek-ind.com,k.harris@cedarcreek-ind.com,Weekly safety huddle notes,Delivered
+2026-12-10T16:46:52,g.palmer@cedarcreek-ind.com,c.rivera@cedarcreek-ind.com,RE: customer visit Monday,Delivered

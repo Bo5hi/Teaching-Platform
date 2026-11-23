@@ -1,0 +1,6 @@
+Capture: plant_span.pcap
+Taken by: Jordan Pike, 2026-12-01, about 10:14 to 10:22 AM
+Where: mirror (SPAN) port on PLANT-SW1, copying all plant VLAN traffic
+Approved in: network/scope_authorization.txt
+
+Handle as Confidential: plant captures can contain passwords.

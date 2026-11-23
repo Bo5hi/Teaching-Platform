@@ -1,0 +1,35 @@
+From: Dee Ortiz <d.ortiz@cedarcreek-ind.com>
+To: you
+Cc: Marcus Reyes <m.reyes@cedarcreek-ind.com>
+Date: Fri, 4 Dec 2026 17:52
+Subject: First vulnerability scan - export attached
+
+Here is our first real vulnerability scan. I ran Greenbone (OpenVAS) from the
+scanner VM, VULN-SCAN01 (10.99.0.50), on the management network.
+
+Scope:
+- Servers, management devices, and two sample PCs (IT-ADMIN-01, FIN-LT-09).
+- PLANT-PC-07 and TIMECLOCK-01 on the plant network. Walt approved this only
+  if I used "safe checks" and no logins, after second shift ended. So those
+  two were scanned without credentials.
+- One external scan of our internet address, 198.51.100.24 (FW-CORE).
+
+Credentialed scans log in to the host and read the installed software and
+patches directly, so they are more accurate. Uncredentialed scans can only
+guess from what the host shows on the network, such as a version banner.
+
+Things I already know:
+- Finding 1021 on FW-CORE: the vendor told me firmware 7.2.5 (what we run)
+  keeps the old OpenSSH version number in its banner but includes the fixes.
+  See context/fw-core_vendor_reply.txt. I think the scanner is wrong there.
+- Servers are not on the "2nd Tuesday + 7 days" schedule. That schedule is for
+  office PCs through WSUS. I patch servers by hand when I can get a window.
+  Some have slipped. I know.
+- PLANT-PC-07 runs the Line 2 HMI software on a Windows 7 image the line
+  vendor certified. Walt says the vendor will not support it if we patch it
+  ourselves. Their technician uses Remote Desktop when he is on site.
+
+Can you triage this for Marcus? He wants the top five things to fix first, and
+why, not just the list sorted by score.
+
+Dee

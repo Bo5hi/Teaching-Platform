@@ -1,0 +1,20 @@
+ENG-FS01 backup status - Dee Ortiz, 2026-12-23 08:05
+
+Weekly full backup to LTO tape every Friday at 22:00.
+Last good tape: Friday 2026-12-18, job finished 23:47. Verified OK.
+The tape was on the shelf in the server room, not in the drive, so the
+attacker could not reach it. It is our only clean copy.
+
+Windows shadow copies on D: (taken nightly at 23:10) were deleted by the
+attacker at 03:31. The backup catalog was also deleted (wbadmin).
+
+D:\Projects holds about 41,900 files.
+
+Restore plan:
+  Rebuild ENG-FS01 from a clean image ............ about 5 hours
+  Restore D:\Projects from the Friday tape ........ about 9 hours
+  Copy back files changed since Friday that were
+  NOT encrypted, after a malware scan ............. about 2 hours
+
+Tom Becker says Engineering can work from paper and local copies for one
+day at most. After 24 hours, Line 2 starts running out of released drawings.

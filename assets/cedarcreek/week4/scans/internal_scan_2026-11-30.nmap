@@ -1,0 +1,57 @@
+# Nmap 7.95 scan initiated Mon Nov 30 23:20:12 2026 as: nmap -sS -sV -p- --open -T4 -oA internal_scan_2026-11-30 10.40.2.10 10.40.2.57 10.40.2.63-65 10.40.2.70 10.40.9.15 10.30.4.22
+Nmap scan report for line2-plc.cedarcreek.local (10.40.2.10)
+Host is up (0.0012s latency).
+Not shown: 65533 closed tcp ports (reset)
+PORT    STATE SERVICE VERSION
+80/tcp  open  http    Embedded HTTP server
+502/tcp open  modbus  Modbus TCP
+
+Nmap scan report for plant-pc-07.cedarcreek.local (10.40.2.57)
+Host is up (0.00087s latency).
+Not shown: 65531 closed tcp ports (reset)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds  Microsoft Windows 7 - 10 microsoft-ds
+3389/tcp open  ms-wbt-server Microsoft Terminal Services
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Nmap scan report for line2-cnc03.cedarcreek.local (10.40.2.63)
+Host is up (0.0015s latency).
+Not shown: 65533 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+21/tcp open  ftp     Embedded FTP server
+23/tcp open  telnet  BusyBox telnetd
+
+Nmap scan report for line2-cnc04.cedarcreek.local (10.40.2.64)
+Host is up (0.0014s latency).
+Not shown: 65534 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+21/tcp open  ftp     Embedded FTP server
+
+Nmap scan report for line2-label.cedarcreek.local (10.40.2.70)
+Host is up (0.0019s latency).
+Not shown: 65533 closed tcp ports (reset)
+PORT     STATE SERVICE   VERSION
+80/tcp   open  http      Embedded HTTP server
+9100/tcp open  jetdirect
+
+Nmap scan report for hvac-ctrl.cedarcreek.local (10.40.9.15)
+Host is up (0.0021s latency).
+Not shown: 65534 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Embedded HTTP server (HVAC controller login page)
+
+Nmap scan report for eng-app02.cedarcreek.local (10.30.4.22)
+Host is up (0.00052s latency).
+Not shown: 65530 closed tcp ports (reset)
+PORT     STATE SERVICE       VERSION
+80/tcp   open  http          Microsoft IIS httpd 8.5
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds  Microsoft Windows Server 2008 R2 - 2012 microsoft-ds
+3389/tcp open  ms-wbt-server Microsoft Terminal Services
+Service Info: OSs: Windows, Windows Server 2008 R2 - 2012; CPE: cpe:/o:microsoft:windows
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Mon Nov 30 23:46:47 2026 -- 8 IP addresses (7 hosts up) scanned in 1595.22 seconds

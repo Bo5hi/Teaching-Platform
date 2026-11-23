@@ -1,0 +1,72 @@
+Group,Member
+Domain Admins,Administrator
+Domain Admins,ccadmin
+Domain Admins,d.ortiz
+Domain Admins,j.pike
+Domain Admins,m.reyes
+Domain Admins,svc-backup
+Domain Admins,t.becker
+VPN-Users,b.kessler
+VPN-Users,d.ortiz
+VPN-Users,g.palmer
+VPN-Users,j.pike
+VPN-Users,k.tran
+VPN-Users,l.kim
+VPN-Users,m.reyes
+VPN-Users,n.brandt
+VPN-Users,p.nair
+VPN-Users,r.dempsey
+VPN-Users,s.ortega
+VPN-Users,svc-backup
+VPN-Users,t.becker
+VPN-Users,v.chu
+VPN-Users,vendor.cad
+VPN-Users,w.henley
+VPN-MFA-Users,d.ortiz
+VPN-MFA-Users,j.pike
+VPN-MFA-Users,k.tran
+VPN-MFA-Users,l.kim
+VPN-MFA-Users,m.reyes
+VPN-MFA-Users,p.nair
+VPN-MFA-Users,r.dempsey
+VPN-MFA-Users,s.ortega
+VPN-MFA-Users,v.chu
+VPN-MFA-Users,w.henley
+ENG-Share-RW,b.kessler
+ENG-Share-RW,f.hester
+ENG-Share-RW,g.rankin
+ENG-Share-RW,intern.eng
+ENG-Share-RW,l.fischer
+ENG-Share-RW,m.holt
+ENG-Share-RW,n.brandt
+ENG-Share-RW,o.gallagher
+ENG-Share-RW,p.nair
+ENG-Share-RW,r.imes
+ENG-Share-RW,s.ortega
+ENG-Share-RW,t.becker
+ENG-Share-RW,u.beckett
+ENG-Share-RW,v.chu
+ENG-APP02-Admins,d.ortiz
+ENG-APP02-Admins,t.becker
+ENG-APP02-Admins,vendor.cad
+HR-Share-RW,d.reyes
+HR-Share-RW,n.lyle
+HR-Share-RW,p.whitaker
+HR-Share-RW,r.medina
+HR-Share-RW,t.greene
+Finance-Share-RW,amanda.singh
+Finance-Share-RW,c.benson
+Finance-Share-RW,d.reyes
+Finance-Share-RW,g.palmer
+Finance-Share-RW,g.rowe
+Finance-Share-RW,g.voss
+Finance-Share-RW,r.dempsey
+Finance-Share-RW,s.dorsey
+Finance-Share-RW,v.tillman
+Plant-Leads,h.ruiz
+Plant-Leads,j.moran
+Plant-Leads,l.barron
+Plant-Leads,l.vance
+Plant-Leads,r.somers
+Plant-Leads,s.pruitt
+Plant-Leads,w.henley

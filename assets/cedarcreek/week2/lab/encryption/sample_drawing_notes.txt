@@ -1,0 +1,5 @@
+Drawing notes - CCD-3318 HV-310 pump mounting bracket
+Material: 6061-T6 aluminum, 6.35 mm plate
+Four mounting holes, 10.5 mm, on a 120 mm bolt circle
+Finish: clear anodize
+Customer: Halvorsen Pump (confidential)
