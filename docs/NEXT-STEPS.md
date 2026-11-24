@@ -5,14 +5,38 @@ Last updated: 2026-11-24 (Tracker v2 built; lab/lesson key blocker found). Read 
 - `docs/CEDAR_CREEK.md` for the scenario canon and the December timeline
 - `docs/build/BRIEF.md` for the rules every week was built to
 
+## NEXT BUILD — content changes Joey locked 2026-11-24 (spec agreed, NOT built yet)
+This is the active task. All decisions below are final; don't re-ask. Build on `course-v2`. Start with **Week 4 Day 1 as one complete vertical slice** (scope gate + recon lesson + first drill on the local range) for Joey to review the pattern and look, then replicate across the other methods and weeks.
+
+**1. Weeks 4–5 — rebuild the Mock Pentest as a real HackerOne engagement workbook.**
+- The graded engagement is a **real, live HackerOne program**, tested strictly within its scope. **Whole class on ONE shared program.** The program is **not hard-coded** — it's set once in a **Day-1 config** (program name, scope URLs, out-of-scope list, rules: rate limits, forbidden techniques). Joey enters it per cohort.
+- **Day-1 scope gate (graded, blocks all testing):** each student registers on HackerOne, reads the program policy, and logs in-scope assets / out-of-scope / rate limits / forbidden techniques (DoS, social engineering, etc.). A scope re-check sits in front of each technique. Authorization is the program's policy and binds each student individually — the instructor can't blanket-authorize.
+- **"Claim your asset/area" board** so a shared live target doesn't produce collisions / duplicate reports.
+- **Attack methods:** recon + scanning (subdomains, ffuf content discovery, nmap services, tech fingerprint); web / OWASP Top 10 (SQLi, XSS, access control/IDOR, SSRF, misconfig); API testing (auth, BOLA, rate limits); reporting + CVSS.
+- **Readiness ladder — teach + hands-on drill each method on a SAFE LOCAL range BEFORE going live** (a student's first SQLi must not be against the live company): HTTP + Burp Suite intercept (by end of Week 3) → recon/scanning (Wk4 D1) → SQLi, XSS (Wk4) → access control/IDOR (Wk4–5) → SSRF + misconfig (Wk5) → API (Wk5) → reporting + CVSS (Wk5). Each rung = short lesson + a drill, then applied live.
+- **Practice range = LOCAL in the student's Kali VM: OWASP Juice Shop (main; full OWASP Top 10 + REST API for the API drills) + DVWA (on-ramp, adjustable difficulty).** Free, offline, repeatable every cohort. Chosen over PortSwigger / Hacker101 because external sites aren't guaranteed up/available (Joey's reason). Fold the install into Week 1 Kali setup and ship it in the lab pack; offline after that.
+- **Grading:** methodology + scope discipline + evidence + report quality. A valid "no exploitable vulns found — here's what I tested" write-up counts; a real finding is bonus, not required. Flows through the Tracker mock-project rubric for w4/w5.
+- **Fit:** weave the readiness drills into Weeks 3–4, swapping the lightest Security+ practice sets; **keep 15 weeks.**
+- Leave the old in-house Pentest Lab (`Pillar4_EthicalHacking.html`) in place but **unlinked** from Weeks 4–5.
+
+**2. Weeks 9–15 — strip to hands-on only** (remove lessons, practice sets, quizzes):
+- **Week 9:** ticket work only, ~10 tickets/day (Joey assigns as needed). Keep at most a one-line standup.
+- **Weeks 10–13:** Northgate capstone deliverables only.
+- **Weeks 14–15:** just make the **Security+ Mock Exam** and the **10 PBQ labs** accessible — nothing else (same shape as the current platform's weeks 11–12).
+- These will fall under ~4 h/day of *measured* content (the time is now self-paced tool work). **Show Joey the new audit numbers; do not pad.**
+
+**3. Ticket bank → 30 clean, canon-consistent Cedar Creek tickets** (last cohort needed ~30). Keep the student ticket board and the Tracker's `TRACKER_TICKET_BANK` in sync. (Also resolve the ticket-vs-canon mismatches already listed under "Needs Joey" item 2.)
+
+Before any of this is tested live, the lab/lesson key blocker below (item 2 under "Next build steps") still applies.
+
 ## The goal
 Take everything from the original MCCoE Hub (5 pillars + cards) and reorganize it so students can follow it.
 - Every week is **Day 1 and Day 2**, the two class days, with about 4 hours of real student work each.
 - Each day is a numbered list of steps, and each step opens its tool directly. No pillars.
 
 ## Status
-- **Branch `course-v2`**, committed on the work PC, **NOT pushed**. The live site (`main`) is unchanged.
-  - Commits: 47cadc0, 2f6dd86, a9610d9, 7839507, 7857195.
+- **Branch `course-v2`**, pushed to GitHub (backup; `origin/course-v2`). The live site (`main`) is unchanged. Merge to `main` only between cohorts.
+  - Build commits: 47cadc0, 2f6dd86, a9610d9, 7839507, 7857195; Tracker v2: ca2b8c1.
 - **All 15 weeks are built** in `course-data.js`: 312 steps.
   - Content: 66 lessons and talks, 46 labs, 40 practice sets, 13 quizzes, 83 diagrams.
   - Every day measures 3.8-4.4 hours with `docs/tools/estimate_time.js`.
