@@ -87,16 +87,14 @@ The entry point. Students log in here with name + password. Hub SSO passes `?nam
 Password: (ask Joey)
 Admin users: jharbour, cdaniels
 
-**Nav sections and views:**
-- Dashboard, Pending Approvals, Students, Attendance
-- Surveys (dual format: Daily Survey = rating/confidence/topic; Weekly Check-In = mood/learned/goal)
-- Employer Profile, Student Submissions (8 projects, grading)
-- Library, Course Documents, Academy Scores, Acronym Scores
-- Pentest Lab, HTB Scores, Blue Team Lab, Security+ PBQ Labs, CTF Scores
-- SOC Tickets (SLA tracking P1=4h/P2=8h/P3=24h/P4=72h)
-- **🗺️ MITRE Mapping** — student MITRE ATT&CK worksheet submissions
-- Exec Summary Rubric (digital grader), Cheat Sheet, CTF Answer Key
-- Due Dates, Admin Tools
+**Menu (branch course-v2, Tracker v2, 2026-11-24):** five jobs in the sidebar, each with tabs. `tracker-v2.js` + `tracker-v2.css` add the shell and the new pages; every older view is unchanged and sits under a tab (`TV2_SECTIONS` in tracker-v2.js maps view ids to tabs). The old top header is hidden by CSS but kept because older code references its elements.
+- **To-Do** (landing page, `view-todo`): counts, "Grade next", "Needs attention" (absent in last 7 days, survey confidence 2 or lower, under half the class average of this week's steps, quiz under 80% after 2+ tries), sign-ups with Approve/Decline, this week's step progress. Tab "Class overview" = old Dashboard.
+- **Students**: Roster (row click opens the new student record `view-student`: Overview, Course progress, Grades, Attendance, Surveys, Notes), Attendance, Surveys and check-ins, Sign-ups (old Pending Approvals), Employer profiles.
+- **Gradebook**: Grading queue (`view-grading`; one list from mccoe_mockproj, mccoe_submissions, mccoe_course labs with a missed auto-check, mccoe_mitre, mccoe_nist, mccoe_tickets; each item opens its existing grader), Grades (`view-grades`, students x weeks: quiz, mock /25, case study), Auto-scored tools (PBQ, mock exam, Academy, Acronyms, CTF, Pentest, Blue Team, HTB), Submissions by tool (case studies, MITRE, NIST, exec summary rubric).
+- **Course**: Weeks (Step progress `view-weekv2`; Students and review = old Course v2 view; Old 12-week plan), SOC tickets, Due dates, Resources and documents, Answer keys.
+- **Admin**: Tools (`view-admin`: admins, add student, import file, weekly report, CSV, sync), Content manager, Data recovery.
+- Only new Firebase write: "Mark reviewed" on a lab sets `mccoe_course/{key}/labs/{lab}/reviewed = {at, by}`.
+- Headless check with Firebase writes blocked: a CDP script like `%LOCALAPPDATA%\mccoe-tools\work\cdp.js`, loading `mccoe_tracker_students` into localStorage first (a fresh browser otherwise loads the demo roster, and old code can save it back over the real one).
 
 ### MITRE_Attack_Map.html — Interactive Learning Tool
 - 4-tab tool: Framework / Attack Story / Technique Breakdown / Student Worksheet

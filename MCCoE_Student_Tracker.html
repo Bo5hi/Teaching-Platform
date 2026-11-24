@@ -538,6 +538,8 @@ select option { background:var(--surface); color:var(--text); }
   flex-shrink: 0;
 }
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tracker-v2.css?v=20261124">
 </head>
 <body>
 
@@ -600,117 +602,49 @@ select option { background:var(--surface); color:var(--text); }
     <button class="btn btn-outline" onclick="adminLogout()" title="Sign out of the instructor Tracker" style="font-size:.75rem;padding:5px 12px;">⏻ Sign Out</button>
   </div>
 </header>
-<div class="cohort-bar" id="cohortSwitch" title="Which cohort the Tracker shows"></div>
-
 <div class="app">
-<!-- SIDEBAR -->
-<nav>
-  <div class="nav-section">Overview</div>
-  <button class="nav-btn active" onclick="showView('dashboard',this)">
-    <span class="nav-icon">📊</span> Dashboard
-  </button>
-  <button class="nav-btn" onclick="showView('weekly',this)">
-    <span class="nav-icon">📚</span> Weekly Lessons
-  </button>
-  <div class="nav-section">Management</div>
-  <button class="nav-btn" id="nav-pending" onclick="showView('pending',this)">
-    <span class="nav-icon">⏳</span> Pending Approvals
-    <span id="pending-badge" style="display:none;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:auto;"></span>
-  </button>
-  <button class="nav-btn" onclick="showView('students',this)">
-    <span class="nav-icon">👥</span> Students
-  </button>
-  <button class="nav-btn" onclick="showView('attendance',this)">
-    <span class="nav-icon">📅</span> Attendance
-  </button>
-  <div class="nav-section">Reporting</div>
-  <button class="nav-btn" onclick="showView('survey',this)">
-    <span class="nav-icon">📋</span> Surveys
-  </button>
-  <button class="nav-btn" onclick="exportWeeklyReport()">
-    <span class="nav-icon">📤</span> Weekly Export
-  </button>
-  <button class="nav-btn" onclick="showView('employer',this)">
-    <span class="nav-icon">🏢</span> Employer Profile
-  </button>
-  <div class="nav-section">Submissions</div>
-  <button class="nav-btn" id="nav-submissions" onclick="showView('submissions',this)">
-    <span class="nav-icon">📥</span> Student Submissions
-    <span id="sub-badge" style="display:none;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:auto;"></span>
-  </button>
-  <button class="nav-btn" onclick="showView('course',this)">
-    <span class="nav-icon">&#9638;</span> Course v2 (weeks)
-  </button>
-  <div class="nav-section">Content</div>
-  <button class="nav-btn" onclick="showView('library',this)">
-    <span class="nav-icon">📚</span> Resource Library
-  </button>
-  <button class="nav-btn" onclick="showView('documents',this)">
-    <span class="nav-icon">📄</span> Course Documents
-  </button>
-  <button class="nav-btn" onclick="showView('academy',this)">
-    <span class="nav-icon">🎮</span> Academy Scores
-  </button>
-  <button class="nav-btn" onclick="showView('acronym',this)">
-    <span class="nav-icon">🔤</span> Acronym Scores
-  </button>
-  <button class="nav-btn" onclick="showView('pentest',this)">
-    <span class="nav-icon">💻</span> Pentest Lab
-  </button>
-  <button class="nav-btn" onclick="showView('htb',this)">
-    <span class="nav-icon">🟧</span> HTB Scores
-  </button>
-  <button class="nav-btn" onclick="showView('blueteam',this)">
-    <span class="nav-icon">🛡</span> Blue Team Lab
-  </button>
-  <button class="nav-btn" onclick="showView('pbq',this)">
-    <span class="nav-icon">🧪</span> Security+ PBQ Labs
-  </button>
-  <button class="nav-btn" onclick="showView('mock',this)">
-    <span class="nav-icon">⏱️</span> Security+ Mock Exam
-  </button>
-  <button class="nav-btn" onclick="showView('ctf',this)">
-    <span class="nav-icon">🚩</span> CTF Scores
-  </button>
-  <button class="nav-btn" onclick="showView('tickets',this)">
-    <span class="nav-icon">&#127915;</span> SOC Tickets
-  </button>
-  <button class="nav-btn" onclick="showView('mitre',this)">
-    <span class="nav-icon">🗺️</span> MITRE Mapping
-  </button>
-  <button class="nav-btn" onclick="showView('nist',this)">
-    <span class="nav-icon">🏛️</span> NIST CSF Mapping
-  </button>
-  <div class="nav-section">Resources</div>
-  <button class="nav-btn" onclick="showView('rubric',this)">
-    <span class="nav-icon">📝</span> Exec Summary Rubric
-  </button>
-  <button class="nav-btn" onclick="showView('cheatsheet',this)">
-    <span class="nav-icon">📋</span> Cheat Sheet
-  </button>
-  <button class="nav-btn" onclick="showView('ctfkey',this)">
-    <span class="nav-icon">🗝</span> CTF Answer Key
-  </button>
-  <button class="nav-btn" onclick="showView('schedule',this)">
-    <span class="nav-icon">📅</span> Due Dates
-  </button>
-  <a href="MCCoE_Scoreboard.html" class="nav-btn" style="text-decoration:none;display:flex;align-items:center;gap:8px">
-    <span class="nav-icon">📊</span> Live Scoreboard
-  </a>
-  <div class="nav-section">Admin Tools</div>
-  <button class="nav-btn" onclick="showView('recovery',this)">
-    <span class="nav-icon">🔍</span> Data Recovery
-  </button>
-  <button class="nav-btn" onclick="showView('content',this)">
-    <span class="nav-icon">⚙️</span> Content Manager
-  </button>
+<!-- SIDEBAR: five jobs (tracker-v2.js) -->
+<nav class="tv2-side" aria-label="Tracker menu">
+  <div class="tv2-brand"><img src="assets/mccoe-logo.png" alt="MCCoE logo"><div><b>MCCoE</b><span>Instructor Tracker</span></div></div>
+  <div class="cohort-bar" id="cohortSwitch" title="Which cohort the Tracker shows"></div>
+  <div class="tv2-navlist">
+    <button class="tv2-nav on" data-sec="todo" onclick="tv2Go('todo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"></path><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"></path></svg><span class="tv2-l">To-Do</span><span class="tv2-badge" id="tv2b-todo"></span></button>
+    <button class="tv2-nav" data-sec="students" onclick="tv2Go('students')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18 14.5a6.5 6.5 0 0 1 3.5 5.5"></path></svg><span class="tv2-l">Students</span><span class="tv2-badge warn" id="tv2b-students"></span></button>
+    <button class="tv2-nav" data-sec="gradebook" onclick="tv2Go('gradebook')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h12l4 4v12H4z"></path><path d="M8 12h8"></path><path d="M8 16h5"></path><path d="M8 8h4"></path></svg><span class="tv2-l">Gradebook</span><span class="tv2-badge" id="tv2b-gradebook"></span></button>
+    <button class="tv2-nav" data-sec="course" onclick="tv2Go('course')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M3 9h18"></path><path d="M8 2v4"></path><path d="M16 2v4"></path></svg><span class="tv2-l">Course</span></button>
+    <button class="tv2-nav" data-sec="admin" onclick="tv2Go('admin')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg><span class="tv2-l">Admin</span></button>
+  </div>
+  <div class="tv2-foot">
+    <a href="MCCoE_Hub.html" title="Open the student site. You stay signed in here; come back with the Back button.">Student site</a>
+    <a href="MCCoE_Scoreboard.html">Live scoreboard</a>
+    <div class="tv2-who"><span id="tv2-who-name"></span><button onclick="adminLogout()">Sign out</button></div>
+  </div>
 </nav>
 
 <!-- MAIN -->
 <main>
+<div id="tv2-subnav" class="tv2-subnav"></div>
+
+<!-- ═══ TRACKER V2: NEW VIEWS (tracker-v2.js) ═══ -->
+<div id="view-todo" class="view active"><div class="tv2-page" id="tv2-todo"></div></div>
+<div id="view-grading" class="view"><div class="tv2-page" id="tv2-grading"></div></div>
+<div id="view-grades" class="view"><div class="tv2-page" id="tv2-grades"></div></div>
+<div id="view-weekv2" class="view"><div class="tv2-page" id="tv2-week"></div></div>
+<div id="view-student" class="view"><div class="tv2-page" id="tv2-student"></div></div>
+<div id="view-admin" class="view"><div class="tv2-page">
+  <p class="tv2-lede">Setup and repair jobs you won't need every day.</p>
+  <div class="tv2-cards">
+    <div class="tv2-card"><h3>Admin accounts</h3><p>Add or remove instructors who can sign in to this Tracker, and change passwords.</p><button class="tv2-ghost" onclick="renderManageAdmins()">Manage admins</button></div>
+    <div class="tv2-card"><h3>Add a student by hand</h3><p>For someone who can't register on the Hub. Students who register there show up under Students &gt; Sign-ups.</p><button class="tv2-ghost" onclick="openAddStudent()">Add student</button></div>
+    <div class="tv2-card"><h3>Import a submission file</h3><p>Load a project submission a student saved as a .json file instead of submitting online.</p><button class="tv2-ghost" onclick="triggerImport()">Import file</button></div>
+    <div class="tv2-card"><h3>Weekly report</h3><p>A printable summary of the week for the cohort: attendance, surveys, submissions and the week's checklist.</p><button class="tv2-ghost" onclick="exportWeeklyReport()">Build weekly report</button></div>
+    <div class="tv2-card"><h3>Student CSV</h3><p>Download the roster with hours, attendance, scores and status as a spreadsheet file.</p><button class="tv2-ghost" onclick="exportCSV()">Download CSV</button></div>
+    <div class="tv2-card"><h3>Sync sign-ups now</h3><p>The Tracker checks for new registrations every 30 seconds. Use this to pull them in right away.</p><button class="tv2-ghost" onclick="manualSync()">Sync now</button></div>
+  </div>
+</div></div>
 
 <!-- ═══ DASHBOARD ═══ -->
-<div id="view-dashboard" class="view active">
+<div id="view-dashboard" class="view">
   <div class="page-header">
     <div>
       <h2>Dashboard</h2>
@@ -4451,7 +4385,7 @@ function _renderDashboardBody() {
 
   // Table
   document.getElementById('dashboardTable').innerHTML = students.map(s=>`
-    <tr onclick="openDetail('${s.id}')">
+    <tr onclick="tv2OpenStudent('${s.id}')">
       <td><div style="display:flex;align-items:center;gap:10px;">
         <div class="avatar" style="width:34px;height:34px;font-size:.8rem;flex-shrink:0;">${initials(s.name)}</div>
         <div><div style="font-weight:600;color:var(--white);">${s.name}</div><div style="font-size:.7rem;color:var(--muted);">${s.cohort}</div></div>
@@ -4982,7 +4916,7 @@ function renderStudents() {
   document.getElementById('studentsTable').innerHTML = students.map(s=>{
     const inactive = s.cohortActive === false;
     return `
-    <tr onclick="openDetail('${s.id}')" style="${inactive ? 'opacity:0.45;' : ''}">
+    <tr onclick="tv2OpenStudent('${s.id}')" style="${inactive ? 'opacity:0.45;' : ''}">
       <td><div style="display:flex;align-items:center;gap:10px;">
         <div class="avatar" style="width:34px;height:34px;font-size:.8rem;flex-shrink:0;${inactive ? 'filter:grayscale(1);' : ''}">${initials(s.name)}</div>
         <div>
@@ -10288,6 +10222,7 @@ function buildWeeklyModal(weekNum, weekLabel, weekDates, DAY_LABELS, attendRows,
   });
 }
 </script>
+<script src="tracker-v2.js?v=20261124"></script>
 
 </body>
 </html>

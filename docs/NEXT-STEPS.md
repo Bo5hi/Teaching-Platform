@@ -1,6 +1,6 @@
 # Course v2 redesign: where we left off
 
-Last updated: 2026-11-23 (end of day). Read this first, then:
+Last updated: 2026-11-24 (Tracker v2 built; lab/lesson key blocker found). Read this first, then:
 - `docs/COURSE_V2.md` for structure, data shapes and time rules
 - `docs/CEDAR_CREEK.md` for the scenario canon and the December timeline
 - `docs/build/BRIEF.md` for the rules every week was built to
@@ -99,8 +99,11 @@ Take everything from the original MCCoE Hub (5 pillars + cards) and reorganize i
 
 ## Next build steps
 1. Apply Joey's feedback.
-2. **Tracker:** reorganize the 28 menu items around jobs (To-Do, Students, Gradebook, Course, Admin), with one grading queue. Mockup first.
-3. **Cutover:** merge `course-v2` into `main` **between cohorts**. This changes the live Hub sign-in to land on This Week.
+2. **Fix lab and lesson-check keys before going live (blocker).** `Lab.html` saves `CC.save('labs/' + lid)` and `Lesson.html` saves `CC.save('checks/' + lid)` with ids like `1.1`. The Firebase SDK throws on a key with a dot ("values argument contains an invalid key (1.1)", checked 2026-11-24 against a dummy database), so these saves will fail once `mccoe_course` is live. Store them as `1_1` (and read both in the Tracker's `cvOpen` and anything else that reads `labs`/`checks`). The Tracker v2 queue already reads `1_1` and `1.1`.
+3. **Cutover:** merge `course-v2` into `main` **between cohorts**. This changes the live Hub sign-in to land on This Week, and the Tracker to its new five-job menu.
+
+## Tracker v2 (done 2026-11-24)
+The Tracker's 30 menu items now sit under five jobs: To-Do, Students, Gradebook, Course, Admin, with one grading queue. Joey approved the mockup (claude.ai design canvas "Tracker Reorganization Mockup"). Files: `tracker-v2.js`, `tracker-v2.css`; see CLAUDE.md "MCCoE_Student_Tracker.html". Differences from the mockup: clicking a queue item opens that item's existing grader (mock project review overlay, project grade modal, ticket grader, MITRE/NIST card) instead of a side panel, so the answer-key checks and Claude draft grades still work; the old Dashboard stays as To-Do > Class overview. Checked headless with Firebase writes blocked: every tab renders on live data with no script errors; graders open from the queue; cohort switch; phone width.
 
 ## How to resume
 - **Repo:** `OneDrive\Documents\GitHub\Teaching-Platform`. Run `git switch course-v2`.
